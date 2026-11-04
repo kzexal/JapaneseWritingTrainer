@@ -46,45 +46,54 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val InkStyle = Stroke(width = 14f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-
-// Đơn vị theo hệ tọa độ của dataset (viewBox 109) nên sẽ được phóng to theo canvas.
 private val TemplateStyle = Stroke(width = 6f, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
 private val TemplateColor = Color(0xFFD0D0D0)
 private val AnimationColor = Color(0xFF1E88E5)
 private val NumberColor = Color(0xFFD32F2F)
+private val CompletedGuideColor = Color(0xFFBDBDBD)
+private val WaitingGuideColor = Color(0xFFE8E8E8)
+
+private enum class WritingMode {
+    TRACE,
+    GUIDED
+}
 
 /**
- * Màn hình viết chữ:
- * - Khung vuông có lưới, vẽ bằng ngón tay.
- * - Chữ mẫu mờ (Trace) + số thứ tự nét.
- * - Animation thứ tự nét.
- * - Undo / Xóa hết.
+ * Màn hình luyện viết:
+ * - Trace: hiển thị mẫu mờ để người học đồ theo.
+ * - Guided: chỉ tô sáng nét cần viết tiếp theo; mỗi lần nhấc tay hoàn thành một nét.
+ * - Hỗ trợ Undo, Clear, ẩn/hiện gợi ý và xem animation thứ tự nét.
+ *
+ * Guided Writing MVP chỉ theo dõi số lượng/thứ tự thao tác viết,
+ * chưa so khớp hình dạng nét với SVG.
  */
 @Composable
 fun WritingCanvas(
     modifier: Modifier = Modifier,
     character: CharacterData? = null
 ) {
-    // ---- Nét người dùng vẽ ----
-    val strokes = remember { mutableStateListOf<Path>() }
-    val currentPath = remember { Path() }
-    var redrawTick by remember { mutableIntStateOf(0) }
+    val strokes = remember(character?.id) { mutableStateListOf<Path>() }
+    val currentPath = remember(character?.id) { Path() }
+    var redrawTick by remember(character?.id) { mutableIntStateOf(0) }
 
-    // ---- Dữ liệu chữ mẫu ----
     val templatePaths: List<Path> = remember(character) {
         character?.strokes?.map { PathParser().parsePathString(it.svgPath).toPath() }
             ?: emptyList()
     }
     val measures: List<PathMeasure> = remember(templatePaths) {
-        templatePaths.map { p -> PathMeasure().also { it.setPath(p, false) } }
+        templatePaths.map { path -> PathMeasure().also { it.setPath(path, false) } }
     }
 
-    // ---- Trạng thái hiển thị ----
-    var showTemplate by remember { mutableStateOf(true) }
-    val animProgress = remember { Animatable(0f) }
-    var playToken by remember { mutableIntStateOf(0) }
-    var isAnimating by remember { mutableStateOf(false) }
+    var mode by remember(character?.id) { mutableStateOf(WritingMode.TRACE) }
+    var guidedProgress by remember(character?.id) {
+        mutableStateOf(GuidedWritingProgress())
+    }
+    var showTemplate by remember(character?.id) { mutableStateOf(true) }
+
+    val animProgress = remember(character?.id) { Animatable(0f) }
+    var playToken by remember(character?.id) { mutableIntStateOf(0) }
+    var isAnimating by remember(character?.id) { mutableStateOf(false) }
 
     LaunchedEffect(playToken) {
         if (playToken == 0 || templatePaths.isEmpty()) return@LaunchedEffect
@@ -101,6 +110,9 @@ fun WritingCanvas(
     }
 
     val textMeasurer = rememberTextMeasurer()
+    val totalStrokes = templatePaths.size
+    val completedStrokes = guidedProgress.completedStrokeCount.coerceAtMost(totalStrokes)
+    val isGuidedComplete = guidedProgress.isComplete(totalStrokes)
 
     Column(
         modifier = modifier
@@ -116,17 +128,64 @@ fun WritingCanvas(
             )
         }
 
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.TRACE
+                    strokes.clear()
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.TRACE
+            ) {
+                Text("Trace")
+            }
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.GUIDED
+                    strokes.clear()
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = true
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.GUIDED && totalStrokes > 0
+            ) {
+                Text("Guided Writing")
+            }
+        }
+
+        if (mode == WritingMode.GUIDED && totalStrokes > 0) {
+            Text(
+                text = if (isGuidedComplete) {
+                    "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
+                } else {
+                    "Nét ${completedStrokes + 1} / $totalStrokes"
+                },
+                color = if (isGuidedComplete) Color(0xFF2E7D32) else Color.Unspecified
+            )
+        }
+
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(1f)
                 .background(Color.White)
-                .pointerInput(Unit) {
+                .pointerInput(mode, character?.id, totalStrokes) {
                     awaitEachGesture {
+                        // Guided chỉ nhận đúng số nét trong dữ liệu và không nhận thêm
+                        // nét sau khi đã hoàn thành ký tự.
+                        if (mode == WritingMode.GUIDED &&
+                            !guidedProgress.canAcceptStroke(totalStrokes)
+                        ) {
+                            return@awaitEachGesture
+                        }
+
                         val down = awaitFirstDown()
                         down.consume()
 
-                        var last: Offset = down.position
+                        var last = down.position
                         var moved = false
                         currentPath.reset()
                         currentPath.moveTo(last.x, last.y)
@@ -134,24 +193,30 @@ fun WritingCanvas(
 
                         while (true) {
                             val event = awaitPointerEvent()
-                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                            val change = event.changes.firstOrNull { it.id == down.id }
+                                ?: break
                             if (!change.pressed) break
 
-                            for (h in change.historical) {
-                                val p = h.position
+                            for (historical in change.historical) {
+                                val point = historical.position
                                 currentPath.quadraticTo(
-                                    last.x, last.y,
-                                    (last.x + p.x) / 2f, (last.y + p.y) / 2f
+                                    last.x,
+                                    last.y,
+                                    (last.x + point.x) / 2f,
+                                    (last.y + point.y) / 2f
                                 )
-                                last = p
+                                last = point
                                 moved = true
                             }
-                            val p = change.position
+
+                            val point = change.position
                             currentPath.quadraticTo(
-                                last.x, last.y,
-                                (last.x + p.x) / 2f, (last.y + p.y) / 2f
+                                last.x,
+                                last.y,
+                                (last.x + point.x) / 2f,
+                                (last.y + point.y) / 2f
                             )
-                            last = p
+                            last = point
                             moved = true
 
                             change.consume()
@@ -163,7 +228,11 @@ fun WritingCanvas(
                         } else {
                             currentPath.lineTo(last.x + 0.1f, last.y)
                         }
+
                         strokes.add(Path().apply { addPath(currentPath) })
+                        if (mode == WritingMode.GUIDED) {
+                            guidedProgress = guidedProgress.completeStroke(totalStrokes)
+                        }
                         currentPath.reset()
                         redrawTick++
                     }
@@ -174,33 +243,63 @@ fun WritingCanvas(
 
             drawGrid()
 
-            // --- Lớp 1: chữ mẫu (nằm dưới nét của người dùng) ---
             if (templatePaths.isNotEmpty()) {
                 val unit = size.width / (character?.viewBoxSize ?: 109f)
 
                 if (isAnimating) {
                     val progress = animProgress.value
                     for (i in templatePaths.indices) {
-                        val frac = (progress - i).coerceIn(0f, 1f)
-                        if (frac <= 0f) break
-                        if (frac >= 1f) {
+                        val fraction = (progress - i).coerceIn(0f, 1f)
+                        if (fraction <= 0f) break
+                        if (fraction >= 1f) {
                             drawTemplateStroke(templatePaths[i], unit, AnimationColor)
                         } else {
-                            val m = measures[i]
                             val segment = Path()
-                            m.getSegment(0f, m.length * frac, segment, true)
+                            measures[i].getSegment(
+                                0f,
+                                measures[i].length * fraction,
+                                segment,
+                                true
+                            )
                             drawTemplateStroke(segment, unit, AnimationColor)
                         }
                     }
-                } else if (showTemplate) {
-                    templatePaths.forEach { drawTemplateStroke(it, unit, TemplateColor) }
+                } else if (showTemplate && mode == WritingMode.GUIDED) {
+                    // Các nét đã hoàn thành và nét chờ được làm mờ.
+                    // Chỉ nét kế tiếp được tô xanh để người học tập trung.
+                    templatePaths.forEachIndexed { index, path ->
+                        val color = when {
+                            index < completedStrokes -> CompletedGuideColor
+                            index == completedStrokes && !isGuidedComplete -> AnimationColor
+                            else -> WaitingGuideColor
+                        }
+                        drawTemplateStroke(path, unit, color)
+                    }
 
-                    // Số thứ tự nét, đặt gần điểm bắt đầu của mỗi nét.
-                    measures.forEachIndexed { i, m ->
-                        val start = m.getPosition(0f)
+                    measures.forEachIndexed { index, measure ->
+                        val start = measure.getPosition(0f)
+                        val numberColor = if (index == completedStrokes && !isGuidedComplete) {
+                            NumberColor
+                        } else {
+                            CompletedGuideColor
+                        }
                         drawText(
                             textMeasurer = textMeasurer,
-                            text = "${i + 1}",
+                            text = "${index + 1}",
+                            topLeft = Offset(start.x * unit - 18f, start.y * unit - 40f),
+                            style = TextStyle(fontSize = 14.sp, color = numberColor)
+                        )
+                    }
+                } else if (showTemplate) {
+                    templatePaths.forEach { path ->
+                        drawTemplateStroke(path, unit, TemplateColor)
+                    }
+
+                    measures.forEachIndexed { index, measure ->
+                        val start = measure.getPosition(0f)
+                        drawText(
+                            textMeasurer = textMeasurer,
+                            text = "${index + 1}",
                             topLeft = Offset(start.x * unit - 18f, start.y * unit - 40f),
                             style = TextStyle(fontSize = 14.sp, color = NumberColor)
                         )
@@ -208,36 +307,49 @@ fun WritingCanvas(
                 }
             }
 
-            // --- Lớp 2: nét người dùng ---
             strokes.forEach { drawPath(it, Color.Black, style = InkStyle) }
             drawPath(currentPath, Color.Black, style = InkStyle)
         }
 
-        if (character != null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                OutlinedButton(onClick = { showTemplate = !showTemplate }) {
-                    Text(if (showTemplate) "Ẩn mẫu" else "Hiện mẫu")
-                }
-                OutlinedButton(
-                    onClick = { playToken++ },
-                    enabled = !isAnimating
-                ) {
-                    Text("Xem thứ tự nét")
-                }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+                Text(if (showTemplate) "Ẩn gợi ý" else "Hiện gợi ý")
+            }
+            OutlinedButton(
+                onClick = { playToken++ },
+                enabled = !isAnimating && templatePaths.isNotEmpty()
+            ) {
+                Text("Xem thứ tự nét")
             }
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(onClick = {
-                if (strokes.isNotEmpty()) strokes.removeAt(strokes.lastIndex)
-            }) {
+            OutlinedButton(
+                onClick = {
+                    if (strokes.isNotEmpty()) {
+                        strokes.removeAt(strokes.lastIndex)
+                        if (mode == WritingMode.GUIDED) {
+                            guidedProgress = guidedProgress.undo()
+                        }
+                        redrawTick++
+                    }
+                },
+                enabled = strokes.isNotEmpty()
+            ) {
                 Text("Undo")
             }
-            Button(onClick = {
-                strokes.clear()
-                currentPath.reset()
-                redrawTick++
-            }) {
+
+            Button(
+                onClick = {
+                    strokes.clear()
+                    currentPath.reset()
+                    if (mode == WritingMode.GUIDED) {
+                        guidedProgress = guidedProgress.reset()
+                    }
+                    redrawTick++
+                },
+                enabled = strokes.isNotEmpty() || completedStrokes > 0
+            ) {
                 Text("Xóa hết")
             }
         }
