@@ -1,17 +1,20 @@
 package com.example.japanesewritingtrainer
 
+import kotlin.math.abs
 import kotlin.math.sqrt
 
 /**
  * Kết quả so sánh một nét người dùng với nét SVG tham chiếu.
  *
- * score nằm trong [0, 100]. directionCorrect cho biết người dùng có
- * bắt đầu và kết thúc theo đúng chiều của nét mẫu hay không.
+ * score nằm trong [0, 100]. directionCorrect cho biết nét có đúng chiều
+ * và nằm trong dung sai đầu/cuối hay không. directionReversed nhận diện
+ * trường hợp người dùng đi từ cuối nét mẫu về đầu nét mẫu.
  */
 data class StrokeMatchResult(
     val score: Float,
     val accepted: Boolean,
     val directionCorrect: Boolean,
+    val directionReversed: Boolean,
     val averagePathDistance: Float,
     val startDistance: Float,
     val endDistance: Float,
@@ -21,12 +24,9 @@ data class StrokeMatchResult(
 /**
  * So khớp hai đường đi đã được chuẩn hóa về cùng hệ tọa độ SVG.
  *
- * Thuật toán:
- * 1. Resample hai polyline thành cùng số điểm theo chiều dài cung.
- * 2. Tính khoảng cách trung bình giữa các cặp điểm tương ứng.
- * 3. Kết hợp độ giống đường đi, hai đầu nét và tỷ lệ độ dài.
- *
- * Đây là bộ chấm điểm hình học phiên bản đầu, chưa dùng machine learning.
+ * Điểm hình dạng được tính riêng trước. Nếu phát hiện nét bị viết ngược,
+ * điểm cuối cùng bị giới hạn để không tạo cảm giác một nét sai chiều vẫn
+ * đạt điểm cao chỉ vì hình học của nó giống mẫu.
  */
 object StrokeMatcher {
 
@@ -52,34 +52,53 @@ object StrokeMatcher {
         val startDistance = distance(reference.startPoint, user.startPoint)
         val endDistance = distance(reference.endPoint, user.endPoint)
 
+        // So sánh cả hai đầu theo chiều ngược để phân biệt viết ngược
+        // với trường hợp viết đúng chiều nhưng bị lệch vị trí.
+        val reverseStartDistance = distance(reference.startPoint, user.endPoint)
+        val reverseEndDistance = distance(reference.endPoint, user.startPoint)
+        val forwardEndpointError = startDistance + endDistance
+        val reverseEndpointError = reverseStartDistance + reverseEndDistance
+
         val referenceLength = reference.length.coerceAtLeast(EPSILON)
         val lengthRatio = user.length / referenceLength
-        val lengthError = kotlin.math.abs(1f - lengthRatio)
+        val lengthError = abs(1f - lengthRatio)
 
-        // Chuẩn hóa các sai số theo kích thước viewBox để dùng được với
-        // dataset có kích thước khác nhau.
         val pathError = (averageDistance / diagonal).coerceIn(0f, 1f)
         val startError = (startDistance / diagonal).coerceIn(0f, 1f)
         val endError = (endDistance / diagonal).coerceIn(0f, 1f)
         val normalizedLengthError = lengthError.coerceIn(0f, 1f)
 
-        val score = (
+        // Điểm hình học trước khi áp dụng hình phạt sai chiều.
+        val shapeScore = (
             (1f - pathError) * 45f +
                 (1f - startError) * 20f +
                 (1f - endError) * 20f +
                 (1f - normalizedLengthError) * 15f
             ).coerceIn(0f, 100f)
 
-        val directionCorrect =
-            startDistance <= diagonal * config.maxEndpointErrorRatio &&
-                endDistance <= diagonal * config.maxEndpointErrorRatio
+        val endpointTolerance = diagonal * config.maxEndpointErrorRatio
+        val directionReversed =
+            reverseEndpointError + config.directionDetectionMargin < forwardEndpointError * 0.5f
 
-        val accepted = score >= config.acceptanceScore && directionCorrect
+        val directionCorrect =
+            !directionReversed &&
+                startDistance <= endpointTolerance &&
+                endDistance <= endpointTolerance
+
+        // Sai chiều luôn bị giới hạn điểm, bất kể độ giống hình dạng.
+        val finalScore = if (directionReversed) {
+            minOf(shapeScore, config.reversedDirectionScoreCap)
+        } else {
+            shapeScore
+        }
+
+        val accepted = finalScore >= config.acceptanceScore && directionCorrect
 
         return StrokeMatchResult(
-            score = score,
+            score = finalScore,
             accepted = accepted,
             directionCorrect = directionCorrect,
+            directionReversed = directionReversed,
             averagePathDistance = averageDistance,
             startDistance = startDistance,
             endDistance = endDistance,
@@ -87,9 +106,7 @@ object StrokeMatcher {
         )
     }
 
-    /**
-     * Lấy mẫu đều theo chiều dài polyline. Trả về đúng sampleCount điểm.
-     */
+    /** Lấy mẫu đều theo chiều dài polyline. Trả về đúng sampleCount điểm. */
     internal fun resample(
         points: List<StrokePoint>,
         sampleCount: Int
@@ -141,11 +158,15 @@ object StrokeMatcher {
     data class Config(
         val sampleCount: Int = 32,
         val acceptanceScore: Float = 75f,
-        val maxEndpointErrorRatio: Float = 0.12f
+        val maxEndpointErrorRatio: Float = 0.12f,
+        val reversedDirectionScoreCap: Float = 49f,
+        val directionDetectionMargin: Float = 1f
     ) {
         init {
             require(acceptanceScore in 0f..100f)
             require(maxEndpointErrorRatio in 0f..1f)
+            require(reversedDirectionScoreCap in 0f..100f)
+            require(directionDetectionMargin >= 0f && directionDetectionMargin.isFinite())
         }
     }
 
