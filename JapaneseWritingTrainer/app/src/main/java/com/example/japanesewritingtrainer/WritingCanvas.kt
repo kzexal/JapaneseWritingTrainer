@@ -101,6 +101,7 @@ fun WritingCanvas(
         mutableStateOf(GuidedWritingProgress())
     }
     var showTemplate by remember(character?.id) { mutableStateOf(true) }
+    var latestAnalysisFailed by remember(character?.id) { mutableStateOf(false) }
 
     val animProgress = remember(character?.id) { Animatable(0f) }
     var playToken by remember(character?.id) { mutableIntStateOf(0) }
@@ -147,6 +148,7 @@ fun WritingCanvas(
                     strokes.clear()
                     analyzedStrokes.clear()
                     strokeMatches.clear()
+                    latestAnalysisFailed = false
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     redrawTick++
@@ -161,6 +163,7 @@ fun WritingCanvas(
                     strokes.clear()
                     analyzedStrokes.clear()
                     strokeMatches.clear()
+                    latestAnalysisFailed = false
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     showTemplate = true
@@ -181,7 +184,12 @@ fun WritingCanvas(
                 },
                 color = if (isGuidedComplete) Color(0xFF2E7D32) else Color.Unspecified
             )
-            if (latestMatch != null) {
+            if (latestAnalysisFailed) {
+                Text(
+                    text = "Nét quá ngắn hoặc chưa đủ dữ liệu để đánh giá. Hãy viết lại nét này.",
+                    color = Color(0xFFEF6C00)
+                )
+            } else if (latestMatch != null) {
                 Text(
                     text = if (latestMatch.accepted) {
                         "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
@@ -230,6 +238,7 @@ fun WritingCanvas(
                         val rawStrokePoints = mutableListOf<CanvasStrokePoint>()
 
                         if (canRecordStroke) {
+                            latestAnalysisFailed = false
                             rawStrokePoints += CanvasStrokePoint(
                                 x = last.x,
                                 y = last.y,
@@ -292,11 +301,15 @@ fun WritingCanvas(
                             }
 
                             strokes.add(Path().apply { addPath(currentPath) })
-                            StrokeInputAnalyzer.analyze(
+                            val analyzedStroke = StrokeInputAnalyzer.analyze(
                                 order = strokes.size,
                                 rawPoints = rawStrokePoints,
                                 transformer = inputTransformer
-                            )?.let { analyzed ->
+                            )
+                            if (analyzedStroke == null) {
+                                latestAnalysisFailed = true
+                            } else {
+                                val analyzed = analyzedStroke
                                 analyzedStrokes.add(analyzed)
                                 val reference = referenceStrokes.getOrNull(analyzed.order - 1)
                                 if (reference != null) {
@@ -438,6 +451,8 @@ fun WritingCanvas(
                 onClick = {
                     strokes.clear()
                     analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
                     currentPath.reset()
                     if (mode == WritingMode.GUIDED) {
                         guidedProgress = guidedProgress.reset()
