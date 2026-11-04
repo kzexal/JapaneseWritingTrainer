@@ -292,17 +292,24 @@ fun WritingCanvas(
 
                     measures.forEachIndexed { index, measure ->
                         val start = transformer.toCanvas(measure.getPosition(0f))
-                        val numberColor = if (index == completedStrokes && !isGuidedComplete) {
-                            NumberColor
-                        } else {
-                            CompletedGuideColor
-                        }
+                        val isNextStroke = index == completedStrokes && !isGuidedComplete
+                        val numberColor = if (isNextStroke) NumberColor else CompletedGuideColor
+
+                        drawCircle(
+                            color = numberColor,
+                            radius = if (isNextStroke) 5f else 3f,
+                            center = start
+                        )
                         drawText(
                             textMeasurer = textMeasurer,
                             text = "${index + 1}",
                             topLeft = Offset(start.x - 18f, start.y - 40f),
                             style = TextStyle(fontSize = 14.sp, color = numberColor)
                         )
+
+                        if (isNextStroke) {
+                            drawStrokeDirection(measure, transformer)
+                        }
                     }
                 } else if (showTemplate) {
                     templatePaths.forEach { path ->
@@ -368,6 +375,58 @@ fun WritingCanvas(
             }
         }
     }
+}
+
+/**
+ * Hiển thị mũi tên nhỏ trên nét đang được hướng dẫn.
+ * Mũi tên chỉ chiều đi từ đầu nét đến cuối nét theo SVG tham chiếu.
+ */
+private fun DrawScope.drawStrokeDirection(
+    measure: PathMeasure,
+    transformer: CoordinateTransformer
+) {
+    if (measure.length <= 0f) return
+
+    val distance = measure.length * 0.35f
+    val sourcePosition = measure.getPosition(distance)
+    val sourceTangent = measure.getTangent(distance)
+    val position = transformer.toCanvas(sourcePosition)
+    val tangentLength = kotlin.math.sqrt(
+        sourceTangent.x * sourceTangent.x + sourceTangent.y * sourceTangent.y
+    )
+    if (tangentLength <= 0f) return
+
+    val direction = Offset(
+        sourceTangent.x / tangentLength,
+        sourceTangent.y / tangentLength
+    )
+    val arrowLength = 13f
+    val arrowHalfWidth = 6f
+    val tip = position + direction * arrowLength
+    val base = tip - direction * arrowLength
+    val perpendicular = Offset(-direction.y, direction.x)
+
+    drawLine(
+        color = AnimationColor,
+        start = base,
+        end = tip,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
+    drawLine(
+        color = AnimationColor,
+        start = tip,
+        end = tip - direction * 7f + perpendicular * arrowHalfWidth,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
+    drawLine(
+        color = AnimationColor,
+        start = tip,
+        end = tip - direction * 7f - perpendicular * arrowHalfWidth,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
 }
 
 /** Vẽ một nét mẫu, phóng từ hệ tọa độ dataset sang pixel của canvas. */
