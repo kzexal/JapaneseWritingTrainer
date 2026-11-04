@@ -77,6 +77,12 @@ fun WritingCanvas(
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
     val analyzedStrokes = remember(character?.id) { mutableStateListOf<AnalyzedUserStroke>() }
+    val strokeMatches = remember(character?.id) {
+        mutableStateListOf<Pair<Int, StrokeMatchResult>>()
+    }
+    val referenceStrokes = remember(character?.id) {
+        character?.strokes?.let { SvgStrokeParser.parseAll(it) } ?: emptyList()
+    }
     val currentPath = remember(character?.id) { Path() }
     var redrawTick by remember(character?.id) { mutableIntStateOf(0) }
 
@@ -118,6 +124,7 @@ fun WritingCanvas(
     val totalStrokes = templatePaths.size
     val completedStrokes = guidedProgress.completedStrokeCount.coerceAtMost(totalStrokes)
     val isGuidedComplete = guidedProgress.isComplete(totalStrokes)
+    val latestMatch = strokeMatches.lastOrNull()?.second
 
     Column(
         modifier = modifier
@@ -139,6 +146,7 @@ fun WritingCanvas(
                     mode = WritingMode.TRACE
                     strokes.clear()
                     analyzedStrokes.clear()
+                    strokeMatches.clear()
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     redrawTick++
@@ -172,6 +180,22 @@ fun WritingCanvas(
                 },
                 color = if (isGuidedComplete) Color(0xFF2E7D32) else Color.Unspecified
             )
+            if (latestMatch != null) {
+                Text(
+                    text = if (latestMatch.accepted) {
+                        "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
+                    } else if (!latestMatch.directionCorrect) {
+                        "Sai chiều hoặc vị trí đầu/cuối nét · " + latestMatch.score.toInt() + "/100"
+                    } else {
+                        "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
+                    },
+                    color = if (latestMatch.accepted) {
+                        Color(0xFF2E7D32)
+                    } else {
+                        Color(0xFFEF6C00)
+                    }
+                )
+            }
         }
 
         Canvas(
@@ -269,7 +293,18 @@ fun WritingCanvas(
                                 order = strokes.size,
                                 rawPoints = rawStrokePoints,
                                 transformer = inputTransformer
-                            )?.let(analyzedStrokes::add)
+                            )?.let { analyzed ->
+                                analyzedStrokes.add(analyzed)
+                                val reference = referenceStrokes.getOrNull(analyzed.order - 1)
+                                if (reference != null) {
+                                    val result = StrokeMatcher.match(
+                                        reference = reference,
+                                        user = analyzed,
+                                        viewBoxSize = viewBoxSize
+                                    )
+                                    strokeMatches.add(analyzed.order to result)
+                                }
+                            }
 
                             if (mode == WritingMode.GUIDED) {
                                 guidedProgress = guidedProgress.completeStroke(totalStrokes)
@@ -384,6 +419,7 @@ fun WritingCanvas(
                         val removedOrder = strokes.size
                         strokes.removeAt(strokes.lastIndex)
                         analyzedStrokes.removeAll { it.order == removedOrder }
+                        strokeMatches.removeAll { it.first == removedOrder }
                         if (mode == WritingMode.GUIDED) {
                             guidedProgress = guidedProgress.undo()
                         }
