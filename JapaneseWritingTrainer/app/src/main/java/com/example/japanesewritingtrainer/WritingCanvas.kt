@@ -56,16 +56,12 @@ private val NumberColor = Color(0xFFD32F2F)
 private val CompletedGuideColor = Color(0xFFBDBDBD)
 private val WaitingGuideColor = Color(0xFFE8E8E8)
 
-private enum class WritingMode {
-    TRACE,
-    GUIDED
-}
-
 /**
  * Màn hình luyện viết:
  * - Trace: hiển thị mẫu mờ để người học đồ theo.
- * - Guided: chỉ tô sáng nét cần viết tiếp theo; mỗi lần nhấc tay hoàn thành một nét.
- * - Hỗ trợ Undo, Clear, ẩn/hiện gợi ý và xem animation thứ tự nét.
+ * - Guided: hiển thị nét cần viết tiếp theo và hướng dẫn chiều viết.
+ * - Recall: ẩn mẫu trong lúc viết, yêu cầu người học tự nhớ thứ tự và hình dạng nét.
+ * - Hỗ trợ Undo, Clear, ẩn/hiện đáp án và xem animation thứ tự nét.
  *
  * Guided Writing MVP chỉ theo dõi số lượng/thứ tự thao tác viết,
  * chưa so khớp hình dạng nét với SVG.
@@ -151,6 +147,7 @@ fun WritingCanvas(
                     latestAnalysisFailed = false
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
+                    showTemplate = true
                     redrawTick++
                 },
                 enabled = mode != WritingMode.TRACE
@@ -171,16 +168,37 @@ fun WritingCanvas(
                 },
                 enabled = mode != WritingMode.GUIDED && totalStrokes > 0
             ) {
-                Text("Guided Writing")
+                Text("Guided")
+            }
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.RECALL
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = false
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.RECALL && totalStrokes > 0
+            ) {
+                Text("Recall")
             }
         }
 
-        if (mode == WritingMode.GUIDED && totalStrokes > 0) {
+        if (mode.requiresStrokeValidation && totalStrokes > 0) {
             Text(
-                text = if (isGuidedComplete) {
-                    "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
-                } else {
-                    "Nét ${completedStrokes + 1} / $totalStrokes"
+                text = when {
+                    isGuidedComplete && mode == WritingMode.RECALL ->
+                        "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
+                    isGuidedComplete ->
+                        "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
+                    mode == WritingMode.RECALL ->
+                        "Tự nhớ và viết · Nét ${completedStrokes + 1} / $totalStrokes"
+                    else ->
+                        "Nét ${completedStrokes + 1} / $totalStrokes"
                 },
                 color = if (isGuidedComplete) Color(0xFF2E7D32) else Color.Unspecified
             )
@@ -234,7 +252,7 @@ fun WritingCanvas(
                         // thành, vẫn nhận sự kiện cảm ứng nhưng không ghi thêm nét.
                         // Không return sớm khỏi awaitEachGesture vì có thể tạo vòng lặp
                         // bận trên Main Thread sau khi hoàn thành ký tự.
-                        val canRecordStroke = mode != WritingMode.GUIDED ||
+                        val canRecordStroke = !mode.requiresStrokeValidation ||
                             guidedProgress.canAcceptStroke(totalStrokes)
 
                         val down = awaitFirstDown()
@@ -309,7 +327,7 @@ fun WritingCanvas(
 
                             strokes.add(Path().apply { addPath(currentPath) })
                             val attemptOrder = strokes.size
-                            val targetOrder = if (mode == WritingMode.GUIDED) {
+                            val targetOrder = if (mode.requiresStrokeValidation) {
                                 guidedProgress.nextStrokeOrder(totalStrokes) ?: attemptOrder
                             } else {
                                 attemptOrder
@@ -336,8 +354,16 @@ fun WritingCanvas(
                                 }
                             }
 
-                            if (mode == WritingMode.GUIDED && acceptedAttempt) {
-                                guidedProgress = guidedProgress.completeStroke(totalStrokes)
+                            if (mode.requiresStrokeValidation && acceptedAttempt) {
+                                val updatedProgress = guidedProgress.completeStroke(totalStrokes)
+                                guidedProgress = updatedProgress
+                                // Chỉ mở mẫu đáp án sau khi người học tự hoàn thành
+                                // tất cả các nét trong Recall Writing.
+                                if (mode == WritingMode.RECALL &&
+                                    updatedProgress.isComplete(totalStrokes)
+                                ) {
+                                    showTemplate = true
+                                }
                             }
                             currentPath.reset()
                             redrawTick++
@@ -376,7 +402,7 @@ fun WritingCanvas(
                             drawTemplateStroke(segment, transformer, AnimationColor)
                         }
                     }
-                } else if (showTemplate && mode == WritingMode.GUIDED) {
+                } else if (showTemplate && mode.showsStrokeGuidance) {
                     // Các nét đã hoàn thành và nét chờ được làm mờ.
                     // Chỉ nét kế tiếp được tô xanh để người học tập trung.
                     templatePaths.forEachIndexed { index, path ->
@@ -409,7 +435,11 @@ fun WritingCanvas(
                             drawStrokeDirection(measure, transformer)
                         }
                     }
-                } else if (showTemplate) {
+                } else if (
+                    showTemplate &&
+                    (mode == WritingMode.TRACE ||
+                        (mode == WritingMode.RECALL && isGuidedComplete))
+                ) {
                     templatePaths.forEach { path ->
                         drawTemplateStroke(path, transformer, TemplateColor)
                     }
@@ -430,15 +460,17 @@ fun WritingCanvas(
             drawPath(currentPath, Color.Black, style = InkStyle)
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            OutlinedButton(onClick = { showTemplate = !showTemplate }) {
-                Text(if (showTemplate) "Ẩn gợi ý" else "Hiện gợi ý")
-            }
-            OutlinedButton(
-                onClick = { playToken++ },
-                enabled = !isAnimating && templatePaths.isNotEmpty()
-            ) {
-                Text("Xem thứ tự nét")
+        if (mode != WritingMode.RECALL || isGuidedComplete) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+                    Text(if (showTemplate) "Ẩn mẫu" else "Hiện mẫu")
+                }
+                OutlinedButton(
+                    onClick = { playToken++ },
+                    enabled = !isAnimating && templatePaths.isNotEmpty()
+                ) {
+                    Text("Xem thứ tự nét")
+                }
             }
         }
 
@@ -452,8 +484,11 @@ fun WritingCanvas(
                         analyzedStrokes.removeAll { it.order == removedOrder }
                         strokeMatches.removeAll { it.first == removedOrder }
                         latestAnalysisFailed = false
-                        if (mode == WritingMode.GUIDED && removedMatch?.accepted == true) {
+                        if (mode.requiresStrokeValidation && removedMatch?.accepted == true) {
                             guidedProgress = guidedProgress.undo()
+                            if (mode == WritingMode.RECALL && !guidedProgress.isComplete(totalStrokes)) {
+                                showTemplate = false
+                            }
                         }
                         redrawTick++
                     }
@@ -470,8 +505,9 @@ fun WritingCanvas(
                     strokeMatches.clear()
                     latestAnalysisFailed = false
                     currentPath.reset()
-                    if (mode == WritingMode.GUIDED) {
+                    if (mode.requiresStrokeValidation) {
                         guidedProgress = guidedProgress.reset()
+                        if (mode == WritingMode.RECALL) showTemplate = false
                     }
                     redrawTick++
                 },
