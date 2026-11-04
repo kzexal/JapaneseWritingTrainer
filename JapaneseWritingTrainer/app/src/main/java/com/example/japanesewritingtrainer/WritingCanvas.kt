@@ -85,7 +85,9 @@ fun WritingCanvas(
         templatePaths.map { path -> PathMeasure().also { it.setPath(path, false) } }
     }
 
-    var mode by remember(character?.id) { mutableStateOf(WritingMode.TRACE) }
+    // Giữ chế độ đang chọn khi chuyển sang ký tự khác.
+    // Các trạng thái nét vẽ và tiến trình vẫn được reset theo character?.id.
+    var mode by remember { mutableStateOf(WritingMode.TRACE) }
     var guidedProgress by remember(character?.id) {
         mutableStateOf(GuidedWritingProgress())
     }
