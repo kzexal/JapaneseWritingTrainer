@@ -185,8 +185,10 @@ fun WritingCanvas(
                 Text(
                     text = if (latestMatch.accepted) {
                         "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
+                    } else if (latestMatch.directionReversed) {
+                        "Sai chiều viết nét · " + latestMatch.score.toInt() + "/100"
                     } else if (!latestMatch.directionCorrect) {
-                        "Sai chiều hoặc vị trí đầu/cuối nét · " + latestMatch.score.toInt() + "/100"
+                        "Sai vị trí bắt đầu hoặc kết thúc nét · " + latestMatch.score.toInt() + "/100"
                     } else {
                         "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
                     },
