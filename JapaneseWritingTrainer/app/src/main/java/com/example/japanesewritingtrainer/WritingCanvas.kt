@@ -37,6 +37,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -252,7 +253,12 @@ fun WritingCanvas(
             drawGrid()
 
             if (templatePaths.isNotEmpty()) {
-                val unit = size.width / (character?.viewBoxSize ?: 109f)
+                val viewBoxSize = character?.viewBoxSize ?: 109f
+                val transformer = CoordinateTransformer.fit(
+                    sourceWidth = viewBoxSize,
+                    sourceHeight = viewBoxSize,
+                    canvasSize = size
+                )
 
                 if (isAnimating) {
                     val progress = animProgress.value
@@ -260,7 +266,7 @@ fun WritingCanvas(
                         val fraction = (progress - i).coerceIn(0f, 1f)
                         if (fraction <= 0f) break
                         if (fraction >= 1f) {
-                            drawTemplateStroke(templatePaths[i], unit, AnimationColor)
+                            drawTemplateStroke(templatePaths[i], transformer, AnimationColor)
                         } else {
                             val segment = Path()
                             measures[i].getSegment(
@@ -269,7 +275,7 @@ fun WritingCanvas(
                                 segment,
                                 true
                             )
-                            drawTemplateStroke(segment, unit, AnimationColor)
+                            drawTemplateStroke(segment, transformer, AnimationColor)
                         }
                     }
                 } else if (showTemplate && mode == WritingMode.GUIDED) {
@@ -281,11 +287,11 @@ fun WritingCanvas(
                             index == completedStrokes && !isGuidedComplete -> AnimationColor
                             else -> WaitingGuideColor
                         }
-                        drawTemplateStroke(path, unit, color)
+                        drawTemplateStroke(path, transformer, color)
                     }
 
                     measures.forEachIndexed { index, measure ->
-                        val start = measure.getPosition(0f)
+                        val start = transformer.toCanvas(measure.getPosition(0f))
                         val numberColor = if (index == completedStrokes && !isGuidedComplete) {
                             NumberColor
                         } else {
@@ -294,21 +300,21 @@ fun WritingCanvas(
                         drawText(
                             textMeasurer = textMeasurer,
                             text = "${index + 1}",
-                            topLeft = Offset(start.x * unit - 18f, start.y * unit - 40f),
+                            topLeft = Offset(start.x - 18f, start.y - 40f),
                             style = TextStyle(fontSize = 14.sp, color = numberColor)
                         )
                     }
                 } else if (showTemplate) {
                     templatePaths.forEach { path ->
-                        drawTemplateStroke(path, unit, TemplateColor)
+                        drawTemplateStroke(path, transformer, TemplateColor)
                     }
 
                     measures.forEachIndexed { index, measure ->
-                        val start = measure.getPosition(0f)
+                        val start = transformer.toCanvas(measure.getPosition(0f))
                         drawText(
                             textMeasurer = textMeasurer,
                             text = "${index + 1}",
-                            topLeft = Offset(start.x * unit - 18f, start.y * unit - 40f),
+                            topLeft = Offset(start.x - 18f, start.y - 40f),
                             style = TextStyle(fontSize = 14.sp, color = NumberColor)
                         )
                     }
@@ -365,9 +371,15 @@ fun WritingCanvas(
 }
 
 /** Vẽ một nét mẫu, phóng từ hệ tọa độ dataset sang pixel của canvas. */
-private fun DrawScope.drawTemplateStroke(path: Path, unit: Float, color: Color) {
-    scale(scale = unit, pivot = Offset.Zero) {
-        drawPath(path, color, style = TemplateStyle)
+private fun DrawScope.drawTemplateStroke(
+    path: Path,
+    transformer: CoordinateTransformer,
+    color: Color
+) {
+    translate(left = transformer.offset.x, top = transformer.offset.y) {
+        scale(scale = transformer.scale, pivot = Offset.Zero) {
+            drawPath(path, color, style = TemplateStyle)
+        }
     }
 }
 
