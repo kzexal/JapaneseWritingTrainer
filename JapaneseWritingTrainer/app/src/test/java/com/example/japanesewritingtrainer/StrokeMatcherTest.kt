@@ -67,8 +67,10 @@ class StrokeMatcherTest {
 
         assertFalse(result.accepted)
         assertFalse(result.directionCorrect)
+        assertTrue(result.directionReversed)
         assertTrue(result.startDistance > 0f)
         assertTrue(result.endDistance > 0f)
+        assertTrue("Nét ngược chiều không được có điểm cao", result.score <= 49f)
     }
 
     @Test
@@ -81,6 +83,7 @@ class StrokeMatcherTest {
         )
 
         assertFalse(result.accepted)
+        assertFalse(result.directionReversed)
         assertTrue(result.averagePathDistance > 0f)
         assertTrue(result.score < 100f)
     }
