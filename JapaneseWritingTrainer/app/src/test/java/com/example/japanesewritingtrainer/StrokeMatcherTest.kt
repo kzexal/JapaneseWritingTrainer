@@ -53,6 +53,7 @@ class StrokeMatcherTest {
 
         assertTrue(result.accepted)
         assertTrue(result.directionCorrect)
+        assertTrue(result.lengthWithinTolerance)
         assertEquals(100f, result.score, 0.01f)
         assertEquals(1f, result.lengthRatio, 0.001f)
     }
@@ -103,7 +104,47 @@ class StrokeMatcherTest {
         )
 
         assertTrue(result.lengthRatio < 1f)
-        assertTrue(result.score < 100f)
+        assertFalse(result.lengthWithinTolerance)
+        assertFalse(result.accepted)
+        assertTrue(result.score <= 59f)
+    }
+
+    @Test
+    fun rejectsHalfLengthStrokeEvenWhenItsVisibleShapeIsSimilar() {
+        val halfLength = listOf(
+            StrokePoint(10f, 10f),
+            StrokePoint(20f, 10f),
+            StrokePoint(30f, 10f),
+            StrokePoint(40f, 10f),
+            StrokePoint(50f, 10f)
+        )
+        val result = StrokeMatcher.match(
+            reference,
+            userStroke(halfLength, length = 40f),
+            viewBoxSize = 109f
+        )
+
+        assertEquals(0.5f, result.lengthRatio, 0.001f)
+        assertFalse(result.lengthWithinTolerance)
+        assertFalse(result.accepted)
+        assertTrue("Nét chỉ viết một nửa không được đạt điểm cao", result.score <= 59f)
+    }
+
+    @Test
+    fun rejectsVeryShortDotInsteadOfTreatingItAsCompleteStroke() {
+        val dot = listOf(
+            StrokePoint(10f, 10f),
+            StrokePoint(10.5f, 10f)
+        )
+        val result = StrokeMatcher.match(
+            reference,
+            userStroke(dot, length = 0.5f),
+            viewBoxSize = 109f
+        )
+
+        assertFalse(result.lengthWithinTolerance)
+        assertFalse(result.accepted)
+        assertTrue(result.score <= 59f)
     }
 
     @Test
