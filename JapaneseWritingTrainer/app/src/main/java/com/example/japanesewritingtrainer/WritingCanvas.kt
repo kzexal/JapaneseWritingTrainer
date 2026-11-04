@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -75,6 +76,7 @@ fun WritingCanvas(
     character: CharacterData? = null
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
+    val analyzedStrokes = remember(character?.id) { mutableStateListOf<AnalyzedUserStroke>() }
     val currentPath = remember(character?.id) { Path() }
     var redrawTick by remember(character?.id) { mutableIntStateOf(0) }
 
@@ -136,6 +138,7 @@ fun WritingCanvas(
                 onClick = {
                     mode = WritingMode.TRACE
                     strokes.clear()
+                    analyzedStrokes.clear()
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     redrawTick++
@@ -148,6 +151,7 @@ fun WritingCanvas(
                 onClick = {
                     mode = WritingMode.GUIDED
                     strokes.clear()
+                    analyzedStrokes.clear()
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     showTemplate = true
@@ -176,6 +180,13 @@ fun WritingCanvas(
                 .aspectRatio(1f)
                 .background(Color.White)
                 .pointerInput(mode, character?.id, totalStrokes) {
+                    val viewBoxSize = character?.viewBoxSize ?: 109f
+                    val inputTransformer = CoordinateTransformer.fit(
+                        sourceWidth = viewBoxSize,
+                        sourceHeight = viewBoxSize,
+                        canvasSize = Size(size.width.toFloat(), size.height.toFloat())
+                    )
+
                     awaitEachGesture {
                         // Luôn chờ và xử lý trọn vẹn một gesture. Khi Guided đã hoàn
                         // thành, vẫn nhận sự kiện cảm ứng nhưng không ghi thêm nét.
@@ -189,8 +200,14 @@ fun WritingCanvas(
 
                         var last = down.position
                         var moved = false
+                        val rawStrokePoints = mutableListOf<CanvasStrokePoint>()
 
                         if (canRecordStroke) {
+                            rawStrokePoints += CanvasStrokePoint(
+                                x = last.x,
+                                y = last.y,
+                                timestampMillis = down.uptimeMillis
+                            )
                             currentPath.reset()
                             currentPath.moveTo(last.x, last.y)
                             redrawTick++
@@ -212,6 +229,11 @@ fun WritingCanvas(
                                         (last.y + point.y) / 2f
                                     )
                                     last = point
+                                    rawStrokePoints += CanvasStrokePoint(
+                                        x = point.x,
+                                        y = point.y,
+                                        timestampMillis = historical.uptimeMillis
+                                    )
                                     moved = true
                                 }
 
@@ -223,6 +245,11 @@ fun WritingCanvas(
                                     (last.y + point.y) / 2f
                                 )
                                 last = point
+                                rawStrokePoints += CanvasStrokePoint(
+                                    x = point.x,
+                                    y = point.y,
+                                    timestampMillis = change.uptimeMillis
+                                )
                                 moved = true
                             }
 
@@ -238,6 +265,12 @@ fun WritingCanvas(
                             }
 
                             strokes.add(Path().apply { addPath(currentPath) })
+                            StrokeInputAnalyzer.analyze(
+                                order = analyzedStrokes.size + 1,
+                                rawPoints = rawStrokePoints,
+                                transformer = inputTransformer
+                            )?.let(analyzedStrokes::add)
+
                             if (mode == WritingMode.GUIDED) {
                                 guidedProgress = guidedProgress.completeStroke(totalStrokes)
                             }
@@ -349,6 +382,9 @@ fun WritingCanvas(
                 onClick = {
                     if (strokes.isNotEmpty()) {
                         strokes.removeAt(strokes.lastIndex)
+                        if (analyzedStrokes.isNotEmpty()) {
+                            analyzedStrokes.removeAt(analyzedStrokes.lastIndex)
+                        }
                         if (mode == WritingMode.GUIDED) {
                             guidedProgress = guidedProgress.undo()
                         }
@@ -363,6 +399,7 @@ fun WritingCanvas(
             Button(
                 onClick = {
                     strokes.clear()
+                    analyzedStrokes.clear()
                     currentPath.reset()
                     if (mode == WritingMode.GUIDED) {
                         guidedProgress = guidedProgress.reset()
