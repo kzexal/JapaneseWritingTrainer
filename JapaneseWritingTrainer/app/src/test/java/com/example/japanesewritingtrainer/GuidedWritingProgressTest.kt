@@ -12,7 +12,7 @@ class GuidedWritingProgressTest {
     fun startsAtFirstStroke() {
         val progress = GuidedWritingProgress()
 
-        assertEquals(1, progress.nextStrokeOrder(totalStrokeCount = 3))
+        assertEquals(1, progress.nextStrokeOrder(totalStrokeCount = 3) ?: -1)
         assertEquals(0, progress.completedStrokeCount)
         assertFalse(progress.isComplete(totalStrokeCount = 3))
     }
@@ -24,7 +24,7 @@ class GuidedWritingProgressTest {
             .completeStroke(totalStrokeCount = 3)
 
         assertEquals(2, progress.completedStrokeCount)
-        assertEquals(3, progress.nextStrokeOrder(totalStrokeCount = 3))
+        assertEquals(3, progress.nextStrokeOrder(totalStrokeCount = 3) ?: -1)
         assertTrue(progress.canAcceptStroke(totalStrokeCount = 3))
     }
 
@@ -45,7 +45,7 @@ class GuidedWritingProgressTest {
         val progress = GuidedWritingProgress(completedStrokeCount = 2).undo()
 
         assertEquals(1, progress.completedStrokeCount)
-        assertEquals(2, progress.nextStrokeOrder(totalStrokeCount = 3))
+        assertEquals(2, progress.nextStrokeOrder(totalStrokeCount = 3) ?: -1)
     }
 
     @Test
