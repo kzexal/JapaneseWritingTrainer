@@ -160,6 +160,7 @@ fun WritingCanvas(
                     mode = WritingMode.GUIDED
                     strokes.clear()
                     analyzedStrokes.clear()
+                    strokeMatches.clear()
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     showTemplate = true
