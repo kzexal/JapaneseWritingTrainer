@@ -15,6 +15,7 @@ data class StrokeMatchResult(
     val accepted: Boolean,
     val directionCorrect: Boolean,
     val directionReversed: Boolean,
+    val lengthWithinTolerance: Boolean,
     val averagePathDistance: Float,
     val startDistance: Float,
     val endDistance: Float,
@@ -68,13 +69,17 @@ object StrokeMatcher {
         val endError = (endDistance / diagonal).coerceIn(0f, 1f)
         val normalizedLengthError = lengthError.coerceIn(0f, 1f)
 
-        // Điểm hình học trước khi áp dụng hình phạt sai chiều.
+        // Tăng trọng số độ dài: viết thiếu hoặc thừa một đoạn phải bị trừ
+        // đáng kể, không thể bù điểm chỉ nhờ hình dáng phần đã viết khá giống.
         val shapeScore = (
-            (1f - pathError) * 45f +
-                (1f - startError) * 20f +
-                (1f - endError) * 20f +
-                (1f - normalizedLengthError) * 15f
+            (1f - pathError) * 35f +
+                (1f - startError) * 15f +
+                (1f - endError) * 15f +
+                (1f - normalizedLengthError) * 35f
             ).coerceIn(0f, 100f)
+
+        val lengthWithinTolerance =
+            lengthRatio in config.minLengthRatio..config.maxLengthRatio
 
         val endpointTolerance = diagonal * config.maxEndpointErrorRatio
         val directionReversed =
@@ -86,19 +91,21 @@ object StrokeMatcher {
                 endDistance <= endpointTolerance
 
         // Sai chiều luôn bị giới hạn điểm, bất kể độ giống hình dạng.
-        val finalScore = if (directionReversed) {
-            minOf(shapeScore, config.reversedDirectionScoreCap)
-        } else {
-            shapeScore
+        val finalScore = when {
+            directionReversed -> minOf(shapeScore, config.reversedDirectionScoreCap)
+            !lengthWithinTolerance -> minOf(shapeScore, config.incorrectLengthScoreCap)
+            else -> shapeScore
         }
 
-        val accepted = finalScore >= config.acceptanceScore && directionCorrect
+        val accepted = finalScore >= config.acceptanceScore &&
+            directionCorrect && lengthWithinTolerance
 
         return StrokeMatchResult(
             score = finalScore,
             accepted = accepted,
             directionCorrect = directionCorrect,
             directionReversed = directionReversed,
+            lengthWithinTolerance = lengthWithinTolerance,
             averagePathDistance = averageDistance,
             startDistance = startDistance,
             endDistance = endDistance,
@@ -160,13 +167,20 @@ object StrokeMatcher {
         val acceptanceScore: Float = 75f,
         val maxEndpointErrorRatio: Float = 0.12f,
         val reversedDirectionScoreCap: Float = 49f,
-        val directionDetectionMargin: Float = 1f
+        val directionDetectionMargin: Float = 1f,
+        val minLengthRatio: Float = 0.75f,
+        val maxLengthRatio: Float = 1.35f,
+        val incorrectLengthScoreCap: Float = 59f
     ) {
         init {
             require(acceptanceScore in 0f..100f)
             require(maxEndpointErrorRatio in 0f..1f)
             require(reversedDirectionScoreCap in 0f..100f)
             require(directionDetectionMargin >= 0f && directionDetectionMargin.isFinite())
+            require(minLengthRatio in 0f..1f)
+            require(maxLengthRatio >= 1f && maxLengthRatio.isFinite())
+            require(minLengthRatio < maxLengthRatio)
+            require(incorrectLengthScoreCap in 0f..100f)
         }
     }
 
