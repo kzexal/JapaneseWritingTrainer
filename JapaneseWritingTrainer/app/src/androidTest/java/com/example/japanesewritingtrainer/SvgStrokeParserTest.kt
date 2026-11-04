@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -56,6 +57,27 @@ class SvgStrokeParserTest {
         assertEquals(listOf(1, 2), parsed.map { it.order })
         assertEquals(0f, parsed.first().startPoint.x, 0.01f)
         assertEquals(10f, parsed.last().startPoint.x, 0.01f)
+    }
+
+    @Test
+    fun parsesEveryStrokeInHiraganaDataset() {
+        val context = InstrumentationRegistry.getInstrumentation().targetContext
+        val characters = CharacterRepository.load(context, "characters/hiragana.json")
+
+        assertEquals(46, characters.size)
+
+        characters.forEach { character ->
+            assertEquals(character.strokeCount, character.strokes.size)
+
+            val parsedStrokes = SvgStrokeParser.parseAll(character.strokes)
+            assertEquals(character.strokeCount, parsedStrokes.size)
+
+            parsedStrokes.forEachIndexed { index, stroke ->
+                assertEquals(index + 1, stroke.order)
+                assertTrue(stroke.length > 0f)
+                assertTrue(stroke.points.size > 1)
+            }
+        }
     }
 
     @Test(expected = IllegalArgumentException::class)
