@@ -186,7 +186,7 @@ fun WritingCanvas(
             )
             if (latestAnalysisFailed) {
                 Text(
-                    text = "Nét quá ngắn hoặc chưa đủ dữ liệu để đánh giá. Hãy viết lại nét này.",
+                    text = "Không đủ dữ liệu để đánh giá nét này. Hãy viết lại.",
                     color = Color(0xFFEF6C00)
                 )
             } else if (latestMatch != null) {
@@ -451,6 +451,7 @@ fun WritingCanvas(
                         strokes.removeAt(strokes.lastIndex)
                         analyzedStrokes.removeAll { it.order == removedOrder }
                         strokeMatches.removeAll { it.first == removedOrder }
+                        latestAnalysisFailed = false
                         if (mode == WritingMode.GUIDED && removedMatch?.accepted == true) {
                             guidedProgress = guidedProgress.undo()
                         }
