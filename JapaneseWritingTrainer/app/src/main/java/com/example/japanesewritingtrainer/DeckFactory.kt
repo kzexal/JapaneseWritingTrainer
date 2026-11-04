@@ -30,9 +30,9 @@ object DeckFactory {
             .toSortedMap()
             .map { (type, items) ->
                 val deckId = "japanese_$type"
-                val sortedItems = items.sortedBy { it.id }
+                val orderedItems = items
 
-                val deckCards = sortedItems.mapIndexed { index, character ->
+                val deckCards = orderedItems.mapIndexed { index, character ->
                     WritingCard(
                         id = character.id,
                         deckId = deckId,
