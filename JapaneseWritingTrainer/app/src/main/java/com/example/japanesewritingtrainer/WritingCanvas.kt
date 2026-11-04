@@ -266,7 +266,7 @@ fun WritingCanvas(
 
                             strokes.add(Path().apply { addPath(currentPath) })
                             StrokeInputAnalyzer.analyze(
-                                order = analyzedStrokes.size + 1,
+                                order = strokes.size,
                                 rawPoints = rawStrokePoints,
                                 transformer = inputTransformer
                             )?.let(analyzedStrokes::add)
@@ -381,10 +381,9 @@ fun WritingCanvas(
             OutlinedButton(
                 onClick = {
                     if (strokes.isNotEmpty()) {
+                        val removedOrder = strokes.size
                         strokes.removeAt(strokes.lastIndex)
-                        if (analyzedStrokes.isNotEmpty()) {
-                            analyzedStrokes.removeAt(analyzedStrokes.lastIndex)
-                        }
+                        analyzedStrokes.removeAll { it.order == removedOrder }
                         if (mode == WritingMode.GUIDED) {
                             guidedProgress = guidedProgress.undo()
                         }
