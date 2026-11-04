@@ -301,28 +301,35 @@ fun WritingCanvas(
                             }
 
                             strokes.add(Path().apply { addPath(currentPath) })
-                            val analyzedStroke = StrokeInputAnalyzer.analyze(
-                                order = strokes.size,
+                            val attemptOrder = strokes.size
+                            val targetOrder = if (mode == WritingMode.GUIDED) {
+                                guidedProgress.nextStrokeOrder(totalStrokes) ?: attemptOrder
+                            } else {
+                                attemptOrder
+                            }
+                            val analyzed = StrokeInputAnalyzer.analyze(
+                                order = attemptOrder,
                                 rawPoints = rawStrokePoints,
                                 transformer = inputTransformer
                             )
-                            if (analyzedStroke == null) {
+                            var acceptedAttempt = false
+                            if (analyzed == null) {
                                 latestAnalysisFailed = true
                             } else {
-                                val analyzed = analyzedStroke
                                 analyzedStrokes.add(analyzed)
-                                val reference = referenceStrokes.getOrNull(analyzed.order - 1)
+                                val reference = referenceStrokes.getOrNull(targetOrder - 1)
                                 if (reference != null) {
                                     val result = StrokeMatcher.match(
                                         reference = reference,
                                         user = analyzed,
                                         viewBoxSize = viewBoxSize
                                     )
-                                    strokeMatches.add(analyzed.order to result)
+                                    strokeMatches.add(attemptOrder to result)
+                                    acceptedAttempt = result.accepted
                                 }
                             }
 
-                            if (mode == WritingMode.GUIDED) {
+                            if (mode == WritingMode.GUIDED && acceptedAttempt) {
                                 guidedProgress = guidedProgress.completeStroke(totalStrokes)
                             }
                             currentPath.reset()
@@ -433,10 +440,11 @@ fun WritingCanvas(
                 onClick = {
                     if (strokes.isNotEmpty()) {
                         val removedOrder = strokes.size
+                        val removedMatch = strokeMatches.lastOrNull { it.first == removedOrder }?.second
                         strokes.removeAt(strokes.lastIndex)
                         analyzedStrokes.removeAll { it.order == removedOrder }
                         strokeMatches.removeAll { it.first == removedOrder }
-                        if (mode == WritingMode.GUIDED) {
+                        if (mode == WritingMode.GUIDED && removedMatch?.accepted == true) {
                             guidedProgress = guidedProgress.undo()
                         }
                         redrawTick++
