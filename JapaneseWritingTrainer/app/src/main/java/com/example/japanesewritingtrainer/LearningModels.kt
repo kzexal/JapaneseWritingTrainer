@@ -35,15 +35,19 @@ data class WritingCard(
 
 /**
  * Tiến độ của một Card, độc lập với nội dung Card.
- * Các trường interval/easeFactor là dữ liệu nền cho scheduler ở giai đoạn sau.
+ *
+ * stability/difficulty là các tham số ghi nhớ theo định hướng FSRS.
+ * Scheduler sẽ tính và cập nhật chúng ở giai đoạn sau.
  */
 data class CardProgress(
     val cardId: String,
     val status: CardStatus = CardStatus.NEW,
     val dueAtEpochMillis: Long? = null,
-    val intervalDays: Double = 0.0,
-    val easeFactor: Double = 2.5,
-    val repetitions: Int = 0,
+    val stabilityDays: Double? = null,
+    val difficulty: Double? = null,
+    val scheduledDays: Double = 0.0,
+    val elapsedDays: Double = 0.0,
+    val reps: Int = 0,
     val lapses: Int = 0,
     val reviewCount: Int = 0,
     val correctCount: Int = 0,
@@ -51,9 +55,15 @@ data class CardProgress(
 ) {
     init {
         require(cardId.isNotBlank()) { "cardId must not be blank" }
-        require(intervalDays >= 0.0) { "intervalDays must not be negative" }
-        require(easeFactor > 0.0) { "easeFactor must be positive" }
-        require(repetitions >= 0) { "repetitions must not be negative" }
+        require(stabilityDays == null || stabilityDays > 0.0) {
+            "stabilityDays must be positive when provided"
+        }
+        require(difficulty == null || difficulty in 1.0..10.0) {
+            "difficulty must be between 1 and 10"
+        }
+        require(scheduledDays >= 0.0) { "scheduledDays must not be negative" }
+        require(elapsedDays >= 0.0) { "elapsedDays must not be negative" }
+        require(reps >= 0) { "reps must not be negative" }
         require(lapses >= 0) { "lapses must not be negative" }
         require(reviewCount >= 0) { "reviewCount must not be negative" }
         require(correctCount in 0..reviewCount) {
