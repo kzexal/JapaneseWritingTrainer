@@ -1,7 +1,5 @@
 package com.example.japanesewritingtrainer
 
-import kotlin.math.max
-import kotlin.math.min
 import kotlin.math.sqrt
 
 /**
