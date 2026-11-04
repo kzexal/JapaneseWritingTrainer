@@ -174,22 +174,24 @@ fun WritingCanvas(
                 .background(Color.White)
                 .pointerInput(mode, character?.id, totalStrokes) {
                     awaitEachGesture {
-                        // Guided chỉ nhận đúng số nét trong dữ liệu và không nhận thêm
-                        // nét sau khi đã hoàn thành ký tự.
-                        if (mode == WritingMode.GUIDED &&
-                            !guidedProgress.canAcceptStroke(totalStrokes)
-                        ) {
-                            return@awaitEachGesture
-                        }
+                        // Luôn chờ và xử lý trọn vẹn một gesture. Khi Guided đã hoàn
+                        // thành, vẫn nhận sự kiện cảm ứng nhưng không ghi thêm nét.
+                        // Không return sớm khỏi awaitEachGesture vì có thể tạo vòng lặp
+                        // bận trên Main Thread sau khi hoàn thành ký tự.
+                        val canRecordStroke = mode != WritingMode.GUIDED ||
+                            guidedProgress.canAcceptStroke(totalStrokes)
 
                         val down = awaitFirstDown()
                         down.consume()
 
                         var last = down.position
                         var moved = false
-                        currentPath.reset()
-                        currentPath.moveTo(last.x, last.y)
-                        redrawTick++
+
+                        if (canRecordStroke) {
+                            currentPath.reset()
+                            currentPath.moveTo(last.x, last.y)
+                            redrawTick++
+                        }
 
                         while (true) {
                             val event = awaitPointerEvent()
@@ -197,8 +199,20 @@ fun WritingCanvas(
                                 ?: break
                             if (!change.pressed) break
 
-                            for (historical in change.historical) {
-                                val point = historical.position
+                            if (canRecordStroke) {
+                                for (historical in change.historical) {
+                                    val point = historical.position
+                                    currentPath.quadraticTo(
+                                        last.x,
+                                        last.y,
+                                        (last.x + point.x) / 2f,
+                                        (last.y + point.y) / 2f
+                                    )
+                                    last = point
+                                    moved = true
+                                }
+
+                                val point = change.position
                                 currentPath.quadraticTo(
                                     last.x,
                                     last.y,
@@ -209,32 +223,24 @@ fun WritingCanvas(
                                 moved = true
                             }
 
-                            val point = change.position
-                            currentPath.quadraticTo(
-                                last.x,
-                                last.y,
-                                (last.x + point.x) / 2f,
-                                (last.y + point.y) / 2f
-                            )
-                            last = point
-                            moved = true
-
                             change.consume()
+                            if (canRecordStroke) redrawTick++
+                        }
+
+                        if (canRecordStroke) {
+                            if (moved) {
+                                currentPath.lineTo(last.x, last.y)
+                            } else {
+                                currentPath.lineTo(last.x + 0.1f, last.y)
+                            }
+
+                            strokes.add(Path().apply { addPath(currentPath) })
+                            if (mode == WritingMode.GUIDED) {
+                                guidedProgress = guidedProgress.completeStroke(totalStrokes)
+                            }
+                            currentPath.reset()
                             redrawTick++
                         }
-
-                        if (moved) {
-                            currentPath.lineTo(last.x, last.y)
-                        } else {
-                            currentPath.lineTo(last.x + 0.1f, last.y)
-                        }
-
-                        strokes.add(Path().apply { addPath(currentPath) })
-                        if (mode == WritingMode.GUIDED) {
-                            guidedProgress = guidedProgress.completeStroke(totalStrokes)
-                        }
-                        currentPath.reset()
-                        redrawTick++
                     }
                 }
         ) {
