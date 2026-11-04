@@ -1,0 +1,26 @@
+package com.example.japanesewritingtrainer
+
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
+import org.junit.Test
+
+class WritingModeTest {
+
+    @Test
+    fun traceDoesNotRequireStrokeValidation() {
+        assertFalse(WritingMode.TRACE.requiresStrokeValidation)
+        assertFalse(WritingMode.TRACE.showsStrokeGuidance)
+    }
+
+    @Test
+    fun guidedRequiresValidationAndShowsGuidance() {
+        assertTrue(WritingMode.GUIDED.requiresStrokeValidation)
+        assertTrue(WritingMode.GUIDED.showsStrokeGuidance)
+    }
+
+    @Test
+    fun recallRequiresValidationWithoutShowingGuidance() {
+        assertTrue(WritingMode.RECALL.requiresStrokeValidation)
+        assertFalse(WritingMode.RECALL.showsStrokeGuidance)
+    }
+}
