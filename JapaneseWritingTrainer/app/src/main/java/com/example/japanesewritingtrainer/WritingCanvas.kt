@@ -63,8 +63,8 @@ private val WaitingGuideColor = Color(0xFFE8E8E8)
  * - Recall: ẩn mẫu trong lúc viết, yêu cầu người học tự nhớ thứ tự và hình dạng nét.
  * - Hỗ trợ Undo, Clear, ẩn/hiện đáp án và xem animation thứ tự nét.
  *
- * Guided Writing MVP chỉ theo dõi số lượng/thứ tự thao tác viết,
- * chưa so khớp hình dạng nét với SVG.
+ * Guided và Recall chỉ tiến sang nét tiếp theo khi StrokeMatcher chấp nhận nét.
+ * Recall chỉ hiển thị mẫu sau khi người học hoàn thành toàn bộ ký tự.
  */
 @Composable
 fun WritingCanvas(
@@ -96,7 +96,10 @@ fun WritingCanvas(
     var guidedProgress by remember(character?.id) {
         mutableStateOf(GuidedWritingProgress())
     }
-    var showTemplate by remember(character?.id) { mutableStateOf(true) }
+    // Nếu Recall đang được chọn khi chuyển ký tự, tiếp tục ẩn mẫu ở ký tự mới.
+    var showTemplate by remember(character?.id) {
+        mutableStateOf(mode != WritingMode.RECALL)
+    }
     var latestAnalysisFailed by remember(character?.id) { mutableStateOf(false) }
 
     val animProgress = remember(character?.id) { Animatable(0f) }
