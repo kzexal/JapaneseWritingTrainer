@@ -47,8 +47,8 @@ class DeckFactoryTest {
     fun keepsCharacterGroupAsCardMetadata() {
         val catalog = DeckFactory.fromCharacters(
             listOf(
-                character("hiragana_ka", "か", group = "ka"),
-                character("hiragana_a", "あ", group = "a")
+                character("hiragana_a", "あ", group = "a"),
+                character("hiragana_ka", "か", group = "ka")
             )
         )
 
@@ -117,7 +117,10 @@ class DeckFactoryTest {
         val progress = CardProgress(
             cardId = "hiragana_a",
             reviewCount = 4,
-            correctCount = 3
+            correctCount = 3,
+            stabilityDays = 5.0,
+            difficulty = 4.0,
+            scheduledDays = 5.0
         )
 
         assertEquals(0.75, progress.accuracy, 0.0001)
