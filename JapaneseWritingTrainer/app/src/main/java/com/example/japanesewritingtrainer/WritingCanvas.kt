@@ -197,6 +197,13 @@ fun WritingCanvas(
                         "Sai chiều viết nét · " + latestMatch.score.toInt() + "/100"
                     } else if (!latestMatch.directionCorrect) {
                         "Sai vị trí bắt đầu hoặc kết thúc nét · " + latestMatch.score.toInt() + "/100"
+                    } else if (!latestMatch.lengthWithinTolerance) {
+                        val lengthMessage = if (latestMatch.lengthRatio < 1f) {
+                            "Nét quá ngắn"
+                        } else {
+                            "Nét quá dài"
+                        }
+                        "$lengthMessage · " + latestMatch.score.toInt() + "/100"
                     } else {
                         "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
                     },
