@@ -106,7 +106,7 @@ class LearningSessionRoomIntegrationTest {
         )
 
         assertEquals("a", retry.current?.card?.id)
-        assertEquals(SessionCardKind.REVIEW, retry.current?.kind)
+        assertEquals(SessionCardKind.LEARNING, retry.current?.kind)
 
         retryCoordinator.rateCurrent(ReviewRating.GOOD, now + 60_000L)
 
