@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -69,7 +70,10 @@ private val WaitingGuideColor = Color(0xFFE8E8E8)
 @Composable
 fun WritingCanvas(
     modifier: Modifier = Modifier,
-    character: CharacterData? = null
+    character: CharacterData? = null,
+    initialMode: WritingMode = WritingMode.TRACE,
+    showModeSelector: Boolean = true,
+    onCompleted: (() -> Unit)? = null
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
     val analyzedStrokes = remember(character?.id) { mutableStateListOf<AnalyzedUserStroke>() }
@@ -92,7 +96,8 @@ fun WritingCanvas(
 
     // Giữ chế độ đang chọn khi chuyển sang ký tự khác.
     // Các trạng thái nét vẽ và tiến trình vẫn được reset theo character?.id.
-    var mode by remember { mutableStateOf(WritingMode.TRACE) }
+    var mode by remember { mutableStateOf(initialMode) }
+    val latestOnCompleted by rememberUpdatedState(onCompleted)
     var guidedProgress by remember(character?.id) {
         mutableStateOf(GuidedWritingProgress())
     }
@@ -140,7 +145,8 @@ fun WritingCanvas(
             )
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        if (showModeSelector) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             OutlinedButton(
                 onClick = {
                     mode = WritingMode.TRACE
@@ -188,6 +194,7 @@ fun WritingCanvas(
                 enabled = mode != WritingMode.RECALL && totalStrokes > 0
             ) {
                 Text("Recall")
+            }
             }
         }
 
@@ -366,6 +373,7 @@ fun WritingCanvas(
                                     updatedProgress.isComplete(totalStrokes)
                                 ) {
                                     showTemplate = true
+                                    latestOnCompleted?.invoke()
                                 }
                             }
                             currentPath.reset()
