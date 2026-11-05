@@ -30,7 +30,7 @@ class LearningSessionCoordinatorTest {
         val started = coordinator.start(deck, cards, now, newCardLimit = 2)
         assertEquals("a", started.current?.card?.id)
 
-        val next = coordinator.rateCurrent(ReviewRating.GOOD, now)
+        val next = coordinator.rateCurrent(ReviewRating.GOOD, now + 5_000L)
 
         val saved = store.get("a")
         assertNotNull(saved)
@@ -38,6 +38,22 @@ class LearningSessionCoordinatorTest {
         assertEquals(1, saved?.reviewCount)
         assertEquals("i", next.current?.card?.id)
         assertEquals(1, next.completedCount)
+    }
+
+    @Test
+    fun ratingCreatesRecallLogWithElapsedWritingTime() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = LearningSessionCoordinator(store)
+        coordinator.start(deck, cards, now, newCardLimit = 2)
+
+        coordinator.rateCurrent(ReviewRating.GOOD, now + 12_500L)
+
+        val log = store.logs.single()
+        assertEquals("a", log.cardId)
+        assertEquals(PracticeMode.RECALL, log.mode)
+        assertEquals(ReviewRating.GOOD, log.rating)
+        assertEquals(12_500L, log.durationMs)
+        assertEquals(now + 12_500L, log.timestampEpochMillis)
     }
 
     @Test
@@ -121,6 +137,7 @@ class LearningSessionCoordinatorTest {
 
     private class InMemoryProgressStore : CardProgressStore {
         private val values = mutableMapOf<String, CardProgress>()
+        val logs = mutableListOf<PracticeLog>()
         var failWrites: Boolean = false
 
         override suspend fun get(cardId: String): CardProgress? = values[cardId]
@@ -130,6 +147,12 @@ class LearningSessionCoordinatorTest {
         override suspend fun save(progress: CardProgress) {
             check(!failWrites) { "Simulated persistence failure" }
             values[progress.cardId] = progress
+        }
+
+        override suspend fun saveReview(progress: CardProgress, log: PracticeLog) {
+            check(!failWrites) { "Simulated persistence failure" }
+            values[progress.cardId] = progress
+            logs += log
         }
 
         override suspend fun saveAll(progress: List<CardProgress>) {
@@ -143,6 +166,7 @@ class LearningSessionCoordinatorTest {
 
         override suspend fun clearAll() {
             values.clear()
+            logs.clear()
         }
     }
 }
