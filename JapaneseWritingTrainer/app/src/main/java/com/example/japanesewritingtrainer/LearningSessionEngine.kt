@@ -93,11 +93,14 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
  * Kết nối session engine với Room repository.
  * Việc tạo phiên và chấm rating đều lưu tiến độ trước khi trả kết quả cho UI.
  */
-class LearningSessionCoordinator(
-    context: Context,
+class LearningSessionCoordinator internal constructor(
+    private val progressRepository: CardProgressStore,
     private val scheduler: CardReviewScheduler = Fsrs6Scheduler()
 ) {
-    private val progressRepository = CardProgressRepository(context.applicationContext)
+    constructor(
+        context: Context,
+        scheduler: CardReviewScheduler = Fsrs6Scheduler()
+    ) : this(CardProgressRepository(context.applicationContext), scheduler)
     private var engine: LearningSessionEngine? = null
 
     suspend fun start(
