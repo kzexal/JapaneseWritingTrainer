@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -249,7 +250,9 @@ fun WritingCanvas(
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
+                // Dùng phần chiều cao còn lại để giữ các nút điều khiển luôn hiển thị.
+                // Khi có thông báo lỗi hoặc nội dung bổ sung, vùng vẽ sẽ tự co lại.
+                .weight(1f)
                 .background(Color.White)
                 .pointerInput(mode, character?.id, totalStrokes) {
                     val viewBoxSize = character?.viewBoxSize ?: 109f
@@ -487,8 +490,12 @@ fun WritingCanvas(
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
             OutlinedButton(
+                modifier = Modifier.weight(1f),
                 onClick = {
                     if (strokes.isNotEmpty()) {
                         val removedOrder = strokes.size
@@ -512,6 +519,7 @@ fun WritingCanvas(
             }
 
             Button(
+                modifier = Modifier.weight(1f),
                 onClick = {
                     strokes.clear()
                     analyzedStrokes.clear()
