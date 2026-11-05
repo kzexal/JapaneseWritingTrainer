@@ -54,10 +54,10 @@ class Fsrs6Scheduler(
             progress.stabilityDays != null && progress.difficulty != null
 
         val states = calculateStates(
-            stability = if (hasMemoryState) progress.stabilityDays else null,
-            difficulty = if (hasMemoryState) progress.difficulty else null,
-            elapsedDays = elapsedWholeDays,
-            desiredRetention = desiredRetention
+            if (hasMemoryState) progress.stabilityDays else null,
+            if (hasMemoryState) progress.difficulty else null,
+            elapsedWholeDays,
+            desiredRetention
         )
 
         val memory = when (rating) {
