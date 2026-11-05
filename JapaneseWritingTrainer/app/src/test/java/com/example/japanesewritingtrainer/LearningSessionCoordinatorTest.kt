@@ -25,7 +25,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun ratingPersistsProgressBeforeAdvancingToNextCard() = runBlocking {
         val store = InMemoryProgressStore()
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
 
         val started = coordinator.start(deck, cards, now, newCardLimit = 2)
         assertEquals("a", started.current?.card?.id)
@@ -43,7 +43,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun ratingCreatesRecallLogWithElapsedWritingTime() = runBlocking {
         val store = InMemoryProgressStore()
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
         coordinator.start(deck, cards, now, newCardLimit = 2)
 
         coordinator.rateCurrent(ReviewRating.GOOD, now + 12_500L)
@@ -59,7 +59,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun aNewSessionUsesPersistedDueDatesAndDoesNotRepeatFutureReviews() = runBlocking {
         val store = InMemoryProgressStore()
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
 
         coordinator.start(deck, cards, now, newCardLimit = 2)
         coordinator.rateCurrent(ReviewRating.GOOD, now)
@@ -79,7 +79,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun deckProgressSummaryCountsCardsSavedAcrossSessions() = runBlocking {
         val store = InMemoryProgressStore()
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
 
         coordinator.start(deck, cards, now, newCardLimit = 2)
         coordinator.rateCurrent(ReviewRating.GOOD, now)
@@ -95,7 +95,7 @@ class LearningSessionCoordinatorTest {
 
     @Test
     fun deckProgressSummaryTreatsCardsWithoutSavedRowsAsNew() = runBlocking {
-        val coordinator = LearningSessionCoordinator(InMemoryProgressStore())
+        val coordinator = createCoordinator(InMemoryProgressStore())
 
         val summary = coordinator.getDeckProgressSummary(deck, cards)
 
@@ -107,7 +107,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun persistenceFailureDoesNotAdvanceTheSession() = runBlocking {
         val store = InMemoryProgressStore().apply { failWrites = true }
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
         coordinator.start(deck, cards, now, newCardLimit = 2)
 
         assertThrows(IllegalStateException::class.java) {
@@ -123,7 +123,7 @@ class LearningSessionCoordinatorTest {
     @Test
     fun cannotRateAfterSessionHasCompleted() = runBlocking {
         val store = InMemoryProgressStore()
-        val coordinator = LearningSessionCoordinator(store)
+        val coordinator = createCoordinator(store)
         coordinator.start(deck, cards, now, newCardLimit = 1)
 
         coordinator.rateCurrent(ReviewRating.GOOD, now)
@@ -133,6 +133,41 @@ class LearningSessionCoordinatorTest {
             runBlocking { coordinator.rateCurrent(ReviewRating.GOOD, now) }
         }
         assertEquals(1, store.getAll().size)
+    }
+
+    /**
+     * Coordinator unit tests verify orchestration and persistence, not JNI.
+     * FSRS-rs itself is covered by native bridge tests and Android instrumentation
+     * tests; using a deterministic scheduler keeps these JVM tests platform-neutral.
+     */
+    private fun createCoordinator(store: CardProgressStore) =
+        LearningSessionCoordinator(store, TestCardReviewScheduler)
+
+    private object TestCardReviewScheduler : CardReviewScheduler {
+        override fun review(
+            progress: CardProgress,
+            rating: ReviewRating,
+            nowEpochMillis: Long
+        ): CardProgress {
+            val dueAt = nowEpochMillis + MILLIS_PER_DAY
+            return progress.copy(
+                status = CardStatus.REVIEW,
+                dueAtEpochMillis = dueAt,
+                stabilityDays = 1.0,
+                difficulty = 5.0,
+                scheduledDays = 1.0,
+                elapsedDays = progress.lastReviewedAtEpochMillis?.let {
+                    (nowEpochMillis - it).coerceAtLeast(0L).toDouble() / MILLIS_PER_DAY
+                } ?: 0.0,
+                reps = progress.reps + 1,
+                reviewCount = progress.reviewCount + 1,
+                correctCount = progress.correctCount +
+                    if (rating == ReviewRating.AGAIN) 0 else 1,
+                lastReviewedAtEpochMillis = nowEpochMillis
+            )
+        }
+
+        private const val MILLIS_PER_DAY = 86_400_000L
     }
 
     private class InMemoryProgressStore : CardProgressStore {
