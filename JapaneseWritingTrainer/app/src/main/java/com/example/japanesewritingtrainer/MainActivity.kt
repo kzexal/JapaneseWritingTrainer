@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
-                    var showLearningSession by remember { mutableStateOf(false) }
+                    var selectedScreen by remember { mutableStateOf(MainScreen.FREE) }
 
                     // Đọc JSON trên background thread để tránh chặn giao diện lúc khởi động.
                     LaunchedEffect(context) {
@@ -93,28 +93,38 @@ class MainActivity : ComponentActivity() {
                                     ),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    OutlinedButton(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { showLearningSession = false },
-                                        enabled = showLearningSession
-                                    ) {
-                                        Text("Luyện tự do")
-                                    }
-                                    Button(
-                                        modifier = Modifier.weight(1f),
-                                        onClick = { showLearningSession = true },
-                                        enabled = !showLearningSession
-                                    ) {
-                                        Text("Ôn tập")
+                                    MainScreen.entries.forEach { screen ->
+                                        val selected = selectedScreen == screen
+                                        if (selected) {
+                                            Button(
+                                                modifier = Modifier.weight(1f),
+                                                onClick = { selectedScreen = screen }
+                                            ) {
+                                                Text(screen.label)
+                                            }
+                                        } else {
+                                            OutlinedButton(
+                                                modifier = Modifier.weight(1f),
+                                                onClick = { selectedScreen = screen }
+                                            ) {
+                                                Text(screen.label)
+                                            }
+                                        }
                                     }
                                 }
 
-                                if (showLearningSession) {
-                                    LearningSessionScreen(
+                                when (selectedScreen) {
+                                    MainScreen.LEARNING -> LearningSessionScreen(
                                         characters = characters,
                                         modifier = Modifier.weight(1f)
                                     )
-                                } else {
+
+                                    MainScreen.HISTORY -> PracticeHistoryScreen(
+                                        characters = characters,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    MainScreen.FREE -> {
                                     val selectedCharacter = characters.getOrNull(selectedIndex)
                                     Column(
                                         modifier = Modifier.weight(1f),
@@ -168,6 +178,7 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     }
+                                    }
                                 }
                             }
                         }
@@ -176,6 +187,12 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+}
+
+private enum class MainScreen(val label: String) {
+    FREE("Luyện tự do"),
+    LEARNING("Ôn tập"),
+    HISTORY("Lịch sử")
 }
 
 @Composable
