@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -98,16 +99,28 @@ class MainActivity : ComponentActivity() {
                                         if (selected) {
                                             Button(
                                                 modifier = Modifier.weight(1f),
+                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
-                                                Text(screen.label)
+                                                Text(
+                                                    screen.label,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    maxLines = 1,
+                                                    softWrap = false
+                                                )
                                             }
                                         } else {
                                             OutlinedButton(
                                                 modifier = Modifier.weight(1f),
+                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
-                                                Text(screen.label)
+                                                Text(
+                                                    screen.label,
+                                                    style = MaterialTheme.typography.labelSmall,
+                                                    maxLines = 1,
+                                                    softWrap = false
+                                                )
                                             }
                                         }
                                     }
