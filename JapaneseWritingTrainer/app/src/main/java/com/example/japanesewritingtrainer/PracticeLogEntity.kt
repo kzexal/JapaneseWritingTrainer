@@ -58,7 +58,7 @@ fun PracticeLogEntity.toDomain() = PracticeLog(
     id = id,
     cardId = cardId,
     mode = PracticeMode.valueOf(mode),
-    rating = rating?.let(ReviewRating::valueOf),
+    rating = rating?.let { ReviewRating.valueOf(it) },
     durationMs = durationMs,
     timestampEpochMillis = timestampEpochMillis
 )
