@@ -18,5 +18,7 @@ class PracticeLogRepository internal constructor(
 
     suspend fun count(): Int = dao.count()
 
+    suspend fun add(log: PracticeLog): Long = dao.insert(log.toEntity())
+
     suspend fun clearAll() = dao.deleteAll()
 }
