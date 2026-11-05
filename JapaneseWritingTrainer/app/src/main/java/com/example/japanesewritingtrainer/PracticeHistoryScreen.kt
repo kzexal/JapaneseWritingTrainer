@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.weight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
@@ -45,6 +46,17 @@ fun PracticeHistoryScreen(
     var logs by remember { mutableStateOf<List<PracticeLog>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
+    val characterStats = remember(logs) { buildCharacterPracticeStats(logs) }
+    val needsPractice = remember(characterStats) {
+        characterStats.filter { it.totalAttempts >= 2 }
+            .sortedByDescending { it.againRate }
+            .take(3)
+    }
+    val rememberedWell = remember(characterStats) {
+        characterStats.filter { it.totalAttempts >= 2 && it.successfulAttempts > 0 }
+            .sortedByDescending { it.successRate }
+            .take(3)
+    }
 
     fun loadHistory() {
         scope.launch {
@@ -119,8 +131,42 @@ fun PracticeHistoryScreen(
             }
 
             else -> {
+                Text(
+                    "Tổng thời gian luyện: ${formatDuration(totalPracticeDurationMs(logs))}",
+                    style = MaterialTheme.typography.bodySmall
+                )
+
+                if (needsPractice.isNotEmpty()) {
+                    Text(
+                        "Những chữ cần luyện thêm",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    needsPractice.forEach { stats ->
+                        val character = charactersById[stats.cardId]
+                        Text(
+                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Again ${stats.againCount}/${stats.totalAttempts} (${formatPercent(stats.againRate)})",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                if (rememberedWell.isNotEmpty()) {
+                    Text(
+                        "Những chữ bạn đã nhớ tốt",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    rememberedWell.forEach { stats ->
+                        val character = charactersById[stats.cardId]
+                        Text(
+                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Good/Easy ${stats.successfulAttempts}/${stats.totalAttempts} (${formatPercent(stats.successRate)})",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                }
+
+                Text("Các lần luyện gần đây", style = MaterialTheme.typography.titleMedium)
                 LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(logs, key = { it.id }) { log ->
@@ -175,6 +221,9 @@ private fun ReviewRating?.toVietnameseLabel(): String = when (this) {
     ReviewRating.EASY -> "Easy · Dễ"
     null -> "Chưa đánh giá"
 }
+
+private fun formatPercent(value: Double): String =
+    "${(value * 100).toInt()}%"
 
 private fun formatDuration(durationMs: Long): String {
     val totalSeconds = durationMs / 1_000
