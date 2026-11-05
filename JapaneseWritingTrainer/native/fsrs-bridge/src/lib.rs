@@ -137,9 +137,10 @@ mod tests {
         request: ReviewInput,
         previous: Option<MemoryState>,
     ) {
+        let elapsed_days = request.elapsed_days;
         let bridged = calculate(request).unwrap();
         let upstream = FSRS::default()
-            .next_states(previous, 0.9, request.elapsed_days)
+            .next_states(previous, 0.9, elapsed_days)
             .unwrap();
 
         assert_eq!(bridged.again, state(upstream.again));
