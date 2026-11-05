@@ -22,22 +22,30 @@ class CardProgressEntityTest {
             lastReviewedAtEpochMillis = 1_734_000_000_000L
         )
 
-        val restored = original.toEntity().toDomain()
+        assertEquals(original, original.toEntity().toDomain())
+    }
 
-        assertEquals(original, restored)
+    @Test
+    fun mapsRelearningStatusToEntityAndBack() {
+        val original = CardProgress(
+            cardId = "hiragana_a",
+            status = CardStatus.RELEARNING,
+            lapses = 2
+        )
+
+        assertEquals(CardStatus.RELEARNING.name, original.toEntity().status)
+        assertEquals(original, original.toEntity().toDomain())
     }
 
     @Test
     fun mapsNewProgressWithNullSchedulingFields() {
         val original = CardProgress(cardId = "hiragana_i")
-
         val entity = original.toEntity()
-        val restored = entity.toDomain()
 
         assertEquals(CardStatus.NEW.name, entity.status)
         assertEquals(null, entity.dueAtEpochMillis)
         assertEquals(null, entity.stabilityDays)
         assertEquals(null, entity.difficulty)
-        assertEquals(original, restored)
+        assertEquals(original, entity.toDomain())
     }
 }
