@@ -95,7 +95,7 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
  */
 class LearningSessionCoordinator(
     context: Context,
-    private val scheduler: CardReviewScheduler
+    private val scheduler: CardReviewScheduler = Fsrs6Scheduler()
 ) {
     private val progressRepository = CardProgressRepository(context.applicationContext)
     private var engine: LearningSessionEngine? = null
