@@ -76,7 +76,7 @@ class StrokeMatcherTest {
 
     @Test
     fun penalizesStrokeWithIncorrectPosition() {
-        val shifted = reference.points.map { StrokePoint(it.x, it.y + 30f) }
+        val shifted = reference.points.map { StrokePoint(it.x, it.y + 40f) }
         val result = StrokeMatcher.match(
             reference,
             userStroke(shifted),
@@ -87,6 +87,22 @@ class StrokeMatcherTest {
         assertFalse(result.directionReversed)
         assertTrue(result.averagePathDistance > 0f)
         assertTrue(result.score < 100f)
+    }
+
+
+    @Test
+    fun acceptsSmallStartAndEndPointOffset() {
+        val slightlyShifted = reference.points.map {
+            StrokePoint(it.x + 18f, it.y + 18f)
+        }
+        val result = StrokeMatcher.match(
+            reference,
+            userStroke(slightlyShifted),
+            viewBoxSize = 109f
+        )
+
+        assertTrue("Sai lệch nhỏ ở hai đầu không nên làm nét bị từ chối", result.directionCorrect)
+        assertTrue(result.accepted)
     }
 
     @Test
