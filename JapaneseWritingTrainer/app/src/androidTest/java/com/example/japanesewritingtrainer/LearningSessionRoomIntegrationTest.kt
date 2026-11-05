@@ -117,4 +117,49 @@ class LearningSessionRoomIntegrationTest {
         assertEquals(2, practiceLogDao.getByCardId("a").size)
         assertEquals(PracticeMode.REVIEW, practiceLogDao.getByCardId("a").first().toDomain().mode)
     }
+
+    @Test
+    fun reviewLapsePersistsRelearningStatusAcrossSessions() = runBlocking {
+        dao.upsert(
+            CardProgress(
+                cardId = "a",
+                status = CardStatus.REVIEW,
+                dueAtEpochMillis = now,
+                stabilityDays = 8.0,
+                difficulty = 6.0,
+                scheduledDays = 5.0,
+                elapsedDays = 5.0,
+                reps = 4,
+                reviewCount = 4,
+                correctCount = 3,
+                lastReviewedAtEpochMillis = now - 5L * 86_400_000L
+            ).toEntity()
+        )
+
+        val coordinator = LearningSessionCoordinator(
+            repository,
+            Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+                FsrsReviewResult(
+                    again = FsrsReviewState(0.5, 8.0, 1.0),
+                    hard = FsrsReviewState(1.0, 7.0, 2.0),
+                    good = FsrsReviewState(2.0, 6.0, 3.0),
+                    easy = FsrsReviewState(4.0, 4.0, 5.0)
+                )
+            })
+        )
+        coordinator.start(deck, cards, now, newCardLimit = 0)
+        coordinator.rateCurrent(ReviewRating.AGAIN, now)
+
+        assertEquals(CardStatus.RELEARNING, dao.getByCardId("a")!!.status)
+
+        val nextSession = LearningSessionCoordinator(repository).start(
+            deck = deck,
+            cards = cards,
+            nowEpochMillis = now + 10 * 60_000L,
+            newCardLimit = 0
+        )
+        assertEquals("a", nextSession.current?.card?.id)
+        assertEquals(SessionCardKind.RELEARNING, nextSession.current?.kind)
+    }
+
 }
