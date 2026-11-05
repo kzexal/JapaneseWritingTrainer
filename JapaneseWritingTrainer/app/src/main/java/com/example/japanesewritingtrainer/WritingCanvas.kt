@@ -106,6 +106,7 @@ fun WritingCanvas(
         mutableStateOf(mode != WritingMode.RECALL)
     }
     var latestAnalysisFailed by remember(character?.id) { mutableStateOf(false) }
+    var consecutiveFailedAttempts by remember(character?.id) { mutableIntStateOf(0) }
 
     val animProgress = remember(character?.id) { Animatable(0f) }
     var playToken by remember(character?.id) { mutableIntStateOf(0) }
@@ -155,6 +156,7 @@ fun WritingCanvas(
                     analyzedStrokes.clear()
                     strokeMatches.clear()
                     latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     showTemplate = true
@@ -243,6 +245,25 @@ fun WritingCanvas(
                     }
                 )
             }
+            if (mode == WritingMode.RECALL &&
+                consecutiveFailedAttempts >= 2 &&
+                !isGuidedComplete
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Thử viết chậm hơn. Bạn có thể xem gợi ý nét hiện tại.",
+                        modifier = Modifier.weight(1f),
+                        color = Color(0xFFEF6C00)
+                    )
+                    OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+                        Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
+                    }
+                }
+            }
         }
 
         Canvas(
@@ -254,13 +275,21 @@ fun WritingCanvas(
                 .background(Color.White)
                 .pointerInput(mode, character?.id, totalStrokes) {
                     val viewBoxSize = character?.viewBoxSize ?: 109f
-                    val inputTransformer = CoordinateTransformer.fit(
-                        sourceWidth = viewBoxSize,
-                        sourceHeight = viewBoxSize,
-                        canvasSize = Size(size.width.toFloat(), size.height.toFloat())
-                    )
 
                     awaitEachGesture {
+                        // Trong một số thiết bị khi xoay ngang, bố cục có thể tạo
+                        // Canvas tạm thời có kích thước 0 trong lúc đo lại layout.
+                        // Bỏ qua gesture ở frame đó thay vì truyền kích thước 0
+                        // vào CoordinateTransformer.fit (sẽ gây IllegalArgumentException).
+                        if (size.width <= 0 || size.height <= 0) {
+                            return@awaitEachGesture
+                        }
+                        val inputTransformer = CoordinateTransformer.fit(
+                            sourceWidth = viewBoxSize,
+                            sourceHeight = viewBoxSize,
+                            canvasSize = Size(size.width.toFloat(), size.height.toFloat())
+                        )
+
                         // Luôn chờ và xử lý trọn vẹn một gesture. Khi Guided đã hoàn
                         // thành, vẫn nhận sự kiện cảm ứng nhưng không ghi thêm nét.
                         // Không return sớm khỏi awaitEachGesture vì có thể tạo vòng lặp
@@ -353,6 +382,7 @@ fun WritingCanvas(
                             var acceptedAttempt = false
                             if (analyzed == null) {
                                 latestAnalysisFailed = true
+                                consecutiveFailedAttempts++
                             } else {
                                 analyzedStrokes.add(analyzed)
                                 val reference = referenceStrokes.getOrNull(targetOrder - 1)
@@ -364,6 +394,11 @@ fun WritingCanvas(
                                     )
                                     strokeMatches.add(attemptOrder to result)
                                     acceptedAttempt = result.accepted
+                                    if (result.accepted) {
+                                        consecutiveFailedAttempts = 0
+                                    } else {
+                                        consecutiveFailedAttempts++
+                                    }
                                 }
                             }
 
@@ -392,6 +427,7 @@ fun WritingCanvas(
 
             if (templatePaths.isNotEmpty()) {
                 val viewBoxSize = character?.viewBoxSize ?: 109f
+                if (size.width <= 0f || size.height <= 0f) return@Canvas
                 val transformer = CoordinateTransformer.fit(
                     sourceWidth = viewBoxSize,
                     sourceHeight = viewBoxSize,
@@ -416,6 +452,23 @@ fun WritingCanvas(
                             drawTemplateStroke(segment, transformer, AnimationColor)
                         }
                     }
+                } else if (
+                    showTemplate &&
+                    mode == WritingMode.RECALL &&
+                    !isGuidedComplete
+                ) {
+                    // Trong Recall chỉ hé lộ nét đang luyện, không bật toàn bộ đáp án.
+                    val index = completedStrokes.coerceIn(0, templatePaths.lastIndex)
+                    val hintPath = templatePaths[index]
+                    drawTemplateStroke(hintPath, transformer, AnimationColor)
+                    val measure = measures[index]
+                    val start = transformer.toCanvas(measure.getPosition(0f))
+                    drawCircle(
+                        color = NumberColor,
+                        radius = 7f,
+                        center = start
+                    )
+                    drawStrokeDirection(measure, transformer)
                 } else if (showTemplate && mode.showsStrokeGuidance) {
                     // Các nét đã hoàn thành và nét chờ được làm mờ.
                     // Chỉ nét kế tiếp được tô xanh để người học tập trung.
