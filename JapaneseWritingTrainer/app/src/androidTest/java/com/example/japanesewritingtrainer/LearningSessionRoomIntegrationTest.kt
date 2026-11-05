@@ -18,6 +18,7 @@ class LearningSessionRoomIntegrationTest {
     private lateinit var database: WritingTrainerDatabase
     private lateinit var dao: CardProgressDao
     private lateinit var repository: CardProgressRepository
+    private lateinit var practiceLogDao: PracticeLogDao
 
     private val now = 1_800_000_000_000L
     private val deck = WritingDeck(
@@ -40,7 +41,8 @@ class LearningSessionRoomIntegrationTest {
             WritingTrainerDatabase::class.java
         ).allowMainThreadQueries().build()
         dao = database.cardProgressDao()
-        repository = CardProgressRepository(dao)
+        practiceLogDao = database.practiceLogDao()
+        repository = CardProgressRepository(dao, practiceLogDao, database)
     }
 
     @After
@@ -49,20 +51,26 @@ class LearningSessionRoomIntegrationTest {
     }
 
     @Test
-    fun schedulerSessionAndRoomPersistProgressAcrossSessions() = runBlocking {
+    fun schedulerSessionAndRoomPersistProgressAndHistoryAcrossSessions() = runBlocking {
         val coordinator = LearningSessionCoordinator(repository)
 
         val firstSession = coordinator.start(deck, cards, now, newCardLimit = 2)
         assertEquals("a", firstSession.current?.card?.id)
 
-        val next = coordinator.rateCurrent(ReviewRating.GOOD, now)
+        val next = coordinator.rateCurrent(ReviewRating.GOOD, now + 4_000L)
         assertEquals("i", next.current?.card?.id)
 
         val persisted = dao.getByCardId("a")!!.toDomain()
         assertEquals(CardStatus.REVIEW, persisted.status)
         assertEquals(1, persisted.reviewCount)
-        assertEquals(now, persisted.lastReviewedAtEpochMillis)
+        assertEquals(now + 4_000L, persisted.lastReviewedAtEpochMillis)
         assertTrue(persisted.dueAtEpochMillis!! > now)
+
+        val logs = practiceLogDao.getByCardId("a").map(PracticeLogEntity::toDomain)
+        assertEquals(1, logs.size)
+        assertEquals(PracticeMode.RECALL, logs.single().mode)
+        assertEquals(ReviewRating.GOOD, logs.single().rating)
+        assertEquals(4_000L, logs.single().durationMs)
 
         // Tạo coordinator mới để bảo đảm dữ liệu được đọc lại từ Room,
         // không phụ thuộc state trong bộ nhớ của phiên trước.
@@ -106,5 +114,7 @@ class LearningSessionRoomIntegrationTest {
         assertEquals(CardStatus.REVIEW, graduated.status)
         assertEquals(2, graduated.reviewCount)
         assertEquals(1, graduated.correctCount)
+        assertEquals(2, practiceLogDao.getByCardId("a").size)
+        assertEquals(PracticeMode.REVIEW, practiceLogDao.getByCardId("a").last().mode)
     }
 }
