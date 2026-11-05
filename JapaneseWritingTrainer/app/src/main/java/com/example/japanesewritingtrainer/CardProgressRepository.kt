@@ -19,11 +19,13 @@ interface CardProgressStore {
  * Repository là cổng truy cập tiến độ học.
  * Các lớp UI/session không truy vấn Room trực tiếp.
  */
-class CardProgressRepository(context: Context) : CardProgressStore {
+class CardProgressRepository internal constructor(
+    private val dao: CardProgressDao
+) : CardProgressStore {
 
-    private val dao = WritingTrainerDatabase
-        .getInstance(context.applicationContext)
-        .cardProgressDao()
+    constructor(context: Context) : this(
+        WritingTrainerDatabase.getInstance(context.applicationContext).cardProgressDao()
+    )
 
     override suspend fun get(cardId: String): CardProgress? =
         dao.getByCardId(cardId)?.toDomain()
