@@ -73,6 +73,7 @@ fun WritingCanvas(
     character: CharacterData? = null,
     initialMode: WritingMode = WritingMode.TRACE,
     showModeSelector: Boolean = true,
+    allowEditingAfterCompletion: Boolean = true,
     onCompleted: (() -> Unit)? = null
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
@@ -129,6 +130,7 @@ fun WritingCanvas(
     val totalStrokes = templatePaths.size
     val completedStrokes = guidedProgress.completedStrokeCount.coerceAtMost(totalStrokes)
     val isGuidedComplete = guidedProgress.isComplete(totalStrokes)
+    val canEditStrokes = allowEditingAfterCompletion || !isGuidedComplete
     val latestMatch = strokeMatches.lastOrNull()?.second
 
     Column(
@@ -504,7 +506,7 @@ fun WritingCanvas(
                         redrawTick++
                     }
                 },
-                enabled = strokes.isNotEmpty()
+                enabled = strokes.isNotEmpty() && canEditStrokes
             ) {
                 Text("Undo")
             }
@@ -522,7 +524,7 @@ fun WritingCanvas(
                     }
                     redrawTick++
                 },
-                enabled = strokes.isNotEmpty() || completedStrokes > 0
+                enabled = (strokes.isNotEmpty() || completedStrokes > 0) && canEditStrokes
             ) {
                 Text("Xóa hết")
             }
