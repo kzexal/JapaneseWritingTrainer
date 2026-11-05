@@ -9,7 +9,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 
 @Database(
     entities = [CardProgressEntity::class, PracticeLogEntity::class],
-    version = 2,
+    version = 3,
     exportSchema = false
 )
 abstract class WritingTrainerDatabase : RoomDatabase() {
@@ -45,6 +45,18 @@ abstract class WritingTrainerDatabase : RoomDatabase() {
             }
         }
 
+        /**
+         * Lapses chỉ tăng khi một thẻ Review bị Again. Vì vậy LEARNING có lapses
+         * lớn hơn 0 là các thẻ đang học lại sau một lần quên.
+         */
+        val MIGRATION_2_3: Migration = object : Migration(2, 3) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL(
+                    "UPDATE card_progress SET status = 'RELEARNING' WHERE status = 'LEARNING' AND lapses > 0"
+                )
+            }
+        }
+
         @Volatile
         private var INSTANCE: WritingTrainerDatabase? = null
 
@@ -55,7 +67,7 @@ abstract class WritingTrainerDatabase : RoomDatabase() {
                     WritingTrainerDatabase::class.java,
                     "japanese_writing_trainer.db"
                 )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build()
                     .also { INSTANCE = it }
             }
