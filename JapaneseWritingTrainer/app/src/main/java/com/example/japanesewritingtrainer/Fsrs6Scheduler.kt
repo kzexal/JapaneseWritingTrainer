@@ -6,9 +6,8 @@ import kotlin.math.roundToInt
 /**
  * FSRS-rs 6.6.2 scheduler.
  *
- * The upstream library calculates memory states and review intervals.
- * Learning/relearning steps remain application policy and are intentionally
- * kept separate from the FSRS memory model.
+ * FSRS updates long-term memory states. Short learning/relearning retries are
+ * application policy and must not repeatedly update the FSRS state.
  */
 class Fsrs6Scheduler(
     private val desiredRetention: Double = DEFAULT_DESIRED_RETENTION,
@@ -48,53 +47,71 @@ class Fsrs6Scheduler(
         } ?: 0.0
         val elapsedWholeDays = floor(elapsedDays).toInt().coerceAtLeast(0)
 
-        // A partial memory state is treated as a new card, matching the
-        // previous scheduler's behavior and the JNI bridge's input contract.
-        val hasMemoryState =
-            progress.stabilityDays != null && progress.difficulty != null
+        val wasReview = progress.status == CardStatus.REVIEW
+        val isLearningStep = progress.status == CardStatus.LEARNING ||
+            progress.status == CardStatus.RELEARNING
+        val isShortRetry = isLearningStep &&
+            (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD)
 
-        val states = calculateStates(
-            if (hasMemoryState) progress.stabilityDays else null,
-            if (hasMemoryState) progress.difficulty else null,
-            elapsedWholeDays,
-            desiredRetention
-        )
-
-        val memory = when (rating) {
-            ReviewRating.AGAIN -> states.again
-            ReviewRating.HARD -> states.hard
-            ReviewRating.GOOD -> states.good
-            ReviewRating.EASY -> states.easy
+        // New Again initializes FSRS memory. A review lapse updates it once.
+        // Repeated short learning/relearning steps do not recalculate memory.
+        // Good/Easy graduation from a learning step is scheduled by FSRS.
+        val states = if (!isShortRetry) {
+            val hasMemoryState =
+                progress.stabilityDays != null && progress.difficulty != null
+            calculateStates(
+                if (hasMemoryState) progress.stabilityDays else null,
+                if (hasMemoryState) progress.difficulty else null,
+                elapsedWholeDays,
+                desiredRetention
+            )
+        } else {
+            null
         }
 
-        val wasReview = progress.status == CardStatus.REVIEW
-        val isLearningRetry = progress.status == CardStatus.LEARNING
+        val memory = states?.let {
+            when (rating) {
+                ReviewRating.AGAIN -> it.again
+                ReviewRating.HARD -> it.hard
+                ReviewRating.GOOD -> it.good
+                ReviewRating.EASY -> it.easy
+            }
+        }
+
         val nextStatus: CardStatus
         val intervalMillis: Long
         val scheduledDays: Double
 
         when {
             rating == ReviewRating.AGAIN && wasReview -> {
-                nextStatus = CardStatus.LEARNING
+                nextStatus = CardStatus.RELEARNING
                 intervalMillis = RELEARNING_STEP_MILLIS
                 scheduledDays = RELEARNING_STEP_DAYS
             }
             rating == ReviewRating.AGAIN -> {
-                nextStatus = CardStatus.LEARNING
+                nextStatus = if (progress.status == CardStatus.RELEARNING) {
+                    CardStatus.RELEARNING
+                } else {
+                    CardStatus.LEARNING
+                }
                 intervalMillis = LEARNING_AGAIN_STEP_MILLIS
                 scheduledDays = LEARNING_AGAIN_STEP_DAYS
             }
             rating == ReviewRating.HARD &&
-                (progress.status == CardStatus.NEW || isLearningRetry) -> {
-                nextStatus = CardStatus.LEARNING
+                (progress.status == CardStatus.NEW || isLearningStep) -> {
+                nextStatus = if (progress.status == CardStatus.RELEARNING) {
+                    CardStatus.RELEARNING
+                } else {
+                    CardStatus.LEARNING
+                }
                 intervalMillis = LEARNING_HARD_STEP_MILLIS
                 scheduledDays = LEARNING_HARD_STEP_DAYS
             }
             else -> {
                 nextStatus = CardStatus.REVIEW
-                val intervalDays = memory.intervalDays
-                    .roundToInt()
-                    .coerceIn(1, maximumIntervalDays)
+                val intervalDays = requireNotNull(memory) {
+                    "FSRS state is required when a card graduates to review"
+                }.intervalDays.roundToInt().coerceIn(1, maximumIntervalDays)
                 intervalMillis = intervalDays.toLong() * MILLIS_PER_DAY
                 scheduledDays = intervalDays.toDouble()
             }
@@ -104,8 +121,8 @@ class Fsrs6Scheduler(
         return progress.copy(
             status = nextStatus,
             dueAtEpochMillis = dueAt,
-            stabilityDays = memory.stability,
-            difficulty = memory.difficulty,
+            stabilityDays = memory?.stability ?: progress.stabilityDays,
+            difficulty = memory?.difficulty ?: progress.difficulty,
             scheduledDays = scheduledDays,
             elapsedDays = elapsedDays,
             reps = progress.reps + 1,
@@ -121,12 +138,9 @@ class Fsrs6Scheduler(
         const val DEFAULT_MAXIMUM_INTERVAL_DAYS = 36_500
 
         private const val MILLIS_PER_DAY = 86_400_000L
-
-        // Application learning/relearning policy.
         private const val LEARNING_AGAIN_STEP_MILLIS = 60_000L
         private const val LEARNING_HARD_STEP_MILLIS = 6 * 60_000L
         private const val RELEARNING_STEP_MILLIS = 10 * 60_000L
-
         private const val LEARNING_AGAIN_STEP_DAYS = 1.0 / 1_440.0
         private const val LEARNING_HARD_STEP_DAYS = 6.0 / 1_440.0
         private const val RELEARNING_STEP_DAYS = 10.0 / 1_440.0
