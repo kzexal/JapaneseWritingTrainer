@@ -14,11 +14,15 @@ data class CharacterPracticeStats(
     val successfulAttempts: Int
         get() = goodCount + easyCount
 
+    /** Chỉ các lần có đánh giá mới tham gia tỷ lệ Again/Good/Easy. */
+    val ratedAttempts: Int
+        get() = againCount + hardCount + goodCount + easyCount
+
     val againRate: Double
-        get() = if (totalAttempts == 0) 0.0 else againCount.toDouble() / totalAttempts
+        get() = if (ratedAttempts == 0) 0.0 else againCount.toDouble() / ratedAttempts
 
     val successRate: Double
-        get() = if (totalAttempts == 0) 0.0 else successfulAttempts.toDouble() / totalAttempts
+        get() = if (ratedAttempts == 0) 0.0 else successfulAttempts.toDouble() / ratedAttempts
 
     val averageDurationMs: Long
         get() = if (totalAttempts == 0) 0L else totalDurationMs / totalAttempts
