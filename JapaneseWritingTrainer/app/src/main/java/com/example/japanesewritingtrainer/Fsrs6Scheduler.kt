@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import kotlin.math.exp
+import kotlin.math.floor
 import kotlin.math.pow
 import kotlin.math.roundToInt
 
@@ -34,7 +35,7 @@ class Fsrs6Scheduler(
         val elapsedDays = previousReview?.let {
             ((nowEpochMillis - it).coerceAtLeast(0L)).toDouble() / MILLIS_PER_DAY
         } ?: 0.0
-        val elapsedWholeDays = elapsedDays.roundToInt()
+        val elapsedWholeDays = floor(elapsedDays).toInt()
 
         val grade = rating.toGrade()
         val previousStability = progress.stabilityDays
