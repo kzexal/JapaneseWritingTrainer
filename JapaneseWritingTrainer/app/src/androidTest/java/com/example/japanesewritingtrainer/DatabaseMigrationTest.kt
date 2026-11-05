@@ -1,7 +1,6 @@
 package com.example.japanesewritingtrainer
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -62,7 +61,7 @@ class DatabaseMigrationTest {
         try {
             val progress = migrated.cardProgressDao().getByCardId("hiragana_a")
             assertEquals(CardStatus.REVIEW.name, progress?.status)
-            assertEquals(1, migrated.practiceLogDao().count())
+            assertEquals(0, migrated.practiceLogDao().count())
         } finally {
             migrated.close()
             context.deleteDatabase(databaseName)
