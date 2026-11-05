@@ -17,6 +17,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -73,7 +74,8 @@ fun WritingCanvas(
     initialMode: WritingMode = WritingMode.TRACE,
     showModeSelector: Boolean = true,
     allowEditingAfterCompletion: Boolean = true,
-    onCompleted: (() -> Unit)? = null
+    onCompleted: (() -> Unit)? = null,
+    onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
     val analyzedStrokes = remember(character?.id) { mutableStateListOf<AnalyzedUserStroke>() }
@@ -98,6 +100,28 @@ fun WritingCanvas(
     // Các trạng thái nét vẽ và tiến trình vẫn được reset theo character?.id.
     var mode by remember { mutableStateOf(initialMode) }
     val latestOnCompleted by rememberUpdatedState(onCompleted)
+    val latestOnPracticeFinished by rememberUpdatedState(onPracticeFinished)
+    val practiceStartedAtEpochMillis = remember(character?.id, mode) {
+        System.currentTimeMillis()
+    }
+    var hasPracticeActivity by remember(character?.id, mode) {
+        mutableStateOf(false)
+    }
+
+    // Lưu một phiên khi người học đổi chữ, đổi chế độ hoặc rời màn hình.
+    // Chỉ ghi log nếu phiên thực sự có thao tác viết.
+    DisposableEffect(character?.id, mode) {
+        onDispose {
+            if (character != null && hasPracticeActivity) {
+                val finishedAt = System.currentTimeMillis()
+                latestOnPracticeFinished?.invoke(
+                    mode.toPracticeMode(),
+                    (finishedAt - practiceStartedAtEpochMillis).coerceAtLeast(0L),
+                    finishedAt
+                )
+            }
+        }
+    }
     var guidedProgress by remember(character?.id) {
         mutableStateOf(GuidedWritingProgress())
     }
@@ -368,6 +392,7 @@ fun WritingCanvas(
                                 currentPath.lineTo(last.x + 0.1f, last.y)
                             }
 
+                            hasPracticeActivity = true
                             strokes.add(Path().apply { addPath(currentPath) })
                             val attemptOrder = strokes.size
                             val targetOrder = if (mode.requiresStrokeValidation) {
