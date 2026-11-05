@@ -10,7 +10,6 @@ import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,16 +17,19 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.PathEffect
@@ -37,6 +39,7 @@ import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.drawscope.scale
+import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.TextStyle
@@ -46,45 +49,92 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 private val InkStyle = Stroke(width = 14f, cap = StrokeCap.Round, join = StrokeJoin.Round)
-
-// Đơn vị theo hệ tọa độ của dataset (viewBox 109) nên sẽ được phóng to theo canvas.
 private val TemplateStyle = Stroke(width = 6f, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
 private val TemplateColor = Color(0xFFD0D0D0)
 private val AnimationColor = Color(0xFF1E88E5)
 private val NumberColor = Color(0xFFD32F2F)
+private val CompletedGuideColor = Color(0xFFBDBDBD)
+private val WaitingGuideColor = Color(0xFFE8E8E8)
 
 /**
- * Màn hình viết chữ:
- * - Khung vuông có lưới, vẽ bằng ngón tay.
- * - Chữ mẫu mờ (Trace) + số thứ tự nét.
- * - Animation thứ tự nét.
- * - Undo / Xóa hết.
+ * Màn hình luyện viết:
+ * - Trace: hiển thị mẫu mờ để người học đồ theo.
+ * - Guided: hiển thị nét cần viết tiếp theo và hướng dẫn chiều viết.
+ * - Recall: ẩn mẫu trong lúc viết, yêu cầu người học tự nhớ thứ tự và hình dạng nét.
+ * - Hỗ trợ Undo, Clear, ẩn/hiện đáp án và xem animation thứ tự nét.
+ *
+ * Guided và Recall chỉ tiến sang nét tiếp theo khi StrokeMatcher chấp nhận nét.
+ * Recall chỉ hiển thị mẫu sau khi người học hoàn thành toàn bộ ký tự.
  */
 @Composable
 fun WritingCanvas(
     modifier: Modifier = Modifier,
-    character: CharacterData? = null
+    character: CharacterData? = null,
+    initialMode: WritingMode = WritingMode.TRACE,
+    showModeSelector: Boolean = true,
+    allowEditingAfterCompletion: Boolean = true,
+    onCompleted: (() -> Unit)? = null,
+    onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null
 ) {
-    // ---- Nét người dùng vẽ ----
-    val strokes = remember { mutableStateListOf<Path>() }
-    val currentPath = remember { Path() }
-    var redrawTick by remember { mutableIntStateOf(0) }
+    val strokes = remember(character?.id) { mutableStateListOf<Path>() }
+    val analyzedStrokes = remember(character?.id) { mutableStateListOf<AnalyzedUserStroke>() }
+    val strokeMatches = remember(character?.id) {
+        mutableStateListOf<Pair<Int, StrokeMatchResult>>()
+    }
+    val referenceStrokes = remember(character?.id) {
+        character?.strokes?.let { SvgStrokeParser.parseAll(it) } ?: emptyList()
+    }
+    val currentPath = remember(character?.id) { Path() }
+    var redrawTick by remember(character?.id) { mutableIntStateOf(0) }
 
-    // ---- Dữ liệu chữ mẫu ----
     val templatePaths: List<Path> = remember(character) {
         character?.strokes?.map { PathParser().parsePathString(it.svgPath).toPath() }
             ?: emptyList()
     }
     val measures: List<PathMeasure> = remember(templatePaths) {
-        templatePaths.map { p -> PathMeasure().also { it.setPath(p, false) } }
+        templatePaths.map { path -> PathMeasure().also { it.setPath(path, false) } }
     }
 
-    // ---- Trạng thái hiển thị ----
-    var showTemplate by remember { mutableStateOf(true) }
-    val animProgress = remember { Animatable(0f) }
-    var playToken by remember { mutableIntStateOf(0) }
-    var isAnimating by remember { mutableStateOf(false) }
+    // Giữ chế độ đang chọn khi chuyển sang ký tự khác.
+    // Các trạng thái nét vẽ và tiến trình vẫn được reset theo character?.id.
+    var mode by remember { mutableStateOf(initialMode) }
+    val latestOnCompleted by rememberUpdatedState(onCompleted)
+    val latestOnPracticeFinished = rememberUpdatedState(onPracticeFinished)
+    val practiceStartedAtEpochMillis = remember(character?.id, mode) {
+        System.currentTimeMillis()
+    }
+    val hasPracticeActivity = remember(character?.id, mode) {
+        mutableStateOf(false)
+    }
+
+    // Lưu một phiên khi người học đổi chữ, đổi chế độ hoặc rời màn hình.
+    // Chỉ ghi log nếu phiên thực sự có thao tác viết.
+    DisposableEffect(character?.id, mode) {
+        onDispose {
+            if (character != null && hasPracticeActivity.value) {
+                val finishedAt = System.currentTimeMillis()
+                latestOnPracticeFinished.value?.invoke(
+                    mode.toPracticeMode(),
+                    (finishedAt - practiceStartedAtEpochMillis).coerceAtLeast(0L),
+                    finishedAt
+                )
+            }
+        }
+    }
+    var guidedProgress by remember(character?.id) {
+        mutableStateOf(GuidedWritingProgress())
+    }
+    // Nếu Recall đang được chọn khi chuyển ký tự, tiếp tục ẩn mẫu ở ký tự mới.
+    var showTemplate by remember(character?.id) {
+        mutableStateOf(mode != WritingMode.RECALL)
+    }
+    var latestAnalysisFailed by remember(character?.id) { mutableStateOf(false) }
+    var consecutiveFailedAttempts by remember(character?.id) { mutableIntStateOf(0) }
+
+    val animProgress = remember(character?.id) { Animatable(0f) }
+    var playToken by remember(character?.id) { mutableIntStateOf(0) }
+    var isAnimating by remember(character?.id) { mutableStateOf(false) }
 
     LaunchedEffect(playToken) {
         if (playToken == 0 || templatePaths.isEmpty()) return@LaunchedEffect
@@ -101,6 +151,11 @@ fun WritingCanvas(
     }
 
     val textMeasurer = rememberTextMeasurer()
+    val totalStrokes = templatePaths.size
+    val completedStrokes = guidedProgress.completedStrokeCount.coerceAtMost(totalStrokes)
+    val isGuidedComplete = guidedProgress.isComplete(totalStrokes)
+    val canEditStrokes = allowEditingAfterCompletion || !isGuidedComplete
+    val latestMatch = strokeMatches.lastOrNull()?.second
 
     Column(
         modifier = modifier
@@ -116,56 +171,278 @@ fun WritingCanvas(
             )
         }
 
+        if (showModeSelector) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.TRACE
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = true
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.TRACE
+            ) {
+                Text("Trace")
+            }
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.GUIDED
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = true
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.GUIDED && totalStrokes > 0
+            ) {
+                Text("Guided")
+            }
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.RECALL
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = false
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.RECALL && totalStrokes > 0
+            ) {
+                Text("Recall")
+            }
+            }
+        }
+
+        if (mode.requiresStrokeValidation && totalStrokes > 0) {
+            Text(
+                text = when {
+                    isGuidedComplete && mode == WritingMode.RECALL ->
+                        "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
+                    isGuidedComplete ->
+                        "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
+                    mode == WritingMode.RECALL ->
+                        "Tự nhớ và viết · Nét ${completedStrokes + 1} / $totalStrokes"
+                    else ->
+                        "Nét ${completedStrokes + 1} / $totalStrokes"
+                },
+                color = if (isGuidedComplete) Color(0xFF2E7D32) else Color.Unspecified
+            )
+            if (latestAnalysisFailed) {
+                Text(
+                    text = "Không đủ dữ liệu để đánh giá nét này. Hãy viết lại.",
+                    color = Color(0xFFEF6C00)
+                )
+            } else if (latestMatch != null) {
+                Text(
+                    text = if (latestMatch.accepted) {
+                        "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
+                    } else if (latestMatch.directionReversed) {
+                        "Sai chiều viết nét · " + latestMatch.score.toInt() + "/100"
+                    } else if (!latestMatch.directionCorrect) {
+                        "Sai vị trí bắt đầu hoặc kết thúc nét · " + latestMatch.score.toInt() + "/100"
+                    } else if (!latestMatch.lengthWithinTolerance) {
+                        val lengthMessage = if (latestMatch.lengthRatio < 1f) {
+                            "Nét quá ngắn"
+                        } else {
+                            "Nét quá dài"
+                        }
+                        "$lengthMessage · " + latestMatch.score.toInt() + "/100"
+                    } else {
+                        "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
+                    },
+                    color = if (latestMatch.accepted) {
+                        Color(0xFF2E7D32)
+                    } else {
+                        Color(0xFFEF6C00)
+                    }
+                )
+            }
+            if (mode == WritingMode.RECALL &&
+                consecutiveFailedAttempts >= 2 &&
+                !isGuidedComplete
+            ) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        "Thử viết chậm hơn. Bạn có thể xem gợi ý nét hiện tại.",
+                        modifier = Modifier.weight(1f),
+                        color = Color(0xFFEF6C00)
+                    )
+                    OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+                        Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
+                    }
+                }
+            }
+        }
+
         Canvas(
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(1f)
+                // Dùng phần chiều cao còn lại để giữ các nút điều khiển luôn hiển thị.
+                // Khi có thông báo lỗi hoặc nội dung bổ sung, vùng vẽ sẽ tự co lại.
+                .weight(1f)
                 .background(Color.White)
-                .pointerInput(Unit) {
+                .pointerInput(mode, character?.id, totalStrokes) {
+                    val viewBoxSize = character?.viewBoxSize ?: 109f
+
                     awaitEachGesture {
+                        // Trong một số thiết bị khi xoay ngang, bố cục có thể tạo
+                        // Canvas tạm thời có kích thước 0 trong lúc đo lại layout.
+                        // Bỏ qua gesture ở frame đó thay vì truyền kích thước 0
+                        // vào CoordinateTransformer.fit (sẽ gây IllegalArgumentException).
+                        if (size.width <= 0 || size.height <= 0) {
+                            return@awaitEachGesture
+                        }
+                        val inputTransformer = CoordinateTransformer.fit(
+                            sourceWidth = viewBoxSize,
+                            sourceHeight = viewBoxSize,
+                            canvasSize = Size(size.width.toFloat(), size.height.toFloat())
+                        )
+
+                        // Luôn chờ và xử lý trọn vẹn một gesture. Khi Guided đã hoàn
+                        // thành, vẫn nhận sự kiện cảm ứng nhưng không ghi thêm nét.
+                        // Không return sớm khỏi awaitEachGesture vì có thể tạo vòng lặp
+                        // bận trên Main Thread sau khi hoàn thành ký tự.
+                        val canRecordStroke = !mode.requiresStrokeValidation ||
+                            guidedProgress.canAcceptStroke(totalStrokes)
+
                         val down = awaitFirstDown()
                         down.consume()
 
-                        var last: Offset = down.position
+                        var last = down.position
                         var moved = false
-                        currentPath.reset()
-                        currentPath.moveTo(last.x, last.y)
-                        redrawTick++
+                        val rawStrokePoints = mutableListOf<CanvasStrokePoint>()
 
-                        while (true) {
-                            val event = awaitPointerEvent()
-                            val change = event.changes.firstOrNull { it.id == down.id } ?: break
-                            if (!change.pressed) break
-
-                            for (h in change.historical) {
-                                val p = h.position
-                                currentPath.quadraticTo(
-                                    last.x, last.y,
-                                    (last.x + p.x) / 2f, (last.y + p.y) / 2f
-                                )
-                                last = p
-                                moved = true
-                            }
-                            val p = change.position
-                            currentPath.quadraticTo(
-                                last.x, last.y,
-                                (last.x + p.x) / 2f, (last.y + p.y) / 2f
+                        if (canRecordStroke) {
+                            latestAnalysisFailed = false
+                            rawStrokePoints += CanvasStrokePoint(
+                                x = last.x,
+                                y = last.y,
+                                timestampMillis = down.uptimeMillis
                             )
-                            last = p
-                            moved = true
-
-                            change.consume()
+                            currentPath.reset()
+                            currentPath.moveTo(last.x, last.y)
                             redrawTick++
                         }
 
-                        if (moved) {
-                            currentPath.lineTo(last.x, last.y)
-                        } else {
-                            currentPath.lineTo(last.x + 0.1f, last.y)
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val change = event.changes.firstOrNull { it.id == down.id }
+                                ?: break
+                            if (!change.pressed) break
+
+                            if (canRecordStroke) {
+                                for (historical in change.historical) {
+                                    val point = historical.position
+                                    currentPath.quadraticTo(
+                                        last.x,
+                                        last.y,
+                                        (last.x + point.x) / 2f,
+                                        (last.y + point.y) / 2f
+                                    )
+                                    last = point
+                                    rawStrokePoints += CanvasStrokePoint(
+                                        x = point.x,
+                                        y = point.y,
+                                        timestampMillis = historical.uptimeMillis
+                                    )
+                                    moved = true
+                                }
+
+                                val point = change.position
+                                currentPath.quadraticTo(
+                                    last.x,
+                                    last.y,
+                                    (last.x + point.x) / 2f,
+                                    (last.y + point.y) / 2f
+                                )
+                                last = point
+                                rawStrokePoints += CanvasStrokePoint(
+                                    x = point.x,
+                                    y = point.y,
+                                    timestampMillis = change.uptimeMillis
+                                )
+                                moved = true
+                            }
+
+                            change.consume()
+                            if (canRecordStroke) redrawTick++
                         }
-                        strokes.add(Path().apply { addPath(currentPath) })
-                        currentPath.reset()
-                        redrawTick++
+
+                        if (canRecordStroke) {
+                            if (moved) {
+                                currentPath.lineTo(last.x, last.y)
+                            } else {
+                                currentPath.lineTo(last.x + 0.1f, last.y)
+                            }
+
+                            hasPracticeActivity.value = true
+                            strokes.add(Path().apply { addPath(currentPath) })
+                            val attemptOrder = strokes.size
+                            val targetOrder = if (mode.requiresStrokeValidation) {
+                                guidedProgress.nextStrokeOrder(totalStrokes) ?: attemptOrder
+                            } else {
+                                attemptOrder
+                            }
+                            val analyzed = StrokeInputAnalyzer.analyze(
+                                order = attemptOrder,
+                                rawPoints = rawStrokePoints,
+                                transformer = inputTransformer
+                            )
+                            var acceptedAttempt = false
+                            if (analyzed == null) {
+                                latestAnalysisFailed = true
+                                consecutiveFailedAttempts++
+                            } else {
+                                analyzedStrokes.add(analyzed)
+                                val reference = referenceStrokes.getOrNull(targetOrder - 1)
+                                if (reference != null) {
+                                    val result = StrokeMatcher.match(
+                                        reference = reference,
+                                        user = analyzed,
+                                        viewBoxSize = viewBoxSize
+                                    )
+                                    strokeMatches.add(attemptOrder to result)
+                                    acceptedAttempt = result.accepted
+                                    if (result.accepted) {
+                                        consecutiveFailedAttempts = 0
+                                    } else {
+                                        consecutiveFailedAttempts++
+                                    }
+                                }
+                            }
+
+                            if (mode.requiresStrokeValidation && acceptedAttempt) {
+                                val updatedProgress = guidedProgress.completeStroke(totalStrokes)
+                                guidedProgress = updatedProgress
+                                // Chỉ mở mẫu đáp án sau khi người học tự hoàn thành
+                                // tất cả các nét trong Recall Writing.
+                                if (mode == WritingMode.RECALL &&
+                                    updatedProgress.isComplete(totalStrokes)
+                                ) {
+                                    showTemplate = true
+                                    latestOnCompleted?.invoke()
+                                }
+                            }
+                            currentPath.reset()
+                            redrawTick++
+                        }
                     }
                 }
         ) {
@@ -174,80 +451,236 @@ fun WritingCanvas(
 
             drawGrid()
 
-            // --- Lớp 1: chữ mẫu (nằm dưới nét của người dùng) ---
             if (templatePaths.isNotEmpty()) {
-                val unit = size.width / (character?.viewBoxSize ?: 109f)
+                val viewBoxSize = character?.viewBoxSize ?: 109f
+                if (size.width <= 0f || size.height <= 0f) return@Canvas
+                val transformer = CoordinateTransformer.fit(
+                    sourceWidth = viewBoxSize,
+                    sourceHeight = viewBoxSize,
+                    canvasSize = size
+                )
 
                 if (isAnimating) {
                     val progress = animProgress.value
                     for (i in templatePaths.indices) {
-                        val frac = (progress - i).coerceIn(0f, 1f)
-                        if (frac <= 0f) break
-                        if (frac >= 1f) {
-                            drawTemplateStroke(templatePaths[i], unit, AnimationColor)
+                        val fraction = (progress - i).coerceIn(0f, 1f)
+                        if (fraction <= 0f) break
+                        if (fraction >= 1f) {
+                            drawTemplateStroke(templatePaths[i], transformer, AnimationColor)
                         } else {
-                            val m = measures[i]
                             val segment = Path()
-                            m.getSegment(0f, m.length * frac, segment, true)
-                            drawTemplateStroke(segment, unit, AnimationColor)
+                            measures[i].getSegment(
+                                0f,
+                                measures[i].length * fraction,
+                                segment,
+                                true
+                            )
+                            drawTemplateStroke(segment, transformer, AnimationColor)
                         }
                     }
-                } else if (showTemplate) {
-                    templatePaths.forEach { drawTemplateStroke(it, unit, TemplateColor) }
+                } else if (
+                    showTemplate &&
+                    mode == WritingMode.RECALL &&
+                    !isGuidedComplete
+                ) {
+                    // Trong Recall chỉ hé lộ nét đang luyện, không bật toàn bộ đáp án.
+                    val index = completedStrokes.coerceIn(0, templatePaths.lastIndex)
+                    val hintPath = templatePaths[index]
+                    drawTemplateStroke(hintPath, transformer, AnimationColor)
+                    val measure = measures[index]
+                    val start = transformer.toCanvas(measure.getPosition(0f))
+                    drawCircle(
+                        color = NumberColor,
+                        radius = 7f,
+                        center = start
+                    )
+                    drawStrokeDirection(measure, transformer)
+                } else if (showTemplate && mode.showsStrokeGuidance) {
+                    // Các nét đã hoàn thành và nét chờ được làm mờ.
+                    // Chỉ nét kế tiếp được tô xanh để người học tập trung.
+                    templatePaths.forEachIndexed { index, path ->
+                        val color = when {
+                            index < completedStrokes -> CompletedGuideColor
+                            index == completedStrokes && !isGuidedComplete -> AnimationColor
+                            else -> WaitingGuideColor
+                        }
+                        drawTemplateStroke(path, transformer, color)
+                    }
 
-                    // Số thứ tự nét, đặt gần điểm bắt đầu của mỗi nét.
-                    measures.forEachIndexed { i, m ->
-                        val start = m.getPosition(0f)
+                    measures.forEachIndexed { index, measure ->
+                        val start = transformer.toCanvas(measure.getPosition(0f))
+                        val isNextStroke = index == completedStrokes && !isGuidedComplete
+                        val numberColor = if (isNextStroke) NumberColor else CompletedGuideColor
+
+                        drawCircle(
+                            color = numberColor,
+                            radius = if (isNextStroke) 5f else 3f,
+                            center = start
+                        )
                         drawText(
                             textMeasurer = textMeasurer,
-                            text = "${i + 1}",
-                            topLeft = Offset(start.x * unit - 18f, start.y * unit - 40f),
+                            text = "${index + 1}",
+                            topLeft = Offset(start.x - 18f, start.y - 40f),
+                            style = TextStyle(fontSize = 14.sp, color = numberColor)
+                        )
+
+                        if (isNextStroke) {
+                            drawStrokeDirection(measure, transformer)
+                        }
+                    }
+                } else if (
+                    showTemplate &&
+                    (mode == WritingMode.TRACE ||
+                        (mode == WritingMode.RECALL && isGuidedComplete))
+                ) {
+                    templatePaths.forEach { path ->
+                        drawTemplateStroke(path, transformer, TemplateColor)
+                    }
+
+                    measures.forEachIndexed { index, measure ->
+                        val start = transformer.toCanvas(measure.getPosition(0f))
+                        drawText(
+                            textMeasurer = textMeasurer,
+                            text = "${index + 1}",
+                            topLeft = Offset(start.x - 18f, start.y - 40f),
                             style = TextStyle(fontSize = 14.sp, color = NumberColor)
                         )
                     }
                 }
             }
 
-            // --- Lớp 2: nét người dùng ---
             strokes.forEach { drawPath(it, Color.Black, style = InkStyle) }
             drawPath(currentPath, Color.Black, style = InkStyle)
         }
 
-        if (character != null) {
-            Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        if (mode != WritingMode.RECALL || isGuidedComplete) {
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedButton(onClick = { showTemplate = !showTemplate }) {
                     Text(if (showTemplate) "Ẩn mẫu" else "Hiện mẫu")
                 }
                 OutlinedButton(
                     onClick = { playToken++ },
-                    enabled = !isAnimating
+                    enabled = !isAnimating && templatePaths.isNotEmpty()
                 ) {
                     Text("Xem thứ tự nét")
                 }
             }
         }
 
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            OutlinedButton(onClick = {
-                if (strokes.isNotEmpty()) strokes.removeAt(strokes.lastIndex)
-            }) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    if (strokes.isNotEmpty()) {
+                        val removedOrder = strokes.size
+                        val removedMatch = strokeMatches.lastOrNull { it.first == removedOrder }?.second
+                        strokes.removeAt(strokes.lastIndex)
+                        analyzedStrokes.removeAll { it.order == removedOrder }
+                        strokeMatches.removeAll { it.first == removedOrder }
+                        latestAnalysisFailed = false
+                        consecutiveFailedAttempts = 0
+                        if (mode.requiresStrokeValidation && removedMatch?.accepted == true) {
+                            guidedProgress = guidedProgress.undo()
+                            if (mode == WritingMode.RECALL && !guidedProgress.isComplete(totalStrokes)) {
+                                showTemplate = false
+                            }
+                        }
+                        redrawTick++
+                    }
+                },
+                enabled = strokes.isNotEmpty() && canEditStrokes
+            ) {
                 Text("Undo")
             }
-            Button(onClick = {
-                strokes.clear()
-                currentPath.reset()
-                redrawTick++
-            }) {
+
+            Button(
+                modifier = Modifier.weight(1f),
+                onClick = {
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
+                    currentPath.reset()
+                    if (mode.requiresStrokeValidation) {
+                        guidedProgress = guidedProgress.reset()
+                        if (mode == WritingMode.RECALL) showTemplate = false
+                    }
+                    redrawTick++
+                },
+                enabled = (strokes.isNotEmpty() || completedStrokes > 0) && canEditStrokes
+            ) {
                 Text("Xóa hết")
             }
         }
     }
 }
 
+/**
+ * Hiển thị mũi tên nhỏ trên nét đang được hướng dẫn.
+ * Mũi tên chỉ chiều đi từ đầu nét đến cuối nét theo SVG tham chiếu.
+ */
+private fun DrawScope.drawStrokeDirection(
+    measure: PathMeasure,
+    transformer: CoordinateTransformer
+) {
+    if (measure.length <= 0f) return
+
+    val distance = measure.length * 0.35f
+    val sourcePosition = measure.getPosition(distance)
+    val sourceTangent = measure.getTangent(distance)
+    val position = transformer.toCanvas(sourcePosition)
+    val tangentLength = kotlin.math.sqrt(
+        sourceTangent.x * sourceTangent.x + sourceTangent.y * sourceTangent.y
+    )
+    if (tangentLength <= 0f) return
+
+    val direction = Offset(
+        sourceTangent.x / tangentLength,
+        sourceTangent.y / tangentLength
+    )
+    val arrowLength = 13f
+    val arrowHalfWidth = 6f
+    val tip = position + direction * arrowLength
+    val base = tip - direction * arrowLength
+    val perpendicular = Offset(-direction.y, direction.x)
+
+    drawLine(
+        color = AnimationColor,
+        start = base,
+        end = tip,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
+    drawLine(
+        color = AnimationColor,
+        start = tip,
+        end = tip - direction * 7f + perpendicular * arrowHalfWidth,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
+    drawLine(
+        color = AnimationColor,
+        start = tip,
+        end = tip - direction * 7f - perpendicular * arrowHalfWidth,
+        strokeWidth = 3f,
+        cap = StrokeCap.Round
+    )
+}
+
 /** Vẽ một nét mẫu, phóng từ hệ tọa độ dataset sang pixel của canvas. */
-private fun DrawScope.drawTemplateStroke(path: Path, unit: Float, color: Color) {
-    scale(scale = unit, pivot = Offset.Zero) {
-        drawPath(path, color, style = TemplateStyle)
+private fun DrawScope.drawTemplateStroke(
+    path: Path,
+    transformer: CoordinateTransformer,
+    color: Color
+) {
+    translate(left = transformer.offset.x, top = transformer.offset.y) {
+        scale(scale = transformer.scale, pivot = Offset.Zero) {
+            drawPath(path, color, style = TemplateStyle)
+        }
     }
 }
 
