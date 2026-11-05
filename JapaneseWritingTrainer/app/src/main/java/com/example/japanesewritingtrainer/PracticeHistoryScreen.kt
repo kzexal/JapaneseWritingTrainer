@@ -143,7 +143,7 @@ fun PracticeHistoryScreen(
                     needsPractice.forEach { stats ->
                         val character = charactersById[stats.cardId]
                         Text(
-                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Again ${stats.againCount}/${stats.totalAttempts} (${formatPercent(stats.againRate)})",
+                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Again ${stats.againCount}/${stats.ratedAttempts} (${formatPercent(stats.againRate)})",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
