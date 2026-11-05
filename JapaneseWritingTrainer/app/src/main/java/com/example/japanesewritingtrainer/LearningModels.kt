@@ -3,6 +3,7 @@ package com.example.japanesewritingtrainer
 enum class CardStatus {
     NEW,
     LEARNING,
+    RELEARNING,
     REVIEW
 }
 
