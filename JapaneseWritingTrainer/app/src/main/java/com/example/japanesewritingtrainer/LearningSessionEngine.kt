@@ -140,5 +140,41 @@ class LearningSessionCoordinator internal constructor(
         return activeEngine.completeCurrent(updated)
     }
 
+    /**
+     * Đọc tiến độ đã lưu của riêng deck, không phụ thuộc queue của phiên hiện tại.
+     * Card chưa có bản ghi progress được tính là NEW.
+     */
+    suspend fun getDeckProgressSummary(
+        deck: WritingDeck,
+        cards: List<WritingCard>
+    ): DeckProgressSummary {
+        val deckCardIds = cards
+            .filter { it.deckId == deck.id }
+            .map { it.id }
+            .toSet()
+        val progressById = progressRepository.getAll()
+            .filter { it.cardId in deckCardIds }
+            .associateBy { it.cardId }
+
+        val deckCards = cards.filter { it.id in deckCardIds }
+        val learned = deckCards.count { card ->
+            (progressById[card.id]?.status ?: CardStatus.NEW) != CardStatus.NEW
+        }
+        val learning = deckCards.count {
+            progressById[it.id]?.status == CardStatus.LEARNING
+        }
+        val review = deckCards.count {
+            progressById[it.id]?.status == CardStatus.REVIEW
+        }
+
+        return DeckProgressSummary(
+            totalCards = deckCards.size,
+            learnedCards = learned,
+            learningCards = learning,
+            reviewCards = review,
+            newCards = deckCards.size - learned
+        )
+    }
+
     fun snapshot(): LearningSessionSnapshot? = engine?.snapshot
 }
