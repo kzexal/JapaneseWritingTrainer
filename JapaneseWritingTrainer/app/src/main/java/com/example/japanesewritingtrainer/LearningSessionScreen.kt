@@ -43,7 +43,7 @@ fun LearningSessionScreen(
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
     val deck = catalog.decks.firstOrNull { it.characterType == "hiragana" }
     val deckCards = remember(catalog, deck) {
-        deck?.let(catalog::cardsForDeck).orEmpty()
+        deck?.let { catalog.cardsForDeck(it.id) }.orEmpty()
     }
     val charactersById = remember(characters) { characters.associateBy { it.id } }
     val scope = rememberCoroutineScope()
