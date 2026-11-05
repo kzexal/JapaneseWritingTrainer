@@ -1,25 +1,42 @@
 package com.example.japanesewritingtrainer
 
+import android.content.Context
+
 /**
- * Trạng thái vòng đời của một phiên học.
+ * Đánh giá chủ quan sau khi người học đã viết và xem đáp án.
+ * Không lấy StrokeMatchResult.score để tự suy ra rating.
  */
+enum class ReviewRating {
+    AGAIN,
+    HARD,
+    GOOD,
+    EASY
+}
+
+/** Hợp đồng scheduler. FSRS sẽ triển khai interface này ở bước tiếp theo. */
+interface CardReviewScheduler {
+    fun review(
+        progress: CardProgress,
+        rating: ReviewRating,
+        nowEpochMillis: Long
+    ): CardProgress
+}
+
+/** Trạng thái vòng đời của một phiên học. */
 enum class LearningSessionStatus {
     READY,
     IN_PROGRESS,
     COMPLETED
 }
 
-/**
- * Snapshot bất biến để UI quan sát trạng thái phiên học.
- * currentIndex trỏ vào queue; bằng queue.size khi phiên đã hoàn thành.
- */
+/** Snapshot bất biến để UI quan sát trạng thái phiên học. */
 data class LearningSessionSnapshot(
     val plan: LearningSessionPlan,
     val currentIndex: Int,
     val status: LearningSessionStatus
 ) {
     val current: LearningSessionCard?
-        get() = plan.queue.getOrOrNull(currentIndex)
+        get() = plan.queue.getOrNull(currentIndex)
 
     val completedCount: Int
         get() = currentIndex.coerceAtMost(plan.totalCount)
@@ -29,38 +46,23 @@ data class LearningSessionSnapshot(
 
     val progressFraction: Float
         get() = if (totalCount == 0) 1f else completedCount.toFloat() / totalCount
-
-    private fun <T> List<T>.getOrOrNull(index: Int): T? =
-        if (index in indices) get(index) else null
 }
 
 /**
  * Điều phối queue của một phiên học.
- *
  * Engine không quyết định lịch ôn và không tự đánh giá nét viết.
- * Sau khi người học tự chọn Again/Hard/Good/Easy, tầng scheduler tạo
- * CardProgress mới; engine chỉ nhận tiến độ đã được xử lý và chuyển thẻ.
  */
-class LearningSessionEngine(plan: LearningSessionPlan) {
-
+class LearningSessionEngine(private val plan: LearningSessionPlan) {
     private var index = 0
-    private var sessionStatus = when {
-        plan.isEmpty -> LearningSessionStatus.COMPLETED
-        else -> LearningSessionStatus.READY
+    private var sessionStatus = if (plan.isEmpty) {
+        LearningSessionStatus.COMPLETED
+    } else {
+        LearningSessionStatus.READY
     }
 
     val snapshot: LearningSessionSnapshot
-        get() = LearningSessionSnapshot(
-            plan = plan,
-            currentIndex = index,
-            status = sessionStatus
-        )
+        get() = LearningSessionSnapshot(plan, index, sessionStatus)
 
-    private val plan: LearningSessionPlan = plan
-
-    /**
-     * Bắt đầu phiên. Phiên rỗng luôn giữ trạng thái COMPLETED.
-     */
     fun start(): LearningSessionSnapshot {
         if (sessionStatus == LearningSessionStatus.READY) {
             sessionStatus = LearningSessionStatus.IN_PROGRESS
@@ -68,17 +70,11 @@ class LearningSessionEngine(plan: LearningSessionPlan) {
         return snapshot
     }
 
-    /**
-     * Xác nhận card hiện tại đã được đánh giá và cập nhật tiến độ.
-     * Progress phải thuộc đúng card đang hiển thị để tránh lưu nhầm thẻ.
-     */
     fun completeCurrent(updatedProgress: CardProgress): LearningSessionSnapshot {
         check(sessionStatus == LearningSessionStatus.IN_PROGRESS) {
             "Session must be in progress before completing a card"
         }
-        val currentCard = snapshot.current
-            ?: error("There is no current card")
-
+        val currentCard = snapshot.current ?: error("There is no current card")
         require(updatedProgress.cardId == currentCard.card.id) {
             "Progress cardId does not match current card"
         }
@@ -91,4 +87,55 @@ class LearningSessionEngine(plan: LearningSessionPlan) {
         }
         return snapshot
     }
+}
+
+/**
+ * Kết nối session engine với Room repository.
+ * Việc tạo phiên và chấm rating đều lưu tiến độ trước khi trả kết quả cho UI.
+ */
+class LearningSessionCoordinator(
+    context: Context,
+    private val scheduler: CardReviewScheduler
+) {
+    private val progressRepository = CardProgressRepository(context.applicationContext)
+    private var engine: LearningSessionEngine? = null
+
+    suspend fun start(
+        deck: WritingDeck,
+        cards: List<WritingCard>,
+        nowEpochMillis: Long,
+        newCardLimit: Int
+    ): LearningSessionSnapshot {
+        val progress = progressRepository.getAll().associateBy { it.cardId }
+        val plan = LearningSessionPlanner.plan(
+            deck = deck,
+            cards = cards,
+            progressByCardId = progress,
+            nowEpochMillis = nowEpochMillis,
+            newCardLimit = newCardLimit
+        )
+        return LearningSessionEngine(plan).also { engine = it }.start()
+    }
+
+    /**
+     * Ghi nhận rating cho card hiện tại, lưu Room, rồi chuyển queue.
+     * Scheduler là nguồn duy nhất quyết định status và due date mới.
+     */
+    suspend fun rateCurrent(
+        rating: ReviewRating,
+        nowEpochMillis: Long
+    ): LearningSessionSnapshot {
+        val activeEngine = engine ?: error("Start a session before rating a card")
+        val current = activeEngine.snapshot.current
+            ?: error("There is no current card")
+
+        val updated = scheduler.review(current.progress, rating, nowEpochMillis)
+        require(updated.cardId == current.card.id) {
+            "Scheduler returned progress for a different card"
+        }
+        progressRepository.save(updated)
+        return activeEngine.completeCurrent(updated)
+    }
+
+    fun snapshot(): LearningSessionSnapshot? = engine?.snapshot
 }
