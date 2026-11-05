@@ -104,6 +104,16 @@ class DatabaseMigrationTest {
         )
         legacy.execSQL(
             """
+            CREATE INDEX index_practice_log_cardId ON practice_log(cardId)
+            """.trimIndent()
+        )
+        legacy.execSQL(
+            """
+            CREATE INDEX index_practice_log_timestampEpochMillis ON practice_log(timestampEpochMillis)
+            """.trimIndent()
+        )
+        legacy.execSQL(
+            """
             INSERT INTO card_progress (cardId, status, scheduledDays, elapsedDays, reps, lapses, reviewCount, correctCount)
             VALUES
                 ('first_learning', 'LEARNING', 0.01, 0.0, 2, 0, 2, 0),
