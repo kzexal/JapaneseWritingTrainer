@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +32,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.japanesewritingtrainer.ui.theme.JapaneseWritingTrainerTheme
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MainActivity : ComponentActivity() {
@@ -41,6 +43,8 @@ class MainActivity : ComponentActivity() {
             JapaneseWritingTrainerTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val context = LocalContext.current.applicationContext
+                    val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
+                    val practiceLogScope = rememberCoroutineScope()
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
@@ -187,7 +191,20 @@ class MainActivity : ComponentActivity() {
                                             )
                                             WritingCanvas(
                                                 modifier = Modifier.weight(1f),
-                                                character = character
+                                                character = character,
+                                                onPracticeFinished = { mode, durationMs, finishedAt ->
+                                                    practiceLogScope.launch {
+                                                        practiceLogRepository.add(
+                                                            PracticeLog(
+                                                                cardId = character.id,
+                                                                mode = mode,
+                                                                rating = null,
+                                                                durationMs = durationMs,
+                                                                timestampEpochMillis = finishedAt
+                                                            )
+                                                        )
+                                                    }
+                                                }
                                             )
                                         }
                                     }
