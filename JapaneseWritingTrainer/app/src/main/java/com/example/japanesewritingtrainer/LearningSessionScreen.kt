@@ -174,6 +174,7 @@ fun LearningSessionScreen(
                             character = character,
                             initialMode = WritingMode.RECALL,
                             showModeSelector = false,
+                            allowEditingAfterCompletion = false,
                             onCompleted = { awaitingRating = true }
                         )
                     }
@@ -183,6 +184,9 @@ fun LearningSessionScreen(
                             "Bạn nhớ ký tự này tốt đến mức nào?",
                             style = MaterialTheme.typography.titleMedium
                         )
+                        if (errorMessage != null) {
+                            Text(errorMessage.orEmpty(), color = MaterialTheme.colorScheme.error)
+                        }
                         if (isSaving) {
                             CircularProgressIndicator()
                         } else {
