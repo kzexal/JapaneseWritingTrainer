@@ -5,10 +5,22 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 /**
+ * Abstraction để session coordinator có thể kiểm thử độc lập với Room.
+ */
+interface CardProgressStore {
+    override suspend fun get(cardId: String): CardProgress?
+    override suspend fun getAll(): List<CardProgress>
+    override suspend fun save(progress: CardProgress)
+    override suspend fun saveAll(progress: List<CardProgress>)
+    override suspend fun delete(cardId: String)
+    override suspend fun clearAll()
+}
+
+/**
  * Repository là cổng truy cập tiến độ học.
  * Các lớp UI/session không truy vấn Room trực tiếp.
  */
-class CardProgressRepository(context: Context) {
+class CardProgressRepository(context: Context) : CardProgressStore {
 
     private val dao = WritingTrainerDatabase
         .getInstance(context.applicationContext)
