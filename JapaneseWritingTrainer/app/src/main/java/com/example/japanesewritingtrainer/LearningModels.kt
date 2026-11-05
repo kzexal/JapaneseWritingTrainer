@@ -79,3 +79,16 @@ data class CardProgress(
     val accuracy: Double
         get() = if (reviewCount == 0) 0.0 else correctCount.toDouble() / reviewCount
 }
+
+
+/** Tổng quan tiến độ đã lưu của một bộ thẻ. */
+data class DeckProgressSummary(
+    val totalCards: Int,
+    val learnedCards: Int,
+    val learningCards: Int,
+    val reviewCards: Int,
+    val newCards: Int
+) {
+    val completionFraction: Float
+        get() = if (totalCards == 0) 1f else learnedCards.toFloat() / totalCards
+}
