@@ -4,7 +4,7 @@ import androidx.room.Entity
 import androidx.room.Index
 import androidx.room.PrimaryKey
 
-/** Một lần luyện viết đã hoàn tất và được người học đánh giá. */
+/** Một phiên luyện viết; rating có thể null nếu chế độ không yêu cầu tự đánh giá. */
 @Entity(
     tableName = "practice_log",
     indices = [
