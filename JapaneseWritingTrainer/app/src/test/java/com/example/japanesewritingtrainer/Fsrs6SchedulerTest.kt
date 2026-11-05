@@ -30,11 +30,7 @@ class Fsrs6SchedulerTest {
             result()
         })
 
-        val updated = scheduler.review(
-            CardProgress(cardId = "hiragana_a"),
-            ReviewRating.GOOD,
-            now
-        )
+        val updated = scheduler.review(CardProgress(cardId = "hiragana_a"), ReviewRating.GOOD, now)
 
         assertNull(receivedStability)
         assertNull(receivedDifficulty)
@@ -52,11 +48,7 @@ class Fsrs6SchedulerTest {
     fun newAgainCardEntersShortLearningStepAndUsesAgainMemoryState() {
         val scheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ -> result() })
 
-        val updated = scheduler.review(
-            CardProgress(cardId = "hiragana_a"),
-            ReviewRating.AGAIN,
-            now
-        )
+        val updated = scheduler.review(CardProgress(cardId = "hiragana_a"), ReviewRating.AGAIN, now)
 
         assertEquals(CardStatus.LEARNING, updated.status)
         assertEquals(0.212, updated.stabilityDays!!, 0.0)
@@ -132,11 +124,28 @@ class Fsrs6SchedulerTest {
         val updated = scheduler.review(previous, ReviewRating.AGAIN, now)
 
         assertTrue(updated.stabilityDays!! < 10.0)
-        assertEquals(CardStatus.LEARNING, updated.status)
+        assertEquals(CardStatus.RELEARNING, updated.status)
         assertEquals(now + 10 * 60_000L, updated.dueAtEpochMillis)
         assertEquals(2, updated.lapses)
         assertEquals(5, updated.reviewCount)
         assertEquals(3, updated.correctCount)
+    }
+
+    @Test
+    fun repeatedAgainDuringLearningDoesNotRecalculateFsrsMemory() {
+        var calculationCount = 0
+        val scheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+            calculationCount++
+            result()
+        })
+        val first = scheduler.review(CardProgress(cardId = "new"), ReviewRating.AGAIN, now)
+        val second = scheduler.review(first, ReviewRating.AGAIN, now + 60_000L)
+
+        assertEquals(1, calculationCount)
+        assertEquals(CardStatus.LEARNING, second.status)
+        assertEquals(first.stabilityDays, second.stabilityDays)
+        assertEquals(first.difficulty, second.difficulty)
+        assertEquals(0, second.lapses)
     }
 
     @Test
@@ -173,14 +182,10 @@ class Fsrs6SchedulerTest {
             }
         )
 
-        val updated = scheduler.review(
-            CardProgress(cardId = "hiragana_a"),
-            ReviewRating.GOOD,
-            now
-        )
+        val updated = scheduler.review(CardProgress(cardId = "hiragana_a"), ReviewRating.GOOD, now)
 
         assertEquals(0.95, receivedRetention, 0.0)
-        assertEquals(30.0, updated.scheduledDays!!, 0.0)
+        assertEquals(30.0, updated.scheduledDays, 0.0)
         assertEquals(now + 30L * 86_400_000L, updated.dueAtEpochMillis)
     }
 }
