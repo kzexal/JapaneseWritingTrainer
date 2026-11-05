@@ -2,6 +2,7 @@ package com.example.japanesewritingtrainer
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
 private const val DEFAULT_NEW_CARD_LIMIT = 10
@@ -49,6 +51,7 @@ fun LearningSessionScreen(
     val scope = rememberCoroutineScope()
 
     var snapshot by remember { mutableStateOf<LearningSessionSnapshot?>(null) }
+    var deckProgress by remember { mutableStateOf<DeckProgressSummary?>(null) }
     var isLoading by remember { mutableStateOf(true) }
     var isSaving by remember { mutableStateOf(false) }
     var awaitingRating by remember { mutableStateOf(false) }
@@ -68,6 +71,7 @@ fun LearningSessionScreen(
                 nowEpochMillis = System.currentTimeMillis(),
                 newCardLimit = DEFAULT_NEW_CARD_LIMIT
             )
+            deckProgress = coordinator.getDeckProgressSummary(deck, deckCards)
             errorMessage = null
         } catch (exception: Exception) {
             errorMessage = exception.localizedMessage ?: "Không thể bắt đầu phiên học."
@@ -88,6 +92,7 @@ fun LearningSessionScreen(
                     nowEpochMillis = System.currentTimeMillis(),
                     newCardLimit = DEFAULT_NEW_CARD_LIMIT
                 )
+                deckProgress = coordinator.getDeckProgressSummary(selectedDeck, deckCards)
                 errorMessage = null
             } catch (exception: Exception) {
                 errorMessage = exception.localizedMessage ?: "Không thể tải phiên học."
@@ -106,6 +111,9 @@ fun LearningSessionScreen(
                     rating = rating,
                     nowEpochMillis = System.currentTimeMillis()
                 )
+                deck?.let {
+                    deckProgress = coordinator.getDeckProgressSummary(it, deckCards)
+                }
                 awaitingRating = false
                 errorMessage = null
             } catch (exception: Exception) {
@@ -142,13 +150,19 @@ fun LearningSessionScreen(
 
             else -> {
                 val session = snapshot!!
+                deckProgress?.let { progress ->
+                    Text(
+                        "Đã học: ${progress.learnedCards} / ${progress.totalCards}",
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                    Text(
+                        "Mới: ${progress.newCards}  ·  Đang học: ${progress.learningCards}  ·  Ôn tập: ${progress.reviewCards}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
                 Text(
-                    "Tiến độ: ${session.completedCount} / ${session.totalCount}",
+                    "Phiên này: ${session.completedCount} / ${session.totalCount}",
                     style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    "Thẻ mới còn lại trong bộ: ${session.plan.remainingNewCount}",
-                    style = MaterialTheme.typography.bodySmall
                 )
 
                 val current = session.current
@@ -190,27 +204,40 @@ fun LearningSessionScreen(
                         if (isSaving) {
                             CircularProgressIndicator()
                         } else {
-                            Row(
+                            Column(
                                 modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(4.dp),
-                                verticalAlignment = Alignment.CenterVertically
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                OutlinedButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { submitRating(ReviewRating.AGAIN) }
-                                ) { Text("Again") }
-                                OutlinedButton(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { submitRating(ReviewRating.HARD) }
-                                ) { Text("Hard") }
-                                Button(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { submitRating(ReviewRating.GOOD) }
-                                ) { Text("Good") }
-                                Button(
-                                    modifier = Modifier.weight(1f),
-                                    onClick = { submitRating(ReviewRating.EASY) }
-                                ) { Text("Easy") }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    OutlinedButton(
+                                        modifier = Modifier.weight(1f),
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                                        onClick = { submitRating(ReviewRating.AGAIN) }
+                                    ) { Text("Again", maxLines = 1, softWrap = false, fontSize = 14.sp) }
+                                    OutlinedButton(
+                                        modifier = Modifier.weight(1f),
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                                        onClick = { submitRating(ReviewRating.HARD) }
+                                    ) { Text("Hard", maxLines = 1, softWrap = false, fontSize = 14.sp) }
+                                }
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                                        onClick = { submitRating(ReviewRating.GOOD) }
+                                    ) { Text("Good", maxLines = 1, softWrap = false, fontSize = 14.sp) }
+                                    Button(
+                                        modifier = Modifier.weight(1f),
+                                        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 10.dp),
+                                        onClick = { submitRating(ReviewRating.EASY) }
+                                    ) { Text("Easy", maxLines = 1, softWrap = false, fontSize = 14.sp) }
+                                }
                             }
                         }
                     } else if (errorMessage != null) {
