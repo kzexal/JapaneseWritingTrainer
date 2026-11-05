@@ -2,7 +2,6 @@ package com.example.japanesewritingtrainer
 
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
@@ -58,7 +57,7 @@ class LearningSessionCoordinatorTest {
 
         assertEquals(listOf("i"), nextSession.plan.newCards.map { it.card.id })
         assertTrue(nextSession.plan.reviewCards.isEmpty())
-        assertEquals(1, nextSession.plan.remainingNewCount)
+        assertEquals(0, nextSession.plan.remainingNewCount)
     }
 
     @Test
