@@ -100,11 +100,11 @@ fun WritingCanvas(
     // Các trạng thái nét vẽ và tiến trình vẫn được reset theo character?.id.
     var mode by remember { mutableStateOf(initialMode) }
     val latestOnCompleted by rememberUpdatedState(onCompleted)
-    val latestOnPracticeFinished by rememberUpdatedState(onPracticeFinished)
+    val latestOnPracticeFinished = rememberUpdatedState(onPracticeFinished)
     val practiceStartedAtEpochMillis = remember(character?.id, mode) {
         System.currentTimeMillis()
     }
-    var hasPracticeActivity by remember(character?.id, mode) {
+    val hasPracticeActivity = remember(character?.id, mode) {
         mutableStateOf(false)
     }
 
@@ -112,9 +112,9 @@ fun WritingCanvas(
     // Chỉ ghi log nếu phiên thực sự có thao tác viết.
     DisposableEffect(character?.id, mode) {
         onDispose {
-            if (character != null && hasPracticeActivity) {
+            if (character != null && hasPracticeActivity.value) {
                 val finishedAt = System.currentTimeMillis()
-                latestOnPracticeFinished?.invoke(
+                latestOnPracticeFinished.value?.invoke(
                     mode.toPracticeMode(),
                     (finishedAt - practiceStartedAtEpochMillis).coerceAtLeast(0L),
                     finishedAt
@@ -392,7 +392,7 @@ fun WritingCanvas(
                                 currentPath.lineTo(last.x + 0.1f, last.y)
                             }
 
-                            hasPracticeActivity = true
+                            hasPracticeActivity.value = true
                             strokes.add(Path().apply { addPath(currentPath) })
                             val attemptOrder = strokes.size
                             val targetOrder = if (mode.requiresStrokeValidation) {
