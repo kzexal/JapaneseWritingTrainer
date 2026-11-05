@@ -43,6 +43,7 @@ class MainActivity : ComponentActivity() {
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
+                    var showLearningSession by remember { mutableStateOf(false) }
 
                     // Đọc JSON trên background thread để tránh chặn giao diện lúc khởi động.
                     LaunchedEffect(context) {
@@ -56,8 +57,6 @@ class MainActivity : ComponentActivity() {
                                 ?: "Không thể tải dữ liệu Hiragana."
                         }
                     }
-
-                    val selectedCharacter = characters.getOrNull(selectedIndex)
 
                     when {
                         loadError != null -> {
@@ -75,7 +74,10 @@ class MainActivity : ComponentActivity() {
                                 verticalArrangement = Arrangement.Center
                             ) {
                                 CircularProgressIndicator()
-                                Text("Đang tải dữ liệu Hiragana...", modifier = Modifier.padding(top = 12.dp))
+                                Text(
+                                    "Đang tải dữ liệu Hiragana...",
+                                    modifier = Modifier.padding(top = 12.dp)
+                                )
                             }
                         }
 
@@ -85,45 +87,87 @@ class MainActivity : ComponentActivity() {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 8.dp),
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    verticalAlignment = Alignment.CenterVertically
+                                    modifier = Modifier.fillMaxWidth().padding(
+                                        horizontal = 16.dp,
+                                        vertical = 8.dp
+                                    ),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     OutlinedButton(
-                                        onClick = { selectedIndex = (selectedIndex - 1).coerceAtLeast(0) },
-                                        enabled = selectedIndex > 0
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { showLearningSession = false },
+                                        enabled = showLearningSession
                                     ) {
-                                        Text("Trước")
+                                        Text("Luyện tự do")
                                     }
-
-                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(
-                                            text = "${selectedCharacter?.character ?: ""}",
-                                            style = MaterialTheme.typography.titleLarge
-                                        )
-                                        Text("${selectedIndex + 1} / ${characters.size}")
-                                    }
-
                                     Button(
-                                        onClick = {
-                                            selectedIndex = (selectedIndex + 1).coerceAtMost(characters.lastIndex)
-                                        },
-                                        enabled = selectedIndex < characters.lastIndex
+                                        modifier = Modifier.weight(1f),
+                                        onClick = { showLearningSession = true },
+                                        enabled = !showLearningSession
                                     ) {
-                                        Text("Tiếp")
+                                        Text("Ôn tập")
                                     }
                                 }
 
-                                selectedCharacter?.let { character ->
-                                    Text(
-                                        text = "Nhóm: ${character.group.uppercase()} · ${character.reading}",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        modifier = Modifier.padding(bottom = 4.dp)
+                                if (showLearningSession) {
+                                    LearningSessionScreen(
+                                        characters = characters,
+                                        modifier = Modifier.weight(1f)
                                     )
-                                    WritingCanvas(
+                                } else {
+                                    val selectedCharacter = characters.getOrNull(selectedIndex)
+                                    Column(
                                         modifier = Modifier.weight(1f),
-                                        character = character
-                                    )
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth().padding(
+                                                horizontal = 16.dp,
+                                                vertical = 8.dp
+                                            ),
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            OutlinedButton(
+                                                onClick = {
+                                                    selectedIndex = (selectedIndex - 1).coerceAtLeast(0)
+                                                },
+                                                enabled = selectedIndex > 0
+                                            ) {
+                                                Text("Trước")
+                                            }
+
+                                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                                Text(
+                                                    text = selectedCharacter?.character.orEmpty(),
+                                                    style = MaterialTheme.typography.titleLarge
+                                                )
+                                                Text("${selectedIndex + 1} / ${characters.size}")
+                                            }
+
+                                            Button(
+                                                onClick = {
+                                                    selectedIndex = (selectedIndex + 1)
+                                                        .coerceAtMost(characters.lastIndex)
+                                                },
+                                                enabled = selectedIndex < characters.lastIndex
+                                            ) {
+                                                Text("Tiếp")
+                                            }
+                                        }
+
+                                        selectedCharacter?.let { character ->
+                                            Text(
+                                                text = "Nhóm: ${character.group.uppercase()} · ${character.reading}",
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                modifier = Modifier.padding(bottom = 4.dp)
+                                            )
+                                            WritingCanvas(
+                                                modifier = Modifier.weight(1f),
+                                                character = character
+                                            )
+                                        }
+                                    }
                                 }
                             }
                         }
