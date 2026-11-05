@@ -115,6 +115,6 @@ class LearningSessionRoomIntegrationTest {
         assertEquals(2, graduated.reviewCount)
         assertEquals(1, graduated.correctCount)
         assertEquals(2, practiceLogDao.getByCardId("a").size)
-        assertEquals(PracticeMode.REVIEW, practiceLogDao.getByCardId("a").last().mode)
+        assertEquals(PracticeMode.REVIEW, practiceLogDao.getByCardId("a").first().mode)
     }
 }
