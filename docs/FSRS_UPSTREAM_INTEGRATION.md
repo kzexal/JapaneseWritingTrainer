@@ -52,3 +52,41 @@ The script currently builds arm64-v8a and x86_64 and places the generated librar
 ## Important distinction
 
 The upstream crate calculates FSRS memory states and intervals. Anki's full scheduler also applies learning/relearning steps, queue selection, daily limits, fuzzing and deck configuration. Those policies are not automatically supplied by `fsrs::FSRS::next_states` and remain app-owned until deliberately implemented.
+
+
+## Learning and relearning status
+
+The Kotlin scheduler distinguishes:
+- `LEARNING`: a new card is still in its initial learning steps;
+- `RELEARNING`: a previously graduated review card received Again and is recovering through relearning steps;
+- `REVIEW`: the card has graduated to its long-term review schedule.
+
+Again/Hard short retries during Learning or Relearning do not call the FSRS bridge again.
+A new-card Again initializes its FSRS state, and a review lapse updates that state once.
+Successful graduation from a short-step queue is then scheduled through FSRS.
+
+Room version 3 migrates existing `LEARNING` rows with `lapses > 0` to
+`RELEARNING`. The app increments `lapses` only when a Review card receives Again,
+so this preserves the distinction for previously stored records.
+
+## Session difficulty handling — planned feature
+
+A card that receives repeated **Again** ratings within one learning session should be
+recognized as unusually difficult, rather than being treated as an ordinary retry loop.
+
+Planned behavior (not implemented yet):
+- Track consecutive/session-local Again counts per card while the session is active.
+- After a configurable threshold, move the card into a separate difficult-card path
+  instead of immediately repeating the same short retry pattern.
+- Candidate handling: temporarily suspend the card for the remainder of the session,
+  show a focused hint or stroke breakdown, then offer a deliberate retry later.
+- Keep this signal separate from FSRS long-term memory calculations; session difficulty
+  is an application learning policy, not another FSRS rating.
+- Persist attempt history so a later session can adapt, without applying a permanent
+  penalty automatically because of one frustrating session.
+
+Acceptance criteria to define before implementation:
+1. The threshold is configurable and tested at its boundary.
+2. A difficult card cannot monopolize a session after repeated Again ratings.
+3. The learner can explicitly retry a difficult card.
+4. Session-local counts reset for a new session, while durable practice history remains.
