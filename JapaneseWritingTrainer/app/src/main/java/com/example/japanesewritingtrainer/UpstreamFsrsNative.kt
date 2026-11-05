@@ -46,10 +46,15 @@ internal object UpstreamFsrsNative {
     )
 }
 
-internal data class FsrsReviewState(
-    val stability: Double, val difficulty: Double, val intervalDays: Double
+data class FsrsReviewState(
+    val stability: Double,
+    val difficulty: Double,
+    val intervalDays: Double
 )
-internal data class FsrsReviewResult(
-    val again: FsrsReviewState, val hard: FsrsReviewState,
-    val good: FsrsReviewState, val easy: FsrsReviewState
+
+data class FsrsReviewResult(
+    val again: FsrsReviewState,
+    val hard: FsrsReviewState,
+    val good: FsrsReviewState,
+    val easy: FsrsReviewState
 )
