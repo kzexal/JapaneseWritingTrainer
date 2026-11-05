@@ -165,7 +165,7 @@ object StrokeMatcher {
     data class Config(
         val sampleCount: Int = 32,
         val acceptanceScore: Float = 75f,
-        val maxEndpointErrorRatio: Float = 0.12f,
+        val maxEndpointErrorRatio: Float = 0.22f,
         val reversedDirectionScoreCap: Float = 49f,
         val directionDetectionMargin: Float = 1f,
         val minLengthRatio: Float = 0.75f,
