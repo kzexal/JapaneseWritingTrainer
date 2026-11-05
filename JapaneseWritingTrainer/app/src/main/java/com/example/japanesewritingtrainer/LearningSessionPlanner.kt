@@ -2,6 +2,8 @@ package com.example.japanesewritingtrainer
 
 enum class SessionCardKind {
     REVIEW,
+    LEARNING,
+    RELEARNING,
     NEW
 }
 
@@ -13,7 +15,8 @@ data class LearningSessionCard(
 
 /**
  * Một phiên học được tạo từ các Card đến hạn và giới hạn Card mới.
- * Review luôn được xếp trước New, tương tự luồng học mặc định của Anki.
+ * Các thẻ đến hạn được xếp trước New, giữ nguyên loại trạng thái để UI/log
+ * có thể phân biệt Review, Learning và Relearning.
  */
 data class LearningSessionPlan(
     val deckId: String,
@@ -54,11 +57,13 @@ object LearningSessionPlanner {
                 val progress = progressByCardId[card.id] ?: return@mapNotNull null
                 if (!progress.isDue(nowEpochMillis)) return@mapNotNull null
 
-                LearningSessionCard(
-                    card = card,
-                    progress = progress,
-                    kind = SessionCardKind.REVIEW
-                )
+                val kind = when (progress.status) {
+                    CardStatus.LEARNING -> SessionCardKind.LEARNING
+                    CardStatus.RELEARNING -> SessionCardKind.RELEARNING
+                    CardStatus.REVIEW -> SessionCardKind.REVIEW
+                    CardStatus.NEW -> error("New cards cannot be due")
+                }
+                LearningSessionCard(card = card, progress = progress, kind = kind)
             }
             .sortedWith(
                 compareBy<LearningSessionCard> { it.progress.dueAtEpochMillis ?: Long.MAX_VALUE }
