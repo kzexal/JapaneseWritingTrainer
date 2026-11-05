@@ -91,7 +91,7 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
 
 /**
  * Kết nối session engine với Room repository.
- * Việc tạo phiên và chấm rating đều lưu tiến độ trước khi trả kết quả cho UI.
+ * Mỗi lần đánh giá lưu tiến độ + practice log trong cùng transaction.
  */
 class LearningSessionCoordinator internal constructor(
     private val progressRepository: CardProgressStore,
@@ -101,7 +101,9 @@ class LearningSessionCoordinator internal constructor(
         context: Context,
         scheduler: CardReviewScheduler = Fsrs6Scheduler()
     ) : this(CardProgressRepository(context.applicationContext), scheduler)
+
     private var engine: LearningSessionEngine? = null
+    private var currentCardStartedAtEpochMillis: Long? = null
 
     suspend fun start(
         deck: WritingDeck,
@@ -117,12 +119,15 @@ class LearningSessionCoordinator internal constructor(
             nowEpochMillis = nowEpochMillis,
             newCardLimit = newCardLimit
         )
-        return LearningSessionEngine(plan).also { engine = it }.start()
+        return LearningSessionEngine(plan).also {
+            engine = it
+            currentCardStartedAtEpochMillis = nowEpochMillis
+        }.start()
     }
 
     /**
-     * Ghi nhận rating cho card hiện tại, lưu Room, rồi chuyển queue.
-     * Scheduler là nguồn duy nhất quyết định status và due date mới.
+     * Ghi nhận rating, thời gian luyện và lịch sử; sau khi transaction thành công
+     * mới chuyển sang card tiếp theo.
      */
     suspend fun rateCurrent(
         rating: ReviewRating,
@@ -136,8 +141,26 @@ class LearningSessionCoordinator internal constructor(
         require(updated.cardId == current.card.id) {
             "Scheduler returned progress for a different card"
         }
-        progressRepository.save(updated)
-        return activeEngine.completeCurrent(updated)
+
+        val startedAt = currentCardStartedAtEpochMillis ?: nowEpochMillis
+        val log = PracticeLog(
+            cardId = current.card.id,
+            mode = if (current.kind == SessionCardKind.REVIEW) {
+                PracticeMode.REVIEW
+            } else {
+                PracticeMode.RECALL
+            },
+            rating = rating,
+            durationMs = (nowEpochMillis - startedAt).coerceAtLeast(0L),
+            timestampEpochMillis = nowEpochMillis
+        )
+
+        progressRepository.saveReview(updated, log)
+        val next = activeEngine.completeCurrent(updated)
+        if (next.current != null) {
+            currentCardStartedAtEpochMillis = nowEpochMillis
+        }
+        return next
     }
 
     /**
