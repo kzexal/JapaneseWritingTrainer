@@ -93,11 +93,12 @@ fn calculate_json(input_json: &str) -> String {
 }
 
 /// Instance native method on the Kotlin object; JNI receives JObject ("this").
+#[allow(non_snake_case)]
 #[no_mangle]
 pub extern "system" fn Java_com_example_japanesewritingtrainer_UpstreamFsrsNative_nativeReview(
-    mut env: JNIEnv,
-    _this: JObject,
-    input_json: JString,
+    mut env: JNIEnv<'_>,
+    _this: JObject<'_>,
+    input_json: JString<'_>,
 ) -> jstring {
     let input: String = match env.get_string(&input_json) {
         Ok(value) => value.into(),
