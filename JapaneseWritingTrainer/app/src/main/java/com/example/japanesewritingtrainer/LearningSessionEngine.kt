@@ -142,16 +142,16 @@ class LearningSessionCoordinator internal constructor(
             "Scheduler returned progress for a different card"
         }
 
-        val startedAt = currentCardStartedAtEpochMillis ?: nowEpochMillis
         val log = PracticeLog(
             cardId = current.card.id,
-            mode = if (current.kind == SessionCardKind.REVIEW) {
+            mode = if (current.kind != SessionCardKind.NEW) {
                 PracticeMode.REVIEW
             } else {
                 PracticeMode.RECALL
             },
             rating = rating,
-            durationMs = (nowEpochMillis - startedAt).coerceAtLeast(0L),
+            durationMs = (nowEpochMillis - (currentCardStartedAtEpochMillis ?: nowEpochMillis))
+                .coerceAtLeast(0L),
             timestampEpochMillis = nowEpochMillis
         )
 
@@ -184,7 +184,7 @@ class LearningSessionCoordinator internal constructor(
             (progressById[card.id]?.status ?: CardStatus.NEW) != CardStatus.NEW
         }
         val learning = deckCards.count {
-            progressById[it.id]?.status == CardStatus.LEARNING
+            progressById[it.id]?.status in setOf(CardStatus.LEARNING, CardStatus.RELEARNING)
         }
         val review = deckCards.count {
             progressById[it.id]?.status == CardStatus.REVIEW
