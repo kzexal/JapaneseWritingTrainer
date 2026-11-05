@@ -32,6 +32,30 @@ class PracticeStatisticsTest {
         assertEquals(1.0, i.successRate, 0.0)
     }
 
+
+    @Test
+    fun unratedFreePracticeDoesNotAffectRatingPercentages() {
+        val logs = listOf(
+            log("hiragana_a", ReviewRating.AGAIN, 1_000L, 100L),
+            log("hiragana_a", ReviewRating.GOOD, 2_000L, 200L),
+            PracticeLog(
+                cardId = "hiragana_a",
+                mode = PracticeMode.TRACE,
+                rating = null,
+                durationMs = 8_000L,
+                timestampEpochMillis = 300L
+            )
+        )
+
+        val stats = buildCharacterPracticeStats(logs).single()
+
+        assertEquals(3, stats.totalAttempts)
+        assertEquals(2, stats.ratedAttempts)
+        assertEquals(0.5, stats.againRate, 0.0)
+        assertEquals(0.5, stats.successRate, 0.0)
+        assertEquals(11_000L, stats.totalDurationMs)
+    }
+
     @Test
     fun sortsCharactersByMostRecentPractice() {
         val logs = listOf(
