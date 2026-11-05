@@ -61,6 +61,34 @@ class LearningSessionCoordinatorTest {
     }
 
     @Test
+    fun deckProgressSummaryCountsCardsSavedAcrossSessions() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = LearningSessionCoordinator(store)
+
+        coordinator.start(deck, cards, now, newCardLimit = 2)
+        coordinator.rateCurrent(ReviewRating.GOOD, now)
+
+        val summary = coordinator.getDeckProgressSummary(deck, cards)
+
+        assertEquals(2, summary.totalCards)
+        assertEquals(1, summary.learnedCards)
+        assertEquals(1, summary.reviewCards)
+        assertEquals(0, summary.learningCards)
+        assertEquals(1, summary.newCards)
+    }
+
+    @Test
+    fun deckProgressSummaryTreatsCardsWithoutSavedRowsAsNew() = runBlocking {
+        val coordinator = LearningSessionCoordinator(InMemoryProgressStore())
+
+        val summary = coordinator.getDeckProgressSummary(deck, cards)
+
+        assertEquals(2, summary.totalCards)
+        assertEquals(0, summary.learnedCards)
+        assertEquals(2, summary.newCards)
+    }
+
+    @Test
     fun persistenceFailureDoesNotAdvanceTheSession() = runBlocking {
         val store = InMemoryProgressStore().apply { failWrites = true }
         val coordinator = LearningSessionCoordinator(store)
