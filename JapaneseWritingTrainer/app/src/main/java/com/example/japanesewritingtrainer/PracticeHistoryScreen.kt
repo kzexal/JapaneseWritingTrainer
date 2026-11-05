@@ -47,12 +47,12 @@ fun PracticeHistoryScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val characterStats = remember(logs) { buildCharacterPracticeStats(logs) }
     val needsPractice = remember(characterStats) {
-        characterStats.filter { it.totalAttempts >= 2 }
+        characterStats.filter { it.ratedAttempts >= 2 }
             .sortedByDescending { it.againRate }
             .take(3)
     }
     val rememberedWell = remember(characterStats) {
-        characterStats.filter { it.totalAttempts >= 2 && it.successfulAttempts > 0 }
+        characterStats.filter { it.ratedAttempts >= 2 && it.successfulAttempts > 0 }
             .sortedByDescending { it.successRate }
             .take(3)
     }
@@ -123,7 +123,7 @@ fun PracticeHistoryScreen(
                 ) {
                     Text("Chưa có lịch sử luyện viết.", style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "Hoàn thành một thẻ trong chế độ Ôn tập, kết quả sẽ xuất hiện ở đây.",
+                        "Luyện viết ở chế độ tự do hoặc hoàn thành một thẻ ôn tập để lưu lịch sử tại đây.",
                         style = MaterialTheme.typography.bodyMedium
                     )
                 }
@@ -188,7 +188,11 @@ fun PracticeHistoryScreen(
                                         style = MaterialTheme.typography.titleMedium
                                     )
                                     Text(
-                                        "${log.mode.toVietnameseLabel()} · ${log.rating.toVietnameseLabel()}",
+                                        if (log.rating == null) {
+                                            log.mode.toVietnameseLabel()
+                                        } else {
+                                            "${log.mode.toVietnameseLabel()} · ${log.rating.toVietnameseLabel()}"
+                                        },
                                         style = MaterialTheme.typography.bodyMedium
                                     )
                                     Text(
