@@ -36,8 +36,8 @@ data class WritingCard(
 /**
  * Tiến độ của một Card, độc lập với nội dung Card.
  *
- * stability/difficulty là các tham số ghi nhớ theo định hướng FSRS.
- * Scheduler sẽ tính và cập nhật chúng ở giai đoạn sau.
+ * stability/difficulty là trạng thái ghi nhớ do FSRS-6 tính toán và cập nhật
+ * sau mỗi lần người học tự đánh giá kết quả viết.
  */
 data class CardProgress(
     val cardId: String,
