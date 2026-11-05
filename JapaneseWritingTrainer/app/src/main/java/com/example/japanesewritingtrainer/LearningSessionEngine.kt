@@ -13,7 +13,7 @@ enum class ReviewRating {
     EASY
 }
 
-/** Hợp đồng scheduler. FSRS sẽ triển khai interface này ở bước tiếp theo. */
+/** Hợp đồng scheduler; Fsrs6Scheduler là implementation mặc định của ứng dụng. */
 interface CardReviewScheduler {
     fun review(
         progress: CardProgress,
