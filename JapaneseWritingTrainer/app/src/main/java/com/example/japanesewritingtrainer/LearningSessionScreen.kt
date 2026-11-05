@@ -166,7 +166,12 @@ fun LearningSessionScreen(
                 if (current != null) {
                     val character = charactersById[current.card.characterId]
                     Text(
-                        if (current.kind == SessionCardKind.REVIEW) "Ôn tập đến hạn" else "Học thẻ mới",
+                        when (current.kind) {
+                            SessionCardKind.REVIEW -> "Ôn tập đến hạn"
+                            SessionCardKind.LEARNING -> "Học tiếp"
+                            SessionCardKind.RELEARNING -> "Học lại sau khi quên"
+                            SessionCardKind.NEW -> "Học thẻ mới"
+                        },
                         style = MaterialTheme.typography.labelLarge
                     )
 
