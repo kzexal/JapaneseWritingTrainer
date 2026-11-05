@@ -173,6 +173,7 @@ fun WritingCanvas(
                     analyzedStrokes.clear()
                     strokeMatches.clear()
                     latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
                     currentPath.reset()
                     guidedProgress = guidedProgress.reset()
                     showTemplate = true
@@ -555,6 +556,7 @@ fun WritingCanvas(
                         analyzedStrokes.removeAll { it.order == removedOrder }
                         strokeMatches.removeAll { it.first == removedOrder }
                         latestAnalysisFailed = false
+                        consecutiveFailedAttempts = 0
                         if (mode.requiresStrokeValidation && removedMatch?.accepted == true) {
                             guidedProgress = guidedProgress.undo()
                             if (mode == WritingMode.RECALL && !guidedProgress.isComplete(totalStrokes)) {
@@ -576,6 +578,7 @@ fun WritingCanvas(
                     analyzedStrokes.clear()
                     strokeMatches.clear()
                     latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
                     currentPath.reset()
                     if (mode.requiresStrokeValidation) {
                         guidedProgress = guidedProgress.reset()
