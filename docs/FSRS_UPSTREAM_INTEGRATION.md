@@ -1,39 +1,54 @@
-# Upstream FSRS integration plan
+# Upstream FSRS integration
 
 ## Goal
 
-Replace the hand-maintained FSRS-6 math in `Fsrs6Scheduler` with the upstream FSRS implementation used by Anki, while keeping the app's domain models, Room persistence, session engine, and UI independent from the scheduler.
+Use the upstream Rust FSRS crate pinned by Anki while keeping app-specific learning policy in Kotlin. The Room schema, Session Engine, Coordinator and Compose UI must not depend on JNI types.
 
-## Upstream source
+## Pinned upstream implementation
 
-- Anki: https://github.com/ankitects/anki
-- Anki pins the Rust crate `fsrs = 6.6.2` in its Cargo workspace.
-- The crate source: https://github.com/open-spaced-repetition/fsrs-rs
-- Crate license: BSD-3-Clause (retain copyright/license notices when redistributing).
-- Anki application/workspace license: AGPL-3.0-or-later. Reusing the complete Anki scheduler/application code is a separate licensing decision; non-commercial personal use does not itself waive license terms.
+- Rust crate: fsrs 6.6.2
+- Source: https://github.com/open-spaced-repetition/fsrs-rs/tree/v6.6.2
+- License: BSD-3-Clause. Preserve the upstream license and attribution when distributing the native library.
+- The whole Anki application/workspace is AGPL-3.0-or-later; this project uses the separately published fsrs crate, not Anki's whole application code.
 
-## Integration boundary
+## Current bridge contract
 
-Keep `CardReviewScheduler` as the Kotlin-facing interface. Implement an adapter backed by the upstream Rust `fsrs` crate through Android JNI (or a small maintained binding), and map only these values across the boundary:
+The JNI boundary accepts:
+- stability and difficulty, both null for a new card or both supplied for an existing card;
+- elapsed whole days;
+- desired retention.
 
-- prior memory state (stability, difficulty; absent for a new card)
-- elapsed time in days
-- rating (Again/Hard/Good/Easy)
-- desired retention and maximum interval
-- returned memory state and interval
+It returns the four upstream outcomes (Again, Hard, Good, Easy), each containing stability, difficulty and the raw interval in days.
 
-The Kotlin layer continues to own the app-specific learning policy, card status transitions, due timestamps, and counters. This separation prevents upstream algorithm code from becoming coupled to Room entities or Compose.
+The Rust crate's own `FSRS::next_states` API is the source of truth. The bridge must not reimplement FSRS math. The Kotlin layer converts the selected raw interval to the app's day/step policy and owns due timestamps, status transitions, counters, learning/relearning steps and queue selection.
 
-## Acceptance criteria
+## Build on Windows
 
-1. Pin the upstream FSRS crate version; do not track an unpinned `main`.
-2. Preserve BSD-3-Clause license text and attribution in the bundled source/native artifact.
-3. Add upstream-reference test vectors for new, same-day, interday, and lapse reviews.
-4. Verify the adapter output against the upstream crate for all vectors (tolerance for floating-point values; exact rating/status mapping).
-5. Keep existing session, Room, and UI tests passing.
-6. Remove the local mathematical implementation only after parity tests pass.
-7. Document Android NDK/Cargo build prerequisites and ensure CI can build all supported ABIs.
+Prerequisites:
+1. Rust stable via rustup (Rust 1.85 or newer because the pinned crate uses edition 2024).
+2. Android Studio with Android SDK and NDK installed.
+3. cargo-ndk: `cargo install cargo-ndk`.
+
+From the repository's Android project root:
+
+```powershell
+cd native
+.\build-android.ps1
+cd ..
+.\gradlew.bat :app:assembleDebug
+```
+
+The script currently builds arm64-v8a and x86_64 and places the generated libraries in `app/src/main/jniLibs`. Generated binaries are build outputs; do not commit them unless the repository intentionally adopts checked-in native artifacts.
+
+## Tests and acceptance criteria
+
+- Rust parity tests compare every returned rating and state field against a direct call to the pinned upstream crate for both a new card and an existing card.
+- Android instrumentation tests verify that the packaged .so loads and that JNI returns all four rating states.
+- Before replacing the Kotlin scheduler, add parity vectors for new, same-day, interday and lapse reviews, and verify the app's step/status behavior separately.
+- Keep the existing Session Engine, Room, and UI tests passing.
+- Remove the Kotlin FSRS math only after parity and regression tests pass.
+- CI checks Rust formatting, unit tests, clippy, and Android ABI compilation.
 
 ## Important distinction
 
-The upstream `fsrs` crate implements the FSRS memory model and scheduling calculations. Anki's complete scheduler also includes queue selection, learning/relearning steps, daily limits, fuzzing, and deck configuration. Those policies should be ported deliberately rather than assumed to be provided by the crate.
+The upstream crate calculates FSRS memory states and intervals. Anki's full scheduler also applies learning/relearning steps, queue selection, daily limits, fuzzing and deck configuration. Those policies are not automatically supplied by `fsrs::FSRS::next_states` and remain app-owned until deliberately implemented.
