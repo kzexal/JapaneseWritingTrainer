@@ -157,7 +157,7 @@ fun PracticeHistoryScreen(
                     rememberedWell.forEach { stats ->
                         val character = charactersById[stats.cardId]
                         Text(
-                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Good/Easy ${stats.successfulAttempts}/${stats.totalAttempts} (${formatPercent(stats.successRate)})",
+                            "${character?.character ?: stats.cardId} · ${character?.reading.orEmpty()}  —  Good/Easy ${stats.successfulAttempts}/${stats.ratedAttempts} (${formatPercent(stats.successRate)})",
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
