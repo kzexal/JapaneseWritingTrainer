@@ -40,6 +40,36 @@ class Fsrs6SchedulerEdgeCasesTest {
     }
 
     @Test
+    fun relearningAgainKeepsRelearningStatusAndDoesNotUpdateFsrsState() {
+        var calculationCount = 0
+        val testScheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+            calculationCount++
+            FsrsReviewResult(
+                again = FsrsReviewState(0.1, 9.0, 1.0),
+                hard = FsrsReviewState(0.2, 8.0, 2.0),
+                good = FsrsReviewState(1.0, 6.0, 2.0),
+                easy = FsrsReviewState(2.0, 4.0, 3.0)
+            )
+        })
+        val relearning = CardProgress(
+            cardId = "hiragana_ka",
+            status = CardStatus.RELEARNING,
+            stabilityDays = 0.5,
+            difficulty = 8.0,
+            lapses = 2,
+            dueAtEpochMillis = now
+        )
+
+        val result = testScheduler.review(relearning, ReviewRating.AGAIN, now)
+
+        assertEquals(0, calculationCount)
+        assertEquals(CardStatus.RELEARNING, result.status)
+        assertEquals(0.5, result.stabilityDays!!, 0.0)
+        assertEquals(8.0, result.difficulty!!, 0.0)
+        assertEquals(2, result.lapses)
+    }
+
+    @Test
     fun goodAndEasyGraduateLearningCardsToReview() {
         listOf(ReviewRating.GOOD, ReviewRating.EASY).forEach { rating ->
             val learning = CardProgress(
@@ -61,7 +91,7 @@ class Fsrs6SchedulerEdgeCasesTest {
     @Test
     fun reviewWithClockEarlierThanLastReviewDoesNotProduceNegativeElapsedTime() {
         var receivedElapsedDays = -1
-        val scheduler = Fsrs6Scheduler(calculateStates = { _, _, elapsed, _ ->
+        val testScheduler = Fsrs6Scheduler(calculateStates = { _, _, elapsed, _ ->
             receivedElapsedDays = elapsed
             FsrsReviewResult(
                 again = FsrsReviewState(0.2, 8.0, 1.0),
@@ -79,7 +109,7 @@ class Fsrs6SchedulerEdgeCasesTest {
             lastReviewedAtEpochMillis = now + 1_000L
         )
 
-        val result = scheduler.review(previous, ReviewRating.GOOD, now)
+        val result = testScheduler.review(previous, ReviewRating.GOOD, now)
 
         assertEquals(0, receivedElapsedDays)
         assertEquals(0.0, result.elapsedDays, 0.0)
