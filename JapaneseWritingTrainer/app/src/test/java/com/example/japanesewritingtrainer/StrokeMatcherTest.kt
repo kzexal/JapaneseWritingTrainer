@@ -120,7 +120,7 @@ class StrokeMatcherTest {
         )
         val result = StrokeMatcher.match(
             reference,
-            userStroke(gentlyCurved, length = 81.6f),
+            userStroke(gentlyCurved, length = 80.647f),
             viewBoxSize = 109f
         )
 
