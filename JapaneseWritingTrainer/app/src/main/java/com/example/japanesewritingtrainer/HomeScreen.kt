@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -36,10 +37,14 @@ fun HomeScreen(
 ) {
     val context = LocalContext.current.applicationContext
     val repository = remember(context) { CardProgressRepository(context) }
+    val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     var progressById by remember { mutableStateOf<Map<String, CardProgress>>(emptyMap()) }
+    var newCardsStudiedToday by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(repository, characters) {
+    LaunchedEffect(repository, practiceLogRepository, characters) {
         progressById = repository.getAll().associateBy { it.cardId }
+        newCardsStudiedToday = practiceLogRepository
+            .countDistinctNewCardsSince(localDayStartEpochMillis())
     }
 
     val now = System.currentTimeMillis()
@@ -50,7 +55,8 @@ fun HomeScreen(
         progressById[it.id]?.isDue(now) == true
     }
     val newCount = characters.size - learnedCount
-    val availableNewCount = minOf(newCount, newCardsPerDay)
+    val remainingDailyNewCount = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
+    val availableNewCount = minOf(newCount, remainingDailyNewCount)
 
     Column(
         modifier = modifier.fillMaxSize().padding(20.dp),
@@ -106,7 +112,8 @@ fun HomeScreen(
                     style = MaterialTheme.typography.bodyMedium
                 )
                 Text(
-                    "Giới hạn hôm nay: tối đa $availableNewCount chữ mới.",
+                    "Đã học mới hôm nay: $newCardsStudiedToday / $newCardsPerDay. " +
+                        "Còn có thể học $availableNewCount chữ mới.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
