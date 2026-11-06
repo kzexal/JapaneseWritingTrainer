@@ -207,6 +207,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thêm test thứ tự due queue theo thời điểm đến hạn, dùng thứ tự deck để phân định khi trùng thời điểm.
 - [x] Thêm Room integration test xác nhận daily new-card limit vẫn được giữ khi bắt đầu phiên mới trong cùng ngày.
 - [ ] Hoàn tất kiểm chứng các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING trên toàn bộ rating.
+- [x] Bổ sung scheduler test matrix cho cả bốn rating ở trạng thái LEARNING, RELEARNING và REVIEW; chờ chạy xác nhận trên máy phát triển.
 - [ ] Chạy các test mới cho daily limit, due queue và retry thẻ khó; kiểm tra thêm trường hợp hết hàng đợi trên emulator.
 - [ ] Kiểm tra đóng/mở ứng dụng hoặc rời phiên giữa chừng.
 - [ ] Chạy `testDebugUnitTest` và `assembleDebug` trực tiếp từ Android Studio/Gradle; chạy instrumentation tests trên emulator cho các luồng Room. Không phụ thuộc GitHub Actions để xác minh.
