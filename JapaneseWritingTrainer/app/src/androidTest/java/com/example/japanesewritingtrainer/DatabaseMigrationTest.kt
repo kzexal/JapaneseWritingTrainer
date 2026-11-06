@@ -56,7 +56,23 @@ class DatabaseMigrationTest {
 
         try {
             val progress = migrated.cardProgressDao().getByCardId("hiragana_a")
-            assertEquals(CardStatus.REVIEW.name, progress?.status)
+            assertEquals(
+                CardProgress(
+                    cardId = "hiragana_a",
+                    status = CardStatus.REVIEW,
+                    dueAtEpochMillis = 123456L,
+                    stabilityDays = 3.0,
+                    difficulty = 5.0,
+                    scheduledDays = 2.0,
+                    elapsedDays = 1.0,
+                    reps = 2,
+                    lapses = 0,
+                    reviewCount = 2,
+                    correctCount = 1,
+                    lastReviewedAtEpochMillis = 100000L
+                ),
+                progress?.toDomain()
+            )
             assertEquals(0, migrated.practiceLogDao().count())
         } finally {
             migrated.close()
@@ -121,6 +137,12 @@ class DatabaseMigrationTest {
                 ('review_card', 'REVIEW', 3.0, 2.0, 3, 0, 3, 3)
             """.trimIndent()
         )
+        legacy.execSQL(
+            """
+            INSERT INTO practice_log (id, cardId, mode, rating, durationMs, timestampEpochMillis)
+            VALUES (7, 'lapsed_learning', 'REVIEW', 'AGAIN', 4500, 987654)
+            """.trimIndent()
+        )
         legacy.version = 2
         legacy.close()
 
@@ -140,6 +162,19 @@ class DatabaseMigrationTest {
             assertEquals(
                 CardStatus.REVIEW.name,
                 migrated.cardProgressDao().getByCardId("review_card")?.status
+            )
+            assertEquals(
+                listOf(
+                    PracticeLog(
+                        id = 7L,
+                        cardId = "lapsed_learning",
+                        mode = PracticeMode.REVIEW,
+                        rating = ReviewRating.AGAIN,
+                        durationMs = 4500L,
+                        timestampEpochMillis = 987654L
+                    )
+                ),
+                migrated.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
             )
         } finally {
             migrated.close()
