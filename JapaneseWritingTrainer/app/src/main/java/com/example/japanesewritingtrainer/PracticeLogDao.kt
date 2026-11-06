@@ -21,6 +21,13 @@ interface PracticeLogDao {
     @Query("SELECT COUNT(*) FROM practice_log")
     suspend fun count(): Int
 
+    /** Số thẻ mới khác nhau đã được đánh giá trong ngày; các lần Again lặp lại không tính thêm. */
+    @Query(
+        "SELECT COUNT(DISTINCT cardId) FROM practice_log " +
+            "WHERE mode = 'RECALL' AND rating IS NOT NULL AND timestampEpochMillis >= :sinceEpochMillis"
+    )
+    suspend fun countDistinctNewCardsSince(sinceEpochMillis: Long): Int
+
     @Query("DELETE FROM practice_log")
     suspend fun deleteAll()
 }
