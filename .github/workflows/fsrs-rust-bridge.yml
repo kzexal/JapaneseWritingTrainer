@@ -53,9 +53,9 @@ jobs:
         working-directory: JapaneseWritingTrainer/native/fsrs-bridge
         run: cargo build --release
 
-      - name: Install Android NDK
+      - name: Install Android SDK platform and NDK
         run: |
-          sdkmanager --install "ndk;27.2.12479018"
+          sdkmanager --install "platforms;android-37" "ndk;27.2.12479018"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
 
       - name: Install Rust Android targets and cargo-ndk
