@@ -72,6 +72,39 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun invalidFsrsValuesDoNotReplaceExistingProgress() = runBlocking {
+        val existing = CardProgress(
+            cardId = "hiragana_u",
+            status = CardStatus.REVIEW,
+            stabilityDays = 8.0,
+            difficulty = 4.0,
+            scheduledDays = 8.0,
+            elapsedDays = 2.0,
+            reps = 4,
+            reviewCount = 4,
+            correctCount = 3
+        )
+        database.cardProgressDao().upsert(existing.toEntity())
+
+        val validBackup = manager.createBackupJson()
+        val invalidBackup = validBackup.replace(
+            "\"scheduledDays\": 8.0",
+            "\"scheduledDays\": -1.0"
+        )
+        assertTrue(invalidBackup != validBackup)
+
+        val failure = runCatching {
+            manager.restoreFromJson(invalidBackup)
+        }.exceptionOrNull()
+
+        assertTrue(failure is IllegalArgumentException)
+        assertEquals(
+            existing,
+            database.cardProgressDao().getByCardId("hiragana_u")?.toDomain()
+        )
+    }
+
+    @Test
     fun unsupportedBackupDoesNotDeleteExistingProgress() = runBlocking {
         val progress = CardProgress(cardId = "hiragana_i", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(progress.toEntity())
