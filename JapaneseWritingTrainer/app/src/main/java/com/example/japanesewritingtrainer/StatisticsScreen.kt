@@ -74,6 +74,7 @@ fun StatisticsScreen(
     val practicedIds = deckProgress.filter { it.reviewCount > 0 }.map { it.cardId }.toSet() +
         logs.asSequence().map { it.cardId }.filter { it in characterIds }.toSet()
     val practicedCards = practicedIds.size
+    val streak = remember(logs) { calculatePracticeStreak(logs) }
     val totalDuration = totalPracticeDurationMs(logs)
     val completion = if (totalCards == 0) 0f else (learned.toFloat() / totalCards).coerceIn(0f, 1f)
 
@@ -131,6 +132,14 @@ fun StatisticsScreen(
             StatisticValueCard("Đã luyện", "$practicedCards/$totalCards", Modifier.weight(1f))
             StatisticValueCard("Lượt ôn", totalReviews.toString(), Modifier.weight(1f))
             StatisticValueCard("Chính xác", "$accuracy%", Modifier.weight(1f))
+        }
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            StatisticValueCard("Chuỗi hiện tại", "${streak.currentDays} ngày", Modifier.weight(1f))
+            StatisticValueCard("Kỷ lục", "${streak.longestDays} ngày", Modifier.weight(1f))
         }
 
         Card(modifier = Modifier.fillMaxWidth()) {
