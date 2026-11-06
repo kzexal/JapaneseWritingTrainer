@@ -127,6 +127,7 @@ fun HomeScreen(
                 )
                 Button(
                     onClick = onStartLearning,
+                    enabled = dueCount > 0 || availableNewCount > 0,
                     modifier = Modifier.fillMaxWidth()
                 ) {
                     Text(if (dueCount > 0) "Bắt đầu ôn tập" else "Bắt đầu học")
