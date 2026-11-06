@@ -358,6 +358,7 @@ class MainActivity : ComponentActivity() {
                                             WritingCanvas(
                                                 modifier = Modifier.weight(1f),
                                                 character = character,
+                                                initialMode = WritingMode.FREE,
                                                 showGrid = showGrid,
                                                 showHints = showHints,
                                                 onPracticeFinished = { mode, durationMs, finishedAt ->
