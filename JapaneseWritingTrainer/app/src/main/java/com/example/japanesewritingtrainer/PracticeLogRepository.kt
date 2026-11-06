@@ -18,6 +18,9 @@ class PracticeLogRepository internal constructor(
 
     suspend fun count(): Int = dao.count()
 
+    suspend fun countDistinctNewCardsSince(sinceEpochMillis: Long): Int =
+        dao.countDistinctNewCardsSince(sinceEpochMillis)
+
     suspend fun add(log: PracticeLog): Long = dao.insert(log.toEntity())
 
     suspend fun clearAll() = dao.deleteAll()
