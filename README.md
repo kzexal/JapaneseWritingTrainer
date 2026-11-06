@@ -36,6 +36,15 @@ Dữ liệu SVG thứ tự nét trong \`app/src/main/assets/characters/hiragana.
 - Source project: [https://github.com/KanjiVG/kanjivg](https://github.com/KanjiVG/kanjivg).
 - Tệp dữ liệu chuyển đổi từ KanjiVG được phân phối theo CC BY-SA 3.0. Khi sửa đổi hoặc phân phối lại dữ liệu này, hãy giữ ghi công và tuân thủ điều khoản ShareAlike của giấy phép.
 
+Có thể tạo lại dataset bằng script ở thư mục `JapaneseWritingTrainer/tools/`:
+
+```powershell
+cd JapaneseWritingTrainer
+python tools/generate_hiragana.py
+```
+
+Script tải SVG nguồn, kiểm tra đủ 46 ký tự, ID duy nhất, số nét và thứ tự nét liên tục trước khi ghi đè JSON.
+
 Mã nguồn ứng dụng và dữ liệu bên thứ ba là các thành phần riêng biệt; giấy phép của dataset không tự động áp dụng cho toàn bộ mã nguồn ứng dụng.
 
 ## Cấu trúc chính
