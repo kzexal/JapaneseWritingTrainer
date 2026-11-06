@@ -83,7 +83,7 @@ On Windows, use `gradlew.bat` instead of `./gradlew`.
 - JNI-dependent JVM tests require the host Rust shared library to be available to the test JVM. Build the host library first and set `java.library.path` to `native/fsrs-bridge/target/release`.
 - Android ABI libraries must be built separately for the ABIs packaged by the app. A host library is not a substitute for Android `.so` files.
 - Run instrumentation tests on an emulator or physical device when changing Room, migrations, Android integration, backup/restore, or device-specific behavior.
-- Do not claim tests passed unless the command or CI result was actually observed.
+- Do not claim tests passed unless the local Gradle/Rust command result or Android Studio test result was actually observed.
 - If a check cannot run in the current environment, state exactly which check remains unverified and why.
 - Do not repeatedly rerun checks that have already passed when no relevant code has changed.
 
