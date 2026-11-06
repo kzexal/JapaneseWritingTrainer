@@ -8,6 +8,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -270,35 +271,21 @@ fun WritingCanvas(
                     }
                 )
             }
-            if (mode == WritingMode.RECALL &&
-                consecutiveFailedAttempts >= 2 &&
-                !isGuidedComplete
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        "Thử viết chậm hơn. Bạn có thể xem gợi ý nét hiện tại.",
-                        modifier = Modifier.weight(1f),
-                        color = Color(0xFFEF6C00)
-                    )
-                    OutlinedButton(onClick = { showTemplate = !showTemplate }) {
-                        Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
-                    }
-                }
-            }
         }
 
-        Canvas(
+        // Canvas chiếm toàn bộ vùng linh hoạt. Gợi ý được phủ lên Canvas thay vì
+        // thêm một hàng vào Column, nhờ đó không làm thay đổi kích thước vùng vẽ
+        // hoặc đẩy các nút Undo / Xóa hết xuống ngoài màn hình.
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
-                // Dùng phần chiều cao còn lại để giữ các nút điều khiển luôn hiển thị.
-                // Khi có thông báo lỗi hoặc nội dung bổ sung, vùng vẽ sẽ tự co lại.
                 .weight(1f)
-                .background(Color.White)
-                .pointerInput(mode, character?.id, totalStrokes) {
+        ) {
+            Canvas(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.White)
+                    .pointerInput(mode, character?.id, totalStrokes) {
                     val viewBoxSize = character?.viewBoxSize ?: 109f
 
                     awaitEachGesture {
@@ -549,8 +536,35 @@ fun WritingCanvas(
                 }
             }
 
-            strokes.forEach { drawPath(it, Color.Black, style = InkStyle) }
-            drawPath(currentPath, Color.Black, style = InkStyle)
+                strokes.forEach { drawPath(it, Color.Black, style = InkStyle) }
+                drawPath(currentPath, Color.Black, style = InkStyle)
+            }
+
+            if (mode == WritingMode.RECALL &&
+                consecutiveFailedAttempts >= 2 &&
+                !isGuidedComplete
+            ) {
+                Row(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .fillMaxWidth()
+                        .background(Color.White.copy(alpha = 0.92f))
+                        .padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Thử viết chậm hơn. Có thể xem gợi ý nét hiện tại.",
+                        modifier = Modifier.weight(1f),
+                        color = Color(0xFFEF6C00),
+                        maxLines = 1,
+                        softWrap = false
+                    )
+                    OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+                        Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
+                    }
+                }
+            }
         }
 
         if (mode != WritingMode.RECALL || isGuidedComplete) {
