@@ -130,7 +130,7 @@ fun WritingCanvas(
     }
     // Nếu Recall đang được chọn khi chuyển ký tự, tiếp tục ẩn mẫu ở ký tự mới.
     var showTemplate by remember(character?.id) {
-        mutableStateOf(mode != WritingMode.RECALL)
+        mutableStateOf(mode != WritingMode.RECALL && mode != WritingMode.FREE)
     }
     var latestAnalysisFailed by remember(character?.id) { mutableStateOf(false) }
     var consecutiveFailedAttempts by remember(character?.id) { mutableIntStateOf(0) }
@@ -225,6 +225,23 @@ fun WritingCanvas(
                 enabled = mode != WritingMode.RECALL && totalStrokes > 0
             ) {
                 Text("Recall")
+            }
+            OutlinedButton(
+                onClick = {
+                    mode = WritingMode.FREE
+                    strokes.clear()
+                    analyzedStrokes.clear()
+                    strokeMatches.clear()
+                    latestAnalysisFailed = false
+                    consecutiveFailedAttempts = 0
+                    currentPath.reset()
+                    guidedProgress = guidedProgress.reset()
+                    showTemplate = false
+                    redrawTick++
+                },
+                enabled = mode != WritingMode.FREE
+            ) {
+                Text("Tự do")
             }
             }
         }
@@ -520,6 +537,7 @@ fun WritingCanvas(
                 } else if (
                     showTemplate &&
                     (mode == WritingMode.TRACE ||
+                        mode == WritingMode.FREE ||
                         (mode == WritingMode.RECALL && isGuidedComplete))
                 ) {
                     templatePaths.forEach { path ->
