@@ -33,11 +33,14 @@ enum class LearningSessionStatus {
 data class LearningSessionSnapshot(
     val plan: LearningSessionPlan,
     val currentIndex: Int,
-    val status: LearningSessionStatus
+    val status: LearningSessionStatus,
+    val queue: List<LearningSessionCard> = plan.queue,
+    val difficultCards: List<LearningSessionCard> = emptyList()
 ) {
     val current: LearningSessionCard?
-        get() = plan.queue.getOrNull(currentIndex)
+        get() = queue.firstOrNull()
 
+    /** Số thẻ đã xử lý trong phiên, bao gồm cả thẻ được tạm xếp vào nhóm khó. */
     val completedCount: Int
         get() = currentIndex.coerceAtMost(plan.totalCount)
 
@@ -50,10 +53,13 @@ data class LearningSessionSnapshot(
 
 /**
  * Điều phối queue của một phiên học.
- * Engine không quyết định lịch ôn và không tự đánh giá nét viết.
+ * Thẻ Again được đưa xuống cuối queue; thẻ đạt ngưỡng Again được tách vào nhóm khó.
  */
 class LearningSessionEngine(private val plan: LearningSessionPlan) {
-    private var index = 0
+    private val queue = plan.queue.toMutableList()
+    private val difficultCards = mutableListOf<LearningSessionCard>()
+    private val completedCardIds = linkedSetOf<String>()
+
     private var sessionStatus = if (plan.isEmpty) {
         LearningSessionStatus.COMPLETED
     } else {
@@ -61,7 +67,13 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
     }
 
     val snapshot: LearningSessionSnapshot
-        get() = LearningSessionSnapshot(plan, index, sessionStatus)
+        get() = LearningSessionSnapshot(
+            plan = plan,
+            currentIndex = completedCardIds.size + difficultCards.size,
+            status = sessionStatus,
+            queue = queue.toList(),
+            difficultCards = difficultCards.toList()
+        )
 
     fun start(): LearningSessionSnapshot {
         if (sessionStatus == LearningSessionStatus.READY) {
@@ -70,20 +82,47 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
         return snapshot
     }
 
-    fun completeCurrent(updatedProgress: CardProgress): LearningSessionSnapshot {
+    fun completeCurrent(
+        updatedProgress: CardProgress,
+        requeueCurrent: Boolean = false,
+        markDifficult: Boolean = false
+    ): LearningSessionSnapshot {
         check(sessionStatus == LearningSessionStatus.IN_PROGRESS) {
             "Session must be in progress before completing a card"
         }
-        val currentCard = snapshot.current ?: error("There is no current card")
+        val currentCard = queue.firstOrNull() ?: error("There is no current card")
         require(updatedProgress.cardId == currentCard.card.id) {
             "Progress cardId does not match current card"
         }
+        require(!(requeueCurrent && markDifficult)) {
+            "A card cannot be requeued and marked difficult at the same time"
+        }
 
-        index += 1
-        sessionStatus = if (index >= plan.totalCount) {
+        queue.removeAt(0)
+        val updatedCard = currentCard.copy(progress = updatedProgress)
+        when {
+            requeueCurrent -> queue.add(updatedCard)
+            markDifficult -> difficultCards.add(updatedCard)
+            else -> completedCardIds.add(currentCard.card.id)
+        }
+
+        sessionStatus = if (queue.isEmpty()) {
             LearningSessionStatus.COMPLETED
         } else {
             LearningSessionStatus.IN_PROGRESS
+        }
+        return snapshot
+    }
+
+    /** Đưa toàn bộ thẻ khó trở lại cuối queue khi người học chủ động chọn luyện lại. */
+    fun retryDifficultCards(): LearningSessionSnapshot {
+        check(sessionStatus == LearningSessionStatus.COMPLETED) {
+            "Difficult cards can only be retried after the active queue is completed"
+        }
+        if (difficultCards.isNotEmpty()) {
+            queue.addAll(difficultCards)
+            difficultCards.clear()
+            sessionStatus = LearningSessionStatus.IN_PROGRESS
         }
         return snapshot
     }
@@ -104,6 +143,7 @@ class LearningSessionCoordinator internal constructor(
 
     private var engine: LearningSessionEngine? = null
     private var currentCardStartedAtEpochMillis: Long? = null
+    private val againCountsByCardId = mutableMapOf<String, Int>()
 
     suspend fun start(
         deck: WritingDeck,
@@ -119,6 +159,7 @@ class LearningSessionCoordinator internal constructor(
             nowEpochMillis = nowEpochMillis,
             newCardLimit = newCardLimit
         )
+        againCountsByCardId.clear()
         return LearningSessionEngine(plan).also {
             engine = it
             currentCardStartedAtEpochMillis = nowEpochMillis
@@ -126,8 +167,9 @@ class LearningSessionCoordinator internal constructor(
     }
 
     /**
-     * Ghi nhận rating, thời gian luyện và lịch sử; sau khi transaction thành công
-     * mới chuyển sang card tiếp theo.
+     * Ghi nhận rating, thời gian luyện và lịch sử; chỉ thay đổi queue sau khi
+     * transaction lưu thành công. Again được thử lại tối đa hai lần tự động;
+     * lần Again thứ ba chuyển thẻ vào nhóm khó của phiên.
      */
     suspend fun rateCurrent(
         rating: ReviewRating,
@@ -141,6 +183,16 @@ class LearningSessionCoordinator internal constructor(
         require(updated.cardId == current.card.id) {
             "Scheduler returned progress for a different card"
         }
+
+        val nextAgainCount = if (rating == ReviewRating.AGAIN) {
+            (againCountsByCardId[current.card.id] ?: 0) + 1
+        } else {
+            0
+        }
+        val shouldRequeue = rating == ReviewRating.AGAIN &&
+            nextAgainCount < DIFFICULT_AGAIN_THRESHOLD
+        val shouldMarkDifficult = rating == ReviewRating.AGAIN &&
+            nextAgainCount >= DIFFICULT_AGAIN_THRESHOLD
 
         val log = PracticeLog(
             cardId = current.card.id,
@@ -156,10 +208,31 @@ class LearningSessionCoordinator internal constructor(
         )
 
         progressRepository.saveReview(updated, log)
-        val next = activeEngine.completeCurrent(updated)
+        if (nextAgainCount == 0) {
+            againCountsByCardId.remove(current.card.id)
+        } else {
+            againCountsByCardId[current.card.id] = nextAgainCount
+        }
+
+        val next = activeEngine.completeCurrent(
+            updatedProgress = updated,
+            requeueCurrent = shouldRequeue,
+            markDifficult = shouldMarkDifficult
+        )
         if (next.current != null) {
             currentCardStartedAtEpochMillis = nowEpochMillis
         }
+        return next
+    }
+
+    /** Người học chủ động luyện lại nhóm thẻ khó; bộ đếm Again được đặt lại. */
+    fun retryDifficultCards(): LearningSessionSnapshot {
+        val activeEngine = engine ?: error("Start a session before retrying difficult cards")
+        activeEngine.snapshot.difficultCards.forEach {
+            againCountsByCardId.remove(it.card.id)
+        }
+        val next = activeEngine.retryDifficultCards()
+        currentCardStartedAtEpochMillis = System.currentTimeMillis()
         return next
     }
 
@@ -200,4 +273,8 @@ class LearningSessionCoordinator internal constructor(
     }
 
     fun snapshot(): LearningSessionSnapshot? = engine?.snapshot
+
+    companion object {
+        const val DIFFICULT_AGAIN_THRESHOLD = 3
+    }
 }
