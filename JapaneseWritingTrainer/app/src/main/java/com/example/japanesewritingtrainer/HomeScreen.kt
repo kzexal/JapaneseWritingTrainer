@@ -49,7 +49,7 @@ fun HomeScreen(
 
     val now = System.currentTimeMillis()
     val learnedCount = characters.count {
-        (progressById[it.id]?.status ?: CardStatus.NEW) != CardStatus.NEW
+        progressById[it.id]?.status == CardStatus.REVIEW
     }
     val dueCount = characters.count {
         progressById[it.id]?.isDue(now) == true
