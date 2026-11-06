@@ -41,7 +41,7 @@ fun CharacterLibraryScreen(
     characters: List<CharacterData>,
     showGrid: Boolean = true,
     showHints: Boolean = true,
-    onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null,
+    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -169,7 +169,7 @@ private fun CharacterDetailContent(
     onBack: () -> Unit,
     showGrid: Boolean,
     showHints: Boolean,
-    onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)?,
+    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -220,7 +220,9 @@ private fun CharacterDetailContent(
             initialMode = WritingMode.TRACE,
             showGrid = showGrid,
             showHints = showHints,
-            onPracticeFinished = onPracticeFinished
+            onPracticeFinished = { mode, durationMs, finishedAt ->
+                onPracticeFinished?.invoke(character.id, mode, durationMs, finishedAt)
+            }
         )
     }
 }
