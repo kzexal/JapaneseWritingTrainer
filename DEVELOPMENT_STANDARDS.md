@@ -28,7 +28,10 @@ These rules apply to all development work in this repository. They are intended 
 
 - Use the pinned upstream FSRS-rs version declared in `native/fsrs-bridge/Cargo.toml`; do not silently upgrade or replace it.
 - Rust is responsible for FSRS memory-state calculations. Kotlin remains responsible for application policy such as Learning/Relearning steps, session queues, daily new-card limits, and retry behavior.
-- A single learner rating must produce one coherent progress transition and one corresponding history event. Avoid duplicate scheduling updates.
+- A single learner rating must produce one coherent progress transition and one corresponding history event. Ignore duplicate/concurrent rating submissions while the first persistence operation is in flight.
+- `lastReviewedAtEpochMillis` is the timestamp anchor for the last FSRS memory calculation, not the timestamp of every short Learning/Relearning attempt. Practice-attempt timestamps belong in `PracticeLog`.
+- Short Again/Hard steps in Learning or Relearning must not repeatedly recalculate FSRS memory. Graduation must calculate elapsed days from the last FSRS memory update.
+- Clamp scheduler time against clock rollback so a device clock moving backwards cannot move the FSRS review anchor or due date backwards.
 - Preserve the distinction between `NEW`, `LEARNING`, `RELEARNING`, and `REVIEW`.
 - Validate input and persisted state at boundaries. Invalid stability, difficulty, retention, elapsed time, or card identifiers must not silently corrupt progress.
 - When changing scheduling behavior, cover new cards, same-day reviews, interday reviews, lapses/Again, Learning, Relearning, due queues, and session interruption/resumption.
