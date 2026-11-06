@@ -56,14 +56,24 @@ data class CardProgress(
 ) {
     init {
         require(cardId.isNotBlank()) { "cardId must not be blank" }
-        require(stabilityDays == null || stabilityDays > 0.0) {
-            "stabilityDays must be positive when provided"
+        require(stabilityDays == null || stabilityDays.isFinite() && stabilityDays > 0.0) {
+            "stabilityDays must be finite and positive when provided"
         }
-        require(difficulty == null || difficulty in 1.0..10.0) {
-            "difficulty must be between 1 and 10"
+        require(difficulty == null || difficulty.isFinite() && difficulty in 1.0..10.0) {
+            "difficulty must be finite and between 1 and 10"
         }
-        require(scheduledDays >= 0.0) { "scheduledDays must not be negative" }
-        require(elapsedDays >= 0.0) { "elapsedDays must not be negative" }
+        require(scheduledDays.isFinite() && scheduledDays >= 0.0) {
+            "scheduledDays must be finite and not negative"
+        }
+        require(elapsedDays.isFinite() && elapsedDays >= 0.0) {
+            "elapsedDays must be finite and not negative"
+        }
+        require(dueAtEpochMillis == null || dueAtEpochMillis >= 0L) {
+            "dueAtEpochMillis must not be negative"
+        }
+        require(lastReviewedAtEpochMillis == null || lastReviewedAtEpochMillis >= 0L) {
+            "lastReviewedAtEpochMillis must not be negative"
+        }
         require(reps >= 0) { "reps must not be negative" }
         require(lapses >= 0) { "lapses must not be negative" }
         require(reviewCount >= 0) { "reviewCount must not be negative" }
