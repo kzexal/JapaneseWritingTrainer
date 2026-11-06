@@ -1,16 +1,21 @@
 package com.example.japanesewritingtrainer
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +45,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JapaneseWritingTrainerTheme {
+            val context = LocalContext.current.applicationContext
+            val appSettings = remember(context) { AppSettings(context) }
+            var themeMode by remember { mutableStateOf(appSettings.getThemeMode()) }
+            val systemDarkTheme = isSystemInDarkTheme()
+            val darkTheme = when (themeMode) {
+                AppThemeMode.SYSTEM -> systemDarkTheme
+                AppThemeMode.LIGHT -> false
+                AppThemeMode.DARK -> true
+            }
+
+            JapaneseWritingTrainerTheme(darkTheme = darkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val context = LocalContext.current.applicationContext
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
@@ -49,6 +64,61 @@ class MainActivity : ComponentActivity() {
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.FREE) }
+                    val backupRestoreManager = remember(context) { BackupRestoreManager(context) }
+                    var pendingRestoreJson by remember { mutableStateOf<String?>(null) }
+
+                    val backupLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.CreateDocument("application/json")
+                    ) { uri ->
+                        if (uri != null) {
+                            practiceLogScope.launch {
+                                try {
+                                    val json = withContext(Dispatchers.IO) {
+                                        backupRestoreManager.createBackupJson()
+                                    }
+                                    withContext(Dispatchers.IO) {
+                                        val output = context.contentResolver.openOutputStream(uri)
+                                            ?: error("Không thể mở tệp để ghi.")
+                                        output.use { it.write(json.toByteArray(Charsets.UTF_8)) }
+                                    }
+                                    Toast.makeText(context, "Đã sao lưu dữ liệu.", Toast.LENGTH_SHORT).show()
+                                } catch (exception: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Sao lưu thất bại: ${exception.localizedMessage ?: "Lỗi không xác định"}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
+
+                    val restoreLauncher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.OpenDocument()
+                    ) { uri ->
+                        if (uri != null) {
+                            practiceLogScope.launch {
+                                try {
+                                    val json = withContext(Dispatchers.IO) {
+                                        val input = context.contentResolver.openInputStream(uri)
+                                            ?: error("Không thể mở tệp đã chọn.")
+                                        val bytes = input.use { it.readBytes() }
+                                        require(bytes.size <= MAX_BACKUP_FILE_BYTES) {
+                                            "Tệp sao lưu vượt quá giới hạn 20 MB."
+                                        }
+                                        String(bytes, Charsets.UTF_8)
+                                    }
+                                    pendingRestoreJson = json
+                                } catch (exception: Exception) {
+                                    Toast.makeText(
+                                        context,
+                                        "Không đọc được bản sao lưu: ${exception.localizedMessage ?: "Tệp không hợp lệ"}",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
+                            }
+                        }
+                    }
 
                     // Đọc JSON trên background thread để tránh chặn giao diện lúc khởi động.
                     LaunchedEffect(context) {
@@ -91,19 +161,18 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth().padding(
-                                        horizontal = 16.dp,
-                                        vertical = 8.dp
-                                    ),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                FlowRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     MainScreen.entries.forEach { screen ->
                                         val selected = selectedScreen == screen
                                         if (selected) {
                                             Button(
-                                                modifier = Modifier.weight(1f),
-                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
+                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
                                                 Text(
@@ -115,8 +184,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         } else {
                                             OutlinedButton(
-                                                modifier = Modifier.weight(1f),
-                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
+                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
                                                 Text(
@@ -138,6 +206,52 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = characters,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    MainScreen.STATISTICS -> StatisticsScreen(
+                                        characters = characters,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
+                                    MainScreen.SETTINGS -> SettingsScreen(
+                                        themeMode = themeMode,
+                                        onThemeModeChange = { mode ->
+                                            themeMode = mode
+                                            appSettings.setThemeMode(mode)
+                                        },
+                                        onBackupClick = {
+                                            backupLauncher.launch("JapaneseWritingTrainer-backup.json")
+                                        },
+                                        onRestoreClick = {
+                                            restoreLauncher.launch(arrayOf("application/json", "text/plain"))
+                                        },
+                                        restoreConfirmationVisible = pendingRestoreJson != null,
+                                        onConfirmRestore = {
+                                            val json = pendingRestoreJson
+                                            pendingRestoreJson = null
+                                            if (json != null) {
+                                                practiceLogScope.launch {
+                                                    try {
+                                                        withContext(Dispatchers.IO) {
+                                                            backupRestoreManager.restoreFromJson(json)
+                                                        }
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Khôi phục dữ liệu thành công.",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    } catch (exception: Exception) {
+                                                        Toast.makeText(
+                                                            context,
+                                                            "Khôi phục thất bại: ${exception.localizedMessage ?: "Tệp không hợp lệ"}",
+                                                            Toast.LENGTH_LONG
+                                                        ).show()
+                                                    }
+                                                }
+                                            }
+                                        },
+                                        onCancelRestore = { pendingRestoreJson = null },
                                         modifier = Modifier.weight(1f)
                                     )
 
@@ -219,10 +333,14 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+private const val MAX_BACKUP_FILE_BYTES = 20 * 1024 * 1024
+
 private enum class MainScreen(val label: String) {
     FREE("Luyện tự do"),
     LEARNING("Ôn tập"),
-    HISTORY("Lịch sử")
+    HISTORY("Lịch sử"),
+    STATISTICS("Thống kê"),
+    SETTINGS("Cài đặt")
 }
 
 @Composable
