@@ -7,7 +7,10 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
@@ -20,6 +23,11 @@ import androidx.compose.ui.unit.dp
 fun SettingsScreen(
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
+    onBackupClick: () -> Unit,
+    onRestoreClick: () -> Unit,
+    restoreConfirmationVisible: Boolean,
+    onConfirmRestore: () -> Unit,
+    onCancelRestore: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -79,11 +87,28 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "Tiến độ học và lịch sử luyện viết được lưu trên thiết bị. " +
-                        "Chức năng sao lưu và khôi phục sẽ được bổ sung ở bước tiếp theo.",
+                    text = "Sao lưu tiến độ FSRS và lịch sử luyện viết thành một tệp JSON, " +
+                        "hoặc khôi phục dữ liệu từ tệp đã tạo trước đó.",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Button(
+                        modifier = Modifier.weight(1f),
+                        onClick = onBackupClick
+                    ) {
+                        Text("Sao lưu")
+                    }
+                    OutlinedButton(
+                        modifier = Modifier.weight(1f),
+                        onClick = onRestoreClick
+                    ) {
+                        Text("Khôi phục")
+                    }
+                }
             }
         }
 
@@ -91,6 +116,29 @@ fun SettingsScreen(
             text = "Japanese Writing Trainer · Phiên bản 1.0",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    if (restoreConfirmationVisible) {
+        AlertDialog(
+            onDismissRequest = onCancelRestore,
+            title = { Text("Khôi phục dữ liệu?") },
+            text = {
+                Text(
+                    "Dữ liệu tiến độ và lịch sử hiện tại sẽ bị thay thế bằng dữ liệu trong " +
+                        "tệp sao lưu. Bạn nên sao lưu dữ liệu hiện tại trước khi tiếp tục."
+                )
+            },
+            confirmButton = {
+                Button(onClick = onConfirmRestore) {
+                    Text("Khôi phục")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = onCancelRestore) {
+                    Text("Hủy")
+                }
+            }
         )
     }
 }
