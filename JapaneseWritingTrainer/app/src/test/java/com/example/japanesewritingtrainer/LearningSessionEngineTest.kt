@@ -102,4 +102,39 @@ class LearningSessionEngineTest {
             engine.completeCurrent(CardProgress(cardId = "i"))
         }
     }
+
+    @Test
+    fun retryingDifficultCardsDoesNotMoveSessionProgressBackwards() {
+        val singleCardDeck = deck.copy(cardIds = listOf("a"))
+        val singleCardPlan = LearningSessionPlanner.plan(
+            deck = singleCardDeck,
+            cards = cards,
+            progressByCardId = emptyMap(),
+            nowEpochMillis = 100L,
+            newCardLimit = 1
+        )
+        val engine = LearningSessionEngine(singleCardPlan)
+        engine.start()
+
+        repeat(2) {
+            engine.completeCurrent(
+                updatedProgress = CardProgress(cardId = "a", status = CardStatus.LEARNING),
+                requeueCurrent = true
+            )
+        }
+        val parked = engine.completeCurrent(
+            updatedProgress = CardProgress(cardId = "a", status = CardStatus.LEARNING),
+            markDifficult = true
+        )
+
+        assertEquals(1, parked.completedCount)
+        assertEquals(1f, parked.progressFraction)
+
+        val retried = engine.retryDifficultCards()
+
+        assertEquals(1, retried.completedCount)
+        assertEquals(1f, retried.progressFraction)
+        assertEquals("a", retried.current?.card?.id)
+    }
+
 }
