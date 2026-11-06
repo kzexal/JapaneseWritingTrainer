@@ -7,6 +7,7 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -21,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -161,18 +163,17 @@ class MainActivity : ComponentActivity() {
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
                                 Row(
-                                    modifier = Modifier.fillMaxWidth().padding(
-                                        horizontal = 16.dp,
-                                        vertical = 8.dp
-                                    ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .horizontalScroll(rememberScrollState())
+                                        .padding(horizontal = 16.dp, vertical = 8.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
                                     MainScreen.entries.forEach { screen ->
                                         val selected = selectedScreen == screen
                                         if (selected) {
                                             Button(
-                                                modifier = Modifier.weight(1f),
-                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
+                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
                                                 Text(
@@ -184,8 +185,7 @@ class MainActivity : ComponentActivity() {
                                             }
                                         } else {
                                             OutlinedButton(
-                                                modifier = Modifier.weight(1f),
-                                                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 8.dp),
+                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
                                                 onClick = { selectedScreen = screen }
                                             ) {
                                                 Text(
