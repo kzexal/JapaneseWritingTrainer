@@ -48,6 +48,11 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current.applicationContext
             val appSettings = remember(context) { AppSettings(context) }
             var themeMode by remember { mutableStateOf(appSettings.getThemeMode()) }
+            var newCardsPerDay by remember {
+                mutableIntStateOf(appSettings.getNewCardsPerDay())
+            }
+            var showGrid by remember { mutableStateOf(appSettings.getShowGrid()) }
+            var showHints by remember { mutableStateOf(appSettings.getShowHints()) }
             val systemDarkTheme = isSystemInDarkTheme()
             val darkTheme = when (themeMode) {
                 AppThemeMode.SYSTEM -> systemDarkTheme
@@ -201,6 +206,9 @@ class MainActivity : ComponentActivity() {
                                 when (selectedScreen) {
                                     MainScreen.LEARNING -> LearningSessionScreen(
                                         characters = characters,
+                                        newCardsPerDay = newCardsPerDay,
+                                        showGrid = showGrid,
+                                        showHints = showHints,
                                         modifier = Modifier.weight(1f)
                                     )
 
@@ -219,6 +227,21 @@ class MainActivity : ComponentActivity() {
                                         onThemeModeChange = { mode ->
                                             themeMode = mode
                                             appSettings.setThemeMode(mode)
+                                        },
+                                        newCardsPerDay = newCardsPerDay,
+                                        onNewCardsPerDayChange = { value ->
+                                            newCardsPerDay = value.coerceIn(0, 50)
+                                            appSettings.setNewCardsPerDay(newCardsPerDay)
+                                        },
+                                        showGrid = showGrid,
+                                        onShowGridChange = { enabled ->
+                                            showGrid = enabled
+                                            appSettings.setShowGrid(enabled)
+                                        },
+                                        showHints = showHints,
+                                        onShowHintsChange = { enabled ->
+                                            showHints = enabled
+                                            appSettings.setShowHints(enabled)
                                         },
                                         onBackupClick = {
                                             backupLauncher.launch("JapaneseWritingTrainer-backup.json")
@@ -306,6 +329,8 @@ class MainActivity : ComponentActivity() {
                                             WritingCanvas(
                                                 modifier = Modifier.weight(1f),
                                                 character = character,
+                                                showGrid = showGrid,
+                                                showHints = showHints,
                                                 onPracticeFinished = { mode, durationMs, finishedAt ->
                                                     practiceLogScope.launch {
                                                         practiceLogRepository.add(
