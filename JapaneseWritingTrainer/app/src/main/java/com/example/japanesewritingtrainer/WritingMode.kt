@@ -9,11 +9,12 @@ package com.example.japanesewritingtrainer
 enum class WritingMode {
     TRACE,
     GUIDED,
-    RECALL;
+    RECALL,
+    FREE;
 
     /** Trace không bắt buộc thứ tự nét; Guided và Recall thì có. */
     val requiresStrokeValidation: Boolean
-        get() = this != TRACE
+        get() = this == GUIDED || this == RECALL
 
     /** Chỉ Guided được hiển thị đường nét và hướng dẫn trong lúc viết. */
     val showsStrokeGuidance: Boolean
