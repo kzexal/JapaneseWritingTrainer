@@ -1,0 +1,17 @@
+# Local IDE and machine-specific files
+.idea/
+*.iml
+.DS_Store
+Thumbs.db
+local.properties
+
+# Gradle
+.gradle/
+**/build/
+
+# Rust
+**/target/
+
+# Temporary files
+*.log
+*.tmp
