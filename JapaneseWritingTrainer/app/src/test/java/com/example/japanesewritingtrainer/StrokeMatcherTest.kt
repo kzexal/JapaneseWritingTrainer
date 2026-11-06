@@ -91,6 +91,45 @@ class StrokeMatcherTest {
 
 
     @Test
+    fun acceptsModerateUniformScaleVariation() {
+        val scaled = reference.points.map {
+            StrokePoint(
+                x = 50f + (it.x - 50f) * 1.2f,
+                y = 10f + (it.y - 10f) * 1.2f
+            )
+        }
+        val result = StrokeMatcher.match(
+            reference,
+            userStroke(scaled, length = 96f),
+            viewBoxSize = 109f
+        )
+
+        assertTrue("Biến thiên kích thước vừa phải nên được chấp nhận", result.accepted)
+        assertTrue(result.lengthWithinTolerance)
+        assertEquals(1.2f, result.lengthRatio, 0.001f)
+    }
+
+    @Test
+    fun acceptsSmallNaturalCurvatureVariation() {
+        val gentlyCurved = listOf(
+            StrokePoint(10f, 10f),
+            StrokePoint(30f, 13f),
+            StrokePoint(50f, 15f),
+            StrokePoint(70f, 13f),
+            StrokePoint(90f, 10f)
+        )
+        val result = StrokeMatcher.match(
+            reference,
+            userStroke(gentlyCurved, length = 81.6f),
+            viewBoxSize = 109f
+        )
+
+        assertTrue("Độ cong nhẹ do thao tác tay không nên bị từ chối", result.accepted)
+        assertTrue(result.directionCorrect)
+        assertTrue(result.lengthWithinTolerance)
+    }
+
+    @Test
     fun acceptsSmallStartAndEndPointOffset() {
         val slightlyShifted = reference.points.map {
             StrokePoint(it.x + 18f, it.y + 18f)
