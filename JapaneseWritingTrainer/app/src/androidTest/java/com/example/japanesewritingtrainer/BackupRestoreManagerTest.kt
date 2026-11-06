@@ -107,6 +107,72 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun duplicateCardIdsDoNotReplaceExistingData() = runBlocking {
+        val existing = CardProgress(cardId = "hiragana_e", status = CardStatus.LEARNING)
+        database.cardProgressDao().upsert(existing.toEntity())
+
+        val backupRoot = JSONObject(manager.createBackupJson())
+        val progressArray = backupRoot.getJSONArray("cardProgress")
+        val duplicate = JSONObject(progressArray.getJSONObject(0).toString())
+        progressArray.put(duplicate)
+
+        val failure = runCatching {
+            manager.restoreFromJson(backupRoot.toString())
+        }.exceptionOrNull()
+
+        assertTrue(failure is IllegalArgumentException)
+        assertEquals(
+            existing,
+            database.cardProgressDao().getByCardId("hiragana_e")?.toDomain()
+        )
+    }
+
+    @Test
+    fun duplicatePracticeLogIdsDoNotReplaceExistingData() = runBlocking {
+        val existing = CardProgress(cardId = "hiragana_o", status = CardStatus.REVIEW)
+        database.cardProgressDao().upsert(existing.toEntity())
+
+        val backupRoot = JSONObject(manager.createBackupJson())
+        val duplicateLog = JSONObject()
+            .put("id", 9L)
+            .put("cardId", "hiragana_o")
+            .put("mode", PracticeMode.REVIEW.name)
+            .put("rating", ReviewRating.GOOD.name)
+            .put("durationMs", 1200L)
+            .put("timestampEpochMillis", 5000L)
+        backupRoot.getJSONArray("practiceLogs")
+            .put(JSONObject(duplicateLog.toString()))
+            .put(JSONObject(duplicateLog.toString()))
+
+        val failure = runCatching {
+            manager.restoreFromJson(backupRoot.toString())
+        }.exceptionOrNull()
+
+        assertTrue(failure is IllegalArgumentException)
+        assertEquals(
+            existing,
+            database.cardProgressDao().getByCardId("hiragana_o")?.toDomain()
+        )
+        assertEquals(0, database.practiceLogDao().count())
+    }
+
+    @Test
+    fun malformedJsonDoesNotReplaceExistingData() = runBlocking {
+        val existing = CardProgress(cardId = "hiragana_ka", status = CardStatus.LEARNING)
+        database.cardProgressDao().upsert(existing.toEntity())
+
+        val failure = runCatching {
+            manager.restoreFromJson("""{"format":"japanese-writing-trainer","schemaVersion":1""")
+        }.exceptionOrNull()
+
+        assertTrue(failure != null)
+        assertEquals(
+            existing,
+            database.cardProgressDao().getByCardId("hiragana_ka")?.toDomain()
+        )
+    }
+
+    @Test
     fun unsupportedBackupDoesNotDeleteExistingProgress() = runBlocking {
         val progress = CardProgress(cardId = "hiragana_i", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(progress.toEntity())
