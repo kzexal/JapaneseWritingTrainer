@@ -92,7 +92,7 @@ fun LearningSessionScreen(
                     deck = selectedDeck,
                     cards = deckCards,
                     nowEpochMillis = System.currentTimeMillis(),
-                    newCardLimit = DEFAULT_NEW_CARD_LIMIT
+                    newCardLimit = newCardsPerDay
                 )
                 deckProgress = coordinator.getDeckProgressSummary(selectedDeck, deckCards)
                 errorMessage = null
