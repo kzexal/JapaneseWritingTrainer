@@ -709,4 +709,18 @@ private fun DrawScope.drawGrid() {
         strokeWidth = 2f,
         pathEffect = dash
     )
+    drawLine(
+        color = gridColor,
+        start = Offset.Zero,
+        end = Offset(size.width, size.height),
+        strokeWidth = 1.5f,
+        pathEffect = dash
+    )
+    drawLine(
+        color = gridColor,
+        start = Offset(size.width, 0f),
+        end = Offset(0f, size.height),
+        strokeWidth = 1.5f,
+        pathEffect = dash
+    )
 }
