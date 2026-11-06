@@ -41,7 +41,7 @@ data class LearningSessionSnapshot(
     val current: LearningSessionCard?
         get() = queue.firstOrNull()
 
-    /** Số thẻ đã xử lý trong phiên, bao gồm cả thẻ được tạm xếp vào nhóm khó. */
+    /** Số thẻ đã được xử lý ít nhất một lần trong phiên, tính theo card duy nhất. */
     val completedCount: Int
         get() = currentIndex.coerceAtMost(plan.totalCount)
 
@@ -59,7 +59,7 @@ data class LearningSessionSnapshot(
 class LearningSessionEngine(private val plan: LearningSessionPlan) {
     private val queue = plan.queue.toMutableList()
     private val difficultCards = mutableListOf<LearningSessionCard>()
-    private val completedCardIds = linkedSetOf<String>()
+    private val processedCardIds = linkedSetOf<String>()
 
     private var sessionStatus = if (plan.isEmpty) {
         LearningSessionStatus.COMPLETED
@@ -70,7 +70,7 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
     val snapshot: LearningSessionSnapshot
         get() = LearningSessionSnapshot(
             plan = plan,
-            currentIndex = completedCardIds.size + difficultCards.size,
+            currentIndex = processedCardIds.size,
             status = sessionStatus,
             queue = queue.toList(),
             difficultCards = difficultCards.toList()
@@ -111,8 +111,11 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
         )
         when {
             requeueCurrent -> queue.add(updatedCard)
-            markDifficult -> difficultCards.add(updatedCard)
-            else -> completedCardIds.add(currentCard.card.id)
+            markDifficult -> {
+                difficultCards.add(updatedCard)
+                processedCardIds.add(currentCard.card.id)
+            }
+            else -> processedCardIds.add(currentCard.card.id)
         }
 
         sessionStatus = if (queue.isEmpty()) {
