@@ -3,6 +3,7 @@ package com.example.japanesewritingtrainer
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -133,6 +134,65 @@ class LearningSessionCoordinatorTest {
             runBlocking { coordinator.rateCurrent(ReviewRating.GOOD, now) }
         }
         assertEquals(1, store.getAll().size)
+    }
+
+    @Test
+    fun thirdAgainInOneSessionMovesCardToDifficultQueue() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = createCoordinator(store)
+        val singleCardDeck = deck.copy(cardIds = listOf("a"))
+        val singleCard = cards.filter { it.id == "a" }
+
+        coordinator.start(singleCardDeck, singleCard, now, newCardLimit = 1)
+        coordinator.rateCurrent(ReviewRating.AGAIN, now + 1_000L)
+        coordinator.rateCurrent(ReviewRating.AGAIN, now + 2_000L)
+
+        val difficult = coordinator.rateCurrent(ReviewRating.AGAIN, now + 3_000L)
+
+        assertNull(difficult.current)
+        assertEquals(LearningSessionStatus.COMPLETED, difficult.status)
+        assertEquals(listOf("a"), difficult.difficultCards.map { it.card.id })
+        assertEquals(3, store.logs.size)
+    }
+
+    @Test
+    fun difficultCardCanBeExplicitlyRetriedAndAgainCounterResets() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = createCoordinator(store)
+        val singleCardDeck = deck.copy(cardIds = listOf("a"))
+        val singleCard = cards.filter { it.id == "a" }
+
+        coordinator.start(singleCardDeck, singleCard, now, newCardLimit = 1)
+        repeat(3) { index ->
+            coordinator.rateCurrent(ReviewRating.AGAIN, now + (index + 1) * 1_000L)
+        }
+
+        val retry = coordinator.retryDifficultCards()
+        assertEquals("a", retry.current?.card?.id)
+        assertTrue(retry.difficultCards.isEmpty())
+        assertEquals(LearningSessionStatus.IN_PROGRESS, retry.status)
+
+        val afterRetryAgain = coordinator.rateCurrent(ReviewRating.AGAIN, now + 4_000L)
+        assertEquals("a", afterRetryAgain.current?.card?.id)
+        assertTrue(afterRetryAgain.difficultCards.isEmpty())
+        assertEquals(LearningSessionStatus.IN_PROGRESS, afterRetryAgain.status)
+    }
+
+    @Test
+    fun nonAgainRatingResetsConsecutiveAgainCount() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = createCoordinator(store)
+        val singleCardDeck = deck.copy(cardIds = listOf("a"))
+        val singleCard = cards.filter { it.id == "a" }
+
+        coordinator.start(singleCardDeck, singleCard, now, newCardLimit = 1)
+        coordinator.rateCurrent(ReviewRating.AGAIN, now + 1_000L)
+        coordinator.rateCurrent(ReviewRating.HARD, now + 2_000L)
+
+        // Hard completes this card; a new session resets all session-local counters.
+        val nextSession = coordinator.start(singleCardDeck, singleCard, now + 3_000L, newCardLimit = 1)
+        assertEquals(LearningSessionStatus.COMPLETED, nextSession.status)
+        assertTrue(nextSession.difficultCards.isEmpty())
     }
 
     /**
