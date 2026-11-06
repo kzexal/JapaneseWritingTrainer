@@ -167,12 +167,12 @@ class LearningSessionCoordinator internal constructor(
         try {
             val progress = progressRepository.getAll().associateBy { it.cardId }
             val plan = LearningSessionPlanner.plan(
-            deck = deck,
-            cards = cards,
-            progressByCardId = progress,
-            nowEpochMillis = nowEpochMillis,
-            newCardLimit = newCardLimit
-        )
+                deck = deck,
+                cards = cards,
+                progressByCardId = progress,
+                nowEpochMillis = nowEpochMillis,
+                newCardLimit = newCardLimit
+            )
             againCountsByCardId.clear()
             return LearningSessionEngine(plan).also {
                 engine = it
@@ -203,49 +203,49 @@ class LearningSessionCoordinator internal constructor(
             val current = activeEngine.snapshot.current
                 ?: error("There is no current card")
 
-        val updated = scheduler.review(current.progress, rating, nowEpochMillis)
-        require(updated.cardId == current.card.id) {
-            "Scheduler returned progress for a different card"
-        }
+            val updated = scheduler.review(current.progress, rating, nowEpochMillis)
+            require(updated.cardId == current.card.id) {
+                "Scheduler returned progress for a different card"
+            }
 
-        val nextAgainCount = if (rating == ReviewRating.AGAIN) {
-            (againCountsByCardId[current.card.id] ?: 0) + 1
-        } else {
-            0
-        }
-        val shouldRequeue = rating == ReviewRating.AGAIN &&
-            nextAgainCount < DIFFICULT_AGAIN_THRESHOLD
-        val shouldMarkDifficult = rating == ReviewRating.AGAIN &&
-            nextAgainCount >= DIFFICULT_AGAIN_THRESHOLD
-
-        val log = PracticeLog(
-            cardId = current.card.id,
-            mode = if (current.kind != SessionCardKind.NEW) {
-                PracticeMode.REVIEW
+            val nextAgainCount = if (rating == ReviewRating.AGAIN) {
+                (againCountsByCardId[current.card.id] ?: 0) + 1
             } else {
-                PracticeMode.RECALL
-            },
-            rating = rating,
-            durationMs = (nowEpochMillis - (currentCardStartedAtEpochMillis ?: nowEpochMillis))
-                .coerceAtLeast(0L),
-            timestampEpochMillis = nowEpochMillis
-        )
+                0
+            }
+            val shouldRequeue = rating == ReviewRating.AGAIN &&
+                nextAgainCount < DIFFICULT_AGAIN_THRESHOLD
+            val shouldMarkDifficult = rating == ReviewRating.AGAIN &&
+                nextAgainCount >= DIFFICULT_AGAIN_THRESHOLD
 
-        progressRepository.saveReview(updated, log)
-        if (nextAgainCount == 0) {
-            againCountsByCardId.remove(current.card.id)
-        } else {
-            againCountsByCardId[current.card.id] = nextAgainCount
-        }
+            val log = PracticeLog(
+                cardId = current.card.id,
+                mode = if (current.kind != SessionCardKind.NEW) {
+                    PracticeMode.REVIEW
+                } else {
+                    PracticeMode.RECALL
+                },
+                rating = rating,
+                durationMs = (nowEpochMillis - (currentCardStartedAtEpochMillis ?: nowEpochMillis))
+                    .coerceAtLeast(0L),
+                timestampEpochMillis = nowEpochMillis
+            )
 
-        val next = activeEngine.completeCurrent(
-            updatedProgress = updated,
-            requeueCurrent = shouldRequeue,
-            markDifficult = shouldMarkDifficult
-        )
-        if (next.current != null) {
-            currentCardStartedAtEpochMillis = nowEpochMillis
-        }
+            progressRepository.saveReview(updated, log)
+            if (nextAgainCount == 0) {
+                againCountsByCardId.remove(current.card.id)
+            } else {
+                againCountsByCardId[current.card.id] = nextAgainCount
+            }
+
+            val next = activeEngine.completeCurrent(
+                updatedProgress = updated,
+                requeueCurrent = shouldRequeue,
+                markDifficult = shouldMarkDifficult
+            )
+            if (next.current != null) {
+                currentCardStartedAtEpochMillis = nowEpochMillis
+            }
             return next
         } finally {
             operationInProgress.set(false)
@@ -254,16 +254,20 @@ class LearningSessionCoordinator internal constructor(
 
     /** Người học chủ động luyện lại nhóm thẻ khó; bộ đếm Again được đặt lại. */
     fun retryDifficultCards(nowEpochMillis: Long = System.currentTimeMillis()): LearningSessionSnapshot {
-        check(!operationInProgress.get()) {
-            "Cannot retry difficult cards while another session operation is in progress"
+        check(operationInProgress.compareAndSet(false, true)) {
+            "Another learning-session operation is already in progress"
         }
-        val activeEngine = engine ?: error("Start a session before retrying difficult cards")
-        activeEngine.snapshot.difficultCards.forEach {
-            againCountsByCardId.remove(it.card.id)
+        try {
+            val activeEngine = engine ?: error("Start a session before retrying difficult cards")
+            activeEngine.snapshot.difficultCards.forEach {
+                againCountsByCardId.remove(it.card.id)
+            }
+            val next = activeEngine.retryDifficultCards()
+            currentCardStartedAtEpochMillis = nowEpochMillis
+            return next
+        } finally {
+            operationInProgress.set(false)
         }
-        val next = activeEngine.retryDifficultCards()
-        currentCardStartedAtEpochMillis = nowEpochMillis
-        return next
     }
 
     /**
