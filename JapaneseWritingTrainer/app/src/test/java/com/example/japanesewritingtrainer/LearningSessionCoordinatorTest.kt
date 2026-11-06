@@ -1,5 +1,7 @@
 package com.example.japanesewritingtrainer
 
+import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -195,6 +197,37 @@ class LearningSessionCoordinatorTest {
         assertTrue(nextSession.difficultCards.isEmpty())
     }
 
+
+    @Test
+    fun concurrentDuplicateRatingDuringPersistenceIsIgnored() = runBlocking {
+        val store = InMemoryProgressStore()
+        val coordinator = createCoordinator(store)
+        coordinator.start(deck, cards, now, newCardLimit = 2)
+
+        val writeStarted = CompletableDeferred<Unit>()
+        val allowWriteToFinish = CompletableDeferred<Unit>()
+        store.reviewWriteStarted = writeStarted
+        store.reviewWriteGate = allowWriteToFinish
+
+        val firstRating = async {
+            coordinator.rateCurrent(ReviewRating.GOOD, now + 1_000L)
+        }
+        writeStarted.await()
+
+        val duplicate = coordinator.rateCurrent(ReviewRating.EASY, now + 2_000L)
+
+        assertEquals("a", duplicate.current?.card?.id)
+        assertTrue(store.logs.isEmpty())
+
+        allowWriteToFinish.complete(Unit)
+        val completed = firstRating.await()
+
+        assertEquals("i", completed.current?.card?.id)
+        assertEquals(1, store.logs.size)
+        assertEquals(ReviewRating.GOOD, store.logs.single().rating)
+        assertEquals(1, store.getAll().single { it.cardId == "a" }.reviewCount)
+    }
+
     /**
      * Coordinator unit tests verify orchestration and persistence, not JNI.
      * FSRS-rs itself is covered by native bridge tests and Android instrumentation
@@ -234,6 +267,8 @@ class LearningSessionCoordinatorTest {
         private val values = mutableMapOf<String, CardProgress>()
         val logs = mutableListOf<PracticeLog>()
         var failWrites: Boolean = false
+        var reviewWriteStarted: CompletableDeferred<Unit>? = null
+        var reviewWriteGate: CompletableDeferred<Unit>? = null
 
         override suspend fun get(cardId: String): CardProgress? = values[cardId]
 
@@ -246,6 +281,8 @@ class LearningSessionCoordinatorTest {
 
         override suspend fun saveReview(progress: CardProgress, log: PracticeLog) {
             check(!failWrites) { "Simulated persistence failure" }
+            reviewWriteStarted?.complete(Unit)
+            reviewWriteGate?.await()
             values[progress.cardId] = progress
             logs += log
         }
