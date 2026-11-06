@@ -27,8 +27,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
-private const val DEFAULT_NEW_CARD_LIMIT = 10
-
 /**
  * Phiên ôn tập Hiragana:
  * 1. Planner chọn thẻ đến hạn trước, sau đó thêm thẻ mới.
@@ -39,6 +37,9 @@ private const val DEFAULT_NEW_CARD_LIMIT = 10
 @Composable
 fun LearningSessionScreen(
     characters: List<CharacterData>,
+    newCardsPerDay: Int = 10,
+    showGrid: Boolean = true,
+    showHints: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -58,7 +59,7 @@ fun LearningSessionScreen(
     var awaitingRating by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(coordinator, deck, deckCards) {
+    LaunchedEffect(coordinator, deck, deckCards, newCardsPerDay) {
         if (deck == null) {
             isLoading = false
             errorMessage = "Không tìm thấy bộ thẻ Hiragana."
@@ -70,7 +71,7 @@ fun LearningSessionScreen(
                 deck = deck,
                 cards = deckCards,
                 nowEpochMillis = System.currentTimeMillis(),
-                newCardLimit = DEFAULT_NEW_CARD_LIMIT
+                newCardLimit = newCardsPerDay
             )
             deckProgress = coordinator.getDeckProgressSummary(deck, deckCards)
             errorMessage = null
@@ -198,6 +199,8 @@ fun LearningSessionScreen(
                             initialMode = WritingMode.RECALL,
                             showModeSelector = false,
                             allowEditingAfterCompletion = false,
+                            showGrid = showGrid,
+                            showHints = showHints,
                             onCompleted = { awaitingRating = true }
                         )
                         if (errorMessage != null) {
