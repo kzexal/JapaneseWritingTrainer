@@ -76,6 +76,53 @@ class PracticeStatisticsTest {
         assertEquals(0L, totalPracticeDurationMs(emptyList()))
     }
 
+    @Test
+    fun calculatesCurrentAndLongestPracticeStreaks() {
+        val zone = java.time.ZoneOffset.UTC
+        val today = java.time.LocalDate.of(2026, 11, 6)
+        val logs = listOf(
+            logOn("hiragana_a", today.minusDays(2), zone),
+            logOn("hiragana_i", today.minusDays(1), zone),
+            logOn("hiragana_u", today, zone),
+            logOn("hiragana_e", today.minusDays(4), zone)
+        )
+        val now = today.atTime(12, 0).toInstant(zone).toEpochMilli()
+
+        val streak = calculatePracticeStreak(logs, now, zone)
+
+        assertEquals(3, streak.currentDays)
+        assertEquals(3, streak.longestDays)
+    }
+
+    @Test
+    fun currentStreakCanContinueFromYesterdayButExpiresAfterOneMissedDay() {
+        val zone = java.time.ZoneOffset.UTC
+        val today = java.time.LocalDate.of(2026, 11, 6)
+        val logs = listOf(
+            logOn("hiragana_a", today.minusDays(1), zone),
+            logOn("hiragana_i", today.minusDays(2), zone),
+            logOn("hiragana_u", today.minusDays(4), zone)
+        )
+        val now = today.atTime(12, 0).toInstant(zone).toEpochMilli()
+
+        val streak = calculatePracticeStreak(logs, now, zone)
+
+        assertEquals(2, streak.currentDays)
+        assertEquals(2, streak.longestDays)
+    }
+
+    private fun logOn(
+        cardId: String,
+        date: java.time.LocalDate,
+        zone: java.time.ZoneId
+    ) = PracticeLog(
+        cardId = cardId,
+        mode = PracticeMode.FREE,
+        rating = null,
+        durationMs = 1_000L,
+        timestampEpochMillis = date.atTime(12, 0).atZone(zone).toInstant().toEpochMilli()
+    )
+
     private fun log(
         cardId: String,
         rating: ReviewRating,
