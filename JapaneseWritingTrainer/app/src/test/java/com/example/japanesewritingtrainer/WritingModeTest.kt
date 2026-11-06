@@ -13,6 +13,13 @@ class WritingModeTest {
     }
 
     @Test
+    fun freePracticeDoesNotRequireStrokeValidationOrGuidance() {
+        assertFalse(WritingMode.FREE.requiresStrokeValidation)
+        assertFalse(WritingMode.FREE.showsStrokeGuidance)
+        assertEquals(PracticeMode.FREE, WritingMode.FREE.toPracticeMode())
+    }
+
+    @Test
     fun guidedRequiresValidationAndShowsGuidance() {
         assertTrue(WritingMode.GUIDED.requiresStrokeValidation)
         assertTrue(WritingMode.GUIDED.showsStrokeGuidance)
