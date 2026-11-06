@@ -202,10 +202,12 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Không cho đồng hồ thiết bị lùi làm lùi FSRS anchor hoặc due date.
 - [x] Bổ sung validation cho thời gian âm và các giá trị FSRS không hữu hạn trong CardProgress.
 - [x] Thêm regression tests cho FSRS anchor, graduation elapsed days, clock rollback và dữ liệu không hữu hạn.
+- [x] Giữ `completedCount` không giảm khi người học đưa nhóm thẻ khó trở lại queue.
+- [x] Thêm regression test cho rating trùng trong lúc transaction lưu tiến độ/lịch sử đang chờ.
 - [ ] Hoàn tất kiểm chứng các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING trên toàn bộ rating.
 - [ ] Kiểm tra giới hạn card mới, due queue, retry card khó và trường hợp hết hàng đợi.
 - [ ] Kiểm tra đóng/mở ứng dụng hoặc rời phiên giữa chừng.
-- [ ] Chạy và xác nhận test suite trên môi trường build có runner; không viết lại FSRS bridge nếu contract hiện tại đã đúng.
+- [ ] Chạy `testDebugUnitTest` và `assembleDebug` trực tiếp từ Android Studio/Gradle; chạy instrumentation tests trên emulator cho các luồng Room. Không phụ thuộc GitHub Actions để xác minh.
 
 ### Phase 2 — Writing experience
 
