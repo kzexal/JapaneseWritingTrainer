@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -140,4 +141,87 @@ class Fsrs6SchedulerEdgeCasesTest {
         assertEquals(1, result.lapses)
         assertEquals(now, result.lastReviewedAtEpochMillis)
     }
+
+    @Test
+    fun shortLearningRetriesKeepTheLastFsrsReviewTimestamp() {
+        val anchor = now - 2L * 86_400_000L
+        val learning = CardProgress(
+            cardId = "hiragana_ka",
+            status = CardStatus.LEARNING,
+            stabilityDays = 0.5,
+            difficulty = 6.0,
+            dueAtEpochMillis = now,
+            lastReviewedAtEpochMillis = anchor
+        )
+
+        val result = scheduler().review(learning, ReviewRating.AGAIN, now)
+
+        assertEquals(anchor, result.lastReviewedAtEpochMillis)
+        assertEquals(2.0, result.elapsedDays, 0.0)
+        assertEquals(now + 60_000L, result.dueAtEpochMillis)
+    }
+
+    @Test
+    fun learningGraduationPassesElapsedDaysSinceLastFsrsUpdate() {
+        var receivedElapsedDays = -1
+        val testScheduler = Fsrs6Scheduler(calculateStates = { _, _, elapsed, _ ->
+            receivedElapsedDays = elapsed
+            FsrsReviewResult(
+                again = FsrsReviewState(0.2, 8.0, 1.0),
+                hard = FsrsReviewState(0.3, 7.0, 1.0),
+                good = FsrsReviewState(1.0, 6.0, 2.0),
+                easy = FsrsReviewState(2.0, 4.0, 3.0)
+            )
+        })
+        val anchor = now - 3L * 86_400_000L
+        val learning = CardProgress(
+            cardId = "hiragana_ka",
+            status = CardStatus.LEARNING,
+            stabilityDays = 0.5,
+            difficulty = 6.0,
+            dueAtEpochMillis = now,
+            lastReviewedAtEpochMillis = anchor
+        )
+
+        val result = testScheduler.review(learning, ReviewRating.GOOD, now)
+
+        assertEquals(3, receivedElapsedDays)
+        assertEquals(now, result.lastReviewedAtEpochMillis)
+        assertEquals(CardStatus.REVIEW, result.status)
+    }
+
+    @Test
+    fun clockRollbackDoesNotMoveFsrsAnchorOrDueDateBackwards() {
+        val futureAnchor = now + 1_000L
+        val previous = CardProgress(
+            cardId = "hiragana_ta",
+            status = CardStatus.REVIEW,
+            stabilityDays = 4.0,
+            difficulty = 5.0,
+            dueAtEpochMillis = futureAnchor,
+            lastReviewedAtEpochMillis = futureAnchor
+        )
+
+        val result = scheduler().review(previous, ReviewRating.GOOD, now)
+
+        assertEquals(futureAnchor, result.lastReviewedAtEpochMillis)
+        assertEquals(futureAnchor + 2L * 86_400_000L, result.dueAtEpochMillis)
+        assertEquals(0.0, result.elapsedDays, 0.0)
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun rejectsNegativeReviewTimestamp() {
+        scheduler().review(CardProgress(cardId = "invalid_time"), ReviewRating.GOOD, -1L)
+    }
+
+    @Test
+    fun rejectsNonFinitePersistedFsrsValues() {
+        assertThrows(IllegalArgumentException::class.java) {
+            CardProgress(cardId = "invalid_stability", stabilityDays = Double.POSITIVE_INFINITY)
+        }
+        assertThrows(IllegalArgumentException::class.java) {
+            CardProgress(cardId = "invalid_elapsed", elapsedDays = Double.NaN)
+        }
+    }
+
 }
