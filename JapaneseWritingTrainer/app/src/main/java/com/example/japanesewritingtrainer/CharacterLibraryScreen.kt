@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CharacterLibraryScreen(
     characters: List<CharacterData>,
+    showGrid: Boolean = true,
+    showHints: Boolean = true,
     onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
@@ -59,6 +61,8 @@ fun CharacterLibraryScreen(
             character = selectedCharacter,
             progress = progressById[selectedCharacter.id],
             onBack = { selectedCharacterId = null },
+            showGrid = showGrid,
+            showHints = showHints,
             onPracticeFinished = onPracticeFinished,
             modifier = modifier
         )
@@ -163,6 +167,8 @@ private fun CharacterDetailContent(
     character: CharacterData,
     progress: CardProgress?,
     onBack: () -> Unit,
+    showGrid: Boolean,
+    showHints: Boolean,
     onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)?,
     modifier: Modifier = Modifier
 ) {
@@ -212,6 +218,8 @@ private fun CharacterDetailContent(
             modifier = Modifier.weight(1f),
             character = character,
             initialMode = WritingMode.TRACE,
+            showGrid = showGrid,
+            showHints = showHints,
             onPracticeFinished = onPracticeFinished
         )
     }
