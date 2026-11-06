@@ -196,4 +196,37 @@ class LearningSessionRoomIntegrationTest {
         assertEquals(SessionCardKind.RELEARNING, nextSession.current?.kind)
     }
 
+    @Test
+    fun interruptedSessionRebuildsQueueFromRoomWithoutRepeatingGraduatedCard() = runBlocking {
+        val firstCoordinator = LearningSessionCoordinator(repository)
+        val firstSession = firstCoordinator.start(
+            deck = deck,
+            cards = cards,
+            nowEpochMillis = now,
+            newCardLimit = 2
+        )
+
+        assertEquals("a", firstSession.current?.card?.id)
+        firstCoordinator.rateCurrent(ReviewRating.GOOD, now + 3_000L)
+
+        // Simulate abandoning the in-memory session and creating a new coordinator.
+        // Only durable per-card progress and practice history are expected to survive.
+        val resumedCoordinator = LearningSessionCoordinator(repository)
+        val resumed = resumedCoordinator.start(
+            deck = deck,
+            cards = cards,
+            nowEpochMillis = now + 4_000L,
+            newCardLimit = 2
+        )
+
+        assertEquals("i", resumed.current?.card?.id)
+        assertEquals(listOf("i"), resumed.plan.newCards.map { it.card.id })
+        assertTrue(resumed.plan.reviewCards.isEmpty())
+
+        val persisted = dao.getByCardId("a")!!.toDomain()
+        assertEquals(CardStatus.REVIEW, persisted.status)
+        assertEquals(1, persisted.reviewCount)
+        assertEquals(1, practiceLogDao.getByCardId("a").size)
+    }
+
 }
