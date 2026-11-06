@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import android.content.Context
+import java.util.concurrent.atomic.AtomicBoolean
 
 /**
  * Đánh giá chủ quan sau khi người học đã viết và xem đáp án.
@@ -152,6 +153,7 @@ class LearningSessionCoordinator internal constructor(
     private var engine: LearningSessionEngine? = null
     private var currentCardStartedAtEpochMillis: Long? = null
     private val againCountsByCardId = mutableMapOf<String, Int>()
+    private val operationInProgress = AtomicBoolean(false)
 
     suspend fun start(
         deck: WritingDeck,
@@ -159,33 +161,47 @@ class LearningSessionCoordinator internal constructor(
         nowEpochMillis: Long,
         newCardLimit: Int
     ): LearningSessionSnapshot {
-        val progress = progressRepository.getAll().associateBy { it.cardId }
-        val plan = LearningSessionPlanner.plan(
+        check(operationInProgress.compareAndSet(false, true)) {
+            "Another learning-session operation is already in progress"
+        }
+        try {
+            val progress = progressRepository.getAll().associateBy { it.cardId }
+            val plan = LearningSessionPlanner.plan(
             deck = deck,
             cards = cards,
             progressByCardId = progress,
             nowEpochMillis = nowEpochMillis,
             newCardLimit = newCardLimit
         )
-        againCountsByCardId.clear()
-        return LearningSessionEngine(plan).also {
-            engine = it
-            currentCardStartedAtEpochMillis = nowEpochMillis
-        }.start()
+            againCountsByCardId.clear()
+            return LearningSessionEngine(plan).also {
+                engine = it
+                currentCardStartedAtEpochMillis = nowEpochMillis
+            }.start()
+        } finally {
+            operationInProgress.set(false)
+        }
     }
 
     /**
      * Ghi nhận rating, thời gian luyện và lịch sử; chỉ thay đổi queue sau khi
      * transaction lưu thành công. Again được thử lại tối đa hai lần tự động;
      * lần Again thứ ba chuyển thẻ vào nhóm khó của phiên.
+     *
+     * A duplicate/concurrent rating while persistence is in flight is ignored;
+     * this prevents a double tap from creating duplicate FSRS updates and logs.
      */
     suspend fun rateCurrent(
         rating: ReviewRating,
         nowEpochMillis: Long
     ): LearningSessionSnapshot {
         val activeEngine = engine ?: error("Start a session before rating a card")
-        val current = activeEngine.snapshot.current
-            ?: error("There is no current card")
+        if (!operationInProgress.compareAndSet(false, true)) {
+            return activeEngine.snapshot
+        }
+        try {
+            val current = activeEngine.snapshot.current
+                ?: error("There is no current card")
 
         val updated = scheduler.review(current.progress, rating, nowEpochMillis)
         require(updated.cardId == current.card.id) {
@@ -230,11 +246,17 @@ class LearningSessionCoordinator internal constructor(
         if (next.current != null) {
             currentCardStartedAtEpochMillis = nowEpochMillis
         }
-        return next
+            return next
+        } finally {
+            operationInProgress.set(false)
+        }
     }
 
     /** Người học chủ động luyện lại nhóm thẻ khó; bộ đếm Again được đặt lại. */
     fun retryDifficultCards(nowEpochMillis: Long = System.currentTimeMillis()): LearningSessionSnapshot {
+        check(!operationInProgress.get()) {
+            "Cannot retry difficult cards while another session operation is in progress"
+        }
         val activeEngine = engine ?: error("Start a session before retrying difficult cards")
         activeEngine.snapshot.difficultCards.forEach {
             againCountsByCardId.remove(it.card.id)
