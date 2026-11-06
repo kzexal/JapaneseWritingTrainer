@@ -12,7 +12,7 @@ import org.json.JSONObject
 class BackupRestoreManager(context: Context) {
     private val database = WritingTrainerDatabase.getInstance(context.applicationContext)
 
-    suspend fun createBackupJson(): String {
+    suspend fun createBackupJson(): String = database.withTransaction {
         val progress = database.cardProgressDao().getAll()
         val logs = database.practiceLogDao().getAll()
 
@@ -55,7 +55,7 @@ class BackupRestoreManager(context: Context) {
 
         root.put("cardProgress", progressArray)
         root.put("practiceLogs", logArray)
-        return root.toString(2)
+        root.toString(2)
     }
 
     /**
