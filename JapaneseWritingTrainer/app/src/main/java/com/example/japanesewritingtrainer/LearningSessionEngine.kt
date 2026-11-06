@@ -99,7 +99,15 @@ class LearningSessionEngine(private val plan: LearningSessionPlan) {
         }
 
         queue.removeAt(0)
-        val updatedCard = currentCard.copy(progress = updatedProgress)
+        val updatedCard = currentCard.copy(
+            progress = updatedProgress,
+            kind = when (updatedProgress.status) {
+                CardStatus.NEW -> SessionCardKind.NEW
+                CardStatus.LEARNING -> SessionCardKind.LEARNING
+                CardStatus.RELEARNING -> SessionCardKind.RELEARNING
+                CardStatus.REVIEW -> SessionCardKind.REVIEW
+            }
+        )
         when {
             requeueCurrent -> queue.add(updatedCard)
             markDifficult -> difficultCards.add(updatedCard)
@@ -226,13 +234,13 @@ class LearningSessionCoordinator internal constructor(
     }
 
     /** Người học chủ động luyện lại nhóm thẻ khó; bộ đếm Again được đặt lại. */
-    fun retryDifficultCards(): LearningSessionSnapshot {
+    fun retryDifficultCards(nowEpochMillis: Long = System.currentTimeMillis()): LearningSessionSnapshot {
         val activeEngine = engine ?: error("Start a session before retrying difficult cards")
         activeEngine.snapshot.difficultCards.forEach {
             againCountsByCardId.remove(it.card.id)
         }
         val next = activeEngine.retryDifficultCards()
-        currentCardStartedAtEpochMillis = System.currentTimeMillis()
+        currentCardStartedAtEpochMillis = nowEpochMillis
         return next
     }
 
