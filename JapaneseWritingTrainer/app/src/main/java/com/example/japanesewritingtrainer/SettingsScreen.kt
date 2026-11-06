@@ -174,6 +174,26 @@ fun SettingsScreen(
             }
         }
 
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    "Ghi công dữ liệu",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Text(
+                    "Dữ liệu thứ tự nét Hiragana được chuyển đổi từ KanjiVG. " +
+                        "Copyright © Ulrich Apel. Licensed under Creative Commons " +
+                        "Attribution-ShareAlike 3.0 (CC BY-SA 3.0). " +
+                        "Nguồn: https://github.com/KanjiVG/kanjivg",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
         Text(
             text = "Japanese Writing Trainer · Phiên bản 1.0",
             style = MaterialTheme.typography.labelMedium,
