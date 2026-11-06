@@ -57,7 +57,7 @@ These rules apply to all development work in this repository. They are intended 
 
 ## 6. Testing and verification
 
-Run the narrowest relevant checks after each change, then run the full applicable CI command before considering the work complete.
+Run the narrowest relevant checks after each change, then run the full applicable local test/build commands before considering the work complete. Use Android Studio's Gradle tool window or its integrated terminal for Android verification; GitHub Actions is not a required verification gate.
 
 ### Rust bridge
 
@@ -72,7 +72,7 @@ cargo build --release
 
 ### Android app
 
-From `JapaneseWritingTrainer`:
+From `JapaneseWritingTrainer`, using Android Studio's Gradle tool window or integrated terminal:
 
 ```bash
 ./gradlew testDebugUnitTest assembleDebug
