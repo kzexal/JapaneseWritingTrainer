@@ -118,6 +118,38 @@ class LearningSessionRoomIntegrationTest {
         assertEquals(PracticeMode.REVIEW, practiceLogDao.getByCardId("a").first().toDomain().mode)
     }
 
+
+    @Test
+    fun dailyNewCardLimitIsPreservedAcrossSeparateSessions() = runBlocking {
+        val dayStart = now - 1_000L
+        val firstCoordinator = LearningSessionCoordinator(repository)
+        val firstSession = firstCoordinator.start(
+            deck = deck,
+            cards = cards,
+            nowEpochMillis = now,
+            newCardLimit = 1
+        )
+
+        assertEquals("a", firstSession.current?.card?.id)
+        firstCoordinator.rateCurrent(ReviewRating.GOOD, now + 4_000L)
+
+        val studiedToday = practiceLogDao.countDistinctNewCardsSince(dayStart)
+        assertEquals(1, studiedToday)
+
+        val remainingLimit = (1 - studiedToday).coerceAtLeast(0)
+        val nextSession = LearningSessionCoordinator(repository).start(
+            deck = deck,
+            cards = cards,
+            nowEpochMillis = now + 5_000L,
+            newCardLimit = remainingLimit
+        )
+
+        assertTrue(nextSession.plan.newCards.isEmpty())
+        assertEquals(1, nextSession.plan.remainingNewCount)
+        assertTrue(nextSession.plan.reviewCards.isEmpty())
+        assertEquals(LearningSessionStatus.COMPLETED, nextSession.status)
+    }
+
     @Test
     fun reviewLapsePersistsRelearningStatusAcrossSessions() = runBlocking {
         dao.upsert(
