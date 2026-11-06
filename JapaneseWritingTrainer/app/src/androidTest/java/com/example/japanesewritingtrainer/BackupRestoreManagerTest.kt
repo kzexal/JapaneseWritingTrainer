@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.json.JSONObject
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
@@ -87,10 +88,11 @@ class BackupRestoreManagerTest {
         database.cardProgressDao().upsert(existing.toEntity())
 
         val validBackup = manager.createBackupJson()
-        val invalidBackup = validBackup.replace(
-            "\"scheduledDays\": 8.0",
-            "\"scheduledDays\": -1.0"
-        )
+        val invalidRoot = JSONObject(validBackup)
+        invalidRoot.getJSONArray("cardProgress")
+            .getJSONObject(0)
+            .put("scheduledDays", -1.0)
+        val invalidBackup = invalidRoot.toString()
         assertTrue(invalidBackup != validBackup)
 
         val failure = runCatching {
