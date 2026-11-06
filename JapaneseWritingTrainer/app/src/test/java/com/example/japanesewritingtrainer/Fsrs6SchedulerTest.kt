@@ -188,4 +188,140 @@ class Fsrs6SchedulerTest {
         assertEquals(30.0, updated.scheduledDays, 0.0)
         assertEquals(now + 30L * 86_400_000L, updated.dueAtEpochMillis)
     }
+
+    @Test
+    fun learningRatingMatrixKeepsShortRetriesAndGraduatesSuccessfulRatings() {
+        val anchor = now - 3L * 86_400_000L
+        val expected = mapOf(
+            ReviewRating.AGAIN to (CardStatus.LEARNING to now + 60_000L),
+            ReviewRating.HARD to (CardStatus.LEARNING to now + 6L * 60_000L),
+            ReviewRating.GOOD to (CardStatus.REVIEW to now + 2L * 86_400_000L),
+            ReviewRating.EASY to (CardStatus.REVIEW to now + 10L * 86_400_000L)
+        )
+
+        expected.forEach { (rating, transition) ->
+            var calculationCount = 0
+            val scheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+                calculationCount++
+                result()
+            })
+            val learning = CardProgress(
+                cardId = "learning_${rating.name.lowercase()}",
+                status = CardStatus.LEARNING,
+                stabilityDays = 0.5,
+                difficulty = 6.0,
+                dueAtEpochMillis = now,
+                lastReviewedAtEpochMillis = anchor,
+                reps = 2,
+                reviewCount = 2,
+                correctCount = 1
+            )
+
+            val updated = scheduler.review(learning, rating, now)
+
+            assertEquals(transition.first, updated.status)
+            assertEquals(transition.second, updated.dueAtEpochMillis)
+            assertEquals(
+                if (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD) 0 else 1,
+                calculationCount
+            )
+            assertEquals(
+                if (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD) anchor else now,
+                updated.lastReviewedAtEpochMillis
+            )
+            assertEquals(3, updated.reps)
+            assertEquals(3, updated.reviewCount)
+            assertEquals(if (rating == ReviewRating.AGAIN) 1 else 2, updated.correctCount)
+        }
+    }
+
+    @Test
+    fun relearningRatingMatrixPreservesRelearningPolicyAndGraduatesGoodOrEasy() {
+        val anchor = now - 4L * 86_400_000L
+        val expected = mapOf(
+            ReviewRating.AGAIN to (CardStatus.RELEARNING to now + 10L * 60_000L),
+            ReviewRating.HARD to (CardStatus.RELEARNING to now + 6L * 60_000L),
+            ReviewRating.GOOD to (CardStatus.REVIEW to now + 2L * 86_400_000L),
+            ReviewRating.EASY to (CardStatus.REVIEW to now + 10L * 86_400_000L)
+        )
+
+        expected.forEach { (rating, transition) ->
+            var calculationCount = 0
+            val scheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+                calculationCount++
+                result()
+            })
+            val relearning = CardProgress(
+                cardId = "relearning_${rating.name.lowercase()}",
+                status = CardStatus.RELEARNING,
+                stabilityDays = 0.5,
+                difficulty = 6.0,
+                dueAtEpochMillis = now,
+                lastReviewedAtEpochMillis = anchor,
+                reps = 4,
+                lapses = 2,
+                reviewCount = 4,
+                correctCount = 3
+            )
+
+            val updated = scheduler.review(relearning, rating, now)
+
+            assertEquals(transition.first, updated.status)
+            assertEquals(transition.second, updated.dueAtEpochMillis)
+            assertEquals(
+                if (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD) 0 else 1,
+                calculationCount
+            )
+            assertEquals(
+                if (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD) anchor else now,
+                updated.lastReviewedAtEpochMillis
+            )
+            assertEquals(5, updated.reps)
+            assertEquals(5, updated.reviewCount)
+            assertEquals(2, updated.lapses)
+            assertEquals(if (rating == ReviewRating.AGAIN) 3 else 4, updated.correctCount)
+        }
+    }
+
+    @Test
+    fun reviewRatingMatrixMapsAllRatingsToExpectedStateAndCounters() {
+        val expected = mapOf(
+            ReviewRating.AGAIN to (CardStatus.RELEARNING to now + 10L * 60_000L),
+            ReviewRating.HARD to (CardStatus.REVIEW to now + 4L * 86_400_000L),
+            ReviewRating.GOOD to (CardStatus.REVIEW to now + 2L * 86_400_000L),
+            ReviewRating.EASY to (CardStatus.REVIEW to now + 10L * 86_400_000L)
+        )
+
+        expected.forEach { (rating, transition) ->
+            var calculationCount = 0
+            val scheduler = Fsrs6Scheduler(calculateStates = { _, _, _, _ ->
+                calculationCount++
+                result()
+            })
+            val review = CardProgress(
+                cardId = "review_${rating.name.lowercase()}",
+                status = CardStatus.REVIEW,
+                stabilityDays = 5.0,
+                difficulty = 5.0,
+                dueAtEpochMillis = now,
+                lastReviewedAtEpochMillis = now - 2L * 86_400_000L,
+                reps = 5,
+                lapses = 1,
+                reviewCount = 5,
+                correctCount = 4
+            )
+
+            val updated = scheduler.review(review, rating, now)
+
+            assertEquals(transition.first, updated.status)
+            assertEquals(transition.second, updated.dueAtEpochMillis)
+            assertEquals(1, calculationCount)
+            assertEquals(now, updated.lastReviewedAtEpochMillis)
+            assertEquals(6, updated.reps)
+            assertEquals(6, updated.reviewCount)
+            assertEquals(if (rating == ReviewRating.AGAIN) 2 else 1, updated.lapses)
+            assertEquals(if (rating == ReviewRating.AGAIN) 4 else 5, updated.correctCount)
+        }
+    }
+
 }
