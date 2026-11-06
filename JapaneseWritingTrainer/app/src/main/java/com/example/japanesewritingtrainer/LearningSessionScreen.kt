@@ -103,6 +103,17 @@ fun LearningSessionScreen(
         }
     }
 
+    fun retryDifficultCards() {
+        if (isLoading || isSaving) return
+        try {
+            snapshot = coordinator.retryDifficultCards()
+            awaitingRating = false
+            errorMessage = null
+        } catch (exception: Exception) {
+            errorMessage = exception.localizedMessage ?: "Không thể đưa thẻ khó vào luyện lại."
+        }
+    }
+
     fun submitRating(rating: ReviewRating) {
         if (isSaving || !awaitingRating) return
         scope.launch {
@@ -270,17 +281,27 @@ fun LearningSessionScreen(
                         }
                     }
                 } else {
-                    Text(
-                        if (session.plan.remainingNewCount > 0) {
-                            "Bạn đã hoàn thành nhóm thẻ này. Có thể tiếp tục học các thẻ mới."
-                        } else {
-                            "Không còn thẻ mới hoặc thẻ đến hạn trong phiên này."
-                        },
-                        style = MaterialTheme.typography.bodyMedium
-                    )
+                    if (session.difficultCards.isNotEmpty()) {
+                        Text(
+                            "Có ${session.difficultCards.size} thẻ cần luyện thêm. Những thẻ này đã được tách khỏi lượt học chính để bạn không phải lặp lại liên tục.",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                        OutlinedButton(onClick = { retryDifficultCards() }) {
+                            Text("Luyện lại các thẻ khó")
+                        }
+                    } else {
+                        Text(
+                            if (session.plan.remainingNewCount > 0) {
+                                "Bạn đã hoàn thành nhóm thẻ này. Có thể tiếp tục học các thẻ mới."
+                            } else {
+                                "Không còn thẻ mới hoặc thẻ đến hạn trong phiên này."
+                            },
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
                     OutlinedButton(onClick = { startAnotherSession() }) {
                         Text(
-                            if (session.plan.remainingNewCount > 0) "Học tiếp" else "Kiểm tra lịch ôn"
+                            if (session.plan.remainingNewCount > 0) "Học tiếp" else "Bắt đầu phiên mới"
                         )
                     }
                 }
