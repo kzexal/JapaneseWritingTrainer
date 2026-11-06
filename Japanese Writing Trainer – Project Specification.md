@@ -1,6 +1,6 @@
 # Japanese Writing Trainer – Project Specification
 
-*Phiên bản 2.0 · Cập nhật: 06/11/2026 · Baseline: nhánh `main`*
+*Phiên bản 2.0 · Cập nhật: 07/11/2026 · Baseline: nhánh `main`*
 
 > Tài liệu này mô tả trạng thái thực tế của mã nguồn trên `main` và kế hoạch phát triển tiếp theo. Nhãn **Implemented** nghĩa là đã có triển khai trong mã nguồn; chưa đồng nghĩa mọi hành vi đã được kiểm chứng trên thiết bị thật. Không dùng trạng thái hoặc kết quả kiểm thử từ nhánh khác làm bằng chứng cho `main`.
 
@@ -209,7 +209,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Kiểm chứng các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING trên toàn bộ rating bằng scheduler matrix; test unit đã pass trên máy phát triển.
 - [x] Bổ sung và chạy pass scheduler test matrix cho cả bốn rating ở trạng thái LEARNING, RELEARNING và REVIEW.
 - [x] Chạy pass unit/instrumentation tests cho daily limit, due queue, retry thẻ khó và trường hợp hết hàng đợi.
-- [ ] Kiểm tra thực tế đóng tiến trình Android và mở lại ứng dụng; đã bổ sung Room instrumentation test mô phỏng bỏ coordinator cũ, tạo phiên mới và khôi phục queue từ tiến độ/lịch sử đã lưu. Queue đang chạy không được persist nguyên trạng; phiên mới được lập lại từ dữ liệu card trong Room.
+- [x] Kiểm tra thực tế force-stop Android và mở lại ứng dụng giữa quá trình sử dụng; người dùng xác nhận phiên học vẫn khôi phục đúng, không phát hiện mất tiến độ hoặc lặp lại sai card. Room instrumentation test cũng mô phỏng bỏ coordinator cũ, tạo phiên mới và khôi phục queue từ tiến độ/lịch sử đã lưu. Queue đang chạy không được persist nguyên trạng; phiên mới được lập lại từ dữ liệu card trong Room.
 - [ ] Chạy `testDebugUnitTest` và `assembleDebug` trực tiếp từ Android Studio/Gradle; chạy instrumentation tests trên emulator cho các luồng Room. Không phụ thuộc GitHub Actions để xác minh.
 
 ### Phase 2 — Writing experience
