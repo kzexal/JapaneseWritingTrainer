@@ -197,6 +197,41 @@ class LearningSessionRoomIntegrationTest {
     }
 
     @Test
+    fun progressCountersMatchPersistedRatedPracticeLogs() = runBlocking {
+        val singleCardDeck = deck.copy(cardIds = listOf("a"))
+        val singleCard = cards.filter { it.id == "a" }
+
+        val coordinator = LearningSessionCoordinator(repository)
+        coordinator.start(
+            deck = singleCardDeck,
+            cards = singleCard,
+            nowEpochMillis = now,
+            newCardLimit = 1
+        )
+
+        coordinator.rateCurrent(ReviewRating.AGAIN, now + 1_000L)
+        coordinator.rateCurrent(ReviewRating.AGAIN, now + 2_000L)
+        coordinator.rateCurrent(ReviewRating.GOOD, now + 3_000L)
+
+        val progress = dao.getByCardId("a")!!.toDomain()
+        val logs = practiceLogDao.getByCardId("a").map(PracticeLogEntity::toDomain)
+        val ratedLogs = logs.filter { it.rating != null }
+
+        assertEquals(3, progress.reviewCount)
+        assertEquals(1, progress.correctCount)
+        assertEquals(progress.reviewCount, ratedLogs.size)
+        assertEquals(
+            progress.correctCount,
+            ratedLogs.count { it.rating != ReviewRating.AGAIN }
+        )
+        assertEquals(
+            listOf(ReviewRating.GOOD, ReviewRating.AGAIN, ReviewRating.AGAIN),
+            logs.map { it.rating }
+        )
+        assertEquals(3, logs.size)
+    }
+
+    @Test
     fun interruptedSessionRebuildsQueueFromRoomWithoutRepeatingGraduatedCard() = runBlocking {
         val firstCoordinator = LearningSessionCoordinator(repository)
         val firstSession = firstCoordinator.start(
