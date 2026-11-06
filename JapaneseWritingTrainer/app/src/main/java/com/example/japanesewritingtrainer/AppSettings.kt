@@ -27,7 +27,35 @@ class AppSettings(context: Context) {
         preferences.edit().putString(KEY_THEME_MODE, mode.storageValue).apply()
     }
 
+    fun getNewCardsPerDay(): Int =
+        preferences.getInt(KEY_NEW_CARDS_PER_DAY, DEFAULT_NEW_CARDS_PER_DAY)
+            .coerceIn(MIN_NEW_CARDS_PER_DAY, MAX_NEW_CARDS_PER_DAY)
+
+    fun setNewCardsPerDay(value: Int) {
+        preferences.edit()
+            .putInt(KEY_NEW_CARDS_PER_DAY, value.coerceIn(MIN_NEW_CARDS_PER_DAY, MAX_NEW_CARDS_PER_DAY))
+            .apply()
+    }
+
+    fun getShowGrid(): Boolean = preferences.getBoolean(KEY_SHOW_GRID, true)
+
+    fun setShowGrid(value: Boolean) {
+        preferences.edit().putBoolean(KEY_SHOW_GRID, value).apply()
+    }
+
+    fun getShowHints(): Boolean = preferences.getBoolean(KEY_SHOW_HINTS, true)
+
+    fun setShowHints(value: Boolean) {
+        preferences.edit().putBoolean(KEY_SHOW_HINTS, value).apply()
+    }
+
     private companion object {
         const val KEY_THEME_MODE = "theme_mode"
+        const val KEY_NEW_CARDS_PER_DAY = "new_cards_per_day"
+        const val KEY_SHOW_GRID = "show_grid"
+        const val KEY_SHOW_HINTS = "show_hints"
+        const val DEFAULT_NEW_CARDS_PER_DAY = 10
+        const val MIN_NEW_CARDS_PER_DAY = 0
+        const val MAX_NEW_CARDS_PER_DAY = 50
     }
 }
