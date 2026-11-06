@@ -224,7 +224,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 - [ ] Mở rộng test migration Room qua các phiên bản.
 - [ ] Mở rộng backup/restore: đã bổ sung instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng; cần chạy xác nhận trên thiết bị. Tiếp tục kiểm tra dữ liệu không hợp lệ, backup cũ và rollback transaction.
-- [ ] Đối chiếu thống kê với practice logs và card progress.
+- [ ] Đối chiếu thống kê với practice logs và card progress: đã bổ sung Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử; chờ xác nhận chạy trên thiết bị.
 - [ ] Kiểm tra theme/settings được giữ sau khi khởi động lại.
 - [ ] Xác minh không mất dữ liệu khi nâng cấp app.
 
