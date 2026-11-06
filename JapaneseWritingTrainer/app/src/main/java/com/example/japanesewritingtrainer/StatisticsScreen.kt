@@ -60,18 +60,22 @@ fun StatisticsScreen(
     LaunchedEffect(logRepository) { loadLogs() }
 
     val totalCards = characters.size
-    val learned = progress.count { it.status == CardStatus.REVIEW }
-    val learning = progress.count {
+    val characterIds = remember(characters) { characters.map { it.id }.toSet() }
+    val deckProgress = progress.filter { it.cardId in characterIds }
+    val learned = deckProgress.count { it.status == CardStatus.REVIEW }
+    val learning = deckProgress.count {
         it.status == CardStatus.LEARNING || it.status == CardStatus.RELEARNING
     }
     val newCards = (totalCards - learned - learning).coerceAtLeast(0)
-    val dueCards = progress.count { it.isDue(System.currentTimeMillis()) }
-    val totalReviews = progress.sumOf { it.reviewCount }
-    val correctReviews = progress.sumOf { it.correctCount }
+    val dueCards = deckProgress.count { it.isDue(System.currentTimeMillis()) }
+    val totalReviews = deckProgress.sumOf { it.reviewCount }
+    val correctReviews = deckProgress.sumOf { it.correctCount }
     val accuracy = if (totalReviews == 0) 0 else correctReviews * 100 / totalReviews
-    val practicedCards = progress.count { it.reviewCount > 0 }
+    val practicedIds = deckProgress.filter { it.reviewCount > 0 }.map { it.cardId }.toSet() +
+        logs.asSequence().map { it.cardId }.filter { it in characterIds }.toSet()
+    val practicedCards = practicedIds.size
     val totalDuration = totalPracticeDurationMs(logs)
-    val completion = if (totalCards == 0) 0f else learned.toFloat() / totalCards
+    val completion = if (totalCards == 0) 0f else (learned.toFloat() / totalCards).coerceIn(0f, 1f)
 
     Column(
         modifier = modifier.fillMaxSize().padding(16.dp),
@@ -99,7 +103,7 @@ fun StatisticsScreen(
                 ) {
                     Text("Tiến độ hoàn thành", style = MaterialTheme.typography.titleMedium)
                     Text(
-                        "\${(completion * 100).toInt()}%",
+                        "${(completion * 100).toInt()}%",
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold
                     )
@@ -144,7 +148,7 @@ fun StatisticsScreen(
                     CircularProgressIndicator()
                 } else {
                     Text(
-                        "\${logs.size} phiên luyện đã được ghi nhận",
+                        "${logs.size} phiên luyện đã được ghi nhận",
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -212,6 +216,6 @@ private fun formatStatisticsDuration(durationMs: Long): String {
     return when {
         hours > 0 -> String.format(Locale.getDefault(), "%d giờ %d phút", hours, minutes)
         totalMinutes > 0 -> "$totalMinutes phút"
-        else -> "\${durationMs.coerceAtLeast(0L) / 1_000L} giây"
+        else -> "${durationMs.coerceAtLeast(0L) / 1_000L} giây"
     }
 }
