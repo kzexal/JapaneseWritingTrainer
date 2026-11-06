@@ -544,25 +544,13 @@ fun WritingCanvas(
                 consecutiveFailedAttempts >= 2 &&
                 !isGuidedComplete
             ) {
-                Row(
+                OutlinedButton(
                     modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth()
-                        .background(Color.White.copy(alpha = 0.92f))
-                        .padding(horizontal = 8.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                        .align(Alignment.TopEnd)
+                        .padding(8.dp),
+                    onClick = { showTemplate = !showTemplate }
                 ) {
-                    Text(
-                        text = "Thử viết chậm hơn. Có thể xem gợi ý nét hiện tại.",
-                        modifier = Modifier.weight(1f),
-                        color = Color(0xFFEF6C00),
-                        maxLines = 1,
-                        softWrap = false
-                    )
-                    OutlinedButton(onClick = { showTemplate = !showTemplate }) {
-                        Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
-                    }
+                    Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
                 }
             }
         }
