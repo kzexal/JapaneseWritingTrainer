@@ -71,6 +71,43 @@ class LearningSessionPlannerTest {
         )
     }
 
+
+    @Test
+    fun ordersDueCardsByEarliestDueTimeThenDeckOrder() {
+        val progress = mapOf(
+            "a" to CardProgress(
+                cardId = "a",
+                status = CardStatus.LEARNING,
+                dueAtEpochMillis = 900L
+            ),
+            "i" to CardProgress(
+                cardId = "i",
+                status = CardStatus.RELEARNING,
+                dueAtEpochMillis = 700L
+            ),
+            "u" to CardProgress(
+                cardId = "u",
+                status = CardStatus.REVIEW,
+                dueAtEpochMillis = 500L
+            ),
+            "e" to CardProgress(
+                cardId = "e",
+                status = CardStatus.REVIEW,
+                dueAtEpochMillis = 700L
+            )
+        )
+
+        val plan = LearningSessionPlanner.plan(
+            deck = deck,
+            cards = cards,
+            progressByCardId = progress,
+            nowEpochMillis = 1_000L,
+            newCardLimit = 0
+        )
+
+        assertEquals(listOf("u", "i", "e", "a"), plan.reviewCards.map { it.card.id })
+    }
+
     @Test
     fun respectsNewCardLimitAndReportsRemainingCards() {
         val plan = LearningSessionPlanner.plan(deck, cards, emptyMap(), 0L, 2)
