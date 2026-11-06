@@ -182,7 +182,9 @@ class LearningSessionRoomIntegrationTest {
         coordinator.start(deck, cards, now, newCardLimit = 0)
         coordinator.rateCurrent(ReviewRating.AGAIN, now)
 
-        assertEquals(CardStatus.RELEARNING, dao.getByCardId("a")!!.status)
+        val persistedProgress = dao.getByCardId("a")!!
+        assertEquals(CardStatus.RELEARNING.name, persistedProgress.status)
+        assertEquals(CardStatus.RELEARNING, persistedProgress.toDomain().status)
 
         val nextSession = LearningSessionCoordinator(repository).start(
             deck = deck,
