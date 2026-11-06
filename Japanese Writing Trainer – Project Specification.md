@@ -1,412 +1,266 @@
 # Japanese Writing Trainer – Project Specification
 
-*Phiên bản 1.0 · Phương án C · MVP: Hiragana Writing Trainer*
+*Phiên bản 2.0 · Cập nhật: 06/11/2026 · Baseline: nhánh `main`*
 
-## 1. Product Requirements Document (PRD)
+> Tài liệu này mô tả trạng thái thực tế của mã nguồn trên `main` và kế hoạch phát triển tiếp theo. Nhãn **Implemented** nghĩa là đã có triển khai trong mã nguồn; chưa đồng nghĩa mọi hành vi đã được kiểm chứng trên thiết bị thật. Không dùng trạng thái hoặc kết quả kiểm thử từ nhánh khác làm bằng chứng cho `main`.
+
+## 1. Tổng quan sản phẩm
 
 ### 1.1 Tầm nhìn
 
-Xây dựng ứng dụng Android học viết tiếng Nhật bằng cảm ứng, kết hợp **luyện nét**, **viết từ trí nhớ** và **ôn tập thông minh (SRS)**. Ứng dụng hoạt động offline, dữ liệu độc lập, có thể mở rộng lâu dài từ Hiragana → Katakana → Kanji N5–N1.
+Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
 
-### 1.2 Vấn đề cần giải quyết
+Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Phiên bản hiện tại tập trung vào Hiragana; kiến trúc deck/card và dữ liệu ký tự được tách riêng để có thể mở rộng sau này.
 
-- Ứng dụng hiện có thường chỉ cho xem thứ tự nét, thiếu cơ chế ép người học **tự nhớ và viết lại**.
-- Thiếu lịch ôn tập gắn với *từng chữ* theo mức độ nhớ.
-- Dữ liệu bị khóa trong ứng dụng, khó tích hợp với quy trình học sẵn có (Excel → Anki).
+### 1.2 Nền tảng và công nghệ hiện tại
 
-### 1.3 Đối tượng người dùng
-
-- Người tự học tiếng Nhật ở mức bắt đầu (Hiragana) đến trung cấp (Kanji N5–N1).
-- Người đã quen với SRS/Anki, muốn luyện **viết tay** thay vì chỉ nhận diện mặt chữ.
-
-### 1.4 Mục tiêu và chỉ số thành công (MVP)
-
-| Mục tiêu | Chỉ số |
+| Thành phần | Công nghệ / cấu hình |
 | --- | --- |
-| Học trọn bộ 46 Hiragana | 46/46 ký tự có dữ liệu nét và học được |
-| Viết bằng ngón tay mượt | Vẽ nét không giật, độ trễ cảm nhận được thấp |
-| Ôn tập có hệ thống | Mỗi ký tự có `dueDate` và được xếp vào hàng đợi ôn |
-| Giữ tiến độ | Đóng/mở app không mất dữ liệu |
-| Cài đặt được | Build APK chạy trên điện thoại thật |
+| Nền tảng | Android |
+| Ngôn ngữ | Kotlin |
+| UI | Jetpack Compose, Material 3 |
+| Vẽ và nhận thao tác | Compose Canvas |
+| Cơ sở dữ liệu | Room |
+| Cài đặt | Android SharedPreferences |
+| Dữ liệu ký tự | JSON trong app assets |
+| SRS | FSRS-rs 6.6.2 qua Rust JNI |
+| Android tối thiểu | API 26 |
+| Native ABI được build trong CI | arm64-v8a, x86_64 |
 
-### 1.5 Ngoài phạm vi MVP
+Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấu hình build; không tự ý nâng cấp phiên bản chỉ dựa trên tài liệu này.
 
-Katakana, Kanji, AI nhận diện chữ viết, đồng bộ Anki, import Excel, tài khoản/server/Firebase.
+### 1.3 Mục tiêu phiên bản hiện tại
 
-### 1.6 Ràng buộc và giả định
+- Luyện viết bộ 46 ký tự Hiragana cơ bản.
+- Hỗ trợ Trace, Guided Writing, Recall Writing và Free Practice.
+- Lưu tiến độ theo từng card và lịch sử luyện tập.
+- Lập lịch học mới, học lại và ôn tập bằng FSRS.
+- Cho phép điều chỉnh giới hạn card mới mỗi ngày và các tùy chọn luyện viết.
+- Hiển thị lịch sử, thống kê, và hỗ trợ backup/restore dữ liệu cục bộ.
 
-- Nền tảng: Android smartphone; Kotlin + Jetpack Compose.
-- Offline-first, không cần mạng.
-- Một nhà phát triển, vừa làm vừa học Kotlin → thời gian thực tế có thể lệch so với kế hoạch.
-- Nguồn dữ liệu nét chữ SVG cần kiểm tra giấy phép trước khi dùng (xem mục 6).
+### 1.4 Ngoài phạm vi hiện tại
 
-## 2. Functional Requirements
+Katakana, Kanji, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase, đồng bộ Anki và import Excel chưa thuộc phạm vi triển khai hiện tại. Chỉ đưa vào roadmap khi có quyết định sản phẩm riêng.
 
-### 2.1 Chế độ học
+## 2. Trạng thái chức năng
 
-| Mã | Chế độ | Mô tả | Ưu tiên |
-| --- | --- | --- | --- |
-| FR-01 | Trace | Tập viết theo nét mẫu mờ | MVP |
-| FR-02 | Guided Writing | Viết từng nét, có gợi ý nét tiếp theo | MVP |
-| FR-03 | Recall Writing | Tự viết từ trí nhớ, xem đáp án sau | MVP |
-| FR-04 | Review | Ôn tập theo lịch SRS | MVP |
-| FR-05 | Free Practice | Viết tự do, không tính điểm | Should |
+### 2.1 Luyện viết
 
-### 2.2 Canvas viết
-
-- FR-10: Vẽ nét bằng ngón tay, ghi lại điểm theo thời gian.
-- FR-11: Hiển thị lưới ô vuông (có đường chéo/giữa, bật/tắt được).
-- FR-12: Undo nét cuối, Clear toàn bộ.
-- FR-13: Hỗ trợ nhiều nét; phân tách nét theo thao tác nhấc tay.
-
-### 2.3 Stroke Engine
-
-- FR-20: Parse SVG path thành đường vẽ trên Compose Canvas.
-- FR-21: Hiển thị chữ mẫu, từng nét, số thứ tự nét.
-- FR-22: Animation vẽ từng nét theo thứ tự.
-- FR-23: Tô sáng nét tiếp theo trong Guided Writing.
-
-### 2.4 Thư viện ký tự
-
-- FR-30: Danh sách ký tự theo nhóm (cơ bản, các hàng a/ka/sa…).
-- FR-31: Màn hình chi tiết: chữ, cách đọc, số nét, animation.
-- FR-32: Tìm kiếm theo ký tự hoặc romaji.
-- FR-33: Hiển thị trạng thái học của từng ký tự (mới / đang học / đã thuộc).
-
-### 2.5 Đánh giá và SRS
-
-- FR-40: **Level 1** – Tự đánh giá sau khi viết: Again / Hard / Good / Easy.
-- FR-41: SRS cập nhật `easeFactor`, `intervalDays`, `dueDate` theo đánh giá.
-- FR-42: Hàng đợi ôn hôm nay = các ký tự có `dueDate ≤ hôm nay`.
-- FR-43: Giới hạn số ký tự mới mỗi ngày (cấu hình được).
-- FR-44: *(Should)* **Level 2** – Gợi ý tự động dựa trên vùng bắt đầu, hướng, thứ tự nét; chỉ mang tính tham khảo, người học vẫn quyết định kết quả cuối.
-
-### 2.6 Tiến độ và thống kê
-
-- FR-50: Lưu lịch sử mỗi lần luyện (thời điểm, chế độ, kết quả).
-- FR-51: Màn hình thống kê: số chữ đã học, số lần ôn, tỷ lệ đạt, chuỗi ngày học.
-
-### 2.7 Cài đặt và dữ liệu
-
-- FR-60: Settings: số chữ mới/ngày, bật/tắt lưới, bật/tắt gợi ý.
-- FR-61: Backup/Restore dữ liệu học (xuất/nhập file JSON).
-- FR-62: Dữ liệu persist qua Room.
-
-### 2.8 Yêu cầu phi chức năng
-
-| Mã | Yêu cầu |
-| --- | --- |
-| NFR-01 | Chạy hoàn toàn offline |
-| NFR-02 | Khởi động app < 3 giây trên máy tầm trung |
-| NFR-03 | Vẽ nét mượt, không rơi khung hình rõ rệt |
-| NFR-04 | Dữ liệu người dùng chỉ lưu trên thiết bị |
-| NFR-05 | Hỗ trợ Android API 26+ *(đề xuất, cần xác nhận)* |
-| NFR-06 | Dữ liệu ký tự tách biệt khỏi dữ liệu học để dễ mở rộng |
-
-## 3. User Flow
-
-### 3.1 Lần đầu mở app
-
-1. Mở app → Home (không cần đăng ký).
-2. Chọn **Bắt đầu bài đầu tiên** → vào bài học nhóm あ.
-3. Với mỗi ký tự: xem animation → **Trace** → **Guided** → **Recall**.
-4. Sau Recall, tự đánh giá Again/Hard/Good/Easy.
-5. Ký tự được lên lịch ôn; quay lại Home với tiến độ cập nhật.
-
-### 3.2 Ngày học thường ngày
-
-1. Mở Home → xem *số chữ cần ôn* và *bài mới hôm nay*.
-2. Bấm **Ôn tập** → Review lần lượt từng ký tự đến hạn (viết từ trí nhớ).
-3. Xem đáp án → tự đánh giá → SRS cập nhật.
-4. Hết hàng đợi → có thể học chữ mới hoặc Free Practice.
-
-### 3.3 Tra cứu thư viện
-
-Home → Library → chọn nhóm → chọn ký tự → Chi tiết → chọn chế độ luyện.
-
-### 3.4 Luồng trong một lượt Recall
-
-`Hiện cue (cách đọc)` → `Người học viết` → `Bấm Xem đáp án` → `So sánh với chữ mẫu` → `Chọn Again/Hard/Good/Easy` → `Cập nhật SRS` → `Ký tự tiếp theo`
-
-## 4. UI/UX Specification
-
-### 4.1 Các màn hình
-
-| Màn hình | Nội dung chính |
-| --- | --- |
-| **Home** | Bài hôm nay, tiến độ tổng, số chữ cần ôn, nút Ôn tập / Học mới |
-| **Library** | Lưới/ danh sách ký tự theo nhóm, ô tìm kiếm, trạng thái từng chữ |
-| **Character Detail** | Chữ lớn, cách đọc, số nét, animation, nút chọn chế độ luyện |
-| **Writing** | Canvas + lưới, chữ mẫu mờ, nút Undo/Clear/Gợi ý, nút Xem đáp án |
-| **Review** | Giống Writing nhưng ẩn mẫu ban đầu; kết thúc bằng 4 nút đánh giá |
-| **Statistics & Settings** | Biểu đồ tiến độ, cấu hình *(làm sau khi phần học ổn định)* |
-
-### 4.2 Điều hướng
-
-Bottom navigation: **Home · Library · Review · Stats/Settings**. Màn Writing mở toàn màn hình từ Library hoặc Home.
-
-### 4.3 Nguyên tắc thiết kế
-
-- Canvas là trung tâm: chiếm tối đa diện tích, nút điều khiển gọn.
-- Một thao tác chính mỗi màn hình.
-- Phản hồi tức thì khi chạm; không có hộp thoại gây gián đoạn khi đang viết.
-- Chống chạm nhầm: vùng canvas bỏ qua cử chỉ cạnh màn hình.
-- Hỗ trợ giao diện sáng/tối *(Should)*.
-- Chữ mẫu và nét người dùng phải phân biệt rõ về màu sắc.
-
-### 4.4 Trạng thái cần thiết kế
-
-Chưa có dữ liệu · Đang tải · Hết hàng đợi ôn · Hoàn thành bài · Lỗi tải dữ liệu ký tự.
-
-## 5. Database Schema (Room)
-
-### 5.1 Bảng `character_progress`
-
-| Cột | Kiểu | Ghi chú |
+| Chức năng | Trạng thái | Ghi chú |
 | --- | --- | --- |
-| `characterId` | TEXT (PK) | Khớp `id` trong dataset, vd `hiragana_a` |
-| `easeFactor` | REAL | Mặc định 2.5 |
-| `intervalDays` | INTEGER | Mặc định 0 |
-| `dueDate` | INTEGER | Epoch day; null/0 nếu chưa học |
-| `reviewCount` | INTEGER | Tổng số lần ôn |
-| `correctCount` | INTEGER | Số lần viết đạt |
-| `incorrectCount` | INTEGER | Số lần chưa đạt |
-| `lastReviewedAt` | INTEGER | Epoch millis |
-| `status` | TEXT | `NEW` / `LEARNING` / `REVIEW` |
+| Writing Canvas | **Implemented** | Nhận thao tác cảm ứng và lưu các nét trong lượt viết |
+| Undo / Clear | **Implemented** | Hoàn tác nét cuối hoặc xóa nét đã viết |
+| Grid | **Implemented** | Có tùy chọn hiển thị lưới |
+| Trace | **Implemented** | Luyện viết dựa trên mẫu |
+| Guided Writing | **Implemented** | Hướng dẫn theo nét và sử dụng Stroke Matcher |
+| Recall Writing | **Implemented** | Tự viết, xem gợi ý/đáp án theo luồng học |
+| Free Practice | **Implemented** | Luyện tự do, không dùng rating để cập nhật lịch SRS |
+| Hint button | **Implemented** | Hiển thị nút gợi ý sau các lần viết không đạt ngưỡng; cần giữ nút điều khiển canvas luôn dễ tiếp cận |
 
-### 5.2 Bảng `practice_log`
+### 2.2 Dataset và thư viện
 
-| Cột | Kiểu | Ghi chú |
+- **Implemented:** dataset Hiragana JSON trong assets, gồm 46 ký tự.
+- **Implemented:** dữ liệu tĩnh của ký tự được tách khỏi tiến độ học.
+- **Implemented:** deck/card model cho phép một bộ thẻ tham chiếu đến character data.
+- **Implemented:** thư viện ký tự và các màn hình tra cứu/chi tiết hiện có.
+- **Planned:** mở rộng dataset sang Katakana hoặc Kanji sau khi MVP Hiragana ổn định.
+
+### 2.3 Learning session và SRS
+
+| Thành phần | Trạng thái | Ghi chú |
 | --- | --- | --- |
-| `id` | INTEGER (PK, auto) |  |
-| `characterId` | TEXT (FK, index) |  |
-| `mode` | TEXT | TRACE / GUIDED / RECALL / REVIEW / FREE |
-| `rating` | TEXT | AGAIN / HARD / GOOD / EASY (nếu có) |
-| `durationMs` | INTEGER | Thời gian viết |
-| `timestamp` | INTEGER | Epoch millis |
+| Card status | **Implemented** | `NEW`, `LEARNING`, `RELEARNING`, `REVIEW` |
+| FSRS memory state | **Implemented** | Lưu stability, difficulty, scheduled/elapsed days và due time |
+| FSRS-rs native bridge | **Implemented** | Rust gọi FSRS-rs 6.6.2 và cung cấp kết quả qua JNI |
+| Learning / Relearning steps | **Implemented** | Kotlin quản lý policy và các bước học lại |
+| Due queue | **Implemented** | Lập hàng đợi card đến hạn |
+| Daily new-card limit | **Implemented** | Giới hạn card mới mỗi ngày, có thể cấu hình |
+| Session planner / engine / coordinator | **Implemented** | Quản lý thứ tự card, rating và retry trong phiên |
+| Difficult-card retry | **Implemented** | Có cơ chế xử lý card gặp nhiều lần Again |
+| Scheduling audit | **Planned** | Tiếp tục kiểm tra edge case về thời gian, gián đoạn phiên và chuyển trạng thái; không viết lại scheduler nếu chưa có lỗi được tái hiện |
 
-### 5.3 Bảng `app_settings` *(hoặc DataStore)*
+**Ranh giới trách nhiệm:** Rust/FSRS-rs tính toán trạng thái ghi nhớ và các khoảng lịch đề xuất. Kotlin quản lý chính sách sản phẩm như Learning/Relearning, hàng đợi, giới hạn card mới, retry và vòng đời phiên học. Không thay thế FSRS bằng SM-2.
 
-`newPerDay`, `showGrid`, `showHints`, `theme`.
+### 2.4 Tiến độ, cài đặt và dữ liệu
 
-### 5.4 Thuật toán SRS đề xuất (MVP)
+| Chức năng | Trạng thái | Ghi chú |
+| --- | --- | --- |
+| Room persistence | **Implemented** | Lưu card progress và practice log |
+| Database migrations | **Implemented** | Schema hiện tại version 3, có migration 1→2 và 2→3 |
+| Practice history | **Implemented** | Lưu mode, rating, thời lượng và timestamp |
+| Statistics | **Implemented** | Có thống kê tiến độ, accuracy, streak và trạng thái card |
+| Settings | **Implemented** | Theme, số card mới/ngày, grid, hints; lưu bằng SharedPreferences |
+| JSON backup/restore | **Implemented** | Có kiểm tra dữ liệu và restore theo transaction |
+| Backup compatibility tests | **In progress** | Mở rộng kiểm thử dữ liệu sai, dữ liệu cũ và trường hợp biên |
 
-Dùng biến thể đơn giản kiểu SM-2:
+## 3. Kiến trúc hiện tại
 
-| Đánh giá | Hành động |
-| --- | --- |
-| **Again** | `intervalDays = 0` (ôn lại trong ngày/ngày mai), `easeFactor −= 0.2` (tối thiểu 1.3), `incorrectCount++` |
-| **Hard** | `intervalDays = max(1, intervalDays × 1.2)`, `easeFactor −= 0.15` |
-| **Good** | `intervalDays = max(1, intervalDays × easeFactor)` (lần đầu: 1 ngày) |
-| **Easy** | `intervalDays = max(2, intervalDays × easeFactor × 1.3)`, `easeFactor += 0.15` |
+### 3.1 Luồng kiến trúc
 
-Sau mỗi lần: `dueDate = today + intervalDays`, `reviewCount++`, `lastReviewedAt = now`. Các hệ số là giá trị khởi điểm, nên cấu hình được và điều chỉnh sau khi dùng thực tế.
-
-## 6. Dataset Specification
-
-### 6.1 Nguyên tắc
-
-Tách **dữ liệu tĩnh** (nét chữ, chung cho mọi người) khỏi **dữ liệu học** (riêng người dùng, lưu trong Room). Liên kết qua `characterId`.
-
-### 6.2 Cấu trúc JSON
-
-```json
-{
-  "id": "hiragana_a",
-  "character": "あ",
-  "type": "hiragana",
-  "group": "basic",
-  "reading": "a",
-  "strokeCount": 3,
-  "strokes": [
-    { "order": 1, "svgPath": "M ..." },
-    { "order": 2, "svgPath": "M ..." },
-    { "order": 3, "svgPath": "M ..." }
-  ]
-}
+```text
+Jetpack Compose UI
+        |
+        v
+Learning / Domain layer
+(Session Planner, Engine, Coordinator, Stroke Matcher)
+        |
+        +--------------------+
+        |                    |
+        v                    v
+Room persistence        FSRS-rs JNI bridge
+(Card progress, logs)   (Rust / FSRS-rs 6.6.2)
+        |
+        v
+Local character assets (JSON)
 ```
 
-### 6.3 Quy ước
+Sơ đồ thể hiện các trách nhiệm chính, không phải thứ tự gọi bắt buộc của mọi thao tác. Repository và DAO được dùng để đóng gói truy cập dữ liệu.
 
-- `id`: `<type>_<romaji>`, chữ thường, không dấu cách.
-- `type`: `hiragana` | `katakana` | `kanji`.
-- `group`: nhóm hiển thị (vd `a`, `ka`, `sa`…) hoặc cấp độ (`n5`…).
-- `strokes[].order` bắt đầu từ 1, liên tục, không trùng.
-- `strokeCount` phải bằng độ dài `strokes`.
-- Toàn bộ path dùng **cùng hệ tọa độ** (viewBox thống nhất, vd 109×109 hoặc 1024×1024) để render đồng nhất.
-- Tệp đặt tại `assets/characters/`, ví dụ `hiragana.json`.
+### 3.2 Mô hình dữ liệu học
 
-### 6.4 Nguồn dữ liệu và giấy phép
+- **Character data:** nội dung tĩnh như ký tự, reading, nhóm và dữ liệu nét.
+- **Deck:** bộ thẻ học độc lập, có ID, tên, mô tả, loại ký tự và danh sách card ID.
+- **Card:** đơn vị học trong một deck; tham chiếu đến character data.
+- **Card progress:** trạng thái học riêng của card, gồm status, due time, stability, difficulty, scheduled/elapsed days, reps, lapses, review count, correct count và lần review cuối.
+- **Practice log:** lịch sử từng lượt luyện, gồm card, mode, rating (nếu có), duration và timestamp.
 
-Nguồn thường dùng cho nét chữ là dự án mở như **KanjiVG** (giấy phép Creative Commons BY-SA 3.0, có dữ liệu kana và kanji). Cần **xác nhận lại giấy phép và yêu cầu ghi công** trước khi đưa vào ứng dụng phát hành, và ghi nguồn trong README/màn hình About.
+Không dùng mô hình SM-2 `easeFactor/intervalDays` trong implementation hiện tại. FSRS memory state và lịch học được biểu diễn bằng các trường tương ứng trong `CardProgress`.
 
-### 6.5 Công cụ trong thư mục `tools/`
+### 3.3 Database
 
-Script chuyển SVG nguồn → JSON theo schema trên, kèm bước kiểm tra tự động (đủ nét, thứ tự liên tục, path hợp lệ). Cách làm này phù hợp với kinh nghiệm pipeline Excel → Anki của bạn và dùng lại được khi mở rộng sang Kanji.
+Room database hiện có hai entity chính:
 
-## 7. Technical Architecture
+1. `CardProgressEntity` — bảng `card_progress`.
+2. `PracticeLogEntity` — bảng `practice_log`.
 
-### 7.1 Tổng quan
+Schema version hiện tại: **3**. Các thay đổi schema tương lai phải có migration rõ ràng và kiểm thử bảo toàn dữ liệu. Không sử dụng destructive migration để xóa tiến độ người học.
 
-MVVM + Repository Pattern, offline-first.
+### 3.4 Native FSRS bridge
 
-`UI (Compose) → ViewModel → Repository → { Room DAO, Asset JSON loader }`
+- Rust crate: `JapaneseWritingTrainer/native/fsrs-bridge`.
+- Upstream dependency được pin: `fsrs = 6.6.2`.
+- JNI library: `japanese_writing_fsrs`.
+- Bridge nhận memory state trước đó, elapsed days và desired retention; trả về state/interval cho Again, Hard, Good và Easy.
+- Kotlin kiểm tra input và chuyển kết quả native thành domain model.
+- Android native library phải được build theo ABI Android; thư viện host dùng cho JVM unit test không thể thay thế thư viện Android.
 
-### 7.2 Cấu trúc dự án
+## 4. Nguyên tắc đánh giá chữ viết
 
-```
-JapaneseWritingTrainer/
-├── README.md
-├── docs/            (PROJECT_PLAN, REQUIREMENTS, ARCHITECTURE,
-│                     DATABASE, UI_DESIGN, DATASET, ROADMAP)
-├── app/
-│   ├── ui/          home · library · writing · review · statistics
-│   ├── domain/      model · srs · handwriting
-│   ├── data/        local (database, dao) · repository · assets
-│   └── navigation/
-├── data/
-└── tools/
-```
+### 4.1 Self-rating
 
-### 7.3 Công nghệ
+Người học tự chọn Again / Hard / Good / Easy sau lượt Recall hoặc Review. Rating là đầu vào cho scheduler; không tự động suy ra rating từ Stroke Matcher.
 
-| Công nghệ | Vai trò |
-| --- | --- |
-| Kotlin | Ngôn ngữ |
-| Jetpack Compose | UI |
-| Compose Canvas | Vẽ và nhận input chạm |
-| Room | Lưu tiến độ học |
-| Kotlin Serialization | Đọc JSON ký tự |
-| Navigation Compose | Điều hướng |
-| ViewModel + StateFlow | Quản lý trạng thái |
-| Coroutines | Xử lý bất đồng bộ |
-| SVG path parser | Chuyển `svgPath` thành `Path` để vẽ |
+### 4.2 Stroke Matcher
 
-### 7.4 Thành phần cốt lõi
+Stroke Matcher hiện đã được tích hợp trong luồng Guided/Recall để phân tích nét và quyết định việc chấp nhận nét tiếp theo trong một số bước.
 
-- **WritingCanvas**: thu điểm chạm thành danh sách nét (`List<Stroke>`), mỗi nét là chuỗi `Point(x, y, t)`.
-- **StrokeRenderer**: parse và vẽ SVG, hỗ trợ tô theo từng nét và animation.
-- **SrsScheduler** (domain): hàm thuần `(progress, rating, today) → newProgress`, dễ unit test.
-- **CharacterRepository**: nạp dataset từ assets, cache trong bộ nhớ.
-- **ProgressRepository**: đọc/ghi Room, tạo hàng đợi ôn.
-- **StrokeMatcher** (Level 2): so khớp vùng bắt đầu, hướng, thứ tự, hình dạng với dung sai rộng.
+**Điểm cần tiếp tục cải thiện:** dung sai phải phù hợp với thao tác ngón tay thực tế; tránh false rejection khiến người học không thể tiến tiếp. Khi matcher chặn tiến trình, cần có hướng khôi phục rõ ràng. Không tự ý biến matcher thành hệ thống tự chấm FSRS.
 
-### 7.5 Chiến lược kiểm tra chữ viết
+### 4.3 Các cấp độ tương lai
 
-| Mức | Cơ chế | Phiên bản |
+| Mức | Cơ chế | Trạng thái |
 | --- | --- | --- |
-| Level 1 | Tự đánh giá Again/Hard/Good/Easy | MVP |
-| Level 2 | Stroke matching, chỉ gợi ý | Sau MVP nếu còn thời gian |
-| Level 3 | Nhận diện tự động (CNN/handwriting recognition) | Tương lai |
+| Level 1 | Người học tự đánh giá | **Implemented** |
+| Level 2 | Phân tích nét và gợi ý/feedback | **Partially implemented** |
+| Level 3 | Nhận diện chữ viết bằng mô hình ML/CNN | **Planned / Out of current scope** |
 
-Lý do: Level 1 giúp SRS chạy ngay mà không cần AI; chấm nét quá cứng sẽ gây khó chịu vì nét ngón tay không bao giờ trùng khít SVG.
+## 5. Yêu cầu phi chức năng
 
-### 7.6 Kiểm thử
+- **Offline-first:** các chức năng học cốt lõi không yêu cầu tài khoản hoặc server.
+- **Data safety:** tiến độ phải tồn tại sau khi đóng/mở ứng dụng; migration và restore không được âm thầm làm mất dữ liệu.
+- **Responsiveness:** canvas và các nút Undo/Clear/Hint phải dùng được trong suốt lượt viết.
+- **Compatibility:** hỗ trợ Android API 26 trở lên.
+- **Maintainability:** Kotlin giữ policy học; Rust giữ phần tính toán FSRS; dữ liệu tĩnh tách khỏi tiến độ cá nhân.
+- **Reproducibility:** các bước build Rust và Android phải có thể chạy trong CI.
 
-- Unit test: SRS scheduler, parser dataset, StrokeMatcher.
-- Test DAO với Room in-memory.
-- Kiểm thử thủ công trên điện thoại thật (độ mượt canvas, chống chạm nhầm).
+Các mục tiêu định lượng về thời gian khởi động, độ trễ vẽ và frame rate chưa có benchmark được xác nhận; sẽ bổ sung khi có phép đo trên thiết bị đại diện.
 
-## 8. Development Roadmap
+## 6. Roadmap phát triển
 
-| Milestone | Nội dung | Kết quả |
+Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `main`, không phải kế hoạch khởi tạo dự án từ đầu.
+
+### Phase 0 — Repository, tài liệu và CI
+
+**Mục tiêu:** tạo nền tảng làm việc ổn định, tài liệu phản ánh đúng code và CI xác minh Rust/Android.
+
+- [x] Chọn `main` làm baseline phát triển.
+- [x] Tạo tài liệu Development Standards riêng.
+- [x] Cập nhật Specification theo implementation hiện tại và roadmap.
+- [x] Bổ sung ignore rules cho IDE/build output/Rust target.
+- [x] Mở workflow Rust bridge trên push `main` và pull request vào `main`.
+- [x] Bổ sung Android JVM unit tests và debug APK build vào CI.
+- [ ] Kiểm tra kết quả CI thực tế sau commit.
+- [ ] Rà soát và loại bỏ các build artifacts/IDE files đã bị track từ trước, sau khi xác nhận không có runtime dependency.
+
+### Phase 1 — Ổn định learning system
+
+- [ ] Audit các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING.
+- [ ] Kiểm tra Again/Hard/Good/Easy, cùng ngày và khác ngày, elapsed time, due time và desired retention.
+- [ ] Kiểm tra không cập nhật scheduler hoặc ghi history trùng cho một rating.
+- [ ] Kiểm tra giới hạn card mới, due queue, retry card khó và trường hợp hết hàng đợi.
+- [ ] Kiểm tra đóng/mở ứng dụng hoặc rời phiên giữa chừng.
+- [ ] Bổ sung regression tests cho lỗi được tái hiện; không viết lại FSRS bridge nếu contract hiện tại đã đúng.
+
+### Phase 2 — Writing experience
+
+- [ ] Đánh giá false rejection của Stroke Matcher bằng bộ input đa dạng.
+- [ ] Đảm bảo có cách tiếp tục khi matcher từ chối nét liên tục.
+- [ ] Kiểm tra Guided, Recall, Trace và Free Practice trên thiết bị thật.
+- [ ] Kiểm tra canvas không bị thu hẹp hoặc đẩy các nút Undo/Clear/Hint khỏi vùng dễ thao tác.
+- [ ] Kiểm tra độ mượt, kích thước màn hình và thao tác chạm.
+
+### Phase 3 — Data integrity và progress
+
+- [ ] Mở rộng test migration Room qua các phiên bản.
+- [ ] Mở rộng backup/restore: JSON sai cấu trúc, ID trùng, dữ liệu không hợp lệ, backup cũ và restore transaction.
+- [ ] Đối chiếu thống kê với practice logs và card progress.
+- [ ] Kiểm tra theme/settings được giữ sau khi khởi động lại.
+- [ ] Xác minh không mất dữ liệu khi nâng cấp app.
+
+### Phase 4 — MVP release readiness
+
+- [ ] Chạy instrumentation tests trên emulator và kiểm tra thủ công trên thiết bị thật.
+- [ ] Kiểm tra offline, cài mới, nâng cấp và backup/restore.
+- [ ] Build release APK/AAB và kiểm tra native libraries theo ABI.
+- [ ] Hoàn thiện ghi công/giấy phép nguồn dataset.
+- [ ] Cập nhật README, hướng dẫn cài đặt và release notes.
+- [ ] Chỉ công bố MVP sau khi Acceptance Criteria bên dưới được kiểm chứng.
+
+### Phase 5 — Mở rộng sau MVP
+
+Chỉ xem xét sau khi MVP Hiragana ổn định: Katakana, Kanji theo cấp độ, cải thiện stroke analysis, import/export bổ sung hoặc đồng bộ. Các tính năng này chưa được cam kết trong MVP.
+
+## 7. Acceptance criteria
+
+| ID | Tiêu chí | Trạng thái hiện tại |
 | --- | --- | --- |
-| **M1 – Prototype** | Phase 0–1 | Mở app và viết chữ trên Canvas |
-| **M2 – Writing Engine** | Phase 2–3 | Hiển thị Hiragana và thứ tự nét |
-| **M3 – Learning System** | Phase 4 | Guided, Recall, đánh giá kết quả |
-| **M4 – MVP** | Phase 5–6 | SRS, lưu tiến độ, thống kê, APK |
-| **M5 – Expansion** | Phase 7 | Katakana, Kanji, Anki, nâng cấp chấm nét |
+| AC-01 | Có dữ liệu 46 Hiragana | **Implemented** |
+| AC-02 | Viết nhiều nét bằng cảm ứng, Undo/Clear | **Implemented** |
+| AC-03 | Trace và hiển thị dữ liệu nét | **Implemented** |
+| AC-04 | Guided Writing và Recall Writing | **Implemented** |
+| AC-05 | Self-rating bốn mức và cập nhật FSRS | **Implemented** |
+| AC-06 | Learning, Relearning, Review queue | **Implemented** |
+| AC-07 | Lưu tiến độ qua lần mở app | **Implemented; cần tiếp tục kiểm thử migration** |
+| AC-08 | Lịch sử luyện và thống kê | **Implemented** |
+| AC-09 | Settings và JSON backup/restore | **Implemented; cần tiếp tục kiểm thử edge cases** |
+| AC-10 | Build và chạy trên thiết bị Android thật | **Cần kiểm chứng release** |
+| AC-11 | Offline đầy đủ | **Cần kiểm chứng acceptance trên thiết bị** |
 
-Ước lượng MVP: khoảng 6–8 tuần, phụ thuộc tốc độ làm quen Kotlin và xử lý dữ liệu.
+## 8. Definition of done
 
-## 9. Task Breakdown theo tuần
+Một phase hoặc tính năng chỉ được đánh dấu hoàn thành khi:
 
-### Tuần 1 – Phase 0 & bắt đầu Phase 1
+1. Được triển khai trên `main`.
+2. Có test phù hợp với logic mới hoặc regression test cho lỗi đã sửa.
+3. Các lệnh kiểm tra liên quan đã chạy và có kết quả quan sát được.
+4. Nếu cần kiểm tra trên thiết bị, đã chạy instrumentation/manual test và ghi rõ thiết bị/API.
+5. Không làm hỏng dữ liệu Room, backup cũ hoặc contract JNI.
+6. Tài liệu được cập nhật đồng bộ.
+7. Các mục chưa kiểm chứng được ghi rõ, không đánh dấu hoàn thành chỉ vì code đã tồn tại.
 
-- [ ] Chốt phạm vi MVP, hoàn thiện tài liệu này.
-- [ ] Cài Android Studio, tạo project Kotlin + Compose.
-- [ ] Tạo Git repository, thêm cấu trúc `docs/`.
-- [ ] Xác định nguồn SVG và kiểm tra giấy phép.
-- [ ] Màn hình Writing đầu tiên: vẽ nét bằng ngón tay.
+## 9. Tài liệu liên quan
 
-### Tuần 2 – Phase 1: Writing Canvas
-
-- [ ] Lưới ô vuông.
-- [ ] Undo / Clear.
-- [ ] Tối ưu độ mượt khi vẽ.
-- [ ] Tạo dữ liệu mẫu cho chữ あ.
-
-### Tuần 3 – Phase 2: Stroke Engine
-
-- [ ] Parse SVG path, hiển thị あ.
-- [ ] Render từng nét, hiển thị số thứ tự.
-- [ ] Animation thứ tự nét.
-- [ ] Chế độ **Trace** (hoàn thành Milestone: prototype dùng được).
-
-### Tuần 4 – Phase 3: Character Library
-
-- [ ] Viết script `tools/` chuyển dữ liệu → JSON.
-- [ ] Import 46 Hiragana, kiểm tra tự động.
-- [ ] Màn hình Library, Character Detail, tìm kiếm.
-
-### Tuần 5 – Phase 4: Guided & Recall
-
-- [ ] Guided Writing: tô sáng nét tiếp theo, viết từng nét.
-- [ ] Recall Writing: ẩn mẫu, nút xem đáp án.
-- [ ] Màn hình tự đánh giá 4 mức.
-
-### Tuần 6 – Phase 5: SRS & Progress
-
-- [ ] Room: entity, DAO, repository.
-- [ ] SrsScheduler + unit test.
-- [ ] Hàng đợi ôn, màn hình Review.
-- [ ] Lưu lịch sử luyện viết.
-
-### Tuần 7 – Phase 5 (tiếp) & Phase 6
-
-- [ ] Màn hình Home và Statistics.
-- [ ] Settings, Backup/Restore.
-- [ ] Sửa lỗi, tối ưu giao diện.
-
-### Tuần 8 – Hoàn thiện
-
-- [ ] Kiểm thử trên điện thoại thật.
-- [ ] Đối chiếu Acceptance Criteria.
-- [ ] Build APK và cài đặt.
-- [ ] Hoàn thiện README, ghi công nguồn dữ liệu.
-
-## 10. Acceptance Criteria cho MVP
-
-MVP được xem là hoàn thành khi **tất cả** điều kiện sau đạt:
-
-| # | Tiêu chí | Cách kiểm chứng |
-| --- | --- | --- |
-| AC-01 | Học được toàn bộ 46 Hiragana | Mỗi ký tự có dữ liệu nét hợp lệ và mở được chế độ luyện |
-| AC-02 | Viết trực tiếp bằng ngón tay | Vẽ nhiều nét, Undo/Clear hoạt động đúng |
-| AC-03 | Xem thứ tự nét | Animation và số thứ tự nét đúng với dữ liệu |
-| AC-04 | Có Trace, Guided Writing, Recall | Cả ba chế độ chạy hết một ký tự từ đầu đến cuối |
-| AC-05 | Tự đánh giá và SRS | Chọn Again/Hard/Good/Easy làm `dueDate` thay đổi đúng quy tắc |
-| AC-06 | Lịch ôn tập | Màn hình Review chỉ hiện ký tự đến hạn |
-| AC-07 | Lưu tiến độ | Đóng hẳn app, mở lại, tiến độ và lịch ôn còn nguyên |
-| AC-08 | Thống kê cơ bản | Hiển thị số chữ đã học, số lần ôn, tỷ lệ đạt |
-| AC-09 | Offline | Hoạt động đầy đủ khi tắt mạng |
-| AC-10 | Cài đặt được | Cài APK lên điện thoại Android thật và chạy ổn định |
-
-## 11. Rủi ro và cách giảm thiểu
-
-| Rủi ro | Mức độ | Giảm thiểu |
-| --- | --- | --- |
-| Dữ liệu SVG không đồng nhất hoặc vướng giấy phép | Cao | Kiểm tra sớm ở Phase 0, viết script kiểm tra dữ liệu |
-| Canvas giật khi vẽ | Trung bình | Thử trên máy thật từ Phase 1, tránh tạo lại `Path` mỗi khung hình |
-| Chấm nét quá cứng nhắc | Trung bình | Giữ Level 1 làm chính, Level 2 chỉ gợi ý với dung sai rộng |
-| Chưa quen Kotlin làm chậm tiến độ | Trung bình | Làm prototype nhỏ trước, không viết toàn bộ app cùng lúc |
-| Thêm tính năng tùy hứng | Trung bình | Bám tài liệu này; tính năng mới phải đưa vào Roadmap trước |
-
-## 12. Bước tiếp theo
-
-1. Tạo project Android Studio (Kotlin + Jetpack Compose).
-2. Làm màn hình **Writing Canvas** và xử lý cảm ứng.
-3. Tạo dữ liệu mẫu cho chữ **あ** và hiển thị SVG.
-4. Hoàn thành **Trace** để có prototype dùng được.
-
-Sau khi bạn xem xong, mình có thể tách tài liệu này thành các file riêng (`PROJECT_PLAN.md`, `REQUIREMENTS.md`, `ARCHITECTURE.md`…) để đưa vào thư mục `docs/` của repository, hoặc bắt đầu viết code cho Writing Canvas.
+- [Development Standards](DEVELOPMENT_STANDARDS.md)
+- [README](README.md)
+- [FSRS Rust bridge source](JapaneseWritingTrainer/native/fsrs-bridge/)
+- [Android application source](JapaneseWritingTrainer/app/src/main/)
