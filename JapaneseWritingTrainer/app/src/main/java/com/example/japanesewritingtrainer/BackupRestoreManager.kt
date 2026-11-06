@@ -9,8 +9,12 @@ import org.json.JSONObject
  * Sao lưu/khôi phục dữ liệu người học. Dữ liệu ký tự tĩnh trong assets không nằm
  * trong bản sao lưu; chỉ tiến độ FSRS và lịch sử luyện viết được xuất.
  */
-class BackupRestoreManager(context: Context) {
-    private val database = WritingTrainerDatabase.getInstance(context.applicationContext)
+class BackupRestoreManager internal constructor(
+    private val database: WritingTrainerDatabase
+) {
+    constructor(context: Context) : this(
+        WritingTrainerDatabase.getInstance(context.applicationContext)
+    )
 
     suspend fun createBackupJson(): String = database.withTransaction {
         val progress = database.cardProgressDao().getAll()
