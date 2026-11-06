@@ -223,9 +223,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 ### Phase 3 — Data integrity và progress
 
 - [ ] Mở rộng test migration Room qua các phiên bản.
-- [ ] Mở rộng backup/restore: đã bổ sung instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng; cần chạy xác nhận trên thiết bị. Tiếp tục kiểm tra dữ liệu không hợp lệ, backup cũ và rollback transaction.
-- [ ] Đối chiếu thống kê với practice logs và card progress: đã bổ sung Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử; chờ xác nhận chạy trên thiết bị.
-- [ ] Kiểm tra theme/settings được giữ sau khi khởi động lại: đã bổ sung Android instrumentation tests cho giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày; chờ xác nhận chạy trên thiết bị.
+- [x] Kiểm thử backup/restore: instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng đã được chạy pass trên thiết bị. Tiếp tục kiểm tra backup cũ và rollback transaction.
+- [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
+- [x] Android instrumentation tests cho settings đã chạy pass: giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày. [ ] Vẫn cần kiểm tra thủ công đóng tiến trình Android rồi mở lại để xác nhận toàn bộ cài đặt được giữ.
 - [ ] Xác minh không mất dữ liệu khi nâng cấp app.
 
 ### Phase 4 — MVP release readiness
