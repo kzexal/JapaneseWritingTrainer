@@ -14,6 +14,8 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.Slider
+import androidx.compose.material3.Switch
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +25,12 @@ import androidx.compose.ui.unit.dp
 fun SettingsScreen(
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
+    newCardsPerDay: Int,
+    onNewCardsPerDayChange: (Int) -> Unit,
+    showGrid: Boolean,
+    onShowGridChange: (Boolean) -> Unit,
+    showHints: Boolean,
+    onShowHintsChange: (Boolean) -> Unit,
     onBackupClick: () -> Unit,
     onRestoreClick: () -> Unit,
     restoreConfirmationVisible: Boolean,
@@ -73,6 +81,60 @@ fun SettingsScreen(
                             style = MaterialTheme.typography.bodyLarge
                         )
                     }
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = "Luyện tập",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Số chữ mới mỗi ngày: $newCardsPerDay")
+                    Text(
+                        "Giới hạn số ký tự mới được đưa vào mỗi phiên học trong ngày.",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                    Slider(
+                        value = newCardsPerDay.toFloat(),
+                        onValueChange = { onNewCardsPerDayChange(it.toInt()) },
+                        valueRange = 0f..50f,
+                        steps = 49
+                    )
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Hiển thị lưới viết")
+                        Text(
+                            "Hiện khung và đường căn giữa trên Canvas.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(checked = showGrid, onCheckedChange = onShowGridChange)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Hiển thị gợi ý")
+                        Text(
+                            "Cho phép mở nút gợi ý khi gặp khó khăn trong Recall.",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Switch(checked = showHints, onCheckedChange = onShowHintsChange)
                 }
             }
         }
