@@ -74,6 +74,9 @@ class BackupRestoreManager internal constructor(
         require(root.getInt("schemaVersion") == BACKUP_SCHEMA_VERSION) {
             "Phiên bản bản sao lưu không được hỗ trợ."
         }
+        require(root.getLong("createdAtEpochMillis") >= 0L) {
+            "Thời điểm tạo bản sao lưu không hợp lệ."
+        }
 
         val progressArray = root.getJSONArray("cardProgress")
         val logArray = root.getJSONArray("practiceLogs")
@@ -135,16 +138,19 @@ class BackupRestoreManager internal constructor(
             "Bản sao lưu chứa mã lịch sử trùng lặp."
         }
         require(progress.all {
-            (it.stabilityDays == null || it.stabilityDays > 0.0) &&
-                (it.difficulty == null || it.difficulty in 1.0..10.0) &&
-                it.scheduledDays >= 0.0 && it.elapsedDays >= 0.0 &&
+            (it.dueAtEpochMillis == null || it.dueAtEpochMillis >= 0L) &&
+                (it.lastReviewedAtEpochMillis == null || it.lastReviewedAtEpochMillis >= 0L) &&
+                (it.stabilityDays == null || (it.stabilityDays.isFinite() && it.stabilityDays > 0.0)) &&
+                (it.difficulty == null || (it.difficulty.isFinite() && it.difficulty in 1.0..10.0)) &&
+                it.scheduledDays.isFinite() && it.scheduledDays >= 0.0 &&
+                it.elapsedDays.isFinite() && it.elapsedDays >= 0.0 &&
                 it.reps >= 0 && it.lapses >= 0 &&
                 it.reviewCount >= 0 && it.correctCount in 0..it.reviewCount
         }) {
             "Bản sao lưu chứa tiến độ FSRS không hợp lệ."
         }
         require(logs.all {
-            it.id >= 0 && it.durationMs >= 0 && it.timestampEpochMillis >= 0
+            it.id > 0 && it.durationMs >= 0 && it.timestampEpochMillis >= 0
         }) {
             "Bản sao lưu chứa dữ liệu lịch sử không hợp lệ."
         }
