@@ -77,7 +77,7 @@ Katakana, Kanji, nhận diện chữ viết bằng AI/CNN, tài khoản người
 | Daily new-card limit | **Implemented** | Giới hạn card mới mỗi ngày, có thể cấu hình |
 | Session planner / engine / coordinator | **Implemented** | Quản lý thứ tự card, rating và retry trong phiên |
 | Difficult-card retry | **Implemented** | Có cơ chế xử lý card gặp nhiều lần Again |
-| Scheduling audit | **Planned** | Tiếp tục kiểm tra edge case về thời gian, gián đoạn phiên và chuyển trạng thái; không viết lại scheduler nếu chưa có lỗi được tái hiện |
+| Scheduling audit | **In progress** | Đã sửa FSRS review-time anchor, clock rollback và duplicate concurrent rating; tiếp tục audit các chuyển trạng thái và gián đoạn phiên |
 
 **Ranh giới trách nhiệm:** Rust/FSRS-rs tính toán trạng thái ghi nhớ và các khoảng lịch đề xuất. Kotlin quản lý chính sách sản phẩm như Learning/Relearning, hàng đợi, giới hạn card mới, retry và vòng đời phiên học. Không thay thế FSRS bằng SM-2.
 
@@ -123,6 +123,8 @@ Sơ đồ thể hiện các trách nhiệm chính, không phải thứ tự gọ
 - **Card:** đơn vị học trong một deck; tham chiếu đến character data.
 - **Card progress:** trạng thái học riêng của card, gồm status, due time, stability, difficulty, scheduled/elapsed days, reps, lapses, review count, correct count và lần review cuối.
 - **Practice log:** lịch sử từng lượt luyện, gồm card, mode, rating (nếu có), duration và timestamp.
+
+**FSRS timestamp invariant:** `lastReviewedAtEpochMillis` là mốc của lần cập nhật FSRS memory gần nhất. Các bước Again/Hard ngắn trong Learning/Relearning vẫn tạo practice log và cập nhật bộ đếm lượt luyện, nhưng không dịch chuyển mốc FSRS này. Khi tốt nghiệp sang Review, elapsed days được tính từ mốc FSRS gần nhất. Thời điểm của từng lần thao tác vẫn được lưu trong `PracticeLog.timestampEpochMillis`.
 
 Không dùng mô hình SM-2 `easeFactor/intervalDays` trong implementation hiện tại. FSRS memory state và lịch học được biểu diễn bằng các trường tương ứng trong `CardProgress`.
 
@@ -194,12 +196,16 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 ### Phase 1 — Ổn định learning system
 
-- [ ] Audit các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING.
-- [ ] Kiểm tra Again/Hard/Good/Easy, cùng ngày và khác ngày, elapsed time, due time và desired retention.
-- [ ] Kiểm tra không cập nhật scheduler hoặc ghi history trùng cho một rating.
+- [x] Audit ban đầu phát hiện và sửa việc short Learning/Relearning steps làm dịch chuyển `lastReviewedAtEpochMillis`, khiến elapsed days lúc tốt nghiệp bị tính thiếu.
+- [x] Giữ FSRS review anchor ổn định qua các bước Again/Hard ngắn; chỉ cập nhật anchor khi thực sự tính FSRS memory.
+- [x] Chặn rating trùng đồng thời trong lúc thao tác ghi dữ liệu đang chờ hoàn tất.
+- [x] Không cho đồng hồ thiết bị lùi làm lùi FSRS anchor hoặc due date.
+- [x] Bổ sung validation cho thời gian âm và các giá trị FSRS không hữu hạn trong CardProgress.
+- [x] Thêm regression tests cho FSRS anchor, graduation elapsed days, clock rollback và dữ liệu không hữu hạn.
+- [ ] Hoàn tất kiểm chứng các chuyển trạng thái NEW → LEARNING → REVIEW và REVIEW → RELEARNING trên toàn bộ rating.
 - [ ] Kiểm tra giới hạn card mới, due queue, retry card khó và trường hợp hết hàng đợi.
 - [ ] Kiểm tra đóng/mở ứng dụng hoặc rời phiên giữa chừng.
-- [ ] Bổ sung regression tests cho lỗi được tái hiện; không viết lại FSRS bridge nếu contract hiện tại đã đúng.
+- [ ] Chạy và xác nhận test suite trên môi trường build có runner; không viết lại FSRS bridge nếu contract hiện tại đã đúng.
 
 ### Phase 2 — Writing experience
 
