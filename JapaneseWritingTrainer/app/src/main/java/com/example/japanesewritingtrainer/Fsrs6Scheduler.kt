@@ -41,9 +41,13 @@ class Fsrs6Scheduler(
         rating: ReviewRating,
         nowEpochMillis: Long
     ): CardProgress {
+        require(nowEpochMillis >= 0L) { "nowEpochMillis must not be negative" }
+
         val previousReview = progress.lastReviewedAtEpochMillis
+        // Device clock rollback must not move the FSRS review anchor backwards.
+        val effectiveNow = previousReview?.let { maxOf(nowEpochMillis, it) } ?: nowEpochMillis
         val elapsedDays = previousReview?.let {
-            ((nowEpochMillis - it).coerceAtLeast(0L)).toDouble() / MILLIS_PER_DAY
+            (effectiveNow - it).toDouble() / MILLIS_PER_DAY
         } ?: 0.0
         val elapsedWholeDays = floor(elapsedDays).toInt().coerceAtLeast(0)
 
@@ -52,13 +56,15 @@ class Fsrs6Scheduler(
             progress.status == CardStatus.RELEARNING
         val isShortRetry = isLearningStep &&
             (rating == ReviewRating.AGAIN || rating == ReviewRating.HARD)
+        val hasMemoryState =
+            progress.stabilityDays != null && progress.difficulty != null
 
-        // New Again initializes FSRS memory. A review lapse updates it once.
-        // Repeated short learning/relearning steps do not recalculate memory.
-        // Good/Easy graduation from a learning step is scheduled by FSRS.
-        val states = if (!isShortRetry) {
-            val hasMemoryState =
-                progress.stabilityDays != null && progress.difficulty != null
+        // A short learning step must not repeatedly update FSRS memory.
+        // If a legacy/incomplete learning record has no memory state, initialize it.
+        // Keep lastReviewedAt anchored to the last actual FSRS calculation so that
+        // graduation can pass the correct elapsed days to FSRS.
+        val updatesFsrsMemory = !isShortRetry || !hasMemoryState
+        val states = if (updatesFsrsMemory) {
             calculateStates(
                 if (hasMemoryState) progress.stabilityDays else null,
                 if (hasMemoryState) progress.difficulty else null,
@@ -117,7 +123,7 @@ class Fsrs6Scheduler(
             }
         }
 
-        val dueAt = Math.addExact(nowEpochMillis, intervalMillis)
+        val dueAt = Math.addExact(effectiveNow, intervalMillis)
         return progress.copy(
             status = nextStatus,
             dueAtEpochMillis = dueAt,
@@ -129,7 +135,7 @@ class Fsrs6Scheduler(
             lapses = progress.lapses + if (wasReview && rating == ReviewRating.AGAIN) 1 else 0,
             reviewCount = progress.reviewCount + 1,
             correctCount = progress.correctCount + if (rating == ReviewRating.AGAIN) 0 else 1,
-            lastReviewedAtEpochMillis = nowEpochMillis
+            lastReviewedAtEpochMillis = if (updatesFsrsMemory) effectiveNow else previousReview
         )
     }
 
