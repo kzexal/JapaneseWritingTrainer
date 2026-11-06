@@ -7,7 +7,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -76,14 +76,13 @@ class BackupRestoreManagerTest {
         val progress = CardProgress(cardId = "hiragana_i", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(progress.toEntity())
 
-        assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                manager.restoreFromJson(
-                    """{"format":"japanese-writing-trainer","schemaVersion":999,"cardProgress":[],"practiceLogs":[]}"""
-                )
-            }
-        }
+        val failure = runCatching {
+            manager.restoreFromJson(
+                """{"format":"japanese-writing-trainer","schemaVersion":999,"cardProgress":[],"practiceLogs":[]}"""
+            )
+        }.exceptionOrNull()
 
+        assertTrue(failure is IllegalArgumentException)
         assertEquals(progress, database.cardProgressDao().getByCardId("hiragana_i")?.toDomain())
     }
 }
