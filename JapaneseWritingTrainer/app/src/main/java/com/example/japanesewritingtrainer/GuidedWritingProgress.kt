@@ -1,11 +1,11 @@
 package com.example.japanesewritingtrainer
 
 /**
- * Trạng thái tiến trình của một lượt Guided Writing.
+ * Trạng thái tiến trình của một lượt Guided/Recall Writing.
  *
- * Không đánh giá hình dạng nét viết trong MVP. Mỗi thao tác nhấc tay
- * được tính là hoàn thành một nét; việc kiểm tra hình dạng thuộc
- * StrokeMatcher (Level 2) và nằm ngoài phạm vi hiện tại.
+ * Chỉ tăng completedStrokeCount khi StrokeMatcher chấp nhận nét hiện tại.
+ * Các lần thử không đạt vẫn được giữ trên canvas để người học có thể Undo
+ * hoặc xem gợi ý; chúng không làm tiến trình chuyển sang nét tiếp theo.
  */
 data class GuidedWritingProgress(
     val completedStrokeCount: Int = 0
