@@ -67,4 +67,5 @@ fun WritingMode.toPracticeMode(): PracticeMode = when (this) {
     WritingMode.TRACE -> PracticeMode.TRACE
     WritingMode.GUIDED -> PracticeMode.GUIDED
     WritingMode.RECALL -> PracticeMode.RECALL
+    WritingMode.FREE -> PracticeMode.FREE
 }
