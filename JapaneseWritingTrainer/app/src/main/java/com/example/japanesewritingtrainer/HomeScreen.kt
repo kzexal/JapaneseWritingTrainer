@@ -51,10 +51,13 @@ fun HomeScreen(
     val learnedCount = characters.count {
         progressById[it.id]?.status == CardStatus.REVIEW
     }
+    val learningCount = characters.count {
+        progressById[it.id]?.status in setOf(CardStatus.LEARNING, CardStatus.RELEARNING)
+    }
     val dueCount = characters.count {
         progressById[it.id]?.isDue(now) == true
     }
-    val newCount = characters.size - learnedCount
+    val newCount = (characters.size - learnedCount - learningCount).coerceAtLeast(0)
     val remainingDailyNewCount = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
     val availableNewCount = minOf(newCount, remainingDailyNewCount)
 
@@ -79,10 +82,15 @@ fun HomeScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    SummaryValue("Đã học", "$learnedCount / ${characters.size}")
+                    SummaryValue("Đã thuộc", "$learnedCount / ${characters.size}")
                     SummaryValue("Cần ôn", dueCount.toString())
                     SummaryValue("Chữ mới", newCount.toString())
                 }
+                Text(
+                    "$learningCount chữ đang trong Learning / Relearning.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 val fraction = if (characters.isEmpty()) 0f
                     else learnedCount.toFloat() / characters.size
                 androidx.compose.material3.LinearProgressIndicator(
