@@ -75,6 +75,8 @@ fun WritingCanvas(
     initialMode: WritingMode = WritingMode.TRACE,
     showModeSelector: Boolean = true,
     allowEditingAfterCompletion: Boolean = true,
+    showGrid: Boolean = true,
+    showHints: Boolean = true,
     onCompleted: (() -> Unit)? = null,
     onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null
 ) {
@@ -436,7 +438,7 @@ fun WritingCanvas(
             @Suppress("UNUSED_VARIABLE")
             val tick = redrawTick
 
-            drawGrid()
+            if (showGrid) drawGrid()
 
             if (templatePaths.isNotEmpty()) {
                 val viewBoxSize = character?.viewBoxSize ?: 109f
@@ -540,7 +542,8 @@ fun WritingCanvas(
                 drawPath(currentPath, Color.Black, style = InkStyle)
             }
 
-            if (mode == WritingMode.RECALL &&
+            if (showHints &&
+                mode == WritingMode.RECALL &&
                 consecutiveFailedAttempts >= 2 &&
                 !isGuidedComplete
             ) {
