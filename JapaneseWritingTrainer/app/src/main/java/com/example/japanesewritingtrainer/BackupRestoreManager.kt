@@ -109,7 +109,7 @@ class BackupRestoreManager(context: Context) {
                 val rating = item.optNullableString("rating")
                 require(cardId.isNotBlank()) { "Bản sao lưu chứa cardId rỗng." }
                 PracticeMode.valueOf(mode)
-                rating?.let(ReviewRating::valueOf)
+                rating?.let { ReviewRating.valueOf(it) }
 
                 add(
                     PracticeLogEntity(
