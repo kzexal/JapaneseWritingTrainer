@@ -77,7 +77,7 @@ Katakana, Kanji, nhận diện chữ viết bằng AI/CNN, tài khoản người
 | Daily new-card limit | **Implemented** | Giới hạn card mới mỗi ngày, có thể cấu hình |
 | Session planner / engine / coordinator | **Implemented** | Quản lý thứ tự card, rating và retry trong phiên |
 | Difficult-card retry | **Implemented** | Có cơ chế xử lý card gặp nhiều lần Again |
-| Scheduling audit | **In progress** | Đã sửa FSRS review-time anchor, clock rollback và duplicate concurrent rating; tiếp tục audit các chuyển trạng thái và gián đoạn phiên |
+| Scheduling audit | **Implemented; locally verified** | Đã kiểm tra anchor, clock rollback, duplicate concurrent rating, các chuyển trạng thái, queue, retry và khôi phục phiên qua Room; tiếp tục bổ sung bằng chứng khi phát hiện edge case mới |
 
 **Ranh giới trách nhiệm:** Rust/FSRS-rs tính toán trạng thái ghi nhớ và các khoảng lịch đề xuất. Kotlin quản lý chính sách sản phẩm như Learning/Relearning, hàng đợi, giới hạn card mới, retry và vòng đời phiên học. Không thay thế FSRS bằng SM-2.
 
@@ -210,13 +210,14 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Bổ sung và chạy pass scheduler test matrix cho cả bốn rating ở trạng thái LEARNING, RELEARNING và REVIEW.
 - [x] Chạy pass unit/instrumentation tests cho daily limit, due queue, retry thẻ khó và trường hợp hết hàng đợi.
 - [x] Kiểm tra thực tế force-stop Android và mở lại ứng dụng giữa quá trình sử dụng; người dùng xác nhận phiên học vẫn khôi phục đúng, không phát hiện mất tiến độ hoặc lặp lại sai card. Room instrumentation test cũng mô phỏng bỏ coordinator cũ, tạo phiên mới và khôi phục queue từ tiến độ/lịch sử đã lưu. Queue đang chạy không được persist nguyên trạng; phiên mới được lập lại từ dữ liệu card trong Room.
-- [ ] Chạy `testDebugUnitTest` và `assembleDebug` trực tiếp từ Android Studio/Gradle; chạy instrumentation tests trên emulator cho các luồng Room. Không phụ thuộc GitHub Actions để xác minh.
+- [x] Chạy `testDebugUnitTest` và `assembleDebug` trực tiếp bằng Gradle; người dùng xác nhận unit tests và build đều pass. Các Room instrumentation tests liên quan đến scheduler, queue, migration, backup/restore, progress và settings cũng đã được chạy pass. Không phụ thuộc GitHub Actions để xác minh.
 
 ### Phase 2 — Writing experience
 
-- [ ] Đánh giá false rejection của Stroke Matcher bằng bộ input đa dạng.
-- [ ] Đảm bảo có cách tiếp tục khi matcher từ chối nét liên tục.
-- [ ] Kiểm tra Guided, Recall, Trace và Free Practice trên thiết bị thật.
+- [x] Đánh giá false rejection của Stroke Matcher bằng unit tests cho biến thiên scale/curvature và kiểm tra thực tế các nét đúng, hơi cong/lệch, ngược chiều, quá ngắn/quá dài.
+- [x] Xác minh cách khôi phục khi matcher từ chối nét: hint xuất hiện sau hai lần sai; Undo và Clear vẫn hoạt động.
+- [x] Kiểm tra Guided Writing và Recall Writing trên thiết bị Android thật; các trường hợp trong test matrix đều pass.
+- [ ] Kiểm tra Trace và Free Practice trên thiết bị thật.
 - [ ] Kiểm tra canvas không bị thu hẹp hoặc đẩy các nút Undo/Clear/Hint khỏi vùng dễ thao tác.
 - [ ] Kiểm tra độ mượt, kích thước màn hình và thao tác chạm.
 
