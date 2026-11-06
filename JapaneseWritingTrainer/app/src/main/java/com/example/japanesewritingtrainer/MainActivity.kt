@@ -216,6 +216,19 @@ class MainActivity : ComponentActivity() {
                                         characters = characters,
                                         showGrid = showGrid,
                                         showHints = showHints,
+                                        onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
+                                            practiceLogScope.launch {
+                                                practiceLogRepository.add(
+                                                    PracticeLog(
+                                                        cardId = characterId,
+                                                        mode = mode,
+                                                        rating = null,
+                                                        durationMs = durationMs,
+                                                        timestampEpochMillis = finishedAt
+                                                    )
+                                                )
+                                            }
+                                        },
                                         modifier = Modifier.weight(1f)
                                     )
 
