@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -40,7 +41,17 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            JapaneseWritingTrainerTheme {
+            val context = LocalContext.current.applicationContext
+            val appSettings = remember(context) { AppSettings(context) }
+            var themeMode by remember { mutableStateOf(appSettings.getThemeMode()) }
+            val systemDarkTheme = isSystemInDarkTheme()
+            val darkTheme = when (themeMode) {
+                AppThemeMode.SYSTEM -> systemDarkTheme
+                AppThemeMode.LIGHT -> false
+                AppThemeMode.DARK -> true
+            }
+
+            JapaneseWritingTrainerTheme(darkTheme = darkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val context = LocalContext.current.applicationContext
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
@@ -146,6 +157,15 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.SETTINGS -> SettingsScreen(
+                                        themeMode = themeMode,
+                                        onThemeModeChange = { mode ->
+                                            themeMode = mode
+                                            appSettings.setThemeMode(mode)
+                                        },
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.FREE -> {
                                     val selectedCharacter = characters.getOrNull(selectedIndex)
                                     Column(
@@ -228,7 +248,8 @@ private enum class MainScreen(val label: String) {
     FREE("Luyện tự do"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
-    STATISTICS("Thống kê")
+    STATISTICS("Thống kê"),
+    SETTINGS("Cài đặt")
 }
 
 @Composable
