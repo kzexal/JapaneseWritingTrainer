@@ -26,26 +26,60 @@ object CharacterRepository {
 
     fun load(context: Context, assetPath: String): List<CharacterData> {
         val text = context.assets.open(assetPath).bufferedReader().use { it.readText() }
+        return parseDataset(text)
+    }
+
+    internal fun parseDataset(text: String): List<CharacterData> {
         val array = JSONArray(text)
+        require(array.length() > 0) { "Character dataset must not be empty" }
 
-        return List(array.length()) { i ->
-            val o = array.getJSONObject(i)
-            val strokesJson = o.getJSONArray("strokes")
+        val characters = List(array.length()) { i ->
+            val item = array.getJSONObject(i)
+            val strokesJson = item.getJSONArray("strokes")
             val strokes = List(strokesJson.length()) { j ->
-                val s = strokesJson.getJSONObject(j)
-                StrokeData(order = s.getInt("order"), svgPath = s.getString("svgPath"))
-            }.sortedBy { it.order }
+                val stroke = strokesJson.getJSONObject(j)
+                StrokeData(
+                    order = stroke.getInt("order"),
+                    svgPath = stroke.getString("svgPath")
+                )
+            }
 
-            CharacterData(
-                id = o.getString("id"),
-                character = o.getString("character"),
-                type = o.getString("type"),
-                group = o.getString("group"),
-                reading = o.getString("reading"),
-                strokeCount = o.getInt("strokeCount"),
-                viewBoxSize = o.optDouble("viewBoxSize", 109.0).toFloat(),
+            val character = CharacterData(
+                id = item.getString("id"),
+                character = item.getString("character"),
+                type = item.getString("type"),
+                group = item.getString("group"),
+                reading = item.getString("reading"),
+                strokeCount = item.getInt("strokeCount"),
+                viewBoxSize = item.optDouble("viewBoxSize", 109.0).toFloat(),
                 strokes = strokes
             )
+
+            require(character.id.isNotBlank()) { "Character ID must not be blank" }
+            require(character.character.isNotBlank()) { "Character glyph must not be blank" }
+            require(character.reading.isNotBlank()) { "Character reading must not be blank" }
+            require(character.group.isNotBlank()) { "Character group must not be blank" }
+            require(character.viewBoxSize.isFinite() && character.viewBoxSize > 0f) {
+                "Invalid viewBoxSize for ${character.id}"
+            }
+            require(character.strokeCount == strokes.size && strokes.isNotEmpty()) {
+                "strokeCount does not match stroke data for ${character.id}"
+            }
+            require(strokes.map { it.order } == (1..strokes.size).toList()) {
+                "Stroke order must be continuous from 1 for ${character.id}"
+            }
+            require(strokes.all { it.svgPath.isNotBlank() }) {
+                "Empty SVG path for ${character.id}"
+            }
+            character
         }
+
+        require(characters.map { it.id }.distinct().size == characters.size) {
+            "Character IDs must be unique"
+        }
+        require(characters.map { it.character }.distinct().size == characters.size) {
+            "Character glyphs must be unique"
+        }
+        return characters
     }
 }
