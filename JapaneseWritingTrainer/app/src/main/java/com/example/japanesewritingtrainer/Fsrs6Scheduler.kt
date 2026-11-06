@@ -95,13 +95,18 @@ class Fsrs6Scheduler(
                 scheduledDays = RELEARNING_STEP_DAYS
             }
             rating == ReviewRating.AGAIN -> {
-                nextStatus = if (progress.status == CardStatus.RELEARNING) {
-                    CardStatus.RELEARNING
+                val isRelearning = progress.status == CardStatus.RELEARNING
+                nextStatus = if (isRelearning) CardStatus.RELEARNING else CardStatus.LEARNING
+                intervalMillis = if (isRelearning) {
+                    RELEARNING_STEP_MILLIS
                 } else {
-                    CardStatus.LEARNING
+                    LEARNING_AGAIN_STEP_MILLIS
                 }
-                intervalMillis = LEARNING_AGAIN_STEP_MILLIS
-                scheduledDays = LEARNING_AGAIN_STEP_DAYS
+                scheduledDays = if (isRelearning) {
+                    RELEARNING_STEP_DAYS
+                } else {
+                    LEARNING_AGAIN_STEP_DAYS
+                }
             }
             rating == ReviewRating.HARD &&
                 (progress.status == CardStatus.NEW || isLearningStep) -> {
