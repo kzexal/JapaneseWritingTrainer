@@ -1,48 +1,86 @@
-name: FSRS Rust bridge
+name: Rust bridge and Android validation
 
 on:
   push:
-    branches: [feature/guided-writing, feature/fsrs-rust-jni]
-    paths:
-      - "JapaneseWritingTrainer/native/**"
-      - ".github/workflows/fsrs-rust-bridge.yml"
+    branches: [main]
   pull_request:
-    paths:
-      - "JapaneseWritingTrainer/native/**"
-      - ".github/workflows/fsrs-rust-bridge.yml"
+    branches: [main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
-  rust-tests:
+  rust-and-android:
+    name: Rust checks and Android build
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: JapaneseWritingTrainer/native/fsrs-bridge
     steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - name: Check out main revision
+        uses: actions/checkout@v4
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Rust
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
-      - run: cargo fmt --check
-      - run: cargo test
-      - run: cargo clippy --all-targets -- -D warnings
 
-  android-native-build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: android-actions/setup-android@v3
+      - name: Cache Rust dependencies
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: JapaneseWritingTrainer/native/fsrs-bridge
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Check Rust formatting
+        working-directory: JapaneseWritingTrainer/native/fsrs-bridge
+        run: cargo fmt --check
+
+      - name: Run Rust tests
+        working-directory: JapaneseWritingTrainer/native/fsrs-bridge
+        run: cargo test
+
+      - name: Run Rust Clippy
+        working-directory: JapaneseWritingTrainer/native/fsrs-bridge
+        run: cargo clippy --all-targets -- -D warnings
+
+      - name: Build host JNI library for JVM tests
+        working-directory: JapaneseWritingTrainer/native/fsrs-bridge
+        run: cargo build --release
+
       - name: Install Android NDK
         run: |
           sdkmanager --install "ndk;27.2.12479018"
           echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
+
       - name: Install Rust Android targets and cargo-ndk
         run: |
           rustup target add aarch64-linux-android x86_64-linux-android
-          cargo install cargo-ndk
-      - name: Build Android shared libraries
+          cargo install cargo-ndk --locked
+
+      - name: Build Android JNI libraries
         working-directory: JapaneseWritingTrainer/native/fsrs-bridge
         run: |
           cargo ndk -t arm64-v8a -t x86_64 -o ../../app/src/main/jniLibs build --release
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Run Android unit tests and assemble debug APK
+        working-directory: JapaneseWritingTrainer
+        env:
+          JAVA_TOOL_OPTIONS: -Djava.library.path=${{ github.workspace }}/JapaneseWritingTrainer/native/fsrs-bridge/target/release
+        run: ./gradlew --no-daemon testDebugUnitTest assembleDebug
+
+      - name: Upload debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: japanese-writing-trainer-debug
+          path: JapaneseWritingTrainer/app/build/outputs/apk/debug/*.apk
+          if-no-files-found: error
+          retention-days: 7
