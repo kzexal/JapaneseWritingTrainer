@@ -307,19 +307,26 @@ fun LearningSessionScreen(
                             Text("Luyện lại các thẻ khó")
                         }
                     } else {
+                        val dailyLimitReached = newCardsStudiedToday >= newCardsPerDay
                         Text(
-                            if (session.plan.remainingNewCount > 0) {
-                                "Bạn đã hoàn thành nhóm thẻ này. Có thể tiếp tục học các thẻ mới."
-                            } else {
-                                "Không còn thẻ mới hoặc thẻ đến hạn trong phiên này."
+                            when {
+                                session.plan.remainingNewCount > 0 && dailyLimitReached ->
+                                    "Bạn đã đạt giới hạn chữ mới hôm nay. Tiến độ sẽ được làm mới vào ngày mai."
+                                session.plan.remainingNewCount > 0 ->
+                                    "Bạn đã hoàn thành lượt hiện tại. Có thể tiếp tục học các thẻ mới."
+                                else ->
+                                    "Không còn thẻ mới hoặc thẻ đến hạn trong phiên này."
                             },
                             style = MaterialTheme.typography.bodyMedium
                         )
                     }
-                    OutlinedButton(onClick = { startAnotherSession() }) {
-                        Text(
-                            if (session.plan.remainingNewCount > 0) "Học tiếp" else "Bắt đầu phiên mới"
-                        )
+                    val dailyLimitReached = newCardsStudiedToday >= newCardsPerDay
+                    if (session.plan.remainingNewCount == 0 || !dailyLimitReached) {
+                        OutlinedButton(onClick = { startAnotherSession() }) {
+                            Text(
+                                if (session.plan.remainingNewCount > 0) "Học tiếp" else "Bắt đầu phiên mới"
+                            )
+                        }
                     }
                 }
             }
