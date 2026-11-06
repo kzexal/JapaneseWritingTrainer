@@ -141,6 +141,11 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.STATISTICS -> StatisticsScreen(
+                                        characters = characters,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.FREE -> {
                                     val selectedCharacter = characters.getOrNull(selectedIndex)
                                     Column(
@@ -222,7 +227,8 @@ class MainActivity : ComponentActivity() {
 private enum class MainScreen(val label: String) {
     FREE("Luyện tự do"),
     LEARNING("Ôn tập"),
-    HISTORY("Lịch sử")
+    HISTORY("Lịch sử"),
+    STATISTICS("Thống kê")
 }
 
 @Composable
