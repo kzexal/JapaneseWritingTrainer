@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
-                    var selectedScreen by remember { mutableStateOf(MainScreen.FREE) }
+                    var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
                     val backupRestoreManager = remember(context) { BackupRestoreManager(context) }
                     var pendingRestoreJson by remember { mutableStateOf<String?>(null) }
 
@@ -204,6 +204,15 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 when (selectedScreen) {
+                                    MainScreen.HOME -> HomeScreen(
+                                        characters = characters,
+                                        newCardsPerDay = newCardsPerDay,
+                                        onStartLearning = { selectedScreen = MainScreen.LEARNING },
+                                        onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
+                                        onOpenFreePractice = { selectedScreen = MainScreen.FREE },
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.LEARNING -> LearningSessionScreen(
                                         characters = characters,
                                         newCardsPerDay = newCardsPerDay,
@@ -381,6 +390,7 @@ class MainActivity : ComponentActivity() {
 private const val MAX_BACKUP_FILE_BYTES = 20 * 1024 * 1024
 
 private enum class MainScreen(val label: String) {
+    HOME("Trang chủ"),
     FREE("Luyện tự do"),
     LIBRARY("Thư viện"),
     LEARNING("Ôn tập"),
