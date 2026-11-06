@@ -66,11 +66,11 @@ class PracticeLogDaoTest {
     fun countsDistinctRatedNewRecallCardsSinceDayStart() = runBlocking {
         val dayStart = 1_000L
         val logs = listOf(
-            PracticeLog("hiragana_a", PracticeMode.RECALL, ReviewRating.AGAIN, 500L, 1_000L),
-            PracticeLog("hiragana_a", PracticeMode.REVIEW, ReviewRating.GOOD, 500L, 2_000L),
-            PracticeLog("hiragana_b", PracticeMode.RECALL, ReviewRating.GOOD, 500L, 2_000L),
-            PracticeLog("hiragana_c", PracticeMode.RECALL, null, 500L, 2_000L),
-            PracticeLog("hiragana_d", PracticeMode.RECALL, ReviewRating.EASY, 500L, 999L)
+            PracticeLog(cardId = "hiragana_a", mode = PracticeMode.RECALL, rating = ReviewRating.AGAIN, durationMs = 500L, timestampEpochMillis = 1_000L),
+            PracticeLog(cardId = "hiragana_a", mode = PracticeMode.REVIEW, rating = ReviewRating.GOOD, durationMs = 500L, timestampEpochMillis = 2_000L),
+            PracticeLog(cardId = "hiragana_b", mode = PracticeMode.RECALL, rating = ReviewRating.GOOD, durationMs = 500L, timestampEpochMillis = 2_000L),
+            PracticeLog(cardId = "hiragana_c", mode = PracticeMode.RECALL, rating = null, durationMs = 500L, timestampEpochMillis = 2_000L),
+            PracticeLog(cardId = "hiragana_d", mode = PracticeMode.RECALL, rating = ReviewRating.EASY, durationMs = 500L, timestampEpochMillis = 999L)
         )
         dao.insertAll(logs.map(PracticeLog::toEntity))
 
