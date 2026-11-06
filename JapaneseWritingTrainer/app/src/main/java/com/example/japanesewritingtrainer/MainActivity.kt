@@ -212,6 +212,13 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.LIBRARY -> CharacterLibraryScreen(
+                                        characters = characters,
+                                        showGrid = showGrid,
+                                        showHints = showHints,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = characters,
                                         modifier = Modifier.weight(1f)
@@ -362,6 +369,7 @@ private const val MAX_BACKUP_FILE_BYTES = 20 * 1024 * 1024
 
 private enum class MainScreen(val label: String) {
     FREE("Luyện tự do"),
+    LIBRARY("Thư viện"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
     STATISTICS("Thống kê"),
