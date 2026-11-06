@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
@@ -44,6 +45,7 @@ fun LearningSessionScreen(
 ) {
     val context = LocalContext.current.applicationContext
     val coordinator = remember(context) { LearningSessionCoordinator(context) }
+    val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
     val deck = catalog.decks.firstOrNull { it.characterType == "hiragana" }
     val deckCards = remember(catalog, deck) {
@@ -54,6 +56,7 @@ fun LearningSessionScreen(
 
     var snapshot by remember { mutableStateOf<LearningSessionSnapshot?>(null) }
     var deckProgress by remember { mutableStateOf<DeckProgressSummary?>(null) }
+    var newCardsStudiedToday by remember { mutableIntStateOf(0) }
     var isLoading by remember { mutableStateOf(true) }
     var isSaving by remember { mutableStateOf(false) }
     var awaitingRating by remember { mutableStateOf(false) }
@@ -67,11 +70,15 @@ fun LearningSessionScreen(
         }
 
         try {
+            val todayStart = localDayStartEpochMillis()
+            newCardsStudiedToday = practiceLogRepository
+                .countDistinctNewCardsSince(todayStart)
+            val remainingNewCards = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
             snapshot = coordinator.start(
                 deck = deck,
                 cards = deckCards,
                 nowEpochMillis = System.currentTimeMillis(),
-                newCardLimit = newCardsPerDay
+                newCardLimit = remainingNewCards
             )
             deckProgress = coordinator.getDeckProgressSummary(deck, deckCards)
             errorMessage = null
@@ -88,11 +95,15 @@ fun LearningSessionScreen(
             isLoading = true
             awaitingRating = false
             try {
+                val todayStart = localDayStartEpochMillis()
+                newCardsStudiedToday = practiceLogRepository
+                    .countDistinctNewCardsSince(todayStart)
+                val remainingNewCards = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
                 snapshot = coordinator.start(
                     deck = selectedDeck,
                     cards = deckCards,
                     nowEpochMillis = System.currentTimeMillis(),
-                    newCardLimit = newCardsPerDay
+                    newCardLimit = remainingNewCards
                 )
                 deckProgress = coordinator.getDeckProgressSummary(selectedDeck, deckCards)
                 errorMessage = null
@@ -124,6 +135,8 @@ fun LearningSessionScreen(
                     rating = rating,
                     nowEpochMillis = System.currentTimeMillis()
                 )
+                newCardsStudiedToday = practiceLogRepository
+                    .countDistinctNewCardsSince(localDayStartEpochMillis())
                 deck?.let {
                     deckProgress = coordinator.getDeckProgressSummary(it, deckCards)
                 }
@@ -170,7 +183,8 @@ fun LearningSessionScreen(
                     )
                 }
                 Text(
-                    "Phiên này ${session.completedCount}/${session.totalCount}",
+                    "Phiên này ${session.completedCount}/${session.totalCount}  ·  " +
+                        "Chữ mới hôm nay: $newCardsStudiedToday/$newCardsPerDay",
                     style = MaterialTheme.typography.labelMedium
                 )
 
