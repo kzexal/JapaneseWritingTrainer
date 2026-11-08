@@ -28,7 +28,7 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.util.Locale
 
-/** Tổng quan tiến độ học và thời gian luyện viết của toàn bộ bộ Hiragana. */
+/** Tổng quan tiến độ học và thời gian luyện viết của các bộ ký tự đã nạp. */
 @Composable
 fun StatisticsScreen(
     characters: List<CharacterData>,
@@ -84,7 +84,7 @@ fun StatisticsScreen(
     ) {
         Text("Thống kê học tập", style = MaterialTheme.typography.headlineSmall)
         Text(
-            "Tổng quan tiến độ Hiragana của bạn",
+            "Tổng quan tiến độ Hiragana và Katakana của bạn",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
