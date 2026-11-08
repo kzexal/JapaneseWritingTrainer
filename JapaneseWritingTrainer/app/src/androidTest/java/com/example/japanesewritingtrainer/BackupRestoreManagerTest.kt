@@ -73,7 +73,7 @@ class BackupRestoreManagerTest {
     }
 
     @Test
-    fun invalidFsrsValuesDoNotReplaceExistingProgress() = runBlocking {
+    fun invalidProgressMetadataDoesNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(
             cardId = "hiragana_u",
             status = CardStatus.REVIEW,
@@ -82,28 +82,57 @@ class BackupRestoreManagerTest {
             scheduledDays = 8.0,
             elapsedDays = 2.0,
             reps = 4,
+            lapses = 1,
             reviewCount = 4,
-            correctCount = 3
+            correctCount = 3,
+            dueAtEpochMillis = 20000L,
+            lastReviewedAtEpochMillis = 15000L
+        )
+        val existingLog = PracticeLog(
+            id = 94L,
+            cardId = "hiragana_u",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 1900L,
+            timestampEpochMillis = 18000L
         )
         database.cardProgressDao().upsert(existing.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
 
-        val validBackup = manager.createBackupJson()
-        val invalidRoot = JSONObject(validBackup)
-        invalidRoot.getJSONArray("cardProgress")
-            .getJSONObject(0)
-            .put("scheduledDays", -1.0)
-        val invalidBackup = invalidRoot.toString()
-        assertTrue(invalidBackup != validBackup)
-
-        val failure = runCatching {
-            manager.restoreFromJson(invalidBackup)
-        }.exceptionOrNull()
-
-        assertTrue(failure is IllegalArgumentException)
-        assertEquals(
-            existing,
-            database.cardProgressDao().getByCardId("hiragana_u")?.toDomain()
+        val invalidValues = linkedMapOf<String, Any>(
+            "stabilityDays" to 0.0,
+            "difficulty" to 10.1,
+            "scheduledDays" to -1.0,
+            "elapsedDays" to -1.0,
+            "reps" to -1,
+            "lapses" to -1,
+            "reviewCount" to -1,
+            "correctCount" to 5,
+            "dueAtEpochMillis" to -1L,
+            "lastReviewedAtEpochMillis" to -1L
         )
+
+        invalidValues.forEach { (field, invalidValue) ->
+            val backupRoot = JSONObject(manager.createBackupJson())
+            val progress = backupRoot.getJSONArray("cardProgress").getJSONObject(0)
+            progress.put("cardId", "hiragana_new")
+            progress.put(field, invalidValue)
+
+            val failure = runCatching {
+                manager.restoreFromJson(backupRoot.toString())
+            }.exceptionOrNull()
+
+            assertTrue("$field should be rejected", failure is IllegalArgumentException)
+            assertEquals(
+                existing,
+                database.cardProgressDao().getByCardId("hiragana_u")?.toDomain()
+            )
+            assertEquals(null, database.cardProgressDao().getByCardId("hiragana_new"))
+            assertEquals(
+                listOf(existingLog),
+                database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+            )
+        }
     }
 
     @Test
