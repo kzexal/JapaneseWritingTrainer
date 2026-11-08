@@ -19,8 +19,10 @@ BASE_URL = "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji"
 OUTPUT = ROOT / "app/src/main/assets/characters/katakana.json"
 SOURCE = "KanjiVG (CC BY-SA 3.0) - http://kanjivg.tagaini.net"
 
-# Modern basic Katakana (46 characters), grouped by the traditional rows.
-ROWS = [
+# Basic Katakana plus voiced/semi-voiced forms. Yōon combinations are
+# intentionally excluded: they are multi-glyph writing units and need a
+# separate layout/model decision rather than being treated as single kana.
+BASIC_ROWS = [
     ("アイウエオ", ["a", "i", "u", "e", "o"], "a"),
     ("カキクケコ", ["ka", "ki", "ku", "ke", "ko"], "ka"),
     ("サシスセソ", ["sa", "shi", "su", "se", "so"], "sa"),
@@ -32,6 +34,16 @@ ROWS = [
     ("ラリルレロ", ["ra", "ri", "ru", "re", "ro"], "ra"),
     ("ワヲン", ["wa", "wo", "n"], "wa"),
 ]
+
+DAKUTEN_ROWS = [
+    ("ガギグゲゴ", ["ga", "gi", "gu", "ge", "go"], "ga"),
+    ("ザジズゼゾ", ["za", "ji", "zu", "ze", "zo"], "za"),
+    ("ダヂヅデド", ["da", "ji", "zu", "de", "do"], "da"),
+    ("バビブベボ", ["ba", "bi", "bu", "be", "bo"], "ba"),
+    ("パピプペポ", ["pa", "pi", "pu", "pe", "po"], "pa"),
+]
+
+ROWS = BASIC_ROWS + DAKUTEN_ROWS
 
 
 def expected_characters():
@@ -87,8 +99,9 @@ def validate_dataset(dataset: list[dict]) -> None:
         (item.get("character"), item.get("reading"), item.get("group"))
         for item in dataset
     }
-    if len(dataset) != 46:
-        raise ValueError(f"Expected 46 characters, got {len(dataset)}")
+    expected_count = sum(len(characters) for characters, _, _ in ROWS)
+    if len(dataset) != expected_count:
+        raise ValueError(f"Expected {expected_count} characters, got {len(dataset)}")
     if actual != expected:
         missing = expected - actual
         unexpected = actual - expected
@@ -137,7 +150,18 @@ def main():
             paths = extract_paths(download_svg(character))
             dataset.append(
                 {
-                    "id": f"katakana_{reading}",
+                    # Preserve all existing IDs for the original 46 characters.
+                    # Use Unicode code points for additions because romanized
+                    # readings such as ji/zu occur in more than one voiced row.
+                    "id": (
+                        f"katakana_{reading}"
+                        if (character, reading, group) in {
+                            item
+                            for row in BASIC_ROWS
+                            for item in zip(row[0], row[1], [row[2]] * len(row[0]))
+                        }
+                        else f"katakana_{ord(character):04x}"
+                    ),
                     "character": character,
                     "type": "katakana",
                     "group": group,
@@ -159,7 +183,7 @@ def main():
         encoding="utf-8",
     )
     print(f"\nValidated and generated: {OUTPUT}")
-    print(f"Characters: {len(dataset)}")
+    print(f"Characters: {len(dataset)} (46 basic + 25 dakuten/handakuten)")
 
 
 if __name__ == "__main__":
