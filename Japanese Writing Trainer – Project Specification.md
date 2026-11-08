@@ -1,6 +1,6 @@
 # Japanese Writing Trainer – Project Specification
 
-*Phiên bản 2.0 · Cập nhật: 07/11/2026 · Baseline: nhánh `main`*
+*Phiên bản 2.0 · Cập nhật: 08/11/2026 · Baseline: nhánh `main`*
 
 > Tài liệu này mô tả trạng thái thực tế của mã nguồn trên `main` và kế hoạch phát triển tiếp theo. Nhãn **Implemented** nghĩa là đã có triển khai trong mã nguồn; chưa đồng nghĩa mọi hành vi đã được kiểm chứng trên thiết bị thật. Không dùng trạng thái hoặc kết quả kiểm thử từ nhánh khác làm bằng chứng cho `main`.
 
@@ -241,10 +241,14 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 ### Phase 4 — MVP release readiness
 
-- [ ] Chạy instrumentation tests trên emulator và kiểm tra thủ công trên thiết bị thật.
-- [ ] Kiểm tra offline, cài mới, nâng cấp và backup/restore.
+- [x] Chạy `testDebugUnitTest`, `connectedDebugAndroidTest` và `:app:assembleDebug`; người dùng xác nhận cả ba đều PASS trên môi trường Android local.
+- [x] Kiểm tra thủ công trên thiết bị thật các luồng học cốt lõi, Practice History, Statistics và cả bốn cài đặt; force-stop/mở lại vẫn giữ dữ liệu.
+- [x] Kiểm tra offline trên thiết bị thật: mở ứng dụng, sử dụng cả bốn chế độ luyện viết, rating, tiến độ, lịch sử, thống kê và cài đặt; force-stop/mở lại khi vẫn offline. Người dùng xác nhận PASS.
+- [x] Kiểm tra nâng cấp bằng APK cài đè lên bản hiện có; tiến độ, lịch sử và cài đặt được giữ nguyên (xem Phase 3).
+- [x] Kiểm tra JSON backup/restore thủ công trên thiết bị: tạo tệp sao lưu, khôi phục từ chính tệp đó và xác minh dữ liệu học/lịch sử/thống kê; người dùng xác nhận PASS.
+- [ ] Kiểm tra cài mới trên emulator hoặc thiết bị phụ; không gỡ app/xóa dữ liệu trên thiết bị đang chứa dữ liệu học duy nhất.
 - [ ] Build release APK/AAB và kiểm tra native libraries theo ABI.
-- [ ] Hoàn thiện ghi công/giấy phép nguồn dataset.
+- [ ] Hoàn thiện ghi công/giấy phép nguồn dataset và xác minh nội dung attribution trong bản phát hành.
 - [ ] Cập nhật README, hướng dẫn cài đặt và release notes.
 - [ ] Chỉ công bố MVP sau khi Acceptance Criteria bên dưới được kiểm chứng.
 
@@ -264,9 +268,9 @@ Chỉ xem xét sau khi MVP Hiragana ổn định: Katakana, Kanji theo cấp đ�
 | AC-06 | Learning, Relearning, Review queue | **Implemented** |
 | AC-07 | Lưu tiến độ qua lần mở app | **Implemented; migration 1→2→3 và 2→3 đã được kiểm thử trên thiết bị/emulator** |
 | AC-08 | Lịch sử luyện và thống kê | **Implemented** |
-| AC-09 | Settings và JSON backup/restore | **Implemented; cần tiếp tục kiểm thử edge cases** |
-| AC-10 | Build và chạy trên thiết bị Android thật | **Cần kiểm chứng release** |
-| AC-11 | Offline đầy đủ | **Cần kiểm chứng acceptance trên thiết bị** |
+| AC-09 | Settings và JSON backup/restore | **Implemented; automated edge-case tests và manual backup/restore đã PASS** |
+| AC-10 | Build và chạy trên thiết bị Android thật | **Debug build và manual device checks PASS; release build còn chờ** |
+| AC-11 | Offline đầy đủ | **Manual offline acceptance trên thiết bị thật PASS** |
 
 ## 8. Definition of done
 
