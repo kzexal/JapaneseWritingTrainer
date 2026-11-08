@@ -1,55 +1,132 @@
 # Japanese Writing Trainer
 
-Ứng dụng Android luyện viết tiếng Nhật bằng cảm ứng, xây dựng với Kotlin và Jetpack Compose. Ứng dụng hoạt động offline, lưu tiến độ trên thiết bị bằng Room và dùng FSRS-rs để lập lịch ôn tập.
+Ứng dụng Android hỗ trợ luyện viết tiếng Nhật bằng màn hình cảm ứng. Dự án hiện tập trung vào luyện viết **Hiragana**, ghi nhớ thứ tự nét và ôn tập lặp lại ngắt quãng. Ứng dụng được thiết kế theo hướng offline-first: dữ liệu học tập được lưu trên thiết bị, không cần tài khoản.
+
+> **Trạng thái:** Hiragana đã được triển khai. Katakana, Kanji và nhập từ vựng từ workbook Excel là các giai đoạn phát triển tiếp theo; chưa được xem là chức năng hiện có.
 
 ## Chức năng hiện có
 
-- Luyện viết Hiragana bằng Trace, Guided Writing, Recall Writing và Luyện tự do.
-- Thư viện 46 Hiragana, lọc theo nhóm và tìm kiếm bằng ký tự hoặc romaji.
-- Xem chi tiết ký tự, thứ tự nét và animation.
-- Ôn tập theo FSRS-6, hàng đợi thẻ khó và giới hạn số chữ mới mỗi ngày.
-- Lịch sử luyện viết, thống kê, tùy chỉnh giao diện/lưới/gợi ý.
-- Sao lưu và khôi phục tiến độ cùng lịch sử bằng JSON.
-- Dữ liệu lưu cục bộ; không yêu cầu tài khoản hoặc đồng bộ đám mây.
+- Thư viện 46 ký tự Hiragana cơ bản, có nhóm ký tự và tìm kiếm.
+- Xem thứ tự nét và hình dạng nét của từng ký tự.
+- Bốn chế độ luyện tập:
+  - **Trace:** tập tô theo nét mẫu.
+  - **Guided Writing:** luyện từng nét theo thứ tự, có đánh giá nét viết.
+  - **Recall Writing:** tự viết ký tự từ trí nhớ.
+  - **Free Practice:** luyện viết tự do.
+- Ôn tập theo FSRS-6 với các mức đánh giá Again, Hard, Good và Easy.
+- Quản lý thẻ mới, đang học và cần ôn; giới hạn số thẻ mới mỗi ngày.
+- Lịch sử luyện tập và thống kê tiến độ.
+- Tùy chỉnh giao diện, lưới ký tự và gợi ý.
+- Sao lưu và khôi phục dữ liệu học tập bằng tệp JSON.
+- Hoạt động offline; tiến độ và cài đặt được lưu cục bộ trên thiết bị.
 
-## Build
+## Công nghệ
 
-Mở thư mục \`JapaneseWritingTrainer/\` bằng Android Studio hoặc chạy từ PowerShell:
+- Kotlin
+- Android SDK, Jetpack Compose và Material 3
+- Room Database
+- Rust qua JNI cho phần tính toán FSRS, sử dụng crate `fsrs = 6.6.2`
+- Gradle Kotlin DSL
 
-\`\`\`powershell
-cd JapaneseWritingTrainer
-.\gradlew.bat testDebugUnitTest
-.\gradlew.bat connectedDebugAndroidTest
-.\gradlew.bat :app:assembleDebug
-\`\`\`
+## Cấu trúc repository
 
-APK debug được tạo tại:
-
-\`app/build/outputs/apk/debug/app-debug.apk\`
-
-## Dataset và ghi công
-
-Dữ liệu SVG thứ tự nét trong \`app/src/main/assets/characters/hiragana.json\` được chuyển đổi từ **KanjiVG**.
-
-- Copyright © Ulrich Apel.
-- License: [Creative Commons Attribution-ShareAlike 3.0 (CC BY-SA 3.0)](https://creativecommons.org/licenses/by-sa/3.0/).
-- Source project: [https://github.com/KanjiVG/kanjivg](https://github.com/KanjiVG/kanjivg).
-- Tệp dữ liệu chuyển đổi từ KanjiVG được phân phối theo CC BY-SA 3.0. Khi sửa đổi hoặc phân phối lại dữ liệu này, hãy giữ ghi công và tuân thủ điều khoản ShareAlike của giấy phép.
-
-Có thể tạo lại dataset bằng script ở thư mục `JapaneseWritingTrainer/tools/`:
-
-```powershell
-cd JapaneseWritingTrainer
-python tools/generate_hiragana.py
+```text
+JapaneseWritingTrainer/
+├── README.md
+├── DEVELOPMENT_STANDARDS.md
+├── Japanese Writing Trainer – Project Specification.md
+├── vocabulary.xlsx
+└── JapaneseWritingTrainer/
+    ├── app/
+    │   └── src/main/
+    │       ├── assets/characters/hiragana.json
+    │       ├── java/com/example/japanesewritingtrainer/
+    │       └── jniLibs/
+    ├── native/
+    │   ├── build-android.ps1
+    │   ├── build-android.sh
+    │   └── fsrs-bridge/
+    └── tools/
+        └── generate_hiragana.py
 ```
 
-Script tải SVG nguồn, kiểm tra đủ 46 ký tự, ID duy nhất, số nét và thứ tự nét liên tục trước khi ghi đè JSON.
+## Yêu cầu môi trường
 
-Mã nguồn ứng dụng và dữ liệu bên thứ ba là các thành phần riêng biệt; giấy phép của dataset không tự động áp dụng cho toàn bộ mã nguồn ứng dụng.
+- Android Studio tương thích với Android Gradle Plugin được khai báo trong dự án.
+- Android SDK Platform 37 và Android SDK Build-Tools tương ứng.
+- Thiết bị Android hoặc emulator chạy Android 8.0 (API 26) trở lên.
+- Nếu cần biên dịch lại thư viện Rust JNI: cài Rust toolchain, Android NDK, các Rust Android targets và `cargo-ndk`.
 
-## Cấu trúc chính
+Các phiên bản plugin và thư viện được quản lý trong `JapaneseWritingTrainer/gradle/libs.versions.toml`. Application ID: `com.example.japanesewritingtrainer`.
 
-- \`JapaneseWritingTrainer/app/src/main/java/\`: mã nguồn Android.
-- \`JapaneseWritingTrainer/app/src/main/assets/characters/\`: dataset ký tự.
-- \`JapaneseWritingTrainer/native/fsrs-bridge/\`: JNI bridge tới FSRS-rs.
-- \`docs/\`: tài liệu kỹ thuật và tích hợp FSRS.
+## Mở và chạy ứng dụng
+
+1. Clone repository.
+2. Mở thư mục `JapaneseWritingTrainer/` (thư mục chứa `settings.gradle.kts`) bằng Android Studio.
+3. Chờ Gradle Sync hoàn tất.
+4. Chọn thiết bị Android hoặc emulator rồi chạy cấu hình `app`.
+
+## Build và kiểm thử
+
+Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+
+```powershell
+# Unit tests
+.\gradlew.bat testDebugUnitTest
+
+# Instrumentation tests (cần thiết bị hoặc emulator đang kết nối)
+.\gradlew.bat connectedDebugAndroidTest
+
+# Build debug APK
+.\gradlew.bat :app:assembleDebug
+
+# Build release APK và Android App Bundle
+.\gradlew.bat :app:assembleRelease
+.\gradlew.bat :app:bundleRelease
+```
+
+Đầu ra thường nằm tại:
+
+- Debug APK: `app/build/outputs/apk/debug/app-debug.apk`
+- Release APK: `app/build/outputs/apk/release/app-release-unsigned.apk`
+- Release AAB: `app/build/outputs/bundle/release/app-release.aab`
+
+Release APK được tạo theo cấu hình hiện tại là **unsigned**. Muốn phân phối bản phát hành cần cấu hình ký ứng dụng bằng keystore riêng. Không đưa keystore hoặc mật khẩu ký vào repository.
+
+## Biên dịch lại thư viện Rust JNI (khi cần)
+
+Các thư viện native đã được tích hợp để Gradle đóng gói cùng ứng dụng. Nếu thay đổi mã Rust hoặc cần tạo lại thư viện, trên Windows mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+
+```powershell
+# Chỉ cần cài một lần nếu máy chưa có cargo-ndk
+cargo install cargo-ndk
+
+# Build thư viện cho arm64-v8a và x86_64
+.\native\build-android.ps1
+
+# Sau đó build ứng dụng
+.\gradlew.bat :app:assembleDebug
+```
+
+Script yêu cầu Rust/Cargo, Android NDK và Android toolchain đã được cài đặt, cấu hình. Mã Rust bridge nằm trong `native/fsrs-bridge/`; Kotlin gọi qua JNI. Rust đảm nhiệm phép tính FSRS, còn Kotlin quản lý luồng học, hàng đợi, trạng thái thẻ và lưu trữ Room.
+
+## Sao lưu và khôi phục
+
+Sử dụng chức năng sao lưu/khôi phục JSON trong ứng dụng để chủ động lưu dữ liệu học tập. Nên giữ bản sao lưu ở vị trí an toàn, tách khỏi thiết bị đang sử dụng.
+
+Android Auto Backup có thể hỗ trợ khôi phục dữ liệu trong một số tình huống, nhưng phụ thuộc vào thiết bị, tài khoản và cấu hình hệ thống; không nên xem đây là bản sao lưu duy nhất. Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiểm tra tệp JSON backup.
+
+## Dữ liệu và ghi công
+
+Dataset Hiragana hiện tại được lưu tại `app/src/main/assets/characters/hiragana.json`. Script tạo dữ liệu nằm trong `tools/generate_hiragana.py`.
+
+Dữ liệu thứ tự nét có nguồn gốc từ dự án [KanjiVG](https://github.com/KanjiVG/kanjivg). Thông tin ghi công và giấy phép của dữ liệu bên thứ ba cần được rà soát, hoàn thiện cùng đợt bổ sung Katakana và Kanji trước khi phát hành chính thức. Giấy phép của dữ liệu bên thứ ba không mặc nhiên áp dụng cho toàn bộ mã nguồn ứng dụng.
+
+## Lộ trình
+
+1. Hoàn thiện README và bổ sung tab **Hướng dẫn học** trong ứng dụng.
+2. Bổ sung đầy đủ Katakana và dữ liệu thứ tự nét.
+3. Bổ sung Kanji dựa trên dữ liệu trong workbook `vocabulary.xlsx`; cấu trúc workbook sẽ được kiểm tra trước khi ánh xạ dữ liệu.
+4. Xây dựng chức năng nhập và học từ vựng từ cùng workbook.
+5. Rà soát ghi công/giấy phép, ký ứng dụng và chuẩn bị bản phát hành.
+
