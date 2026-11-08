@@ -88,7 +88,10 @@ fun CharacterLibraryScreen(
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Text("Thư viện Hiragana", style = MaterialTheme.typography.headlineSmall)
+        Text(
+            "Thư viện ${characters.firstOrNull()?.type?.let(::characterTypeLabel) ?: "ký tự"}",
+            style = MaterialTheme.typography.headlineSmall
+        )
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
