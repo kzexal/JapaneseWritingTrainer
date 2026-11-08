@@ -63,7 +63,11 @@ fun LearningSessionScreen(
     }
     val deckCards = remember(catalog, deck, deckType) {
         if (deck == null) emptyList()
-        else if (deckType == "all") catalog.cards.map { it.copy(deckId = deck.id) }
+        else if (deckType == "all") {
+            catalog.cards.mapIndexed { index, card ->
+                card.copy(deckId = deck.id, order = index)
+            }
+        }
         else catalog.cardsForDeck(deck.id)
     }
     val charactersById = remember(characters) { characters.associateBy { it.id } }
