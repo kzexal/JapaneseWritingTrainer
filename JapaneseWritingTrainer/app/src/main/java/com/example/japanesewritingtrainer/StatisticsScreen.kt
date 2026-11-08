@@ -47,7 +47,8 @@ fun StatisticsScreen(
         scope.launch {
             isLoadingLogs = true
             try {
-                logs = logRepository.getAll()
+                val selectedCardIds = characters.map { it.id }.toSet()
+                logs = logRepository.getAll().filter { it.cardId in selectedCardIds }
                 errorMessage = null
             } catch (exception: Exception) {
                 errorMessage = exception.localizedMessage ?: "Không thể tải thống kê luyện viết."
@@ -57,7 +58,7 @@ fun StatisticsScreen(
         }
     }
 
-    LaunchedEffect(logRepository) { loadLogs() }
+    LaunchedEffect(logRepository, characters) { loadLogs() }
 
     val totalCards = characters.size
     val characterIds = remember(characters) { characters.map { it.id }.toSet() }
@@ -84,7 +85,7 @@ fun StatisticsScreen(
     ) {
         Text("Thống kê học tập", style = MaterialTheme.typography.headlineSmall)
         Text(
-            "Tổng quan tiến độ Hiragana và Katakana của bạn",
+            "Tổng quan tiến độ ${characters.firstOrNull()?.let { characterTypeLabel(it.type) } ?: "bộ chữ"} của bạn",
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
