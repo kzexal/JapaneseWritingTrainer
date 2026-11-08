@@ -28,6 +28,17 @@ interface PracticeLogDao {
     )
     suspend fun countDistinctNewCardsSince(sinceEpochMillis: Long): Int
 
+    /** Count distinct newly rated cards only from the selected deck. */
+    @Query(
+        "SELECT COUNT(DISTINCT cardId) FROM practice_log " +
+            "WHERE mode = 'RECALL' AND rating IS NOT NULL " +
+            "AND timestampEpochMillis >= :sinceEpochMillis AND cardId IN (:cardIds)"
+    )
+    suspend fun countDistinctNewCardsSince(
+        sinceEpochMillis: Long,
+        cardIds: List<String>
+    ): Int
+
     @Query("DELETE FROM practice_log")
     suspend fun deleteAll()
 }
