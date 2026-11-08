@@ -40,7 +40,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.4 Ngoài phạm vi hiện tại
 
-Katakana, Kanji, import dữ liệu từ workbook Excel, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase và đồng bộ Anki chưa thuộc phạm vi triển khai hiện tại. Katakana, Kanji lấy dữ liệu từ workbook đã có trên GitHub và import Vocabulary được đưa vào roadmap ở Phase 5–7. Hoàn thiện nội dung và chức năng trước; attribution/license, signing key và đóng gói phát hành chính thức được để sau khi Katakana và Kanji hoàn thành.
+Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase và đồng bộ Anki chưa thuộc phạm vi triển khai hiện tại. Kanji lấy dữ liệu từ workbook đã có trên GitHub và import Vocabulary được đưa vào roadmap ở Phase 6–7. Hoàn thiện nội dung và chức năng trước; attribution/license, signing key và đóng gói phát hành chính thức được để sau khi Katakana và Kanji hoàn thành.
 
 ## 2. Trạng thái chức năng
 
@@ -251,7 +251,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Build `:app:assembleRelease` và `:app:bundleRelease`; người dùng xác nhận cả hai build thành công.
 - [x] Kiểm tra native libraries trong APK và AAB: `libjapanese_writing_fsrs.so` có trong `arm64-v8a` và `x86_64`; xác nhận thiết bị Android của người dùng hỗ trợ `arm64-v8a`.
 - [x] Hoàn thiện README hiện có: giới thiệu ứng dụng, chức năng thực tế, hướng dẫn build/chạy/test, cấu trúc dự án, Rust JNI, backup/restore và trạng thái roadmap. Đã ghi rõ APK Release hiện tại chưa ký và việc rà soát attribution/license cuối cùng được để sau Katakana/Kanji.
-- [ ] Kiểm thử tab **Hướng dẫn học** mới được thêm vào điều hướng; nội dung giải thích cách bắt đầu, thư viện và thứ tự nét, Trace/Guided/Recall/Free Practice, rating FSRS, lịch ôn, Practice History, Statistics và backup/restore. Nội dung phân biệt rõ Hiragana hiện có với Katakana/Kanji/Vocabulary chưa hỗ trợ.
+- [x] Kiểm thử tab **Hướng dẫn học**: người dùng xác nhận tab hiển thị, cuộn, điều hướng, theme sáng/tối và portrait hoạt động đúng; nội dung đã được cập nhật khi bổ sung Katakana.
 - [ ] Kiểm tra cài mới trên emulator hoặc thiết bị phụ; không gỡ app/xóa dữ liệu trên thiết bị đang chứa dữ liệu học duy nhất.
 - [ ] Chỉ công bố bản phát hành cuối sau khi Katakana và Kanji hoàn tất, attribution/license và signing key được xử lý ở giai đoạn phát hành.
 
@@ -267,8 +267,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon) theo từng nhóm; xác minh cách biểu diễn nét và cách học phù hợp. Không gộp các biến thể thành card độc lập nếu chưa có quyết định học tập rõ ràng.
 - [x] Cập nhật deck selector để người học chọn Hiragana, Katakana hoặc cả hai; lựa chọn được lưu cục bộ.
 - [x] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
-- [ ] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
-- [ ] Bổ sung unit tests cho dataset integrity, ID uniqueness, stroke count/order và mapping deck-card.
+- [x] Bổ sung instrumentation test cho asset Katakana: 46 ký tự, ID/glyph duy nhất, type/prefix đúng, stroke count/order liên tục và SVG paths không rỗng; bổ sung unit test mapping deck-card cho phiên kết hợp.
 - [ ] Bổ sung kiểm tra UI, session, progress isolation và Room persistence cho Katakana.
 - [ ] Kiểm tra backup/restore và migration khi dữ liệu có thêm script mới; không làm mất progress Hiragana hiện có.
 - [ ] Kiểm tra thủ công toàn bộ nhóm Katakana trên thiết bị Android thật.
