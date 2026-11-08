@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -66,7 +67,12 @@ fun HomeScreen(
         modifier = modifier.fillMaxSize().padding(20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text("Japanese Writing Trainer", style = MaterialTheme.typography.headlineSmall)
+        Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
+        Text(
+            "Luyện viết và ghi nhớ mặt chữ qua các phiên học ngắn.",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Text(
             "Chào mừng bạn quay lại. Hãy dành vài phút để luyện viết hôm nay.",
             style = MaterialTheme.typography.bodyMedium,
@@ -129,9 +135,12 @@ fun HomeScreen(
                 Button(
                     onClick = onStartLearning,
                     enabled = dueCount > 0 || availableNewCount > 0,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth().height(56.dp)
                 ) {
-                    Text(if (dueCount > 0) "Bắt đầu ôn tập" else "Bắt đầu học")
+                    Text(
+                        if (dueCount > 0) "Ôn tập và học bài mới" else "Học bài mới",
+                        style = MaterialTheme.typography.titleMedium
+                    )
                 }
             }
         }
