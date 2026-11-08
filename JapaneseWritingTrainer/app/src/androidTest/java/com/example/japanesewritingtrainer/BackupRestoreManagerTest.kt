@@ -157,6 +157,66 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun failedDatabaseWriteRollsBackRestoreAndPreservesExistingData() = runBlocking {
+        val existingProgress = CardProgress(
+            cardId = "hiragana_old",
+            status = CardStatus.REVIEW,
+            reps = 3,
+            reviewCount = 2,
+            correctCount = 1
+        )
+        val existingLog = PracticeLog(
+            id = 41L,
+            cardId = "hiragana_old",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 1500L,
+            timestampEpochMillis = 9000L
+        )
+        database.cardProgressDao().upsert(existingProgress.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
+
+        val backup = JSONObject(manager.createBackupJson())
+        val progress = backup.getJSONArray("cardProgress")
+        progress.getJSONObject(0).put("cardId", "hiragana_new")
+        val logs = backup.getJSONArray("practiceLogs")
+        logs.put(
+            JSONObject()
+                .put("id", 42L)
+                .put("cardId", "hiragana_new")
+                .put("mode", PracticeMode.REVIEW.name)
+                .put("rating", ReviewRating.GOOD.name)
+                .put("durationMs", 2000L)
+                .put("timestampEpochMillis", 10000L)
+        )
+
+        database.openHelper.writableDatabase.execSQL(
+            """
+            CREATE TRIGGER reject_restore_log
+            BEFORE INSERT ON practice_log
+            BEGIN
+                SELECT RAISE(ABORT, 'forced restore write failure');
+            END
+            """.trimIndent()
+        )
+
+        val failure = runCatching {
+            manager.restoreFromJson(backup.toString())
+        }.exceptionOrNull()
+
+        assertTrue(failure != null)
+        assertEquals(
+            existingProgress,
+            database.cardProgressDao().getByCardId("hiragana_old")?.toDomain()
+        )
+        assertEquals(null, database.cardProgressDao().getByCardId("hiragana_new"))
+        assertEquals(
+            listOf(existingLog),
+            database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+        )
+    }
+
+    @Test
     fun malformedJsonDoesNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_ka", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(existing.toEntity())
