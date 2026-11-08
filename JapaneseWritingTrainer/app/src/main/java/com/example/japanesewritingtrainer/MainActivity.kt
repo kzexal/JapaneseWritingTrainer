@@ -9,8 +9,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,6 +19,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,8 +49,11 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current.applicationContext
             val appSettings = remember(context) { AppSettings(context) }
             var themeMode by remember { mutableStateOf(appSettings.getThemeMode()) }
-            var newCardsPerDay by remember {
-                mutableIntStateOf(appSettings.getNewCardsPerDay())
+            var hiraganaNewCardsPerDay by remember {
+                mutableIntStateOf(appSettings.getNewCardsPerDay("hiragana"))
+            }
+            var katakanaNewCardsPerDay by remember {
+                mutableIntStateOf(appSettings.getNewCardsPerDay("katakana"))
             }
             var showGrid by remember { mutableStateOf(appSettings.getShowGrid()) }
             var showHints by remember { mutableStateOf(appSettings.getShowHints()) }
@@ -70,8 +74,12 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
                     val selectedCharacters = remember(characters, selectedDeckType) {
-                        if (selectedDeckType == "all") characters
-                        else characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                        characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                    }
+                    val selectedNewCardsPerDay = if (selectedDeckType == "katakana") {
+                        katakanaNewCardsPerDay
+                    } else {
+                        hiraganaNewCardsPerDay
                     }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
@@ -187,75 +195,50 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                FlowRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                // Hai deck được trình bày như hai tab chính, không có chế độ gộp.
+                                TabRow(
+                                    selectedTabIndex = if (selectedDeckType == "katakana") 1 else 0,
+                                    modifier = Modifier.fillMaxWidth()
                                 ) {
-                                    listOf("hiragana", "katakana", "all").forEach { type ->
-                                        val selected = selectedDeckType == type
-                                        if (selected) {
-                                            Button(
-                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
-                                                onClick = {
-                                                    selectedDeckType = type
-                                                    appSettings.setSelectedCharacterType(type)
-                                                    selectedIndex = 0
-                                                }
-                                            ) {
-                                                Text(characterTypeLabel(type))
+                                    Tab(
+                                        selected = selectedDeckType == "hiragana",
+                                        onClick = {
+                                            if (selectedDeckType != "hiragana") {
+                                                selectedDeckType = "hiragana"
+                                                appSettings.setSelectedCharacterType("hiragana")
+                                                selectedIndex = 0
+                                                selectedScreen = MainScreen.HOME
                                             }
-                                        } else {
-                                            OutlinedButton(
-                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
-                                                onClick = {
-                                                    selectedDeckType = type
-                                                    appSettings.setSelectedCharacterType(type)
-                                                    selectedIndex = 0
-                                                }
-                                            ) {
-                                                Text(characterTypeLabel(type))
+                                        },
+                                        text = { Text("Hiragana") }
+                                    )
+                                    Tab(
+                                        selected = selectedDeckType == "katakana",
+                                        onClick = {
+                                            if (selectedDeckType != "katakana") {
+                                                selectedDeckType = "katakana"
+                                                appSettings.setSelectedCharacterType("katakana")
+                                                selectedIndex = 0
+                                                selectedScreen = MainScreen.HOME
                                             }
-                                        }
-                                    }
+                                        },
+                                        text = { Text("Katakana") }
+                                    )
                                 }
 
-                                FlowRow(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
+                                // cho Canvas và các nút thao tác trong màn hình luyện viết.
+                                ScrollableTabRow(
+                                    selectedTabIndex = MainScreen.entries.indexOf(selectedScreen),
+                                    modifier = Modifier.fillMaxWidth(),
+                                    edgePadding = 8.dp
                                 ) {
                                     MainScreen.entries.forEach { screen ->
-                                        val selected = selectedScreen == screen
-                                        if (selected) {
-                                            Button(
-                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
-                                                onClick = { selectedScreen = screen }
-                                            ) {
-                                                Text(
-                                                    screen.label,
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    maxLines = 1,
-                                                    softWrap = false
-                                                )
-                                            }
-                                        } else {
-                                            OutlinedButton(
-                                                contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
-                                                onClick = { selectedScreen = screen }
-                                            ) {
-                                                Text(
-                                                    screen.label,
-                                                    style = MaterialTheme.typography.labelSmall,
-                                                    maxLines = 1,
-                                                    softWrap = false
-                                                )
-                                            }
-                                        }
+                                        Tab(
+                                            selected = selectedScreen == screen,
+                                            onClick = { selectedScreen = screen },
+                                            text = { Text(screen.label, maxLines = 1, softWrap = false) }
+                                        )
                                     }
                                 }
 
@@ -267,7 +250,7 @@ class MainActivity : ComponentActivity() {
                                     MainScreen.HOME -> HomeScreen(
                                         characters = selectedCharacters,
                                         deckName = characterTypeLabel(selectedDeckType),
-                                        newCardsPerDay = newCardsPerDay,
+                                        newCardsPerDay = selectedNewCardsPerDay,
                                         onStartLearning = { selectedScreen = MainScreen.LEARNING },
                                         onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
                                         onOpenFreePractice = { selectedScreen = MainScreen.FREE },
@@ -276,7 +259,7 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.LEARNING -> LearningSessionScreen(
                                         characters = selectedCharacters,
-                                        newCardsPerDay = newCardsPerDay,
+                                        newCardsPerDay = selectedNewCardsPerDay,
                                         showGrid = showGrid,
                                         showHints = showHints,
                                         deckType = selectedDeckType,
@@ -305,12 +288,12 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
-                                        characters = characters,
+                                        characters = selectedCharacters,
                                         modifier = Modifier.weight(1f)
                                     )
 
                                     MainScreen.STATISTICS -> StatisticsScreen(
-                                        characters = characters,
+                                        characters = selectedCharacters,
                                         modifier = Modifier.weight(1f)
                                     )
 
@@ -320,10 +303,15 @@ class MainActivity : ComponentActivity() {
                                             themeMode = mode
                                             appSettings.setThemeMode(mode)
                                         },
-                                        newCardsPerDay = newCardsPerDay,
-                                        onNewCardsPerDayChange = { value ->
-                                            newCardsPerDay = value.coerceIn(0, 50)
-                                            appSettings.setNewCardsPerDay(newCardsPerDay)
+                                        hiraganaNewCardsPerDay = hiraganaNewCardsPerDay,
+                                        onHiraganaNewCardsPerDayChange = { value ->
+                                            hiraganaNewCardsPerDay = value.coerceIn(0, 50)
+                                            appSettings.setNewCardsPerDay("hiragana", hiraganaNewCardsPerDay)
+                                        },
+                                        katakanaNewCardsPerDay = katakanaNewCardsPerDay,
+                                        onKatakanaNewCardsPerDayChange = { value ->
+                                            katakanaNewCardsPerDay = value.coerceIn(0, 50)
+                                            appSettings.setNewCardsPerDay("katakana", katakanaNewCardsPerDay)
                                         },
                                         showGrid = showGrid,
                                         onShowGridChange = { enabled ->
