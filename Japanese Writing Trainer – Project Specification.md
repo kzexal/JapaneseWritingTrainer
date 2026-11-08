@@ -264,7 +264,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; ID Hiragana và Katakana có prefix riêng dù có cùng reading/âm.
 - [x] Dùng chung schema dữ liệu ký tự: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
 - [x] Tạo dataset 46 Katakana cơ bản với thứ tự nét và stroke paths từ KanjiVG; metadata nguồn đã được ghi trong JSON. Rà soát attribution/license cuối cùng vẫn thuộc bước phát hành.
-- [ ] Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon) theo từng nhóm; xác minh cách biểu diễn nét và cách học phù hợp. Không gộp các biến thể thành card độc lập nếu chưa có quyết định học tập rõ ràng.
+- [ ] Bổ sung 25 Katakana dakuten/handakuten (ガ行、ザ行、ダ行、バ行、パ行) thành card riêng; giữ nguyên ID của 46 ký tự cơ bản và dùng ID theo Unicode code point cho ký tự bổ sung để tránh trùng romaji (ví dụ ジ/ヂ, ズ/ヅ).
+- [ ] Chạy `tools/generate_katakana.py`, xác minh dataset có 71 ký tự, ID/glyph duy nhất, stroke count/order liên tục và SVG paths hợp lệ; sau đó cập nhật instrumentation tests và README.
+- [ ] Thiết kế yōon (キャ, シュ, チョ...) như writing unit gồm nhiều kana; không đưa vào dataset CharacterData vuông hiện tại cho đến khi có cách biểu diễn layout/stroke geometry phù hợp.
 - [ ] Thiết kế lại deck selector thành hai tab Hiragana và Katakana; bỏ hoàn toàn lựa chọn học gộp, lựa chọn deck được lưu cục bộ (đã triển khai, chờ kiểm tra UI).
 - [ ] Tách giới hạn số thẻ mới mỗi ngày cho Hiragana và Katakana; dữ liệu cài đặt cũ được dùng làm giá trị kế thừa để không làm thay đổi giới hạn đã thiết lập trước đây (đã triển khai, chờ instrumentation tests).
 - [ ] Khi chuyển giữa hai tab deck, luôn quay về trang chủ của deck vừa chọn; không giữ màn hình Ôn tập/Thư viện/Luyện tự do của deck trước (đã triển khai, chờ kiểm tra thủ công).
