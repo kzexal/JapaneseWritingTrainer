@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun SettingsScreen(
+    onBackClick: () -> Unit,
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
     hiraganaNewCardsPerDay: Int,
@@ -54,10 +55,19 @@ fun SettingsScreen(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Text(
-            text = "Cài đặt",
-            style = MaterialTheme.typography.headlineSmall
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "Cài đặt",
+                style = MaterialTheme.typography.headlineSmall
+            )
+            OutlinedButton(onClick = onBackClick) {
+                Text("Quay lại")
+            }
+        }
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
