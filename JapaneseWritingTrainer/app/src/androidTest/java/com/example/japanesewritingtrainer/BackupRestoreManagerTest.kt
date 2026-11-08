@@ -285,7 +285,16 @@ class BackupRestoreManagerTest {
     @Test
     fun malformedJsonDoesNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_ka", status = CardStatus.LEARNING)
+        val existingLog = PracticeLog(
+            id = 55L,
+            cardId = "hiragana_ka",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.HARD,
+            durationMs = 1800L,
+            timestampEpochMillis = 11000L
+        )
         database.cardProgressDao().upsert(existing.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
 
         val failure = runCatching {
             manager.restoreFromJson("""{"format":"japanese-writing-trainer","schemaVersion":1""")
@@ -295,6 +304,10 @@ class BackupRestoreManagerTest {
         assertEquals(
             existing,
             database.cardProgressDao().getByCardId("hiragana_ka")?.toDomain()
+        )
+        assertEquals(
+            listOf(existingLog),
+            database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
         )
     }
 
