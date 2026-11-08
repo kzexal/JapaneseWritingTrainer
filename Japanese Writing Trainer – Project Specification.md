@@ -217,13 +217,13 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Đánh giá false rejection của Stroke Matcher bằng unit tests cho biến thiên scale/curvature và kiểm tra thực tế các nét đúng, hơi cong/lệch, ngược chiều, quá ngắn/quá dài.
 - [x] Xác minh cách khôi phục khi matcher từ chối nét: hint xuất hiện sau hai lần sai; Undo và Clear vẫn hoạt động.
 - [x] Kiểm tra Guided Writing và Recall Writing trên thiết bị Android thật; các trường hợp trong test matrix đều pass.
-- [ ] Kiểm tra Trace và Free Practice trên thiết bị thật.
-- [ ] Kiểm tra canvas không bị thu hẹp hoặc đẩy các nút Undo/Clear/Hint khỏi vùng dễ thao tác.
-- [ ] Kiểm tra độ mượt, kích thước màn hình và thao tác chạm.
+- [x] Kiểm tra Trace và Free Practice trên thiết bị thật; người dùng xác nhận cả hai chế độ hoạt động đúng.
+- [x] Kiểm tra canvas và các nút Undo/Clear/Hint trong cả bốn chế độ; người dùng xác nhận các nút vẫn truy cập được.
+- [ ] Kiểm tra độ mượt, kích thước màn hình và thao tác chạm trên nhiều kích thước thiết bị.
 
 ### Phase 3 — Data integrity và progress
 
-- [ ] Mở rộng test migration Room qua các phiên bản.
+- [x] Kiểm thử migration Room 1→2→3 và 2→3: bảo toàn CardProgress, chuyển card LEARNING đã lapse sang RELEARNING, giữ nguyên PracticeLog; người dùng xác nhận instrumentation tests PASS.
 - [x] Kiểm thử backup/restore: instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng đã được chạy pass trên thiết bị.
 - [x] Kiểm tra rollback transaction: `failedDatabaseWriteRollsBackRestoreAndPreservesExistingData` đã được người dùng chạy instrumentation test và xác nhận PASS.
 - [ ] Kiểm tra backup cũ/khả năng tương thích schema backup (hiện chỉ có backup schema v1; chưa có định dạng cũ hơn).
@@ -254,7 +254,7 @@ Chỉ xem xét sau khi MVP Hiragana ổn định: Katakana, Kanji theo cấp đ�
 | AC-04 | Guided Writing và Recall Writing | **Implemented** |
 | AC-05 | Self-rating bốn mức và cập nhật FSRS | **Implemented** |
 | AC-06 | Learning, Relearning, Review queue | **Implemented** |
-| AC-07 | Lưu tiến độ qua lần mở app | **Implemented; cần tiếp tục kiểm thử migration** |
+| AC-07 | Lưu tiến độ qua lần mở app | **Implemented; migration 1→2→3 và 2→3 đã được kiểm thử trên thiết bị/emulator** |
 | AC-08 | Lịch sử luyện và thống kê | **Implemented** |
 | AC-09 | Settings và JSON backup/restore | **Implemented; cần tiếp tục kiểm thử edge cases** |
 | AC-10 | Build và chạy trên thiết bị Android thật | **Cần kiểm chứng release** |
