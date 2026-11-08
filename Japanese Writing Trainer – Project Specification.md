@@ -233,11 +233,11 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Test `invalidPracticeLogEnumsDoNotReplaceExistingData`: `mode` và `rating` không thuộc enum hỗ trợ đều bị từ chối; CardProgress và PracticeLog cũ được giữ nguyên; người dùng xác nhận instrumentation test PASS.
 - [x] Test `invalidBackupStatusAndLogIdDoNotReplaceExistingData`: `CardProgress.status` không hợp lệ và `PracticeLog.id = 0` đều bị từ chối; dữ liệu cũ được giữ nguyên; người dùng xác nhận instrumentation test PASS.
 - [x] Mở rộng kiểm thử CardProgress với stability/difficulty, các bộ đếm, thời lượng lịch FSRS và timestamp âm: `invalidProgressMetadataDoesNotReplaceExistingData` xác nhận các giá trị không hợp lệ đều bị từ chối và giữ nguyên CardProgress lẫn PracticeLog; người dùng xác nhận instrumentation test PASS.
-- [ ] Kiểm thử timestamp tạo backup âm và `cardId` rỗng trong CardProgress/PracticeLog; restore phải bị từ chối và giữ nguyên dữ liệu hiện có.
+- [x] Kiểm thử timestamp tạo backup âm và `cardId` rỗng trong CardProgress/PracticeLog: `invalidBackupTimestampAndBlankCardIdsDoNotReplaceExistingData` xác nhận cả ba trường hợp đều bị từ chối và dữ liệu hiện có được giữ nguyên; người dùng xác nhận instrumentation test PASS.
 - [x] Xác minh tương thích backup schema v1: instrumentation test `versionOneBackupWithoutOptionalNullableFieldsRemainsRestorable` xác nhận backup v1 đời đầu không có các trường nullable FSRS và rating vẫn khôi phục được; người dùng đã chạy test và xác nhận PASS. Hiện chưa tồn tại schema backup version cũ hơn v1.
 - [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
 - [x] Android instrumentation tests cho settings đã chạy pass: giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày. Kiểm tra thủ công trên thiết bị bằng Android force-stop rồi mở lại cũng xác nhận Theme, số card mới/ngày, Grid và Hints đều được giữ nguyên.
-- [ ] Xác minh không mất dữ liệu khi nâng cấp app bằng quy trình nâng cấp thực tế; migration Room 1→2→3 và 2→3 đã có instrumentation coverage riêng.
+- [ ] Xác minh không mất dữ liệu khi nâng cấp app bằng quy trình cài APK mới đè lên APK cũ trên thiết bị; migration Room 1→2→3 và 2→3 đã có instrumentation coverage riêng. Bản kiểm thử nâng cấp tiếp theo dùng versionCode 2/versionName 1.1.
 
 ### Phase 4 — MVP release readiness
 
