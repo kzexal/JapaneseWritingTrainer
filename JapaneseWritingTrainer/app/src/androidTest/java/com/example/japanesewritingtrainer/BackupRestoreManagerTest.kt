@@ -217,6 +217,72 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun versionOneBackupWithoutOptionalNullableFieldsRemainsRestorable() = runBlocking {
+        // Represents an early v1 export created before nullable FSRS fields were emitted.
+        val legacyBackup = """
+            {
+              "format": "japanese-writing-trainer",
+              "schemaVersion": 1,
+              "createdAtEpochMillis": 1000,
+              "cardProgress": [
+                {
+                  "cardId": "hiragana_a",
+                  "status": "LEARNING",
+                  "scheduledDays": 0.01,
+                  "elapsedDays": 0.0,
+                  "reps": 0,
+                  "lapses": 0,
+                  "reviewCount": 0,
+                  "correctCount": 0
+                }
+              ],
+              "practiceLogs": [
+                {
+                  "id": 1,
+                  "cardId": "hiragana_a",
+                  "mode": "REVIEW",
+                  "durationMs": 1200,
+                  "timestampEpochMillis": 900
+                }
+              ]
+            }
+        """.trimIndent()
+
+        manager.restoreFromJson(legacyBackup)
+
+        assertEquals(
+            CardProgress(
+                cardId = "hiragana_a",
+                status = CardStatus.LEARNING,
+                dueAtEpochMillis = null,
+                stabilityDays = null,
+                difficulty = null,
+                scheduledDays = 0.01,
+                elapsedDays = 0.0,
+                reps = 0,
+                lapses = 0,
+                reviewCount = 0,
+                correctCount = 0,
+                lastReviewedAtEpochMillis = null
+            ),
+            database.cardProgressDao().getByCardId("hiragana_a")?.toDomain()
+        )
+        assertEquals(
+            listOf(
+                PracticeLog(
+                    id = 1L,
+                    cardId = "hiragana_a",
+                    mode = PracticeMode.REVIEW,
+                    rating = null,
+                    durationMs = 1200L,
+                    timestampEpochMillis = 900L
+                )
+            ),
+            database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+        )
+    }
+
+    @Test
     fun malformedJsonDoesNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_ka", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(existing.toEntity())
