@@ -35,7 +35,7 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
         GuideSection(
             title = "1. Bắt đầu học",
             items = listOf(
-                "Mở Thư viện để xem 46 ký tự Hiragana hiện có, tìm kiếm ký tự hoặc chọn theo nhóm.",
+                "Chọn Hiragana, Katakana hoặc cả hai ở thanh chọn bộ ký tự; mở Thư viện để tìm kiếm và xem từng chữ.",
                 "Chọn một ký tự để xem cách đọc, số nét và thứ tự viết.",
                 "Nên học từng nhóm nhỏ, viết chậm và chú ý hướng đi của từng nét trước khi tăng tốc."
             )
@@ -83,8 +83,8 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
         GuideSection(
             title = "6. Nội dung hiện có và lộ trình",
             items = listOf(
-                "Phiên bản hiện tại cung cấp bộ Hiragana và bốn chế độ luyện viết nêu trên.",
-                "Katakana, Kanji và học từ vựng từ workbook Excel là các phần dự kiến bổ sung; chưa khả dụng trong phiên bản hiện tại."
+                "Phiên bản hiện tại cung cấp 46 Hiragana và 46 Katakana cơ bản; bạn có thể học từng bộ hoặc kết hợp cả hai.",
+                "Katakana có dấu (dakuten/handakuten), âm ghép (yōon), Kanji và học từ vựng từ workbook Excel sẽ được bổ sung ở các giai đoạn tiếp theo."
             )
         )
     }
