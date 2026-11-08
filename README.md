@@ -1,12 +1,12 @@
 # Japanese Writing Trainer
 
-Ứng dụng Android hỗ trợ luyện viết tiếng Nhật bằng màn hình cảm ứng. Phiên bản hiện tại hỗ trợ **46 Hiragana và 46 Katakana cơ bản**, ghi nhớ thứ tự nét và ôn tập lặp lại ngắt quãng. Ứng dụng được thiết kế theo hướng offline-first: dữ liệu học tập được lưu trên thiết bị, không cần tài khoản.
+Ứng dụng Android hỗ trợ luyện viết tiếng Nhật bằng màn hình cảm ứng. Phiên bản hiện tại hỗ trợ **71 Hiragana và 71 Katakana** (46 cơ bản + 25 Dakuten/Handakuten mỗi bộ), ghi nhớ thứ tự nét và ôn tập lặp lại ngắt quãng. Ứng dụng được thiết kế theo hướng offline-first: dữ liệu học tập được lưu trên thiết bị, không cần tài khoản.
 
-> **Trạng thái:** Hiragana và 46 Katakana cơ bản đã được triển khai, có thể chọn học riêng hoặc kết hợp. Katakana mở rộng, Kanji và nhập từ vựng từ workbook Excel vẫn thuộc roadmap.
+> **Trạng thái:** Hiragana và 46 Katakana cơ bản đã được triển khai, có thể chọn học riêng hoặc kết hợp. Yōon (âm ghép), Kanji và nhập từ vựng từ workbook Excel vẫn thuộc roadmap.
 
 ## Chức năng hiện có
 
-- Thư viện 46 Hiragana và 46 Katakana cơ bản, có nhóm ký tự và tìm kiếm.
+- Thư viện 71 Hiragana và 71 Katakana, gồm kana cơ bản, Dakuten và Handakuten, có nhóm ký tự và tìm kiếm.
 - Chọn học Hiragana, Katakana hoặc kết hợp cả hai; tiến độ được lưu riêng theo ID của từng ký tự.
 - Xem thứ tự nét và hình dạng nét của từng ký tự.
 - Bốn chế độ luyện tập:
@@ -122,14 +122,14 @@ Android Auto Backup có thể hỗ trợ khôi phục dữ liệu trong một s�
 
 ## Dữ liệu và ghi công
 
-Dataset Hiragana được lưu tại `app/src/main/assets/characters/hiragana.json`; dataset Katakana cơ bản tại `app/src/main/assets/characters/katakana.json`. Script tạo dữ liệu tương ứng nằm trong `tools/generate_hiragana.py` và `tools/generate_katakana.py`.
+Dataset Hiragana và Katakana (71 ký tự mỗi bộ, gồm 46 ký tự cơ bản + 25 Dakuten/Handakuten) được lưu lần lượt tại `app/src/main/assets/characters/hiragana.json` và `app/src/main/assets/characters/katakana.json`. Script tạo dữ liệu tương ứng nằm trong `tools/generate_hiragana.py` và `tools/generate_katakana.py`.
 
 Dữ liệu thứ tự nét có nguồn gốc từ dự án [KanjiVG](https://github.com/KanjiVG/kanjivg). Thông tin ghi công và giấy phép của dữ liệu bên thứ ba cần được rà soát, hoàn thiện cùng đợt bổ sung Katakana và Kanji trước khi phát hành chính thức. Giấy phép của dữ liệu bên thứ ba không mặc nhiên áp dụng cho toàn bộ mã nguồn ứng dụng.
 
 ## Lộ trình
 
 1. Hoàn thiện README và bổ sung tab **Hướng dẫn học** trong ứng dụng.
-2. Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon).
+2. Hoàn thiện Hiragana/Katakana mở rộng và thiết kế âm ghép (yōon).
 3. Bổ sung Kanji dựa trên dữ liệu trong workbook `vocabulary.xlsx`; cấu trúc workbook sẽ được kiểm tra trước khi ánh xạ dữ liệu.
 4. Xây dựng chức năng nhập và học từ vựng từ cùng workbook.
 5. Rà soát ghi công/giấy phép, ký ứng dụng và chuẩn bị bản phát hành.
