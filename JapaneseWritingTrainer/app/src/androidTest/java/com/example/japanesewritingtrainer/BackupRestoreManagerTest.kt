@@ -199,6 +199,55 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun invalidBackupStatusAndLogIdDoNotReplaceExistingData() = runBlocking {
+        val existingProgress = CardProgress(
+            cardId = "hiragana_old",
+            status = CardStatus.REVIEW,
+            reps = 3,
+            reviewCount = 3,
+            correctCount = 2
+        )
+        val existingLog = PracticeLog(
+            id = 93L,
+            cardId = "hiragana_old",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 1700L,
+            timestampEpochMillis = 17000L
+        )
+        database.cardProgressDao().upsert(existingProgress.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
+
+        listOf("status", "id").forEach { invalidField ->
+            val backupRoot = JSONObject(manager.createBackupJson())
+            if (invalidField == "status") {
+                val progress = backupRoot.getJSONArray("cardProgress").getJSONObject(0)
+                progress.put("cardId", "hiragana_new")
+                progress.put("status", "UNSUPPORTED_STATUS")
+            } else {
+                val log = backupRoot.getJSONArray("practiceLogs").getJSONObject(0)
+                log.put("id", 0L)
+                log.put("cardId", "hiragana_new")
+            }
+
+            val failure = runCatching {
+                manager.restoreFromJson(backupRoot.toString())
+            }.exceptionOrNull()
+
+            assertTrue("$invalidField should be rejected", failure is IllegalArgumentException)
+            assertEquals(
+                existingProgress,
+                database.cardProgressDao().getByCardId("hiragana_old")?.toDomain()
+            )
+            assertEquals(null, database.cardProgressDao().getByCardId("hiragana_new"))
+            assertEquals(
+                listOf(existingLog),
+                database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+            )
+        }
+    }
+
+    @Test
     fun duplicateCardIdsDoNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_e", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(existing.toEntity())
