@@ -95,7 +95,7 @@ fun LearningSessionScreen(
         try {
             val todayStart = localDayStartEpochMillis()
             newCardsStudiedToday = practiceLogRepository
-                .countDistinctNewCardsSince(todayStart)
+                .countDistinctNewCardsSince(todayStart, deckCards.map { it.id })
             val remainingNewCards = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
             snapshot = coordinator.start(
                 deck = deck,
@@ -159,7 +159,7 @@ fun LearningSessionScreen(
                     nowEpochMillis = System.currentTimeMillis()
                 )
                 newCardsStudiedToday = practiceLogRepository
-                    .countDistinctNewCardsSince(localDayStartEpochMillis())
+                    .countDistinctNewCardsSince(localDayStartEpochMillis(), deckCards.map { it.id })
                 deck?.let {
                     deckProgress = coordinator.getDeckProgressSummary(it, deckCards)
                 }
