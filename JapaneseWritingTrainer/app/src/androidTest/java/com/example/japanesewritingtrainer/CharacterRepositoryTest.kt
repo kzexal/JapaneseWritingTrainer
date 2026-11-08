@@ -12,7 +12,7 @@ import org.junit.runner.RunWith
 class CharacterRepositoryTest {
 
     @Test
-    fun hiraganaAssetContainsFortySixValidCharacters() {
+    fun hiraganaAssetContainsSeventyOneValidCharacters() {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         val characters = CharacterRepository.load(
@@ -20,9 +20,13 @@ class CharacterRepositoryTest {
             "characters/hiragana.json"
         )
 
-        assertEquals(46, characters.size)
-        assertEquals(46, characters.map { it.id }.distinct().size)
-        assertEquals(46, characters.map { it.character }.distinct().size)
+        assertEquals(71, characters.size)
+        assertEquals(71, characters.map { it.id }.distinct().size)
+        assertEquals(71, characters.map { it.character }.distinct().size)
+        assertTrue(characters.all { it.type == "hiragana" })
+        assertTrue(characters.all { it.id.startsWith("hiragana_") })
+        assertTrue(characters.any { it.character == "が" && it.id == "hiragana_304c" })
+        assertTrue(characters.any { it.character == "ぱ" && it.id == "hiragana_3071" })
         characters.forEach { character ->
             assertEquals(character.strokeCount, character.strokes.size)
             assertEquals(
@@ -34,15 +38,17 @@ class CharacterRepositoryTest {
     }
 
     @Test
-    fun katakanaAssetContainsFortySixValidCharactersWithSeparateIds() {
+    fun katakanaAssetContainsSeventyOneValidCharactersWithSeparateIds() {
         val context = ApplicationProvider.getApplicationContext<Context>()
 
         val hiragana = CharacterRepository.load(context, "characters/hiragana.json")
         val katakana = CharacterRepository.load(context, "characters/katakana.json")
 
-        assertEquals(46, katakana.size)
-        assertEquals(46, katakana.map { it.id }.distinct().size)
-        assertEquals(46, katakana.map { it.character }.distinct().size)
+        assertEquals(71, katakana.size)
+        assertEquals(71, katakana.map { it.id }.distinct().size)
+        assertEquals(71, katakana.map { it.character }.distinct().size)
+        assertTrue(katakana.any { it.character == "ガ" && it.id == "katakana_30ac" })
+        assertTrue(katakana.any { it.character == "パ" && it.id == "katakana_30d1" })
         assertTrue(katakana.all { it.type == "katakana" })
         assertTrue(katakana.all { it.id.startsWith("katakana_") })
         assertTrue(
