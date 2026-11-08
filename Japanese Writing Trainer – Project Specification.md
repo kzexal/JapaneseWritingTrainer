@@ -281,23 +281,48 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 ### Phase 6 — Kanji từ workbook hiện có
 
-**Mục tiêu:** bổ sung Kanji vào ứng dụng bằng cách tái sử dụng dữ liệu đã có trong file Excel được lưu tại `vocabulary.xlsx` ở root repository trên GitHub. Không tự tạo một danh sách Kanji song song hoặc nhập lại thủ công nội dung đã có trong workbook.
+**Mục tiêu:** bổ sung Kanji vào ứng dụng bằng cách tái sử dụng dữ liệu đã có trong file Excel `vocabulary.xlsx` ở root repository. Workbook là nguồn dữ liệu nội dung gốc; không tạo danh sách Kanji song song hoặc nhập lại thủ công dữ liệu đã có.
 
-**Nguyên tắc:** workbook là nguồn dữ liệu nội dung chính. Trước khi triển khai phải đọc cấu trúc file thực tế, tên sheet, header và kiểu dữ liệu; không suy đoán schema từ tên file hoặc tài liệu cũ. Giữ nguyên workbook gốc.
+**Quyết định kiến trúc cập nhật dữ liệu:**
 
-- [ ] Đọc file `vocabulary.xlsx` thực tế từ repository; lập inventory các sheet, header, số dòng, dữ liệu Kanji, readings, meanings, radicals, stroke count, JLPT và ví dụ (chỉ ghi nhận trường thực sự tồn tại).
-- [ ] Xác định sheet/range chứa Kanji và mapping trực tiếp sang domain model; giữ nguyên các trường dữ liệu hiện có, không tự sinh hoặc tự điền nội dung không có trong Excel.
-- [ ] Thiết kế Kanji Card/Deck với ID ổn định, dùng nội dung workbook làm nguồn dữ liệu; phân biệt Kanji content data với stroke geometry.
-- [ ] Kiểm tra workbook có chứa stroke order/path hay chỉ chứa metadata. Nếu chưa có stroke paths, chọn nguồn stroke data có thể dùng hợp pháp và liên kết theo ký tự; không coi `StrokeCount` là dữ liệu hình học nét.
-- [ ] Xây dựng tra cứu và lọc Kanji dựa trên các trường thực sự có trong workbook (ví dụ JLPT/radical nếu có).
-- [ ] Tích hợp Kanji vào Character Library và các chế độ Trace/Guided/Recall/Free Practice; nếu thiếu stroke paths cho một Kanji thì không bật chế độ luyện nét cho card đó.
-- [ ] Tạo nhóm học theo cấp độ/nhóm trong workbook; không mặc định chỉ N5 nếu workbook đã có cấu trúc khác.
-- [ ] Bảo đảm Kanji card progress độc lập với Hiragana/Katakana và không thay đổi card ID/progress hiện có.
-- [ ] Bổ sung tests cho import/parse dữ liệu workbook, ID uniqueness, metadata validation, stroke mapping, deck-card mapping và progress isolation.
-- [ ] Kiểm tra backup/restore và migration khi thêm Kanji; không làm mất dữ liệu học cũ.
-- [ ] Kiểm tra thủ công tra cứu, học và ôn Kanji trên thiết bị Android thật.
+- **Giai đoạn hiện tại (A):** chỉnh sửa workbook trên máy tính, chạy Python generator/validator để sinh JSON, đóng gói JSON vào app assets và phát hành/cài bản ứng dụng mới để nhận dữ liệu.
+- **Khả năng mở rộng về sau (B):** thiết kế parser, validator, schema và cơ chế upsert độc lập với Android assets để có thể tái sử dụng khi bổ sung chức năng import workbook trực tiếp trong ứng dụng. Không triển khai UI/file picker hoặc import trực tiếp ở Phase 6.
+- Không chỉnh sửa workbook gốc bằng generator. Generator chỉ đọc workbook và ghi các artifact được sinh ra.
+- Không suy đoán schema: mapping phải dựa trên sheet, header và kiểu dữ liệu thực tế; chỉ xuất các trường thực sự có trong nguồn.
 
-**Definition of done:** Kanji được nạp từ dữ liệu đã có trong workbook, có thông tin và nhóm học đúng theo file; những ký tự có stroke paths hợp lệ dùng được các chế độ luyện viết và FSRS. Không tạo một dataset nội dung Kanji thủ công tách rời workbook.
+**Inventory đã xác minh trên workbook hiện tại (08/11/2026):**
+
+- Sheet: `Kanji`; 87 dòng gồm header và 86 bản ghi.
+- Header: `Kanji`, `Onyomi`, `Kunyomi`, `Meaning`, `Radical`, `StrokeCount`, `ExampleWords`, `Notes`, `JLPT`, `Tags`.
+- 86 ký tự hiện tại không trùng; các trường trong inventory đều có dữ liệu; tất cả đang được gắn JLPT N5.
+- `StrokeCount` là số nguyên từ 1 đến 18 trong dữ liệu hiện tại. Workbook không cung cấp stroke order hoặc SVG/path geometry; số nét không được dùng thay cho dữ liệu hình học.
+- Khi workbook được mở rộng, generator phải đọc toàn bộ sheet mỗi lần chạy, không hard-code số lượng 86 hoặc giả định chỉ có N5.
+
+**Quy tắc cập nhật và định danh:**
+
+- Dùng ID ổn định dựa trên Unicode code point của ký tự Kanji (có namespace/prefix riêng cho loại card); không dùng số dòng Excel, thứ tự sắp xếp, JLPT hoặc nội dung Meaning làm ID.
+- Generator hoạt động theo kiểu deterministic: cùng dữ liệu đầu vào phải tạo cùng ID và JSON tương đương.
+- Khi thêm dòng mới, tạo content record/card mới.
+- Khi sửa metadata của Kanji hiện có, cập nhật nội dung theo ID hiện hữu; không tạo card mới và không reset CardProgress, PracticeLog hoặc FSRS state.
+- Khi một dòng bị xóa khỏi workbook, mặc định không xóa card/progress trong ứng dụng. Việc ngừng phân phối nội dung và chính sách archive phải được xử lý tường minh ở bước sau, không suy ra lệnh xóa dữ liệu học.
+- Dữ liệu Kanji metadata và stroke geometry phải tách biệt. Stroke data được liên kết theo ID/ký tự và có thể thiếu; thiếu stroke paths thì không bật Trace/Guided/Recall cho ký tự đó.
+- Schema JSON cần có version hoặc cơ chế tương đương để hỗ trợ validator, tương thích dữ liệu và khả năng tái sử dụng parser khi triển khai import trực tiếp trong app ở tương lai.
+
+**Các công việc triển khai:**
+
+- [ ] Hoàn thiện inventory/validation cho toàn bộ workbook; kiểm tra duplicate, ô thiếu, kiểu dữ liệu, dòng trống và phân bố JLPT/radical; không hard-code số lượng bản ghi.
+- [ ] Thiết kế schema Kanji metadata riêng, không ép dữ liệu metadata vào `CharacterData` vốn yêu cầu stroke paths hợp lệ.
+- [ ] Tạo Python generator/validator đọc sheet `Kanji`, sinh JSON deterministically; có thông báo lỗi theo sheet, dòng và cột; giữ nguyên workbook.
+- [ ] Thêm tests cho parser/generator: dữ liệu hợp lệ, duplicate Kanji, thiếu trường bắt buộc, kiểu dữ liệu sai, dòng trống, Unicode ID, cập nhật metadata và thêm bản ghi mới.
+- [ ] Kiểm tra workbook không có stroke geometry; đánh giá nguồn stroke data có thể dùng hợp pháp và attribution/license trước khi tích hợp. Không tự tạo path dựa trên StrokeCount.
+- [ ] Xây dựng repository đọc Kanji metadata và cơ chế upsert nội dung tách khỏi Room card progress; việc nạp dataset mới không được reset tiến độ.
+- [ ] Xây dựng deck/library và tra cứu/lọc dựa trên các trường thực tế: JLPT, radical, tags, readings và meaning.
+- [ ] Tích hợp card Kanji vào session/FSRS theo ID ổn định; chỉ bật writing modes khi có stroke geometry hợp lệ.
+- [ ] Bảo đảm Kanji card IDs không va chạm với Hiragana/Katakana/Vocabulary; tiến độ các bộ hiện có được giữ nguyên.
+- [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation.
+- [ ] Kiểm tra thủ công thư viện, tìm kiếm, lọc, học và ôn Kanji trên thiết bị Android thật.
+
+**Definition of done:** nội dung Kanji được sinh từ workbook bằng quy trình có thể lặp lại; thêm Kanji mới không cần sửa code ứng dụng hoặc hard-code số lượng; cập nhật metadata không reset tiến độ; dữ liệu bị bỏ khỏi workbook không tự động xóa lịch sử học. Kiến trúc parser/validator/upsert đủ độc lập để hỗ trợ import trực tiếp trong app ở giai đoạn sau, nhưng Phase 6 chưa triển khai chức năng đó.
 
 ### Phase 7 — Import Vocabulary từ workbook hiện có
 
@@ -321,8 +346,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 1. Hoàn tất Phase 4: README và tab Hướng dẫn học trong ứng dụng; clean install trên emulator/thiết bị phụ.
 2. Hoàn tất Phase 5 Katakana.
-3. Hoàn tất Phase 6 Kanji bằng cách lấy nội dung từ workbook Excel đã có trên GitHub, không xây dựng danh sách Kanji song song.
-4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook.
+3. Hoàn tất Phase 6 Kanji bằng pipeline Excel → Python validator/generator → JSON assets; thiết kế parser/validator/upsert theo hướng có thể tái sử dụng cho import trực tiếp trong app về sau, nhưng chưa triển khai UI import.
+4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tái sử dụng nguyên tắc nguồn dữ liệu và cập nhật an toàn đã xây dựng ở Phase 6.
 5. Sau khi Katakana và Kanji hoàn thành, xử lý attribution/license, signing keystore và các bước phát hành cuối; Grammar có thể được xem xét sau.
 6. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
