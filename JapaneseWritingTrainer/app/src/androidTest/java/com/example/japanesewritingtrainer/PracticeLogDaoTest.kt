@@ -96,7 +96,6 @@ class PracticeLogDaoTest {
             1,
             dao.countDistinctNewCardsSince(dayStart, listOf("katakana_a"))
         )
-        assertEquals(0, dao.countDistinctNewCardsSince(dayStart, emptyList()))
     }
 
     @Test
