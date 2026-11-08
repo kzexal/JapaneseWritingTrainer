@@ -78,6 +78,28 @@ class PracticeLogDaoTest {
     }
 
     @Test
+    fun countsDistinctRatedNewRecallCardsOnlyWithinSelectedDeck() = runBlocking {
+        val dayStart = 1_000L
+        val logs = listOf(
+            PracticeLog(cardId = "hiragana_a", mode = PracticeMode.RECALL, rating = ReviewRating.GOOD, durationMs = 500L, timestampEpochMillis = 1_000L),
+            PracticeLog(cardId = "hiragana_a", mode = PracticeMode.RECALL, rating = ReviewRating.AGAIN, durationMs = 500L, timestampEpochMillis = 2_000L),
+            PracticeLog(cardId = "hiragana_i", mode = PracticeMode.RECALL, rating = ReviewRating.HARD, durationMs = 500L, timestampEpochMillis = 2_000L),
+            PracticeLog(cardId = "katakana_a", mode = PracticeMode.RECALL, rating = ReviewRating.GOOD, durationMs = 500L, timestampEpochMillis = 2_000L)
+        )
+        dao.insertAll(logs.map(PracticeLog::toEntity))
+
+        assertEquals(
+            2,
+            dao.countDistinctNewCardsSince(dayStart, listOf("hiragana_a", "hiragana_i"))
+        )
+        assertEquals(
+            1,
+            dao.countDistinctNewCardsSince(dayStart, listOf("katakana_a"))
+        )
+        assertEquals(0, dao.countDistinctNewCardsSince(dayStart, emptyList()))
+    }
+
+    @Test
     fun deleteAllRemovesHistory() = runBlocking {
         dao.insert(
             PracticeLog(
