@@ -73,11 +73,6 @@ fun HomeScreen(
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        Text(
-            "Chào mừng bạn quay lại. Hãy dành vài phút để luyện viết hôm nay.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
 
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
