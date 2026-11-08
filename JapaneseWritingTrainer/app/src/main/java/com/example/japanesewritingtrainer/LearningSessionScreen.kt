@@ -48,9 +48,23 @@ fun LearningSessionScreen(
     val coordinator = remember(context) { LearningSessionCoordinator(context) }
     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
-    val deck = catalog.decks.firstOrNull { it.characterType == deckType }
-    val deckCards = remember(catalog, deck) {
-        deck?.let { catalog.cardsForDeck(it.id) }.orEmpty()
+    val deck = remember(catalog, deckType) {
+        if (deckType == "all") {
+            WritingDeck(
+                id = "japanese_all",
+                name = "Hiragana + Katakana",
+                description = "Luyện viết Hiragana và Katakana",
+                characterType = "all",
+                cardIds = catalog.cards.map { it.id }
+            )
+        } else {
+            catalog.decks.firstOrNull { it.characterType == deckType }
+        }
+    }
+    val deckCards = remember(catalog, deck, deckType) {
+        if (deck == null) emptyList()
+        else if (deckType == "all") catalog.cards.map { it.copy(deckId = deck.id) }
+        else catalog.cardsForDeck(deck.id)
     }
     val charactersById = remember(characters) { characters.associateBy { it.id } }
     val scope = rememberCoroutineScope()
