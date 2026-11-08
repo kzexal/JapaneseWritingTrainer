@@ -83,3 +83,12 @@ object CharacterRepository {
         return characters
     }
 }
+
+
+/** Tên hiển thị thống nhất cho từng bộ ký tự. */
+fun characterTypeLabel(type: String): String = when (type.trim().lowercase()) {
+    "hiragana" -> "Hiragana"
+    "katakana" -> "Katakana"
+    "kanji" -> "Kanji"
+    else -> type.replaceFirstChar { it.uppercase() }
+}
