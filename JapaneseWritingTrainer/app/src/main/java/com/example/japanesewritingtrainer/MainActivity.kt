@@ -204,6 +204,10 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 when (selectedScreen) {
+                                    MainScreen.GUIDE -> LearningGuideScreen(
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.HOME -> HomeScreen(
                                         characters = characters,
                                         newCardsPerDay = newCardsPerDay,
@@ -392,6 +396,7 @@ private const val MAX_BACKUP_FILE_BYTES = 20 * 1024 * 1024
 
 private enum class MainScreen(val label: String) {
     HOME("Trang chủ"),
+    GUIDE("Hướng dẫn"),
     FREE("Luyện tự do"),
     LIBRARY("Thư viện"),
     LEARNING("Ôn tập"),
