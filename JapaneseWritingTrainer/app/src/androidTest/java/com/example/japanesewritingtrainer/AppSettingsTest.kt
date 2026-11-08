@@ -64,14 +64,45 @@ class AppSettingsTest {
     }
 
     @Test
-    fun combinedDeckSelectionIsPersistedAndUnsupportedValuesAreIgnored() {
+    fun onlyHiraganaAndKatakanaDecksCanBeSelected() {
         val settings = AppSettings(context)
 
+        settings.setSelectedCharacterType("katakana")
+        assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
+
         settings.setSelectedCharacterType("all")
-        assertEquals("all", AppSettings(context).getSelectedCharacterType())
+        assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
 
         settings.setSelectedCharacterType("unsupported")
-        assertEquals("all", AppSettings(context).getSelectedCharacterType())
+        assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
+    }
+
+    @Test
+    fun dailyNewCardLimitsAreStoredIndependentlyForEachDeck() {
+        val settings = AppSettings(context)
+
+        assertEquals(10, settings.getNewCardsPerDay("hiragana"))
+        assertEquals(10, settings.getNewCardsPerDay("katakana"))
+
+        settings.setNewCardsPerDay("hiragana", 5)
+        settings.setNewCardsPerDay("katakana", 23)
+
+        val restored = AppSettings(context)
+        assertEquals(5, restored.getNewCardsPerDay("hiragana"))
+        assertEquals(23, restored.getNewCardsPerDay("katakana"))
+    }
+
+    @Test
+    fun deckLimitsInheritLegacyGlobalLimitUntilIndividuallyChanged() {
+        val settings = AppSettings(context)
+        settings.setNewCardsPerDay(17)
+
+        assertEquals(17, settings.getNewCardsPerDay("hiragana"))
+        assertEquals(17, settings.getNewCardsPerDay("katakana"))
+
+        settings.setNewCardsPerDay("katakana", 8)
+        assertEquals(17, settings.getNewCardsPerDay("hiragana"))
+        assertEquals(8, settings.getNewCardsPerDay("katakana"))
     }
 
     @Test
