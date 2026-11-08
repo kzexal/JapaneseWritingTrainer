@@ -312,4 +312,48 @@ class BackupRestoreManagerTest {
         assertTrue(failure is IllegalArgumentException)
         assertEquals(progress, database.cardProgressDao().getByCardId("hiragana_i")?.toDomain())
     }
+    @Test
+    fun unsupportedBackupFormatDoesNotReplaceExistingProgressAndHistory() = runBlocking {
+        val progress = CardProgress(
+            cardId = "hiragana_ki",
+            status = CardStatus.REVIEW,
+            reps = 5,
+            reviewCount = 4,
+            correctCount = 3
+        )
+        val log = PracticeLog(
+            id = 77L,
+            cardId = "hiragana_ki",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 2300L,
+            timestampEpochMillis = 12000L
+        )
+        database.cardProgressDao().upsert(progress.toEntity())
+        database.practiceLogDao().insert(log.toEntity())
+
+        val wrongFormat = """
+            {
+              "format": "some-other-app",
+              "schemaVersion": 1,
+              "cardProgress": [],
+              "practiceLogs": []
+            }
+        """.trimIndent()
+
+        val failure = runCatching {
+            manager.restoreFromJson(wrongFormat)
+        }.exceptionOrNull()
+
+        assertTrue(failure is IllegalArgumentException)
+        assertEquals(
+            progress,
+            database.cardProgressDao().getByCardId("hiragana_ki")?.toDomain()
+        )
+        assertEquals(
+            listOf(log),
+            database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+        )
+    }
+
 }
