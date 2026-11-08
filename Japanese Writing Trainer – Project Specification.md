@@ -40,7 +40,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.4 Ngoài phạm vi hiện tại
 
-Katakana, Kanji, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase, đồng bộ Anki và import Excel chưa thuộc phạm vi triển khai hiện tại. Chỉ đưa vào roadmap khi có quyết định sản phẩm riêng.
+Katakana, Kanji, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase và đồng bộ Anki chưa thuộc phạm vi triển khai hiện tại. Katakana, import Vocabulary từ Excel và Kanji đã được đưa vào roadmap ở Phase 5–7; Grammar vẫn để sau khi mô hình Vocabulary/Kanji ổn định.
 
 ## 2. Trạng thái chức năng
 
@@ -252,9 +252,71 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Cập nhật README, hướng dẫn cài đặt và release notes.
 - [ ] Chỉ công bố MVP sau khi Acceptance Criteria bên dưới được kiểm chứng.
 
-### Phase 5 — Mở rộng sau MVP
+### Phase 5 — Katakana
 
-Chỉ xem xét sau khi MVP Hiragana ổn định: Katakana, Kanji theo cấp độ, cải thiện stroke analysis, import/export bổ sung hoặc đồng bộ. Các tính năng này chưa được cam kết trong MVP.
+**Mục tiêu:** mở rộng thư viện ký tự sang Katakana nhưng tái sử dụng toàn bộ writing engine, session engine, Room và FSRS hiện tại.
+
+- [ ] Audit dataset Hiragana hiện tại và xác định contract JSON dùng chung cho nhiều bộ ký tự.
+- [ ] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; phân biệt rõ Hiragana và Katakana dù có cùng reading/âm.
+- [ ] Chuẩn hóa schema dữ liệu ký tự dùng chung: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
+- [ ] Bổ sung dataset 46 Katakana cơ bản với thứ tự nét và stroke paths có nguồn đáng tin cậy, ghi rõ attribution/license.
+- [ ] Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon) theo từng nhóm; xác minh cách biểu diễn nét và cách học phù hợp. Không gộp các biến thể thành card độc lập nếu chưa có quyết định học tập rõ ràng.
+- [ ] Cập nhật deck/category selector để người học chọn Hiragana, Katakana hoặc cả hai.
+- [ ] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
+- [ ] Bổ sung unit tests cho dataset integrity, ID uniqueness, stroke count/order và mapping deck-card.
+- [ ] Bổ sung kiểm tra UI, session, progress isolation và Room persistence cho Katakana.
+- [ ] Kiểm tra backup/restore và migration khi dữ liệu có thêm script mới; không làm mất progress Hiragana hiện có.
+- [ ] Kiểm tra thủ công toàn bộ nhóm Katakana trên thiết bị Android thật.
+
+**Definition of done:** người học có thể học Katakana độc lập hoặc kết hợp Hiragana; tiến độ hai bộ không bị trộn; mọi chế độ luyện và SRS hoạt động như với Hiragana.
+
+### Phase 6 — Import từ vựng từ Excel
+
+**Mục tiêu:** đưa workbook từ vựng cá nhân vào ứng dụng offline, tạo các card luyện viết từ dữ liệu Excel mà không làm mất hoặc ghi đè tiến độ đã có.
+
+**Phạm vi đầu tiên:** chỉ import sheet `Vocabulary` từ workbook Japanese Knowledge Base. Workbook hiện được định hướng có các sheet `Vocabulary`, `Grammar`, `Kanji`, `Settings`; Grammar và Kanji chưa thuộc phạm vi import của phase này. Giữ nguyên dữ liệu workbook gốc, không yêu cầu chuyển đổi qua Anki.
+
+- [ ] Kiểm tra workbook mẫu thực tế và chốt header/kiểu dữ liệu, trường bắt buộc/tùy chọn, quy tắc nhiều nghĩa, ví dụ và reading. Không tự đoán tên cột khi chưa đối chiếu file.
+- [ ] Chốt mapping Excel → domain model của ứng dụng; tối thiểu phân biệt từ tiếng Nhật, nghĩa tiếng Việt, reading và ví dụ nếu workbook có các trường đó.
+- [ ] Thiết kế mô hình dữ liệu từ vựng riêng với CharacterData; một từ vựng không phải là một ký tự và có thể chứa nhiều ký tự.
+- [ ] Thiết kế Vocabulary Deck và Vocabulary Card có ID ổn định, nguồn/import metadata và trạng thái active/archived phù hợp.
+- [ ] Quyết định rõ đơn vị luyện viết: mặc định dùng trường Japanese để hiển thị từ, trường Reading để hỗ trợ đọc/đối chiếu; không tự chuyển từ kanji sang kana hoặc ngược lại khi chưa có lựa chọn của người học.
+- [ ] Với từ chỉ gồm Hiragana/Katakana, ghép từng ký tự với character dataset tương ứng để có stroke paths. Với từ chứa Kanji, giai đoạn này chỉ được phép luyện theo Reading/kana nếu người học chọn chế độ đó; luyện viết chính tả Kanji chỉ triển khai sau khi có Kanji dataset và stroke paths.
+- [ ] Chọn thư viện đọc `.xlsx` tương thích Android sau khi kiểm tra kích thước APK/AAB, khả năng đọc workbook và bảo trì; không giả định thư viện JVM desktop chạy ổn trên Android.
+- [ ] Tích hợp Android Storage Access Framework để người dùng chọn file; không yêu cầu quyền truy cập toàn bộ bộ nhớ.
+- [ ] Xây dựng luồng import có preview trước khi ghi: tên sheet, số dòng hợp lệ, dòng lỗi, trường thiếu, từ trùng và cách xử lý trùng.
+- [ ] Validate workbook: sheet bắt buộc, header, ô rỗng, kiểu dữ liệu, dòng trống, nội dung trùng và dữ liệu không hợp lệ; thông báo lỗi theo số dòng để người dùng sửa Excel.
+- [ ] Hỗ trợ import lần đầu và import lại theo kiểu upsert bằng khóa định danh ổn định; không xóa card hoặc progress khi dòng Excel bị bỏ khỏi file.
+- [ ] Quy định cập nhật dữ liệu: thay đổi nội dung từ Excel không được reset FSRS progress; các trường định danh/reading thay đổi cần được báo trước và xử lý có kiểm soát.
+- [ ] Ghi import trong transaction; lỗi ở giữa phải rollback, không để lại deck/card dở dang.
+- [ ] Bổ sung tests cho workbook hợp lệ, thiếu sheet/header, dòng lỗi, trùng lặp, import lại, cập nhật nội dung, rollback và bảo toàn progress/history.
+- [ ] Bổ sung backup/restore cho vocabulary deck/cards và kiểm tra tương thích schema.
+- [ ] Kiểm tra thủ công import workbook thật, học thử, force-stop/mở lại, import lại cùng file và xác nhận không nhân đôi card hoặc mất lịch sử.
+
+**Definition of done:** người dùng chọn được file Excel, xem trước và xác nhận import; từ vựng xuất hiện thành deck có thể học, các từ kana có thể luyện viết bằng stroke data; import lại không nhân đôi và không phá tiến độ.
+
+### Phase 7 — Kanji writing và mở rộng nội dung Excel
+
+**Mục tiêu:** hỗ trợ luyện viết Kanji và khai thác các sheet Kanji/Grammar khi đã có dataset, quy tắc học và nguồn stroke data phù hợp.
+
+- [ ] Audit workbook sheet `Kanji` và chốt mapping cho Kanji, Onyomi, Kunyomi, Meaning, Radical, StrokeCount, ExampleWords, Notes, JLPT, Tags.
+- [ ] Xác định nguồn Kanji stroke paths có giấy phép phù hợp; không suy ra stroke paths chỉ từ StrokeCount hoặc ký tự Unicode.
+- [ ] Triển khai Kanji dataset theo từng cấp độ, bắt đầu N5; xác minh thứ tự nét, readings và metadata.
+- [ ] Bổ sung Kanji card/deck, tra cứu, lọc theo JLPT/radical và luyện viết.
+- [ ] Mở rộng Vocabulary Writing để từ chứa Kanji có thể luyện đúng ký tự Kanji thay vì chỉ dùng Reading.
+- [ ] Xác định cách xử lý từ có nhiều Kanji/kana, okurigana, dấu câu và biến thể chữ; bảo đảm thứ tự ký tự và cách chấm hợp lý.
+- [ ] Chỉ sau khi mô hình Vocabulary/Kanji ổn định mới xem xét import sheet `Grammar`; Grammar là nội dung tham khảo/nhận diện cấu trúc, không mặc định là writing card.
+- [ ] Bổ sung tests, backup/restore, migration và kiểm tra thực tế theo từng cấp độ.
+
+**Definition of done:** Kanji có dữ liệu nét đáng tin cậy và có thể học/ôn tập như một loại card độc lập; vocabulary chứa Kanji có thể tạo bài luyện viết đúng dạng chữ.
+
+### Nguyên tắc thứ tự và phạm vi
+
+1. Hoàn tất Phase 4 release readiness của MVP Hiragana trước.
+2. Hoàn tất Phase 5 Katakana để xác nhận mô hình đa script hoạt động.
+3. Thực hiện Phase 6 import Vocabulary từ Excel; đây là ưu tiên dữ liệu cá nhân tiếp theo.
+4. Thực hiện Phase 7 Kanji writing và mở rộng các sheet Excel.
+5. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
 ## 7. Acceptance criteria
 
