@@ -225,6 +225,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 - [x] Kiểm thử migration Room 1→2→3 và 2→3: bảo toàn CardProgress, chuyển card LEARNING đã lapse sang RELEARNING, giữ nguyên PracticeLog; người dùng xác nhận instrumentation tests PASS.
 - [x] Kiểm thử backup/restore: instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng đã được chạy pass trên thiết bị.
+- [ ] Kiểm thử backup sai `format`: bổ sung `unsupportedBackupFormatDoesNotReplaceExistingProgressAndHistory` để xác nhận cả CardProgress và PracticeLog hiện có được giữ nguyên; đang chờ chạy instrumentation test.
 - [x] Kiểm tra rollback transaction: `failedDatabaseWriteRollsBackRestoreAndPreservesExistingData` đã được người dùng chạy instrumentation test và xác nhận PASS.
 - [x] Xác minh tương thích backup schema v1: instrumentation test `versionOneBackupWithoutOptionalNullableFieldsRemainsRestorable` xác nhận backup v1 đời đầu không có các trường nullable FSRS và rating vẫn khôi phục được; người dùng đã chạy test và xác nhận PASS. Hiện chưa tồn tại schema backup version cũ hơn v1.
 - [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
