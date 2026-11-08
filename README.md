@@ -48,7 +48,8 @@ JapaneseWritingTrainer/
     │   ├── build-android.sh
     │   └── fsrs-bridge/
     └── tools/
-        └── generate_hiragana.py
+        ├── generate_hiragana.py
+        └── generate_katakana.py
 ```
 
 ## Yêu cầu môi trường
