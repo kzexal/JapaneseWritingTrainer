@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate and validate the 46 basic Hiragana stroke dataset from KanjiVG.
+"""Generate and validate the 71 basic and voiced Hiragana stroke dataset from KanjiVG.
 
 Run from any working directory:
     python tools/generate_hiragana.py
@@ -18,8 +18,8 @@ ROOT = Path(__file__).resolve().parents[1]
 BASE_URL = "https://raw.githubusercontent.com/KanjiVG/kanjivg/master/kanji"
 OUTPUT = ROOT / "app/src/main/assets/characters/hiragana.json"
 
-# (characters, readings, group)
-ROWS = [
+# Basic Hiragana. Keep these rows first so the original 46 card IDs remain stable.
+BASIC_ROWS = [
     ("あいうえお", ["a", "i", "u", "e", "o"], "a"),
     ("かきくけこ", ["ka", "ki", "ku", "ke", "ko"], "ka"),
     ("さしすせそ", ["sa", "shi", "su", "se", "so"], "sa"),
@@ -31,6 +31,23 @@ ROWS = [
     ("らりるれろ", ["ra", "ri", "ru", "re", "ro"], "ra"),
     ("わをん", ["wa", "wo", "n"], "wa"),
 ]
+
+# Dakuten and handakuten are independent writing cards.
+DAKUTEN_ROWS = [
+    ("がぎぐげご", ["ga", "gi", "gu", "ge", "go"], "ga"),
+    ("ざじずぜぞ", ["za", "ji", "zu", "ze", "zo"], "za"),
+    ("だぢづでど", ["da", "ji", "zu", "de", "do"], "da"),
+    ("ばびぶべぼ", ["ba", "bi", "bu", "be", "bo"], "ba"),
+    ("ぱぴぷぺぽ", ["pa", "pi", "pu", "pe", "po"], "pa"),
+]
+
+ROWS = BASIC_ROWS + DAKUTEN_ROWS
+BASIC_CHARACTER_KEYS = {
+    (character, reading, group)
+    for characters, readings, group in BASIC_ROWS
+    for character, reading in zip(characters, readings)
+}
+SOURCE = "KanjiVG (CC BY-SA 3.0) - http://kanjivg.tagaini.net"
 
 
 def expected_characters():
@@ -86,8 +103,9 @@ def validate_dataset(dataset: list[dict]) -> None:
         (item.get("character"), item.get("reading"), item.get("group"))
         for item in dataset
     }
-    if len(dataset) != 46:
-        raise ValueError(f"Expected 46 characters, got {len(dataset)}")
+    expected_count = sum(len(characters) for characters, _, _ in ROWS)
+    if len(dataset) != expected_count:
+        raise ValueError(f"Expected {expected_count} characters, got {len(dataset)}")
     if actual != expected:
         missing = expected - actual
         unexpected = actual - expected
@@ -133,13 +151,20 @@ def main():
             paths = extract_paths(download_svg(character))
             dataset.append(
                 {
-                    "id": f"hiragana_{reading}",
+                    # Keep original IDs for the 46 basic characters. New forms
+                    # use Unicode code points because romanized readings can repeat.
+                    "id": (
+                        f"hiragana_{reading}"
+                        if (character, reading, group) in BASIC_CHARACTER_KEYS
+                        else f"hiragana_{ord(character):04x}"
+                    ),
                     "character": character,
                     "type": "hiragana",
                     "group": group,
                     "reading": reading,
                     "strokeCount": len(paths),
                     "viewBoxSize": 109.0,
+                    "source": SOURCE,
                     "strokes": [
                         {"order": index + 1, "svgPath": path}
                         for index, path in enumerate(paths)
@@ -154,7 +179,7 @@ def main():
         encoding="utf-8",
     )
     print(f"\nValidated and generated: {OUTPUT}")
-    print(f"Characters: {len(dataset)}")
+    print(f"Characters: {len(dataset)} (46 basic + 25 dakuten/handakuten)")
 
 
 if __name__ == "__main__":
