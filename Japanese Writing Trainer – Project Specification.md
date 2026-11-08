@@ -237,7 +237,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Xác minh tương thích backup schema v1: instrumentation test `versionOneBackupWithoutOptionalNullableFieldsRemainsRestorable` xác nhận backup v1 đời đầu không có các trường nullable FSRS và rating vẫn khôi phục được; người dùng đã chạy test và xác nhận PASS. Hiện chưa tồn tại schema backup version cũ hơn v1.
 - [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
 - [x] Android instrumentation tests cho settings đã chạy pass: giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày. Kiểm tra thủ công trên thiết bị bằng Android force-stop rồi mở lại cũng xác nhận Theme, số card mới/ngày, Grid và Hints đều được giữ nguyên.
-- [ ] Xác minh không mất dữ liệu khi nâng cấp app bằng quy trình cài APK mới đè lên APK cũ trên thiết bị; migration Room 1→2→3 và 2→3 đã có instrumentation coverage riêng. Bản kiểm thử nâng cấp tiếp theo dùng versionCode 2/versionName 1.1.
+- [x] Xác minh nâng cấp app bằng cách cài APK versionCode 2/versionName 1.1 đè lên bản cũ trên thiết bị thật: tiến độ học, Practice History và cả bốn cài đặt được giữ nguyên; ứng dụng khởi động bình thường. Đã sửa SettingsScreen để hiển thị versionName thực tế từ Package Manager thay vì chuỗi 1.0 ghi cứng.
 
 ### Phase 4 — MVP release readiness
 
