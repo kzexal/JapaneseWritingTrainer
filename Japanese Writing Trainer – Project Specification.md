@@ -10,7 +10,7 @@
 
 Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana và Katakana bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
 
-Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Phiên bản hiện tại hỗ trợ Hiragana và 46 Katakana cơ bản; kiến trúc deck/card và dữ liệu ký tự được tách riêng để tiếp tục mở rộng.
+Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Dataset hiện tại có 46 Hiragana và 46 Katakana cơ bản; hai script đang được mở rộng đồng bộ lên 71 ký tự mỗi bộ (bổ sung dakuten/handakuten). Kiến trúc deck/card và dữ liệu ký tự được tách riêng để tiếp tục mở rộng.
 
 ### 1.2 Nền tảng và công nghệ hiện tại
 
@@ -31,7 +31,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.3 Mục tiêu phiên bản hiện tại
 
-- Luyện viết 46 ký tự Hiragana và 46 Katakana cơ bản, có thể chọn từng bộ hoặc học kết hợp.
+- Mục tiêu dataset: 71 Hiragana và 71 Katakana (46 ký tự cơ bản + 25 dakuten/handakuten mỗi bộ), có thể chọn từng bộ hoặc học kết hợp.
 - Hỗ trợ Trace, Guided Writing, Recall Writing và Free Practice.
 - Lưu tiến độ theo từng card và lịch sử luyện tập.
 - Lập lịch học mới, học lại và ôn tập bằng FSRS.
@@ -64,7 +64,7 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 - **Implemented:** dữ liệu tĩnh của ký tự được tách khỏi tiến độ học; ID có prefix riêng theo script.
 - **Implemented:** deck/card model tạo deck độc lập theo character type.
 - **Implemented:** thư viện ký tự và lựa chọn Hiragana, Katakana hoặc kết hợp cả hai.
-- **In progress:** mở rộng Katakana có dakuten/handakuten và yōon; rà soát attribution/license cuối cùng.
+- **In progress:** mở rộng cả Hiragana và Katakana lên 71 ký tự với dakuten/handakuten; yōon được thiết kế riêng vì là writing unit nhiều kana. Rà soát attribution/license cuối cùng.
 
 ### 2.3 Learning session và SRS
 
@@ -264,8 +264,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; ID Hiragana và Katakana có prefix riêng dù có cùng reading/âm.
 - [x] Dùng chung schema dữ liệu ký tự: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
 - [x] Tạo dataset 46 Katakana cơ bản với thứ tự nét và stroke paths từ KanjiVG; metadata nguồn đã được ghi trong JSON. Rà soát attribution/license cuối cùng vẫn thuộc bước phát hành.
-- [ ] Bổ sung 25 Katakana dakuten/handakuten (ガ行、ザ行、ダ行、バ行、パ行) thành card riêng; giữ nguyên ID của 46 ký tự cơ bản và dùng ID theo Unicode code point cho ký tự bổ sung để tránh trùng romaji (ví dụ ジ/ヂ, ズ/ヅ).
-- [ ] Chạy `tools/generate_katakana.py`, xác minh dataset có 71 ký tự, ID/glyph duy nhất, stroke count/order liên tục và SVG paths hợp lệ; sau đó cập nhật instrumentation tests và README.
+- [x] Mở rộng generator cho cả Hiragana và Katakana: mỗi bộ gồm 46 ký tự cơ bản + 25 dakuten/handakuten (ガ行/が行、ザ行/ざ行、ダ行/だ行、バ行/ば行、パ行/ぱ行); giữ nguyên ID của 46 ký tự cơ bản và dùng ID theo Unicode code point cho ký tự bổ sung để tránh trùng romaji (ví dụ ジ/ヂ, ズ/ヅ).
+- [ ] Chạy cả `tools/generate_hiragana.py` và `tools/generate_katakana.py`; xác minh mỗi dataset có 71 ký tự, ID/glyph duy nhất, giữ nguyên 46 ID cũ, stroke count/order liên tục và SVG paths hợp lệ; sau đó cập nhật instrumentation tests và README.
 - [ ] Thiết kế yōon (キャ, シュ, チョ...) như writing unit gồm nhiều kana; không đưa vào dataset CharacterData vuông hiện tại cho đến khi có cách biểu diễn layout/stroke geometry phù hợp.
 - [ ] Thiết kế lại deck selector thành hai tab Hiragana và Katakana; bỏ hoàn toàn lựa chọn học gộp, lựa chọn deck được lưu cục bộ (đã triển khai, chờ kiểm tra UI).
 - [ ] Tách giới hạn số thẻ mới mỗi ngày cho Hiragana và Katakana; dữ liệu cài đặt cũ được dùng làm giá trị kế thừa để không làm thay đổi giới hạn đã thiết lập trước đây (đã triển khai, chờ instrumentation tests).
