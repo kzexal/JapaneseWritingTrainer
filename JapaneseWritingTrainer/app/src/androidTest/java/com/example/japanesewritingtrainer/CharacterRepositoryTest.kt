@@ -33,6 +33,32 @@ class CharacterRepositoryTest {
         }
     }
 
+    @Test
+    fun katakanaAssetContainsFortySixValidCharactersWithSeparateIds() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+
+        val hiragana = CharacterRepository.load(context, "characters/hiragana.json")
+        val katakana = CharacterRepository.load(context, "characters/katakana.json")
+
+        assertEquals(46, katakana.size)
+        assertEquals(46, katakana.map { it.id }.distinct().size)
+        assertEquals(46, katakana.map { it.character }.distinct().size)
+        assertTrue(katakana.all { it.type == "katakana" })
+        assertTrue(katakana.all { it.id.startsWith("katakana_") })
+        assertTrue(
+            (hiragana + katakana).map { it.id }.distinct().size ==
+                hiragana.size + katakana.size
+        )
+        katakana.forEach { character ->
+            assertEquals(character.strokeCount, character.strokes.size)
+            assertEquals(
+                (1..character.strokeCount).toList(),
+                character.strokes.map { it.order }
+            )
+            assertTrue(character.strokes.all { it.svgPath.isNotBlank() })
+        }
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun rejectsDiscontinuousStrokeOrder() {
         CharacterRepository.parseDataset(
