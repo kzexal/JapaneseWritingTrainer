@@ -64,7 +64,7 @@ class SvgStrokeParserTest {
         val context = InstrumentationRegistry.getInstrumentation().targetContext
         val characters = CharacterRepository.load(context, "characters/hiragana.json")
 
-        assertEquals(46, characters.size)
+        assertEquals(71, characters.size)
 
         characters.forEach { character ->
             assertEquals(character.strokeCount, character.strokes.size)
