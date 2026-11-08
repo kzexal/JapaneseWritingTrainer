@@ -215,8 +215,8 @@ class MainActivity : ComponentActivity() {
                                                 selectedDeckType = "hiragana"
                                                 appSettings.setSelectedCharacterType("hiragana")
                                                 selectedIndex = 0
-                                                selectedScreen = MainScreen.HOME
                                             }
+                                            selectedScreen = MainScreen.HOME
                                         },
                                         text = { Text("Hiragana") }
                                     )
@@ -227,8 +227,8 @@ class MainActivity : ComponentActivity() {
                                                 selectedDeckType = "katakana"
                                                 appSettings.setSelectedCharacterType("katakana")
                                                 selectedIndex = 0
-                                                selectedScreen = MainScreen.HOME
                                             }
+                                            selectedScreen = MainScreen.HOME
                                         },
                                         text = { Text("Katakana") }
                                     )
@@ -315,6 +315,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.SETTINGS -> SettingsScreen(
+                                        onBackClick = { selectedScreen = MainScreen.HOME },
                                         themeMode = themeMode,
                                         onThemeModeChange = { mode ->
                                             themeMode = mode
