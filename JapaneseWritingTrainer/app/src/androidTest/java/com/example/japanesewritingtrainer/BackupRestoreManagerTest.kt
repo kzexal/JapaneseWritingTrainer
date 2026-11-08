@@ -153,6 +153,52 @@ class BackupRestoreManagerTest {
     }
 
     @Test
+    fun invalidPracticeLogEnumsDoNotReplaceExistingData() = runBlocking {
+        val existingProgress = CardProgress(
+            cardId = "hiragana_old",
+            status = CardStatus.REVIEW,
+            reps = 2,
+            reviewCount = 2,
+            correctCount = 1
+        )
+        val existingLog = PracticeLog(
+            id = 92L,
+            cardId = "hiragana_old",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 1600L,
+            timestampEpochMillis = 16000L
+        )
+        database.cardProgressDao().upsert(existingProgress.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
+
+        listOf("mode", "rating").forEach { invalidField ->
+            val backupRoot = JSONObject(manager.createBackupJson())
+            backupRoot.getJSONArray("cardProgress")
+                .getJSONObject(0)
+                .put("cardId", "hiragana_new")
+            val log = backupRoot.getJSONArray("practiceLogs").getJSONObject(0)
+            log.put("cardId", "hiragana_new")
+            log.put(invalidField, "UNSUPPORTED_VALUE")
+
+            val failure = runCatching {
+                manager.restoreFromJson(backupRoot.toString())
+            }.exceptionOrNull()
+
+            assertTrue("$invalidField should be rejected", failure is IllegalArgumentException)
+            assertEquals(
+                existingProgress,
+                database.cardProgressDao().getByCardId("hiragana_old")?.toDomain()
+            )
+            assertEquals(null, database.cardProgressDao().getByCardId("hiragana_new"))
+            assertEquals(
+                listOf(existingLog),
+                database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+            )
+        }
+    }
+
+    @Test
     fun duplicateCardIdsDoNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_e", status = CardStatus.LEARNING)
         database.cardProgressDao().upsert(existing.toEntity())
