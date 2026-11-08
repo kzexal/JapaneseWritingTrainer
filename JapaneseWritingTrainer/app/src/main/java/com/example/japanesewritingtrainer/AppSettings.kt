@@ -49,11 +49,25 @@ class AppSettings(context: Context) {
         preferences.edit().putBoolean(KEY_SHOW_HINTS, value).apply()
     }
 
+    fun getSelectedCharacterType(): String =
+        preferences.getString(KEY_SELECTED_CHARACTER_TYPE, DEFAULT_CHARACTER_TYPE)
+            ?.takeIf { it in SUPPORTED_CHARACTER_TYPES }
+            ?: DEFAULT_CHARACTER_TYPE
+
+    fun setSelectedCharacterType(value: String) {
+        if (value in SUPPORTED_CHARACTER_TYPES) {
+            preferences.edit().putString(KEY_SELECTED_CHARACTER_TYPE, value).apply()
+        }
+    }
+
     private companion object {
         const val KEY_THEME_MODE = "theme_mode"
         const val KEY_NEW_CARDS_PER_DAY = "new_cards_per_day"
         const val KEY_SHOW_GRID = "show_grid"
         const val KEY_SHOW_HINTS = "show_hints"
+        const val KEY_SELECTED_CHARACTER_TYPE = "selected_character_type"
+        const val DEFAULT_CHARACTER_TYPE = "hiragana"
+        val SUPPORTED_CHARACTER_TYPES = setOf("hiragana", "katakana")
         const val DEFAULT_NEW_CARDS_PER_DAY = 10
         const val MIN_NEW_CARDS_PER_DAY = 0
         const val MAX_NEW_CARDS_PER_DAY = 50
