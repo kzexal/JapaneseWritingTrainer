@@ -90,5 +90,6 @@ fun characterTypeLabel(type: String): String = when (type.trim().lowercase()) {
     "hiragana" -> "Hiragana"
     "katakana" -> "Katakana"
     "kanji" -> "Kanji"
+    "all" -> "Hiragana + Katakana"
     else -> type.replaceFirstChar { it.uppercase() }
 }
