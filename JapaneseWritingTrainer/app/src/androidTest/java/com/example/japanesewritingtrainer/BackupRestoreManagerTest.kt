@@ -312,9 +312,18 @@ class BackupRestoreManagerTest {
     }
 
     @Test
-    fun unsupportedBackupDoesNotDeleteExistingProgress() = runBlocking {
+    fun unsupportedBackupDoesNotDeleteExistingProgressOrPracticeHistory() = runBlocking {
         val progress = CardProgress(cardId = "hiragana_i", status = CardStatus.LEARNING)
+        val practiceLog = PracticeLog(
+            id = 88,
+            cardId = "hiragana_i",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.AGAIN,
+            durationMs = 2100,
+            timestampEpochMillis = 13000
+        )
         database.cardProgressDao().upsert(progress.toEntity())
+        database.practiceLogDao().insert(practiceLog.toEntity())
 
         val failure = runCatching {
             manager.restoreFromJson(
@@ -324,6 +333,7 @@ class BackupRestoreManagerTest {
 
         assertTrue(failure is IllegalArgumentException)
         assertEquals(progress, database.cardProgressDao().getByCardId("hiragana_i")?.toDomain())
+        assertEquals(listOf(practiceLog), database.practiceLogDao().getAll().map { it.toDomain() })
     }
     @Test
     fun unsupportedBackupFormatDoesNotReplaceExistingProgressAndHistory() = runBlocking {
