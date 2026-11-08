@@ -41,6 +41,7 @@ class AppSettingsTest {
         assertEquals(10, settings.getNewCardsPerDay())
         assertTrue(settings.getShowGrid())
         assertTrue(settings.getShowHints())
+        assertEquals("hiragana", settings.getSelectedCharacterType())
     }
 
     @Test
@@ -50,6 +51,7 @@ class AppSettingsTest {
         settings.setNewCardsPerDay(25)
         settings.setShowGrid(false)
         settings.setShowHints(false)
+        settings.setSelectedCharacterType("katakana")
 
         // A new instance reads from the same persistent SharedPreferences file.
         val restored = AppSettings(context)
@@ -58,6 +60,18 @@ class AppSettingsTest {
         assertEquals(25, restored.getNewCardsPerDay())
         assertFalse(restored.getShowGrid())
         assertFalse(restored.getShowHints())
+        assertEquals("katakana", restored.getSelectedCharacterType())
+    }
+
+    @Test
+    fun combinedDeckSelectionIsPersistedAndUnsupportedValuesAreIgnored() {
+        val settings = AppSettings(context)
+
+        settings.setSelectedCharacterType("all")
+        assertEquals("all", AppSettings(context).getSelectedCharacterType())
+
+        settings.setSelectedCharacterType("unsupported")
+        assertEquals("all", AppSettings(context).getSelectedCharacterType())
     }
 
     @Test
