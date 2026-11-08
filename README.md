@@ -51,7 +51,11 @@ JapaneseWritingTrainer/
     │   └── fsrs-bridge/
     └── tools/
         ├── generate_hiragana.py
-        └── generate_katakana.py
+        ├── generate_katakana.py
+        ├── generate_kanji.py
+        ├── requirements.txt
+        └── tests/
+            └── test_generate_kanji.py
 ```
 
 ## Yêu cầu môi trường
@@ -96,6 +100,31 @@ Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
 - Release AAB: `app/build/outputs/bundle/release/app-release.aab`
 
 Release APK được tạo theo cấu hình hiện tại là **unsigned**. Muốn phân phối bản phát hành cần cấu hình ký ứng dụng bằng keystore riêng. Không đưa keystore hoặc mật khẩu ký vào repository.
+
+## Cập nhật dữ liệu Kanji từ Excel
+
+Workbook `vocabulary.xlsx` ở thư mục gốc repository là nguồn dữ liệu nội dung Kanji. Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+
+```powershell
+# Cài dependency Python (chỉ cần thực hiện một lần)
+python -m pip install -r tools/requirements.txt
+
+# Chạy kiểm thử generator
+python -m unittest discover -s tools/tests -v
+
+# Sinh lại Kanji metadata JSON sau khi cập nhật workbook
+python tools/generate_kanji.py
+```
+
+Generator đọc sheet `Kanji`, kiểm tra header, ký tự trùng, StrokeCount và tạo
+`app/src/main/assets/characters/kanji.json`. ID được tạo từ Unicode code point,
+không phụ thuộc thứ tự dòng. Các chuỗi `None`/`null` không phân biệt hoa thường
+được chuẩn hóa thành JSON `null`. Workbook gốc không bị chỉnh sửa.
+
+JSON hiện chỉ chứa metadata (reading, meaning, radical, số nét, ví dụ, JLPT,
+tags...). Nó **không chứa stroke order hoặc SVG paths**; không thể dùng
+`StrokeCount` thay cho geometry. Việc tích hợp Kanji vào UI/session sẽ được
+thực hiện sau khi có domain model và nguồn stroke geometry phù hợp.
 
 ## Biên dịch lại thư viện Rust JNI (khi cần)
 
