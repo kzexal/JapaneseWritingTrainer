@@ -8,9 +8,9 @@
 
 ### 1.1 Tầm nhìn
 
-Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
+Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana và Katakana bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
 
-Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Phiên bản hiện tại tập trung vào Hiragana; kiến trúc deck/card và dữ liệu ký tự được tách riêng để có thể mở rộng sau này.
+Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Phiên bản hiện tại hỗ trợ Hiragana và 46 Katakana cơ bản; kiến trúc deck/card và dữ liệu ký tự được tách riêng để tiếp tục mở rộng.
 
 ### 1.2 Nền tảng và công nghệ hiện tại
 
@@ -31,7 +31,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.3 Mục tiêu phiên bản hiện tại
 
-- Luyện viết bộ 46 ký tự Hiragana cơ bản.
+- Luyện viết 46 ký tự Hiragana và 46 Katakana cơ bản, có thể chọn từng bộ hoặc học kết hợp.
 - Hỗ trợ Trace, Guided Writing, Recall Writing và Free Practice.
 - Lưu tiến độ theo từng card và lịch sử luyện tập.
 - Lập lịch học mới, học lại và ôn tập bằng FSRS.
@@ -60,10 +60,11 @@ Katakana, Kanji, import dữ liệu từ workbook Excel, nhận diện chữ vi�
 ### 2.2 Dataset và thư viện
 
 - **Implemented:** dataset Hiragana JSON trong assets, gồm 46 ký tự.
-- **Implemented:** dữ liệu tĩnh của ký tự được tách khỏi tiến độ học.
-- **Implemented:** deck/card model cho phép một bộ thẻ tham chiếu đến character data.
-- **Implemented:** thư viện ký tự và các màn hình tra cứu/chi tiết hiện có.
-- **Planned:** mở rộng dataset sang Katakana hoặc Kanji sau khi MVP Hiragana ổn định.
+- **Implemented:** dataset Katakana JSON trong assets, gồm 46 ký tự cơ bản; dữ liệu stroke paths được tạo từ KanjiVG và có metadata nguồn.
+- **Implemented:** dữ liệu tĩnh của ký tự được tách khỏi tiến độ học; ID có prefix riêng theo script.
+- **Implemented:** deck/card model tạo deck độc lập theo character type.
+- **Implemented:** thư viện ký tự và lựa chọn Hiragana, Katakana hoặc kết hợp cả hai.
+- **In progress:** mở rộng Katakana có dakuten/handakuten và yōon; rà soát attribution/license cuối cùng.
 
 ### 2.3 Learning session và SRS
 
@@ -259,12 +260,13 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 **Mục tiêu:** mở rộng thư viện ký tự sang Katakana nhưng tái sử dụng toàn bộ writing engine, session engine, Room và FSRS hiện tại.
 
 - [x] Audit dataset Hiragana hiện tại và xác định contract JSON dùng chung cho nhiều bộ ký tự: `CharacterData` đã có `type`, `group`, `reading`, `strokeCount`, `viewBoxSize`, `strokes`; `CharacterRepository.load(context, assetPath)` có thể đọc từng dataset độc lập. ID và glyph phải duy nhất trong mỗi dataset; khi gộp nhiều script cần ID có prefix riêng.
-- [x] Audit luồng Deck: `DeckFactory` đã tự tạo một Deck cho mỗi `CharacterData.type`, nhưng `MainActivity` hiện mới nạp `hiragana.json`, `LearningSessionScreen` đang chọn cứng deck `hiragana`, còn Home/Library hiển thị nhãn Hiragana. Cần bổ sung nạp nhiều dataset và lựa chọn deck trước khi Katakana có thể học/ôn độc lập.
-- [ ] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; phân biệt rõ Hiragana và Katakana dù có cùng reading/âm.
-- [ ] Chuẩn hóa schema dữ liệu ký tự dùng chung: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
-- [ ] Bổ sung dataset 46 Katakana cơ bản với thứ tự nét và stroke paths có nguồn đáng tin cậy, ghi rõ attribution/license.
+- [x] Audit luồng Deck và xác định các điểm cần mở rộng: nạp nhiều dataset, chọn deck và nhãn Home/Library.
+- [x] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; ID Hiragana và Katakana có prefix riêng dù có cùng reading/âm.
+- [x] Dùng chung schema dữ liệu ký tự: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
+- [x] Tạo dataset 46 Katakana cơ bản với thứ tự nét và stroke paths từ KanjiVG; metadata nguồn đã được ghi trong JSON. Rà soát attribution/license cuối cùng vẫn thuộc bước phát hành.
 - [ ] Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon) theo từng nhóm; xác minh cách biểu diễn nét và cách học phù hợp. Không gộp các biến thể thành card độc lập nếu chưa có quyết định học tập rõ ràng.
-- [ ] Cập nhật deck/category selector để người học chọn Hiragana, Katakana hoặc cả hai.
+- [x] Cập nhật deck selector để người học chọn Hiragana, Katakana hoặc cả hai; lựa chọn được lưu cục bộ.
+- [x] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
 - [ ] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
 - [ ] Bổ sung unit tests cho dataset integrity, ID uniqueness, stroke count/order và mapping deck-card.
 - [ ] Bổ sung kiểm tra UI, session, progress isolation và Room persistence cho Katakana.
