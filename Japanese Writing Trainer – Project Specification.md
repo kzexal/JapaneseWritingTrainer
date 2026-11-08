@@ -225,7 +225,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 - [ ] Mở rộng test migration Room qua các phiên bản.
 - [x] Kiểm thử backup/restore: instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng đã được chạy pass trên thiết bị.
-- [ ] Kiểm tra rollback transaction: đã bổ sung test ép lỗi khi ghi practice log giữa restore để xác nhận dữ liệu cũ được giữ nguyên; chờ chạy instrumentation test.
+- [x] Kiểm tra rollback transaction: `failedDatabaseWriteRollsBackRestoreAndPreservesExistingData` đã được người dùng chạy instrumentation test và xác nhận PASS.
 - [ ] Kiểm tra backup cũ/khả năng tương thích schema backup (hiện chỉ có backup schema v1; chưa có định dạng cũ hơn).
 - [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
 - [x] Android instrumentation tests cho settings đã chạy pass: giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày. Kiểm tra thủ công trên thiết bị bằng Android force-stop rồi mở lại cũng xác nhận Theme, số card mới/ngày, Grid và Hints đều được giữ nguyên.
