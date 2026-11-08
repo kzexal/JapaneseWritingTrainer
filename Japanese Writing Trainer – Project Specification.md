@@ -265,7 +265,10 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Dùng chung schema dữ liệu ký tự: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
 - [x] Tạo dataset 46 Katakana cơ bản với thứ tự nét và stroke paths từ KanjiVG; metadata nguồn đã được ghi trong JSON. Rà soát attribution/license cuối cùng vẫn thuộc bước phát hành.
 - [ ] Bổ sung Katakana có dakuten/handakuten và âm ghép (yōon) theo từng nhóm; xác minh cách biểu diễn nét và cách học phù hợp. Không gộp các biến thể thành card độc lập nếu chưa có quyết định học tập rõ ràng.
-- [x] Cập nhật deck selector để người học chọn Hiragana, Katakana hoặc cả hai; lựa chọn được lưu cục bộ.
+- [x] Thiết kế lại deck selector thành hai tab Hiragana và Katakana; bỏ hoàn toàn lựa chọn học gộp, lựa chọn deck được lưu cục bộ.
+- [x] Tách giới hạn số thẻ mới mỗi ngày cho Hiragana và Katakana; dữ liệu cài đặt cũ được dùng làm giá trị kế thừa để không làm thay đổi giới hạn đã thiết lập trước đây.
+- [x] Khi chuyển giữa hai tab deck, luôn quay về trang chủ của deck vừa chọn; không giữ màn hình Ôn tập/Thư viện/Luyện tự do của deck trước.
+- [x] Thu gọn điều hướng chức năng về một hàng tab cuộn ngang để dành thêm chiều cao cho Writing Canvas; tăng chiều cao nút học chính trên trang chủ.
 - [x] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
 - [x] Bổ sung instrumentation test cho asset Katakana: 46 ký tự, ID/glyph duy nhất, type/prefix đúng, stroke count/order liên tục và SVG paths không rỗng; bổ sung unit test mapping deck-card cho phiên kết hợp.
 - [ ] Bổ sung kiểm tra UI, session, progress isolation và Room persistence cho Katakana.
