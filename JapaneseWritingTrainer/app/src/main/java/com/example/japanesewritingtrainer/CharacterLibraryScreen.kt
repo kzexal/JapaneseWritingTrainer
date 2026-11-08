@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CharacterLibraryScreen(
     characters: List<CharacterData>,
+    deckName: String = characters.firstOrNull()?.type?.let(::characterTypeLabel) ?: "ký tự",
     showGrid: Boolean = true,
     showHints: Boolean = true,
     onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
@@ -89,7 +90,7 @@ fun CharacterLibraryScreen(
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
         Text(
-            "Thư viện ${characters.firstOrNull()?.type?.let(::characterTypeLabel) ?: "ký tự"}",
+            "Thư viện $deckName",
             style = MaterialTheme.typography.headlineSmall
         )
         OutlinedTextField(
