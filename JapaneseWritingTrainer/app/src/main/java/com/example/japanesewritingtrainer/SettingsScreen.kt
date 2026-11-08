@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.dp
 fun SettingsScreen(
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
-    newCardsPerDay: Int,
-    onNewCardsPerDayChange: (Int) -> Unit,
+    hiraganaNewCardsPerDay: Int,
+    onHiraganaNewCardsPerDayChange: (Int) -> Unit,
+    katakanaNewCardsPerDay: Int,
+    onKatakanaNewCardsPerDayChange: (Int) -> Unit,
     showGrid: Boolean,
     onShowGridChange: (Boolean) -> Unit,
     showHints: Boolean,
@@ -102,16 +104,25 @@ fun SettingsScreen(
                     text = "Luyện tập",
                     style = MaterialTheme.typography.titleMedium
                 )
+                Text(
+                    "Giới hạn được áp dụng riêng cho từng bộ chữ và được tính theo ngày.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
                 Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                    Text("Số chữ mới mỗi ngày: $newCardsPerDay")
-                    Text(
-                        "Giới hạn số ký tự mới được đưa vào mỗi phiên học trong ngày.",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Text("Hiragana · chữ mới mỗi ngày: $hiraganaNewCardsPerDay")
                     Slider(
-                        value = newCardsPerDay.toFloat(),
-                        onValueChange = { onNewCardsPerDayChange(it.toInt()) },
+                        value = hiraganaNewCardsPerDay.toFloat(),
+                        onValueChange = { onHiraganaNewCardsPerDayChange(it.toInt()) },
+                        valueRange = 0f..50f,
+                        steps = 49
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Katakana · chữ mới mỗi ngày: $katakanaNewCardsPerDay")
+                    Slider(
+                        value = katakanaNewCardsPerDay.toFloat(),
+                        onValueChange = { onKatakanaNewCardsPerDayChange(it.toInt()) },
                         valueRange = 0f..50f,
                         steps = 49
                     )
@@ -192,7 +203,7 @@ fun SettingsScreen(
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    "Dữ liệu thứ tự nét Hiragana được chuyển đổi từ KanjiVG. " +
+                    "Dữ liệu thứ tự nét Hiragana và Katakana được chuyển đổi từ KanjiVG. " +
                         "Copyright © Ulrich Apel. Licensed under Creative Commons " +
                         "Attribution-ShareAlike 3.0 (CC BY-SA 3.0). " +
                         "Nguồn: https://github.com/KanjiVG/kanjivg",
