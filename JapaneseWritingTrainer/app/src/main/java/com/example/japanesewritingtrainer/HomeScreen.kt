@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun HomeScreen(
     characters: List<CharacterData>,
+    deckName: String,
     newCardsPerDay: Int,
     onStartLearning: () -> Unit,
     onOpenLibrary: () -> Unit,
@@ -77,7 +78,7 @@ fun HomeScreen(
                 modifier = Modifier.padding(18.dp),
                 verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                Text("Tiến độ Hiragana", style = MaterialTheme.typography.titleMedium)
+                Text("Tiến độ $deckName", style = MaterialTheme.typography.titleMedium)
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceBetween
