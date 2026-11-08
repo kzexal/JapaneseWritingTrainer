@@ -143,6 +143,40 @@ class LearningSessionPlannerTest {
         assertEquals(0, plan.totalCount)
     }
 
+    @Test
+    fun combinedDeckCanScheduleHiraganaAndKatakanaWithoutMixingIds() {
+        val katakanaCard = cards.first().copy(
+            id = "katakana_a",
+            deckId = "japanese_katakana",
+            characterId = "katakana_a",
+            character = "ア",
+            reading = "a"
+        )
+        val combinedDeck = WritingDeck(
+            id = "japanese_all",
+            name = "Hiragana + Katakana",
+            description = "Combined practice",
+            characterType = "all",
+            cardIds = cards.map { it.id } + katakanaCard.id
+        )
+        val combinedCards = (cards + katakanaCard).map {
+            it.copy(deckId = combinedDeck.id)
+        }
+
+        val plan = LearningSessionPlanner.plan(
+            deck = combinedDeck,
+            cards = combinedCards,
+            progressByCardId = emptyMap(),
+            nowEpochMillis = 0L,
+            newCardLimit = 10
+        )
+
+        assertEquals(5, plan.newCards.size)
+        assertTrue(plan.newCards.any { it.card.id == "a" })
+        assertTrue(plan.newCards.any { it.card.id == "katakana_a" })
+        assertEquals(5, plan.newCards.map { it.card.id }.distinct().size)
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun rejectsNegativeNewCardLimit() {
         LearningSessionPlanner.plan(deck, cards, emptyMap(), 0L, -1)
