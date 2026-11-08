@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate and validate the 46 basic Katakana stroke dataset from KanjiVG.
+"""Generate and validate the 71 basic and voiced Katakana stroke dataset from KanjiVG.
 
 Run from any working directory:
     python tools/generate_katakana.py
