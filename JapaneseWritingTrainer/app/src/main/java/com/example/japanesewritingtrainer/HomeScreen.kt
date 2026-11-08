@@ -46,7 +46,7 @@ fun HomeScreen(
     LaunchedEffect(repository, practiceLogRepository, characters) {
         progressById = repository.getAll().associateBy { it.cardId }
         newCardsStudiedToday = practiceLogRepository
-            .countDistinctNewCardsSince(localDayStartEpochMillis())
+            .countDistinctNewCardsSince(localDayStartEpochMillis(), characters.map { it.id })
     }
 
     val now = System.currentTimeMillis()
