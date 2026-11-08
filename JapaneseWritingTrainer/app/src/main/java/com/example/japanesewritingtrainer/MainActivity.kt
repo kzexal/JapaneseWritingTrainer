@@ -70,7 +70,8 @@ class MainActivity : ComponentActivity() {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
                     val selectedCharacters = remember(characters, selectedDeckType) {
-                        characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                        if (selectedDeckType == "all") characters
+                        else characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
                     }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
@@ -193,7 +194,7 @@ class MainActivity : ComponentActivity() {
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
-                                    listOf("hiragana", "katakana").forEach { type ->
+                                    listOf("hiragana", "katakana", "all").forEach { type ->
                                         val selected = selectedDeckType == type
                                         if (selected) {
                                             Button(
@@ -284,6 +285,7 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.LIBRARY -> CharacterLibraryScreen(
                                         characters = selectedCharacters,
+                                        deckName = characterTypeLabel(selectedDeckType),
                                         showGrid = showGrid,
                                         showHints = showHints,
                                         onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
