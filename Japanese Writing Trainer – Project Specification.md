@@ -258,7 +258,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 **Mục tiêu:** mở rộng thư viện ký tự sang Katakana nhưng tái sử dụng toàn bộ writing engine, session engine, Room và FSRS hiện tại.
 
-- [ ] Audit dataset Hiragana hiện tại và xác định contract JSON dùng chung cho nhiều bộ ký tự.
+- [x] Audit dataset Hiragana hiện tại và xác định contract JSON dùng chung cho nhiều bộ ký tự: `CharacterData` đã có `type`, `group`, `reading`, `strokeCount`, `viewBoxSize`, `strokes`; `CharacterRepository.load(context, assetPath)` có thể đọc từng dataset độc lập. ID và glyph phải duy nhất trong mỗi dataset; khi gộp nhiều script cần ID có prefix riêng.
 - [ ] Thiết kế định danh card ổn định, không phụ thuộc vị trí trong danh sách; phân biệt rõ Hiragana và Katakana dù có cùng reading/âm.
 - [ ] Chuẩn hóa schema dữ liệu ký tự dùng chung: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
 - [ ] Bổ sung dataset 46 Katakana cơ bản với thứ tự nét và stroke paths có nguồn đáng tin cậy, ghi rõ attribution/license.
