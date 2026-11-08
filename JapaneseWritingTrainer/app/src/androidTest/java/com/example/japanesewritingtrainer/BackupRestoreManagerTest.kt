@@ -452,6 +452,53 @@ class BackupRestoreManagerTest {
         )
     }
 
+
+    @Test
+    fun invalidBackupTimestampAndBlankCardIdsDoNotReplaceExistingData() = runBlocking {
+        val existingProgress = CardProgress(
+            cardId = "hiragana_old",
+            status = CardStatus.REVIEW,
+            reps = 2,
+            reviewCount = 2,
+            correctCount = 1
+        )
+        val existingLog = PracticeLog(
+            id = 95L,
+            cardId = "hiragana_old",
+            mode = PracticeMode.REVIEW,
+            rating = ReviewRating.GOOD,
+            durationMs = 1500L,
+            timestampEpochMillis = 19000L
+        )
+        database.cardProgressDao().upsert(existingProgress.toEntity())
+        database.practiceLogDao().insert(existingLog.toEntity())
+
+        listOf("createdAtEpochMillis", "progressCardId", "logCardId").forEach { invalidField ->
+            val backupRoot = JSONObject(manager.createBackupJson())
+            when (invalidField) {
+                "createdAtEpochMillis" -> backupRoot.put("createdAtEpochMillis", -1L)
+                "progressCardId" -> backupRoot.getJSONArray("cardProgress")
+                    .getJSONObject(0).put("cardId", " ")
+                "logCardId" -> backupRoot.getJSONArray("practiceLogs")
+                    .getJSONObject(0).put("cardId", "")
+            }
+
+            val failure = runCatching {
+                manager.restoreFromJson(backupRoot.toString())
+            }.exceptionOrNull()
+
+            assertTrue("$invalidField should be rejected", failure is IllegalArgumentException)
+            assertEquals(
+                existingProgress,
+                database.cardProgressDao().getByCardId("hiragana_old")?.toDomain()
+            )
+            assertEquals(
+                listOf(existingLog),
+                database.practiceLogDao().getAll().map(PracticeLogEntity::toDomain)
+            )
+        }
+    }
+
     @Test
     fun malformedJsonDoesNotReplaceExistingData() = runBlocking {
         val existing = CardProgress(cardId = "hiragana_ka", status = CardStatus.LEARNING)
