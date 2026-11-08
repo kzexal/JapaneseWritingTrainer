@@ -66,6 +66,12 @@ class MainActivity : ComponentActivity() {
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
                     val practiceLogScope = rememberCoroutineScope()
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
+                    var selectedDeckType by remember {
+                        mutableStateOf(appSettings.getSelectedCharacterType())
+                    }
+                    val selectedCharacters = remember(characters, selectedDeckType) {
+                        characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                    }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
@@ -129,12 +135,26 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(context) {
                         try {
                             characters = withContext(Dispatchers.IO) {
-                                CharacterRepository.load(context, "characters/hiragana.json")
+                                val hiragana = CharacterRepository.load(
+                                    context,
+                                    "characters/hiragana.json"
+                                )
+                                val katakana = CharacterRepository.load(
+                                    context,
+                                    "characters/katakana.json"
+                                )
+                                require(
+                                    (hiragana + katakana).map { it.id }.distinct().size ==
+                                        hiragana.size + katakana.size
+                                ) {
+                                    "Character IDs must be unique across datasets."
+                                }
+                                hiragana + katakana
                             }
                             loadError = null
                         } catch (exception: Exception) {
                             loadError = exception.localizedMessage
-                                ?: "Không thể tải dữ liệu Hiragana."
+                                ?: "Không thể tải dữ liệu Hiragana và Katakana."
                         }
                     }
 
@@ -155,7 +175,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 CircularProgressIndicator()
                                 Text(
-                                    "Đang tải dữ liệu Hiragana...",
+                                    "Đang tải dữ liệu Hiragana và Katakana...",
                                     modifier = Modifier.padding(top = 12.dp)
                                 )
                             }
@@ -169,7 +189,42 @@ class MainActivity : ComponentActivity() {
                                 FlowRow(
                                     modifier = Modifier
                                         .fillMaxWidth()
-                                        .padding(horizontal = 16.dp, vertical = 8.dp),
+                                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    listOf("hiragana", "katakana").forEach { type ->
+                                        val selected = selectedDeckType == type
+                                        if (selected) {
+                                            Button(
+                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
+                                                onClick = {
+                                                    selectedDeckType = type
+                                                    appSettings.setSelectedCharacterType(type)
+                                                    selectedIndex = 0
+                                                }
+                                            ) {
+                                                Text(characterTypeLabel(type))
+                                            }
+                                        } else {
+                                            OutlinedButton(
+                                                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 7.dp),
+                                                onClick = {
+                                                    selectedDeckType = type
+                                                    appSettings.setSelectedCharacterType(type)
+                                                    selectedIndex = 0
+                                                }
+                                            ) {
+                                                Text(characterTypeLabel(type))
+                                            }
+                                        }
+                                    }
+                                }
+
+                                FlowRow(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 4.dp),
                                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                                     verticalArrangement = Arrangement.spacedBy(8.dp)
                                 ) {
@@ -209,7 +264,8 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.HOME -> HomeScreen(
-                                        characters = characters,
+                                        characters = selectedCharacters,
+                                        deckName = characterTypeLabel(selectedDeckType),
                                         newCardsPerDay = newCardsPerDay,
                                         onStartLearning = { selectedScreen = MainScreen.LEARNING },
                                         onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
@@ -218,15 +274,16 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.LEARNING -> LearningSessionScreen(
-                                        characters = characters,
+                                        characters = selectedCharacters,
                                         newCardsPerDay = newCardsPerDay,
                                         showGrid = showGrid,
                                         showHints = showHints,
+                                        deckType = selectedDeckType,
                                         modifier = Modifier.weight(1f)
                                     )
 
                                     MainScreen.LIBRARY -> CharacterLibraryScreen(
-                                        characters = characters,
+                                        characters = selectedCharacters,
                                         showGrid = showGrid,
                                         showHints = showHints,
                                         onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
@@ -312,7 +369,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.FREE -> {
-                                    val selectedCharacter = characters.getOrNull(selectedIndex)
+                                    val selectedCharacter = selectedCharacters.getOrNull(selectedIndex)
                                     Column(
                                         modifier = Modifier.weight(1f),
                                         horizontalAlignment = Alignment.CenterHorizontally
@@ -339,15 +396,15 @@ class MainActivity : ComponentActivity() {
                                                     text = selectedCharacter?.character.orEmpty(),
                                                     style = MaterialTheme.typography.titleLarge
                                                 )
-                                                Text("${selectedIndex + 1} / ${characters.size}")
+                                                Text("${selectedIndex + 1} / ${selectedCharacters.size}")
                                             }
 
                                             Button(
                                                 onClick = {
                                                     selectedIndex = (selectedIndex + 1)
-                                                        .coerceAtMost(characters.lastIndex)
+                                                        .coerceAtMost(selectedCharacters.lastIndex)
                                                 },
-                                                enabled = selectedIndex < characters.lastIndex
+                                                enabled = selectedIndex < selectedCharacters.lastIndex
                                             ) {
                                                 Text("Tiếp")
                                             }
