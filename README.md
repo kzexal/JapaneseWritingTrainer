@@ -40,7 +40,9 @@ JapaneseWritingTrainer/
 └── JapaneseWritingTrainer/
     ├── app/
     │   └── src/main/
-    │       ├── assets/characters/hiragana.json và katakana.json
+    │       ├── assets/characters/
+    │       │   ├── hiragana.json
+    │       │   └── katakana.json
     │       ├── java/com/example/japanesewritingtrainer/
     │       └── jniLibs/
     ├── native/
