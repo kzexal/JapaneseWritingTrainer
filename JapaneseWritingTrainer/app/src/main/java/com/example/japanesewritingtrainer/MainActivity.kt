@@ -17,6 +17,10 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -195,11 +199,15 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                // Hai deck được trình bày như hai tab chính, không có chế độ gộp.
-                                TabRow(
-                                    selectedTabIndex = if (selectedDeckType == "katakana") 1 else 0,
-                                    modifier = Modifier.fillMaxWidth()
+                                // Hai deck là hai tab chính; Cài đặt dùng chung nằm ở góc phải.
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically
                                 ) {
+                                    TabRow(
+                                        selectedTabIndex = if (selectedDeckType == "katakana") 1 else 0,
+                                        modifier = Modifier.weight(1f)
+                                    ) {
                                     Tab(
                                         selected = selectedDeckType == "hiragana",
                                         onClick = {
@@ -224,16 +232,25 @@ class MainActivity : ComponentActivity() {
                                         },
                                         text = { Text("Katakana") }
                                     )
+                                    }
+                                    IconButton(onClick = { selectedScreen = MainScreen.SETTINGS }) {
+                                        Icon(
+                                            imageVector = Icons.Filled.Settings,
+                                            contentDescription = "Cài đặt"
+                                        )
+                                    }
                                 }
 
                                 // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
                                 // cho Canvas và các nút thao tác trong màn hình luyện viết.
                                 ScrollableTabRow(
-                                    selectedTabIndex = MainScreen.entries.indexOf(selectedScreen),
+                                    selectedTabIndex = MainScreen.entries
+                                        .filter { it != MainScreen.SETTINGS }
+                                        .indexOf(selectedScreen).coerceAtLeast(0),
                                     modifier = Modifier.fillMaxWidth(),
                                     edgePadding = 8.dp
                                 ) {
-                                    MainScreen.entries.forEach { screen ->
+                                    MainScreen.entries.filter { it != MainScreen.SETTINGS }.forEach { screen ->
                                         Tab(
                                             selected = selectedScreen == screen,
                                             onClick = { selectedScreen = screen },
