@@ -226,10 +226,10 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Kiểm thử migration Room 1→2→3 và 2→3: bảo toàn CardProgress, chuyển card LEARNING đã lapse sang RELEARNING, giữ nguyên PracticeLog; người dùng xác nhận instrumentation tests PASS.
 - [x] Kiểm thử backup/restore: instrumentation tests cho JSON sai cấu trúc, cardId trùng và practice-log ID trùng đã được chạy pass trên thiết bị.
 - [x] Kiểm tra rollback transaction: `failedDatabaseWriteRollsBackRestoreAndPreservesExistingData` đã được người dùng chạy instrumentation test và xác nhận PASS.
-- [ ] Kiểm tra backup cũ/khả năng tương thích schema backup (hiện chỉ có backup schema v1; chưa có định dạng cũ hơn).
+- [ ] Xác minh tương thích backup schema v1: đã bổ sung instrumentation test `versionOneBackupWithoutOptionalNullableFieldsRemainsRestorable` để kiểm tra backup v1 đời đầu không có các trường nullable FSRS và rating vẫn khôi phục được; đang chờ người dùng chạy test. Hiện chưa tồn tại schema backup version cũ hơn v1.
 - [x] Đối chiếu thống kê với practice logs và card progress: Room integration test kiểm tra `reviewCount`/`correctCount` khớp với số lượng và rating trong lịch sử đã chạy pass.
 - [x] Android instrumentation tests cho settings đã chạy pass: giá trị mặc định, đọc lại qua instance mới, theme không hợp lệ và giới hạn số card/ngày. Kiểm tra thủ công trên thiết bị bằng Android force-stop rồi mở lại cũng xác nhận Theme, số card mới/ngày, Grid và Hints đều được giữ nguyên.
-- [ ] Xác minh không mất dữ liệu khi nâng cấp app.
+- [ ] Xác minh không mất dữ liệu khi nâng cấp app bằng quy trình nâng cấp thực tế; migration Room 1→2→3 và 2→3 đã có instrumentation coverage riêng.
 
 ### Phase 4 — MVP release readiness
 
