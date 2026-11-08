@@ -29,7 +29,7 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 
 /**
- * Phiên ôn tập Hiragana:
+ * Phiên ôn tập của bộ ký tự đang được chọn:
  * 1. Planner chọn thẻ đến hạn trước, sau đó thêm thẻ mới.
  * 2. Người học viết ở Recall Writing.
  * 3. Khi hoàn thành, chuyển sang màn hình đánh giá riêng, gọn và dễ chọn.
@@ -41,13 +41,14 @@ fun LearningSessionScreen(
     newCardsPerDay: Int = 10,
     showGrid: Boolean = true,
     showHints: Boolean = true,
+    deckType: String = "hiragana",
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
     val coordinator = remember(context) { LearningSessionCoordinator(context) }
     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
-    val deck = catalog.decks.firstOrNull { it.characterType == "hiragana" }
+    val deck = catalog.decks.firstOrNull { it.characterType == deckType }
     val deckCards = remember(catalog, deck) {
         deck?.let { catalog.cardsForDeck(it.id) }.orEmpty()
     }
@@ -63,9 +64,13 @@ fun LearningSessionScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(coordinator, deck, deckCards, newCardsPerDay) {
+        isLoading = true
+        snapshot = null
+        deckProgress = null
+        awaitingRating = false
         if (deck == null) {
             isLoading = false
-            errorMessage = "Không tìm thấy bộ thẻ Hiragana."
+            errorMessage = "Không tìm thấy bộ thẻ ${characterTypeLabel(deckType)}."
             return@LaunchedEffect
         }
 
@@ -155,7 +160,7 @@ fun LearningSessionScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Text("Ôn tập Hiragana", style = MaterialTheme.typography.titleLarge)
+        Text("Ôn tập ${characterTypeLabel(deckType)}", style = MaterialTheme.typography.titleLarge)
 
         when {
             isLoading -> {
