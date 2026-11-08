@@ -49,25 +49,10 @@ fun LearningSessionScreen(
     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
     val deck = remember(catalog, deckType) {
-        if (deckType == "all") {
-            WritingDeck(
-                id = "japanese_all",
-                name = "Hiragana + Katakana",
-                description = "Luyện viết Hiragana và Katakana",
-                characterType = "all",
-                cardIds = catalog.cards.map { it.id }
-            )
-        } else {
-            catalog.decks.firstOrNull { it.characterType == deckType }
-        }
+        catalog.decks.firstOrNull { it.characterType == deckType }
     }
-    val deckCards = remember(catalog, deck, deckType) {
+    val deckCards = remember(catalog, deck) {
         if (deck == null) emptyList()
-        else if (deckType == "all") {
-            catalog.cards.mapIndexed { index, card ->
-                card.copy(deckId = deck.id, order = index)
-            }
-        }
         else catalog.cardsForDeck(deck.id)
     }
     val charactersById = remember(characters) { characters.associateBy { it.id } }
