@@ -61,7 +61,8 @@ fun PracticeHistoryScreen(
         scope.launch {
             isLoading = true
             try {
-                logs = repository.getAll()
+                val selectedCardIds = charactersById.keys
+                logs = repository.getAll().filter { it.cardId in selectedCardIds }
                 errorMessage = null
             } catch (exception: Exception) {
                 errorMessage = exception.localizedMessage ?: "Không thể tải lịch sử luyện viết."
@@ -71,7 +72,7 @@ fun PracticeHistoryScreen(
         }
     }
 
-    LaunchedEffect(repository) {
+    LaunchedEffect(repository, charactersById) {
         loadHistory()
     }
 
@@ -85,7 +86,10 @@ fun PracticeHistoryScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Column {
-                Text("Lịch sử luyện viết", style = MaterialTheme.typography.titleLarge)
+                Text(
+                    "Lịch sử ${characters.firstOrNull()?.let { characterTypeLabel(it.type) } ?: "bộ chữ"}",
+                    style = MaterialTheme.typography.titleLarge
+                )
                 Text(
                     "Đã lưu ${logs.size} lần luyện",
                     style = MaterialTheme.typography.bodySmall
