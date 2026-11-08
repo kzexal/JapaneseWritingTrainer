@@ -249,8 +249,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Kiểm tra cài mới trên emulator hoặc thiết bị phụ; không gỡ app/xóa dữ liệu trên thiết bị đang chứa dữ liệu học duy nhất.
 - [x] Build `:app:assembleRelease` và `:app:bundleRelease`; người dùng xác nhận cả hai build thành công.
 - [x] Kiểm tra native libraries trong APK và AAB: `libjapanese_writing_fsrs.so` có trong `arm64-v8a` và `x86_64`; xác nhận thiết bị Android của người dùng hỗ trợ `arm64-v8a`.
-- [ ] Hoàn thiện README: giới thiệu ứng dụng, chức năng thực tế, hướng dẫn build/chạy, cấu trúc dự án, backup/restore và trạng thái roadmap. README hiện có nhưng cần cập nhật, không tạo file README thứ hai.
-- [ ] Xây dựng một tab **Hướng dẫn học** riêng trong ứng dụng; giải thích lộ trình bắt đầu, cách chọn deck, thứ tự nét, Trace/Guided/Recall/Free Practice, rating FSRS, lịch ôn, Practice History, Statistics và backup/restore. Nội dung phải phản ánh đúng chức năng đang có, phân biệt rõ tính năng chưa hỗ trợ.
+- [x] Hoàn thiện README hiện có: giới thiệu ứng dụng, chức năng thực tế, hướng dẫn build/chạy/test, cấu trúc dự án, Rust JNI, backup/restore và trạng thái roadmap. Đã ghi rõ APK Release hiện tại chưa ký và việc rà soát attribution/license cuối cùng được để sau Katakana/Kanji.
+- [ ] Kiểm thử tab **Hướng dẫn học** mới được thêm vào điều hướng; nội dung giải thích cách bắt đầu, thư viện và thứ tự nét, Trace/Guided/Recall/Free Practice, rating FSRS, lịch ôn, Practice History, Statistics và backup/restore. Nội dung phân biệt rõ Hiragana hiện có với Katakana/Kanji/Vocabulary chưa hỗ trợ.
 - [ ] Kiểm tra cài mới trên emulator hoặc thiết bị phụ; không gỡ app/xóa dữ liệu trên thiết bị đang chứa dữ liệu học duy nhất.
 - [ ] Chỉ công bố bản phát hành cuối sau khi Katakana và Kanji hoàn tất, attribution/license và signing key được xử lý ở giai đoạn phát hành.
 
