@@ -59,8 +59,8 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 
 ### 2.2 Dataset và thư viện
 
-- **Implemented:** dataset Hiragana JSON trong assets, gồm 46 ký tự.
-- **Implemented:** dataset Katakana JSON trong assets, gồm 46 ký tự cơ bản; dữ liệu stroke paths được tạo từ KanjiVG và có metadata nguồn.
+- **Implemented:** dataset Hiragana JSON trong assets, gồm 71 ký tự (46 cơ bản + 25 dakuten/handakuten), stroke paths từ KanjiVG và metadata nguồn.
+- **Implemented:** dataset Katakana JSON trong assets, gồm 71 ký tự (46 cơ bản + 25 dakuten/handakuten); dữ liệu stroke paths được tạo từ KanjiVG và có metadata nguồn.
 - **Implemented:** dữ liệu tĩnh của ký tự được tách khỏi tiến độ học; ID có prefix riêng theo script.
 - **Implemented:** deck/card model tạo deck độc lập theo character type.
 - **Implemented:** thư viện ký tự và lựa chọn Hiragana, Katakana hoặc kết hợp cả hai.
@@ -255,9 +255,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Kiểm tra cài mới trên emulator hoặc thiết bị phụ; không gỡ app/xóa dữ liệu trên thiết bị đang chứa dữ liệu học duy nhất.
 - [ ] Chỉ công bố bản phát hành cuối sau khi Katakana và Kanji hoàn tất, attribution/license và signing key được xử lý ở giai đoạn phát hành.
 
-### Phase 5 — Katakana
+### Phase 5 — Mở rộng Hiragana và Katakana
 
-**Mục tiêu:** mở rộng thư viện ký tự sang Katakana nhưng tái sử dụng toàn bộ writing engine, session engine, Room và FSRS hiện tại.
+**Mục tiêu:** mở rộng đồng bộ cả hai thư viện lên 71 ký tự mỗi bộ, tái sử dụng toàn bộ writing engine, session engine, Room và FSRS hiện tại.
 
 - [x] Audit dataset Hiragana hiện tại và xác định contract JSON dùng chung cho nhiều bộ ký tự: `CharacterData` đã có `type`, `group`, `reading`, `strokeCount`, `viewBoxSize`, `strokes`; `CharacterRepository.load(context, assetPath)` có thể đọc từng dataset độc lập. ID và glyph phải duy nhất trong mỗi dataset; khi gộp nhiều script cần ID có prefix riêng.
 - [x] Audit luồng Deck và xác định các điểm cần mở rộng: nạp nhiều dataset, chọn deck và nhãn Home/Library.
@@ -265,14 +265,14 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Dùng chung schema dữ liệu ký tự: character ID, ký tự, script/type, group, reading, stroke count, viewBox và stroke paths.
 - [x] Tạo dataset 46 Katakana cơ bản với thứ tự nét và stroke paths từ KanjiVG; metadata nguồn đã được ghi trong JSON. Rà soát attribution/license cuối cùng vẫn thuộc bước phát hành.
 - [x] Mở rộng generator cho cả Hiragana và Katakana: mỗi bộ gồm 46 ký tự cơ bản + 25 dakuten/handakuten (ガ行/が行、ザ行/ざ行、ダ行/だ行、バ行/ば行、パ行/ぱ行); giữ nguyên ID của 46 ký tự cơ bản và dùng ID theo Unicode code point cho ký tự bổ sung để tránh trùng romaji (ví dụ ジ/ヂ, ズ/ヅ).
-- [ ] Chạy cả `tools/generate_hiragana.py` và `tools/generate_katakana.py`; xác minh mỗi dataset có 71 ký tự, ID/glyph duy nhất, giữ nguyên 46 ID cũ, stroke count/order liên tục và SVG paths hợp lệ; sau đó cập nhật instrumentation tests và README.
+- [x] Chạy cả `tools/generate_hiragana.py` và `tools/generate_katakana.py`; người dùng xác nhận mỗi dataset đã tạo đủ 71 ký tự. Generator tự validate ID/glyph, stroke count/order và SVG paths. README và instrumentation test đã được cập nhật; automated tests đang chờ người dùng chạy.
 - [ ] Thiết kế yōon (キャ, シュ, チョ...) như writing unit gồm nhiều kana; không đưa vào dataset CharacterData vuông hiện tại cho đến khi có cách biểu diễn layout/stroke geometry phù hợp.
 - [ ] Thiết kế lại deck selector thành hai tab Hiragana và Katakana; bỏ hoàn toàn lựa chọn học gộp, lựa chọn deck được lưu cục bộ (đã triển khai, chờ kiểm tra UI).
 - [ ] Tách giới hạn số thẻ mới mỗi ngày cho Hiragana và Katakana; dữ liệu cài đặt cũ được dùng làm giá trị kế thừa để không làm thay đổi giới hạn đã thiết lập trước đây (đã triển khai, chờ instrumentation tests).
 - [ ] Khi chuyển giữa hai tab deck, luôn quay về trang chủ của deck vừa chọn; không giữ màn hình Ôn tập/Thư viện/Luyện tự do của deck trước (đã triển khai, chờ kiểm tra thủ công).
 - [ ] Thu gọn điều hướng chức năng về một hàng tab cuộn ngang để dành thêm chiều cao cho Writing Canvas; tăng chiều cao nút học chính trên trang chủ (đã triển khai, chờ kiểm tra trên thiết bị).
 - [x] Tái sử dụng Trace, Guided Writing, Recall Writing, Free Practice, SRS, history và statistics; không tạo scheduler hoặc writing engine riêng cho Katakana.
-- [x] Bổ sung instrumentation test cho asset Katakana: 46 ký tự, ID/glyph duy nhất, type/prefix đúng, stroke count/order liên tục và SVG paths không rỗng; bổ sung unit test mapping deck-card cho phiên kết hợp.
+- [x] Bổ sung instrumentation test cho asset Hiragana và Katakana: 71 ký tự mỗi bộ, ID/glyph duy nhất, type/prefix đúng, kiểm tra ID Unicode của ký tự mới, stroke count/order liên tục và SVG paths không rỗng; bổ sung unit test mapping deck-card cho phiên kết hợp.
 - [ ] Bổ sung kiểm tra UI, session, progress isolation và Room persistence cho Katakana.
 - [ ] Kiểm tra backup/restore và migration khi dữ liệu có thêm script mới; không làm mất progress Hiragana hiện có.
 - [ ] Kiểm tra thủ công toàn bộ nhóm Katakana trên thiết bị Android thật.
@@ -330,7 +330,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 | ID | Tiêu chí | Trạng thái hiện tại |
 | --- | --- | --- |
-| AC-01 | Có dữ liệu 46 Hiragana | **Implemented** |
+| AC-01 | Có dữ liệu Hiragana và Katakana mở rộng (71 ký tự mỗi bộ) | **Implemented; dataset generated, automated tests pending** |
 | AC-02 | Viết nhiều nét bằng cảm ứng, Undo/Clear | **Implemented** |
 | AC-03 | Trace và hiển thị dữ liệu nét | **Implemented** |
 | AC-04 | Guided Writing và Recall Writing | **Implemented** |
