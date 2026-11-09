@@ -275,7 +275,6 @@ class MainActivity : ComponentActivity() {
                                             )
                                         }
                                     }
-                                }
 
                                 when (selectedScreen) {
                                     MainScreen.GUIDE -> LearningGuideScreen(
@@ -292,7 +291,6 @@ class MainActivity : ComponentActivity() {
                                                 onOpenFreePractice = { selectedScreen = MainScreen.FREE },
                                                 modifier = Modifier.weight(1f)
                                             )
-                                        }
                                     }
 
                                     MainScreen.LEARNING -> LearningSessionScreen(
