@@ -95,10 +95,24 @@ Không cần chạy lại toàn bộ build/test chỉ để chỉnh sửa tài l
 Trước khi thiết kế Vocabulary Deck, có thể kiểm tra cấu trúc sheet bằng công cụ chỉ đọc:
 
 ```powershell
-python tools/audit_vocabulary.py
+py -3.13 tools/audit_vocabulary.py
 ```
 
 Công cụ in header thực tế, số dòng dữ liệu, số ô có dữ liệu, số giá trị trùng theo từng cột và một số dòng mẫu. Có thể tăng số dòng mẫu bằng `--sample-rows 10`. Công cụ không sửa workbook và không sinh hoặc thay đổi dữ liệu ứng dụng.
+
+## Cập nhật dữ liệu Vocabulary từ Excel
+
+Sheet `Vocabulary` trong workbook `vocabulary.xlsx` là nguồn dữ liệu nội dung từ vựng. Công cụ chỉ đọc workbook và sinh metadata JSON; không sửa Excel, không tạo hoặc cập nhật tiến độ học.
+
+Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+
+```powershell
+py -3.13 tools/generate_vocabulary.py
+```
+
+Kết quả được ghi vào `app/src/main/assets/characters/vocabulary.json`. ID được tạo từ toàn bộ Unicode code point của trường `Japanese`, không phụ thuộc vị trí dòng. Vì vậy, hai từ đồng âm như `春` và `貼る` vẫn là hai card riêng; các câu ví dụ trùng nhau cũng không làm các card bị gộp. Khi thêm từ hoặc sắp xếp lại workbook, ID hiện có không đổi.
+
+Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống.
 
 ## Cập nhật dữ liệu Kanji từ Excel
 
@@ -106,13 +120,13 @@ Workbook `vocabulary.xlsx` ở thư mục gốc repository là nguồn dữ li�
 
 ```powershell
 # Cài dependency Python (chỉ cần thực hiện một lần)
-python -m pip install -r tools/requirements.txt
+py -3.13 -m pip install -r tools/requirements.txt
 
 # Chạy kiểm thử công cụ tạo dữ liệu
-python -m unittest discover -s tools/tests -v
+py -3.13 -m unittest discover -s tools/tests -v
 
 # Sinh metadata JSON sau khi cập nhật sheet Kanji
-python tools/generate_kanji.py
+py -3.13 tools/generate_kanji.py
 ```
 
 Generator kiểm tra header, ký tự trùng, StrokeCount và sinh ID theo Unicode code point (không phụ thuộc số thứ tự dòng). Các giá trị chuỗi `None`/`null` được chuẩn hóa thành JSON `null`. Kết quả được ghi vào `app/src/main/assets/characters/kanji.json`.
@@ -122,7 +136,7 @@ Generator kiểm tra header, ký tự trùng, StrokeCount và sinh ID theo Unico
 Stroke geometry được lấy từ [KanjiVG](https://github.com/KanjiVG/kanjivg), không được suy ra từ trường `StrokeCount`. Sau khi tải và giải nén dữ liệu KanjiVG vào `tools/vendor/kanjivg/`, chạy:
 
 ```powershell
-python tools/import_kanjivg_strokes.py --source-dir tools/vendor/kanjivg/kanji
+py -3.13 tools/import_kanjivg_strokes.py --source-dir tools/vendor/kanjivg/kanji
 ```
 
 Công cụ đối chiếu từng ký tự và số nét với workbook, giữ thứ tự nét từ SVG và sinh `app/src/main/assets/characters/kanji_strokes.json`. Nếu thiếu SVG hoặc số nét không khớp, công cụ dừng với lỗi thay vì tạo geometry không hợp lệ.
