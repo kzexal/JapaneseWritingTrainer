@@ -7,6 +7,7 @@
 - **Hiragana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Katakana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Kanji:** 86 ký tự lấy từ sheet `Kanji` trong workbook `vocabulary.xlsx`; metadata được quản lý riêng với stroke geometry.
+- **Vocabulary:** thư viện tra cứu 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc theo 15 nhóm và xem ví dụ/ghi nhớ; hiện là thư viện nội dung chỉ đọc, chưa tạo card FSRS.
 - Mỗi bộ chữ có thể được chọn thành deck học riêng; tiến độ được lưu theo ID ổn định của ký tự.
 - Thư viện ký tự hỗ trợ tìm kiếm; Kanji hỗ trợ lọc theo JLPT và bộ thủ.
 - Guided Writing luyện từng nét theo đúng thứ tự, sử dụng stroke geometry.
@@ -112,7 +113,7 @@ py -3.13 tools/generate_vocabulary.py
 
 Kết quả được ghi vào `app/src/main/assets/characters/vocabulary.json`. ID được tạo từ toàn bộ Unicode code point của trường `Japanese`, không phụ thuộc vị trí dòng. Vì vậy, hai từ đồng âm như `春` và `貼る` vẫn là hai card riêng; các câu ví dụ trùng nhau cũng không làm các card bị gộp. Khi thêm từ hoặc sắp xếp lại workbook, ID hiện có không đổi.
 
-Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống.
+Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống. Ứng dụng đọc JSON qua `VocabularyRepository` và hiển thị trong mục **Từ vựng**; màn hình hiện hỗ trợ tìm kiếm, lọc nhóm và xem chi tiết, chưa đưa các từ vào hàng đợi học/FSRS.
 
 ## Cập nhật dữ liệu Kanji từ Excel
 
@@ -169,6 +170,7 @@ Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiể
 ## Lộ trình tiếp theo
 
 - Hoàn thiện kiểm thử thực tế cho Kanji Learning, Guided Writing, History và Statistics.
+- Hoàn thiện Vocabulary Deck: chọn rõ mục tiêu luyện Japanese hoặc Reading, ánh xạ stroke data theo từng ký tự và tích hợp card/FSRS mà không làm thay đổi tiến độ hiện có.
 - Kiểm tra an toàn luồng cập nhật nội dung: thêm Kanji mới không cần hard-code số lượng; cập nhật metadata không reset tiến độ; bỏ dòng khỏi workbook không tự xóa lịch sử học.
 - Rà soát backup/restore với dữ liệu Kanji.
 - Hoàn thiện nhận diện ứng dụng (app icon/adaptive icon), thông tin phiên bản và chuẩn bị bản phát hành.
