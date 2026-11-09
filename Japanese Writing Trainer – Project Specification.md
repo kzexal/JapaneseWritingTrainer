@@ -332,7 +332,10 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 - [x] Audit sheet Vocabulary và toàn bộ 11 header. Xác nhận 198 dòng; Japanese/Reading/Vietnamese/Example/ExampleMeaning/Nhóm bộ thủ chính/Radicals/Mnemonics/JLPT/Notes/Tags. Japanese có 198 giá trị duy nhất; Reading có một giá trị trùng (`はる`, 春 và 貼る); Example và ExampleMeaning có các giá trị trùng hợp lệ giữa những từ khác nhau. JLPT, Notes và Tags hiện để trống. Có 15 nhóm, trong đó `Nhóm Không Kanji` có 17 từ.
 - [x] Thiết kế `VocabularyData` riêng với `CharacterData`; model lưu Japanese, Reading, nghĩa, ví dụ, nhóm bộ thủ, radicals và mnemonics, không yêu cầu stroke geometry.
-- [ ] Xác định chế độ luyện: viết Japanese chính tả hoặc viết Reading/kana; cho phép người học chọn rõ ràng, không tự thay thế Kanji bằng kana.
+- [x] Xác định hai mục tiêu nội dung độc lập ở domain layer: `JAPANESE` dùng nguyên văn trường Japanese; `READING` dùng nguyên văn trường Reading. Không tự chuyển Kanji thành Kana.
+- [x] Tạo `VocabularyWritingMapper`: ánh xạ từng Unicode code point sang CharacterData có stroke geometry hợp lệ; giữ nguyên thứ tự và ký tự lặp; bỏ qua khoảng trắng/dấu câu; trả về danh sách glyph chưa hỗ trợ thay vì đoán hoặc thay thế.
+- [x] Bổ sung JVM unit tests cho lựa chọn Japanese/Reading, không thay Kanji bằng Kana, thứ tự/ký tự lặp, ký tự thiếu geometry, dấu câu và ký tự chưa hỗ trợ. Chờ người dùng chạy kiểm thử local.
+- [ ] Tích hợp hai mục tiêu trên vào UI phiên học; chỉ bật bắt đầu luyện khi toàn bộ glyph cần viết đều có geometry hợp lệ.
 - [x] Tạo Python generator `tools/generate_vocabulary.py` và schema JSON metadata riêng; ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook; chưa chạy xác nhận trên workbook thật.
 - [ ] Hỗ trợ nạp dữ liệu từ workbook trong repository và quy trình cập nhật/import lại có preview; không bắt buộc người dùng chọn file nếu dữ liệu đã được đóng gói sẵn, nhưng vẫn thiết kế để thay workbook có kiểm soát.
 - [x] Generator kiểm tra header, Japanese trống/trùng, Reading và Vietnamese bắt buộc; chuẩn hóa chuỗi `None`/`null`/blank thành JSON null. Python unit tests đã được bổ sung nhưng đang chờ người dùng chạy. Audit tool in chi tiết các dòng có giá trị trùng.
