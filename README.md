@@ -1,25 +1,21 @@
 # Japanese Writing Trainer
 
-Ứng dụng Android hỗ trợ luyện viết tiếng Nhật bằng màn hình cảm ứng. Phiên bản hiện tại hỗ trợ **71 Hiragana và 71 Katakana** (46 cơ bản + 25 Dakuten/Handakuten mỗi bộ), ghi nhớ thứ tự nét và ôn tập lặp lại ngắt quãng. Ứng dụng được thiết kế theo hướng offline-first: dữ liệu học tập được lưu trên thiết bị, không cần tài khoản.
+Ứng dụng Android hỗ trợ luyện viết tiếng Nhật bằng màn hình cảm ứng và ôn tập lặp lại ngắt quãng. Ứng dụng hoạt động theo hướng offline-first: dữ liệu học tập được lưu cục bộ trên thiết bị, không cần tài khoản.
 
-> **Trạng thái:** Hiragana và 46 Katakana cơ bản đã được triển khai, có thể chọn học riêng hoặc kết hợp. Yōon (âm ghép), Kanji và nhập từ vựng từ workbook Excel vẫn thuộc roadmap.
+## Nội dung hiện có
 
-## Chức năng hiện có
-
-- Thư viện 71 Hiragana và 71 Katakana, gồm kana cơ bản, Dakuten và Handakuten, có nhóm ký tự và tìm kiếm.
-- Chọn học Hiragana, Katakana hoặc kết hợp cả hai; tiến độ được lưu riêng theo ID của từng ký tự.
-- Xem thứ tự nét và hình dạng nét của từng ký tự.
-- Bốn chế độ luyện tập:
-  - **Trace:** tập tô theo nét mẫu.
-  - **Guided Writing:** luyện từng nét theo thứ tự, có đánh giá nét viết.
-  - **Recall Writing:** tự viết ký tự từ trí nhớ.
-  - **Free Practice:** luyện viết tự do.
-- Ôn tập theo FSRS-6 với các mức đánh giá Again, Hard, Good và Easy.
-- Quản lý thẻ mới, đang học và cần ôn; giới hạn số thẻ mới mỗi ngày.
+- **Hiragana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
+- **Katakana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
+- **Kanji:** 86 ký tự lấy từ sheet `Kanji` trong workbook `vocabulary.xlsx`; metadata được quản lý riêng với stroke geometry.
+- Mỗi bộ chữ có thể được chọn thành deck học riêng; tiến độ được lưu theo ID ổn định của ký tự.
+- Thư viện ký tự hỗ trợ tìm kiếm; Kanji hỗ trợ lọc theo JLPT và bộ thủ.
+- Guided Writing luyện từng nét theo đúng thứ tự, sử dụng stroke geometry.
+- Ôn tập theo FSRS-6 với các mức Again, Hard, Good và Easy.
+- Quản lý thẻ mới, thẻ đang học và thẻ đến hạn; giới hạn số thẻ mới mỗi ngày được cấu hình riêng cho từng deck.
 - Lịch sử luyện tập và thống kê tiến độ.
 - Tùy chỉnh giao diện, lưới ký tự và gợi ý.
 - Sao lưu và khôi phục dữ liệu học tập bằng tệp JSON.
-- Hoạt động offline; tiến độ và cài đặt được lưu cục bộ trên thiết bị.
+- Hoạt động offline; không yêu cầu đăng nhập hoặc đồng bộ nhiều thiết bị.
 
 ## Công nghệ
 
@@ -28,6 +24,7 @@
 - Room Database
 - Rust qua JNI cho phần tính toán FSRS, sử dụng crate `fsrs = 6.6.2`
 - Gradle Kotlin DSL
+- Python và openpyxl cho công cụ tạo dữ liệu từ workbook
 
 ## Cấu trúc repository
 
@@ -36,36 +33,36 @@ JapaneseWritingTrainer/
 ├── README.md
 ├── DEVELOPMENT_STANDARDS.md
 ├── Japanese Writing Trainer – Project Specification.md
+├── THIRD_PARTY_NOTICES.md
 ├── vocabulary.xlsx
 └── JapaneseWritingTrainer/
     ├── app/
     │   └── src/main/
     │       ├── assets/characters/
     │       │   ├── hiragana.json
-    │       │   └── katakana.json
+    │       │   ├── katakana.json
+    │       │   ├── kanji.json
+    │       │   └── kanji_strokes.json
     │       ├── java/com/example/japanesewritingtrainer/
     │       └── jniLibs/
     ├── native/
-    │   ├── build-android.ps1
-    │   ├── build-android.sh
     │   └── fsrs-bridge/
     └── tools/
-        ├── generate_hiragana.py
-        ├── generate_katakana.py
         ├── generate_kanji.py
+        ├── import_kanjivg_strokes.py
         ├── requirements.txt
         └── tests/
-            └── test_generate_kanji.py
 ```
 
 ## Yêu cầu môi trường
 
 - Android Studio tương thích với Android Gradle Plugin được khai báo trong dự án.
-- Android SDK Platform 37 và Android SDK Build-Tools tương ứng.
+- Android SDK Platform và Build-Tools theo cấu hình Gradle.
 - Thiết bị Android hoặc emulator chạy Android 8.0 (API 26) trở lên.
-- Nếu cần biên dịch lại thư viện Rust JNI: cài Rust toolchain, Android NDK, các Rust Android targets và `cargo-ndk`.
+- Python 3.10 trở lên và dependency trong `tools/requirements.txt` nếu cần sinh lại dữ liệu Kanji.
+- Rust toolchain, Android NDK, Android Rust targets và `cargo-ndk` chỉ cần khi biên dịch lại thư viện JNI.
 
-Các phiên bản plugin và thư viện được quản lý trong `JapaneseWritingTrainer/gradle/libs.versions.toml`. Application ID: `com.example.japanesewritingtrainer`.
+Application ID: `com.example.japanesewritingtrainer`.
 
 ## Mở và chạy ứng dụng
 
@@ -87,79 +84,69 @@ Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
 
 # Build debug APK
 .\gradlew.bat :app:assembleDebug
-
-# Build release APK và Android App Bundle
-.\gradlew.bat :app:assembleRelease
-.\gradlew.bat :app:bundleRelease
 ```
 
-Đầu ra thường nằm tại:
+Đầu ra debug APK thường nằm tại `app/build/outputs/apk/debug/app-debug.apk`.
 
-- Debug APK: `app/build/outputs/apk/debug/app-debug.apk`
-- Release APK: `app/build/outputs/apk/release/app-release-unsigned.apk`
-- Release AAB: `app/build/outputs/bundle/release/app-release.aab`
-
-Release APK được tạo theo cấu hình hiện tại là **unsigned**. Muốn phân phối bản phát hành cần cấu hình ký ứng dụng bằng keystore riêng. Không đưa keystore hoặc mật khẩu ký vào repository.
+Không cần chạy lại toàn bộ build/test chỉ để chỉnh sửa tài liệu. Khi thay đổi mã nguồn, chạy các lệnh kiểm thử phù hợp trước khi sử dụng bản build mới.
 
 ## Cập nhật dữ liệu Kanji từ Excel
 
-Workbook `vocabulary.xlsx` ở thư mục gốc repository là nguồn dữ liệu nội dung Kanji. Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+Workbook `vocabulary.xlsx` ở thư mục gốc repository là nguồn dữ liệu metadata Kanji. Generator chỉ đọc workbook, không chỉnh sửa file Excel. Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
 
 ```powershell
 # Cài dependency Python (chỉ cần thực hiện một lần)
 python -m pip install -r tools/requirements.txt
 
-# Chạy kiểm thử generator
+# Chạy kiểm thử công cụ tạo dữ liệu
 python -m unittest discover -s tools/tests -v
 
-# Sinh lại Kanji metadata JSON sau khi cập nhật workbook
+# Sinh metadata JSON sau khi cập nhật sheet Kanji
 python tools/generate_kanji.py
 ```
 
-Generator đọc sheet `Kanji`, kiểm tra header, ký tự trùng, StrokeCount và tạo
-`app/src/main/assets/characters/kanji.json`. ID được tạo từ Unicode code point,
-không phụ thuộc thứ tự dòng. Các chuỗi `None`/`null` không phân biệt hoa thường
-được chuẩn hóa thành JSON `null`. Workbook gốc không bị chỉnh sửa.
+Generator kiểm tra header, ký tự trùng, StrokeCount và sinh ID theo Unicode code point (không phụ thuộc số thứ tự dòng). Các giá trị chuỗi `None`/`null` được chuẩn hóa thành JSON `null`. Kết quả được ghi vào `app/src/main/assets/characters/kanji.json`.
 
-JSON hiện chỉ chứa metadata (reading, meaning, radical, số nét, ví dụ, JLPT,
-tags...). Nó **không chứa stroke order hoặc SVG paths**; không thể dùng
-`StrokeCount` thay cho geometry. Việc tích hợp Kanji vào UI/session sẽ được
-thực hiện sau khi có domain model và nguồn stroke geometry phù hợp.
+### Cập nhật stroke geometry Kanji
 
-## Biên dịch lại thư viện Rust JNI (khi cần)
-
-Các thư viện native đã được tích hợp để Gradle đóng gói cùng ứng dụng. Nếu thay đổi mã Rust hoặc cần tạo lại thư viện, trên Windows mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+Stroke geometry được lấy từ [KanjiVG](https://github.com/KanjiVG/kanjivg), không được suy ra từ trường `StrokeCount`. Sau khi tải và giải nén dữ liệu KanjiVG vào `tools/vendor/kanjivg/`, chạy:
 
 ```powershell
-# Chỉ cần cài một lần nếu máy chưa có cargo-ndk
+python tools/import_kanjivg_strokes.py --source-dir tools/vendor/kanjivg/kanji
+```
+
+Công cụ đối chiếu từng ký tự và số nét với workbook, giữ thứ tự nét từ SVG và sinh `app/src/main/assets/characters/kanji_strokes.json`. Nếu thiếu SVG hoặc số nét không khớp, công cụ dừng với lỗi thay vì tạo geometry không hợp lệ.
+
+Dữ liệu KanjiVG được phân phối theo CC BY-SA 3.0. Xem `THIRD_PARTY_NOTICES.md` để biết thông tin ghi công và giấy phép. Khi phân phối ứng dụng, cần giữ thông tin ghi công và tuân thủ điều kiện của giấy phép đối với phần dữ liệu phái sinh.
+
+## Biên dịch thư viện Rust JNI
+
+Các thư viện native đã được tích hợp để Gradle đóng gói cùng ứng dụng. Chỉ cần biên dịch lại khi thay đổi mã Rust hoặc cập nhật FSRS bridge. Trên Windows, mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
+
+```powershell
+# Chỉ cài một lần nếu máy chưa có cargo-ndk
 cargo install cargo-ndk
 
-# Build thư viện cho arm64-v8a và x86_64
+# Build thư viện cho các Android ABI được cấu hình
 .\native\build-android.ps1
 
-# Sau đó build ứng dụng
+# Build ứng dụng
 .\gradlew.bat :app:assembleDebug
 ```
 
-Script yêu cầu Rust/Cargo, Android NDK và Android toolchain đã được cài đặt, cấu hình. Mã Rust bridge nằm trong `native/fsrs-bridge/`; Kotlin gọi qua JNI. Rust đảm nhiệm phép tính FSRS, còn Kotlin quản lý luồng học, hàng đợi, trạng thái thẻ và lưu trữ Room.
+Rust đảm nhiệm phép tính FSRS; Kotlin quản lý chính sách học, hàng đợi, trạng thái thẻ, thời điểm đến hạn và lưu trữ Room.
 
 ## Sao lưu và khôi phục
 
-Sử dụng chức năng sao lưu/khôi phục JSON trong ứng dụng để chủ động lưu dữ liệu học tập. Nên giữ bản sao lưu ở vị trí an toàn, tách khỏi thiết bị đang sử dụng.
+Sử dụng chức năng sao lưu/khôi phục JSON trong ứng dụng để chủ động lưu dữ liệu học tập. Nên giữ bản sao lưu ở vị trí an toàn, tách khỏi thiết bị đang sử dụng. Không nên xem Android Auto Backup là bản sao lưu duy nhất vì khả năng khôi phục còn phụ thuộc thiết bị, tài khoản và cấu hình hệ thống.
 
-Android Auto Backup có thể hỗ trợ khôi phục dữ liệu trong một số tình huống, nhưng phụ thuộc vào thiết bị, tài khoản và cấu hình hệ thống; không nên xem đây là bản sao lưu duy nhất. Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiểm tra tệp JSON backup.
+Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiểm tra tệp JSON backup.
 
-## Dữ liệu và ghi công
+## Lộ trình tiếp theo
 
-Dataset Hiragana và Katakana (71 ký tự mỗi bộ, gồm 46 ký tự cơ bản + 25 Dakuten/Handakuten) được lưu lần lượt tại `app/src/main/assets/characters/hiragana.json` và `app/src/main/assets/characters/katakana.json`. Script tạo dữ liệu tương ứng nằm trong `tools/generate_hiragana.py` và `tools/generate_katakana.py`.
-
-Dữ liệu thứ tự nét có nguồn gốc từ dự án [KanjiVG](https://github.com/KanjiVG/kanjivg). Thông tin ghi công và giấy phép của dữ liệu bên thứ ba cần được rà soát, hoàn thiện cùng đợt bổ sung Katakana và Kanji trước khi phát hành chính thức. Giấy phép của dữ liệu bên thứ ba không mặc nhiên áp dụng cho toàn bộ mã nguồn ứng dụng.
-
-## Lộ trình
-
-1. Hoàn thiện README và bổ sung tab **Hướng dẫn học** trong ứng dụng.
-2. Hoàn thiện Hiragana/Katakana mở rộng và thiết kế âm ghép (yōon).
-3. Bổ sung Kanji dựa trên dữ liệu trong workbook `vocabulary.xlsx`; cấu trúc workbook sẽ được kiểm tra trước khi ánh xạ dữ liệu.
-4. Xây dựng chức năng nhập và học từ vựng từ cùng workbook.
-5. Rà soát ghi công/giấy phép, ký ứng dụng và chuẩn bị bản phát hành.
+- Hoàn thiện kiểm thử thực tế cho Kanji Learning, Guided Writing, History và Statistics.
+- Kiểm tra an toàn luồng cập nhật nội dung: thêm Kanji mới không cần hard-code số lượng; cập nhật metadata không reset tiến độ; bỏ dòng khỏi workbook không tự xóa lịch sử học.
+- Rà soát backup/restore với dữ liệu Kanji.
+- Hoàn thiện nhận diện ứng dụng (app icon/adaptive icon), thông tin phiên bản và chuẩn bị bản phát hành.
+- Đánh giá khả năng nhập workbook trực tiếp trong ứng dụng ở giai đoạn sau; hiện tại workbook trên PC vẫn là nguồn dữ liệu và công cụ Python tạo JSON.
 
