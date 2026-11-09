@@ -304,6 +304,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.KANJI_LIBRARY -> KanjiLibraryScreen(
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = selectedCharacters,
                                         modifier = Modifier.weight(1f)
@@ -464,6 +468,7 @@ private enum class MainScreen(val label: String) {
     GUIDE("Hướng dẫn"),
     FREE("Luyện tự do"),
     LIBRARY("Thư viện"),
+    KANJI_LIBRARY("Kanji"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
     STATISTICS("Thống kê"),
