@@ -506,7 +506,7 @@ private const val MAX_BACKUP_FILE_BYTES = 20 * 1024 * 1024
 private enum class MainScreen(val label: String) {
     HOME("Trang chủ"),
     GUIDE("Hướng dẫn"),
-    FREE("Luyện tự do"),
+    FREE("Luyện Guided"),
     LIBRARY("Thư viện"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
