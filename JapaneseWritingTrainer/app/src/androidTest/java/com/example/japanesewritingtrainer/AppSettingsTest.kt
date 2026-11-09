@@ -70,6 +70,9 @@ class AppSettingsTest {
         settings.setSelectedCharacterType("katakana")
         assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
 
+        settings.setSelectedCharacterType("kanji")
+        assertEquals("kanji", AppSettings(context).getSelectedCharacterType())
+
         settings.setSelectedCharacterType("all")
         assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
 
@@ -83,13 +86,16 @@ class AppSettingsTest {
 
         assertEquals(10, settings.getNewCardsPerDay("hiragana"))
         assertEquals(10, settings.getNewCardsPerDay("katakana"))
+        assertEquals(10, settings.getNewCardsPerDay("kanji"))
 
         settings.setNewCardsPerDay("hiragana", 5)
         settings.setNewCardsPerDay("katakana", 23)
+        settings.setNewCardsPerDay("kanji", 12)
 
         val restored = AppSettings(context)
         assertEquals(5, restored.getNewCardsPerDay("hiragana"))
         assertEquals(23, restored.getNewCardsPerDay("katakana"))
+        assertEquals(12, restored.getNewCardsPerDay("kanji"))
     }
 
     @Test
@@ -99,10 +105,13 @@ class AppSettingsTest {
 
         assertEquals(17, settings.getNewCardsPerDay("hiragana"))
         assertEquals(17, settings.getNewCardsPerDay("katakana"))
+        assertEquals(17, settings.getNewCardsPerDay("kanji"))
 
         settings.setNewCardsPerDay("katakana", 8)
+        settings.setNewCardsPerDay("kanji", 6)
         assertEquals(17, settings.getNewCardsPerDay("hiragana"))
         assertEquals(8, settings.getNewCardsPerDay("katakana"))
+        assertEquals(6, settings.getNewCardsPerDay("kanji"))
     }
 
     @Test
