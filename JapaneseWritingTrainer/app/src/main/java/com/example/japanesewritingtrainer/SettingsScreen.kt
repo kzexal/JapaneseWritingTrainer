@@ -32,6 +32,8 @@ fun SettingsScreen(
     onHiraganaNewCardsPerDayChange: (Int) -> Unit,
     katakanaNewCardsPerDay: Int,
     onKatakanaNewCardsPerDayChange: (Int) -> Unit,
+    kanjiNewCardsPerDay: Int,
+    onKanjiNewCardsPerDayChange: (Int) -> Unit,
     showGrid: Boolean,
     onShowGridChange: (Boolean) -> Unit,
     showHints: Boolean,
@@ -133,6 +135,15 @@ fun SettingsScreen(
                     Slider(
                         value = katakanaNewCardsPerDay.toFloat(),
                         onValueChange = { onKatakanaNewCardsPerDayChange(it.toInt()) },
+                        valueRange = 0f..50f,
+                        steps = 49
+                    )
+                }
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    Text("Kanji · chữ mới mỗi ngày: $kanjiNewCardsPerDay")
+                    Slider(
+                        value = kanjiNewCardsPerDay.toFloat(),
+                        onValueChange = { onKanjiNewCardsPerDayChange(it.toInt()) },
                         valueRange = 0f..50f,
                         steps = 49
                     )
