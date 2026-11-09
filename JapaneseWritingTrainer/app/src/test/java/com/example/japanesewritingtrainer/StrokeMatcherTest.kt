@@ -202,6 +202,68 @@ class StrokeMatcherTest {
         assertTrue(result.score <= 59f)
     }
 
+
+    @Test
+    fun acceptsSlightlyLongerStrokeWhenReferenceIsShort() {
+        val shortReference = ParsedStroke(
+            order = 5,
+            points = listOf(
+                StrokePoint(20f, 20f),
+                StrokePoint(25f, 20f),
+                StrokePoint(30f, 20f)
+            ),
+            startPoint = StrokePoint(20f, 20f),
+            endPoint = StrokePoint(30f, 20f),
+            length = 10f,
+            bounds = Rect(20f, 20f, 30f, 20f)
+        )
+        val slightlyLonger = listOf(
+            StrokePoint(20f, 20f),
+            StrokePoint(27.5f, 20f),
+            StrokePoint(35f, 20f)
+        )
+
+        val result = StrokeMatcher.match(
+            shortReference,
+            userStroke(slightlyLonger, length = 15f),
+            viewBoxSize = 109f
+        )
+
+        assertTrue("Nét ngắn có sai số độ dài nhỏ nên được chấp nhận", result.lengthWithinTolerance)
+        assertTrue(result.accepted)
+    }
+
+    @Test
+    fun stillRejectsHalfLengthStrokeWhenReferenceIsShort() {
+        val shortReference = ParsedStroke(
+            order = 5,
+            points = listOf(
+                StrokePoint(20f, 20f),
+                StrokePoint(25f, 20f),
+                StrokePoint(30f, 20f)
+            ),
+            startPoint = StrokePoint(20f, 20f),
+            endPoint = StrokePoint(30f, 20f),
+            length = 10f,
+            bounds = Rect(20f, 20f, 30f, 20f)
+        )
+        val halfLength = listOf(
+            StrokePoint(20f, 20f),
+            StrokePoint(22.5f, 20f),
+            StrokePoint(25f, 20f)
+        )
+
+        val result = StrokeMatcher.match(
+            shortReference,
+            userStroke(halfLength, length = 5f),
+            viewBoxSize = 109f
+        )
+
+        assertFalse(result.lengthWithinTolerance)
+        assertFalse(result.accepted)
+        assertTrue(result.score <= 59f)
+    }
+
     @Test
     fun resamplesPolylineToRequestedNumberOfPoints() {
         val sampled = StrokeMatcher.resample(reference.points, 16)
