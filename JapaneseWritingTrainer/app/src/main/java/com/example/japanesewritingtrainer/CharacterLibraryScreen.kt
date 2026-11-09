@@ -214,14 +214,14 @@ private fun CharacterDetailContent(
             )
         }
         Text(
-            "Chọn Trace, Guided hoặc Recall để luyện viết. Nút xem thứ tự nét sẽ phát lại animation mẫu.",
+            "Luyện viết theo chế độ Guided: ứng dụng hướng dẫn thứ tự, chiều viết và kiểm tra từng nét.",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
         WritingCanvas(
             modifier = Modifier.weight(1f),
             character = character,
-            initialMode = WritingMode.TRACE,
+            initialMode = WritingMode.GUIDED,
             showGrid = showGrid,
             showHints = showHints,
             onPracticeFinished = { mode, durationMs, finishedAt ->
