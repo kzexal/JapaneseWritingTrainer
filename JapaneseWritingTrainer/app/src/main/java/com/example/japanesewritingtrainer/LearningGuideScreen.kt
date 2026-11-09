@@ -35,19 +35,19 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
         GuideSection(
             title = "1. Bắt đầu học",
             items = listOf(
-                "Chọn một bộ ở thanh trên cùng: Hiragana, Katakana hoặc Kanji. Với Hiragana/Katakana, mở Thư viện để tìm kiếm và xem từng chữ; tab Kanji hiện dùng để tra cứu metadata.",
+                "Chọn một bộ ở thanh trên cùng: Hiragana, Katakana hoặc Kanji. Mở Thư viện (Hiragana/Katakana) hoặc tab Kanji để tìm chữ và vào chi tiết Guided.",
                 "Chọn một ký tự để xem cách đọc, số nét và thứ tự viết.",
                 "Nên học từng nhóm nhỏ, viết chậm và chú ý hướng đi của từng nét trước khi tăng tốc."
             )
         )
 
         GuideSection(
-            title = "2. Các chế độ luyện viết",
+            title = "2. Guided Writing",
             items = listOf(
-                "Trace – quan sát và tô theo nét mẫu để làm quen hình dạng và thứ tự nét.",
-                "Guided Writing – viết từng nét theo thứ tự; ứng dụng kiểm tra nét hiện tại trước khi chuyển sang nét tiếp theo.",
-                "Recall Writing – tự nhớ và viết lại ký tự mà không dựa vào nét mẫu.",
-                "Free Practice – luyện viết tự do trên vùng vẽ; phù hợp để ôn lại sau khi đã quen ký tự."
+                "Ứng dụng hiển thị nét cần viết tiếp theo, số thứ tự và chiều viết tham khảo.",
+                "Viết lần lượt từng nét; ứng dụng kiểm tra nét hiện tại trước khi cho chuyển sang nét tiếp theo.",
+                "Có thể dùng Undo để bỏ nét vừa viết, Xóa hết để bắt đầu lại, hoặc xem mẫu và animation thứ tự nét.",
+                "Trong phiên FSRS, Recall vẫn là bước kiểm tra khả năng tự nhớ trước khi đánh giá Again/Hard/Good/Easy."
             )
         )
 
@@ -84,7 +84,7 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
             title = "6. Nội dung hiện có và lộ trình",
             items = listOf(
                 "Hiragana và Katakana có thể học độc lập qua các chế độ luyện viết và ôn tập.",
-                "Tab Kanji hiện cung cấp thư viện tra cứu metadata; luyện viết Kanji sẽ chỉ được bật sau khi có dữ liệu thứ tự và hình học nét hợp lệ. Các nội dung mở rộng khác sẽ được bổ sung theo roadmap."
+                "Kanji có thư viện metadata và Guided Writing dựa trên dữ liệu thứ tự/hình học nét KanjiVG; mỗi chữ có thể được mở và luyện Guided trực tiếp. Hệ thống card/FSRS cho Kanji sẽ được tích hợp ở giai đoạn tiếp theo."
             )
         )
     }
