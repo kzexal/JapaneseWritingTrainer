@@ -75,8 +75,7 @@ private val WaitingGuideColor = Color(0xFFE8E8E8)
 fun WritingCanvas(
     modifier: Modifier = Modifier,
     character: CharacterData? = null,
-    initialMode: WritingMode = WritingMode.TRACE,
-    showModeSelector: Boolean = true,
+    initialMode: WritingMode = WritingMode.GUIDED,
     allowEditingAfterCompletion: Boolean = true,
     showGrid: Boolean = true,
     showHints: Boolean = true,
@@ -175,81 +174,6 @@ fun WritingCanvas(
                 text = "${character.character}  (${character.reading}) · ${character.strokeCount} nét",
                 style = TextStyle(fontSize = 24.sp)
             )
-        }
-
-        if (showModeSelector) {
-            FlowRow(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-            OutlinedButton(
-                onClick = {
-                    mode = WritingMode.TRACE
-                    strokes.clear()
-                    analyzedStrokes.clear()
-                    strokeMatches.clear()
-                    latestAnalysisFailed = false
-                    consecutiveFailedAttempts = 0
-                    currentPath.reset()
-                    guidedProgress = guidedProgress.reset()
-                    showTemplate = true
-                    redrawTick++
-                },
-                enabled = mode != WritingMode.TRACE
-            ) {
-                Text("Trace")
-            }
-            OutlinedButton(
-                onClick = {
-                    mode = WritingMode.GUIDED
-                    strokes.clear()
-                    analyzedStrokes.clear()
-                    strokeMatches.clear()
-                    latestAnalysisFailed = false
-                    consecutiveFailedAttempts = 0
-                    currentPath.reset()
-                    guidedProgress = guidedProgress.reset()
-                    showTemplate = true
-                    redrawTick++
-                },
-                enabled = mode != WritingMode.GUIDED && totalStrokes > 0
-            ) {
-                Text("Guided")
-            }
-            OutlinedButton(
-                onClick = {
-                    mode = WritingMode.RECALL
-                    strokes.clear()
-                    analyzedStrokes.clear()
-                    strokeMatches.clear()
-                    latestAnalysisFailed = false
-                    currentPath.reset()
-                    guidedProgress = guidedProgress.reset()
-                    showTemplate = false
-                    redrawTick++
-                },
-                enabled = mode != WritingMode.RECALL && totalStrokes > 0
-            ) {
-                Text("Recall")
-            }
-            OutlinedButton(
-                onClick = {
-                    mode = WritingMode.FREE
-                    strokes.clear()
-                    analyzedStrokes.clear()
-                    strokeMatches.clear()
-                    latestAnalysisFailed = false
-                    consecutiveFailedAttempts = 0
-                    currentPath.reset()
-                    guidedProgress = guidedProgress.reset()
-                    showTemplate = false
-                    redrawTick++
-                },
-                enabled = mode != WritingMode.FREE
-            ) {
-                Text("Tự do")
-            }
-            }
         }
 
         // Dành sẵn một vùng feedback cố định bên ngoài Canvas.
