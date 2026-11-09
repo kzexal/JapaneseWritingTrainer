@@ -59,6 +59,9 @@ class MainActivity : ComponentActivity() {
             var katakanaNewCardsPerDay by remember {
                 mutableIntStateOf(appSettings.getNewCardsPerDay("katakana"))
             }
+            var kanjiNewCardsPerDay by remember {
+                mutableIntStateOf(appSettings.getNewCardsPerDay("kanji"))
+            }
             var showGrid by remember { mutableStateOf(appSettings.getShowGrid()) }
             var showHints by remember { mutableStateOf(appSettings.getShowHints()) }
             val systemDarkTheme = isSystemInDarkTheme()
@@ -80,10 +83,10 @@ class MainActivity : ComponentActivity() {
                     val selectedCharacters = remember(characters, selectedDeckType) {
                         characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
                     }
-                    val selectedNewCardsPerDay = if (selectedDeckType == "katakana") {
-                        katakanaNewCardsPerDay
-                    } else {
-                        hiraganaNewCardsPerDay
+                    val selectedNewCardsPerDay = when (selectedDeckType) {
+                        "katakana" -> katakanaNewCardsPerDay
+                        "kanji" -> kanjiNewCardsPerDay
+                        else -> hiraganaNewCardsPerDay
                     }
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
@@ -366,6 +369,11 @@ class MainActivity : ComponentActivity() {
                                         onKatakanaNewCardsPerDayChange = { value ->
                                             katakanaNewCardsPerDay = value.coerceIn(0, 50)
                                             appSettings.setNewCardsPerDay("katakana", katakanaNewCardsPerDay)
+                                        },
+                                        kanjiNewCardsPerDay = kanjiNewCardsPerDay,
+                                        onKanjiNewCardsPerDayChange = { value ->
+                                            kanjiNewCardsPerDay = value.coerceIn(0, 50)
+                                            appSettings.setNewCardsPerDay("kanji", kanjiNewCardsPerDay)
                                         },
                                         showGrid = showGrid,
                                         onShowGridChange = { enabled ->
