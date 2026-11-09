@@ -330,12 +330,12 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 **Mục tiêu:** đưa sheet Vocabulary trong cùng workbook vào ứng dụng offline, tạo Vocabulary Deck/Card từ dữ liệu thực tế của file.
 
-- [ ] Audit sheet Vocabulary, header và các trường Japanese, Reading, Vietnamese, Example, Notes/Tags (chỉ dùng các trường thực sự có trong file).
+- [x] Audit sheet Vocabulary và toàn bộ 11 header. Xác nhận 198 dòng; Japanese/Reading/Vietnamese/Example/ExampleMeaning/Nhóm bộ thủ chính/Radicals/Mnemonics/JLPT/Notes/Tags. Japanese có 198 giá trị duy nhất; Reading có một giá trị trùng (`はる`, 春 và 貼る); Example và ExampleMeaning có các giá trị trùng hợp lệ giữa những từ khác nhau. JLPT, Notes và Tags hiện để trống. Có 15 nhóm, trong đó `Nhóm Không Kanji` có 17 từ.
 - [ ] Thiết kế Vocabulary model riêng với CharacterData vì một từ vựng có thể chứa nhiều ký tự và nhiều loại script.
 - [ ] Xác định chế độ luyện: viết Japanese chính tả hoặc viết Reading/kana; cho phép người học chọn rõ ràng, không tự thay thế Kanji bằng kana.
-- [ ] Tạo Vocabulary Deck/Card có ID ổn định và metadata truy xuất về dòng/nguồn workbook.
+- [x] Tạo Python generator `tools/generate_vocabulary.py` và schema JSON metadata riêng; ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook; chưa chạy xác nhận trên workbook thật.
 - [ ] Hỗ trợ nạp dữ liệu từ workbook trong repository và quy trình cập nhật/import lại có preview; không bắt buộc người dùng chọn file nếu dữ liệu đã được đóng gói sẵn, nhưng vẫn thiết kế để thay workbook có kiểm soát.
-- [ ] Validate header, ô rỗng, kiểu dữ liệu, dòng trống, trùng lặp và nội dung không hợp lệ; báo lỗi theo sheet/dòng.
+- [x] Generator kiểm tra header, Japanese trống/trùng, Reading và Vietnamese bắt buộc; chuẩn hóa chuỗi `None`/`null`/blank thành JSON null. Python unit tests đã được bổ sung nhưng đang chờ người dùng chạy. Audit tool in chi tiết các dòng có giá trị trùng.
 - [ ] Upsert theo khóa ổn định; thay đổi nội dung không reset FSRS progress; bỏ dòng khỏi Excel không tự động xóa card/progress.
 - [ ] Ghi import trong transaction; lỗi giữa chừng phải rollback.
 - [ ] Với từ có Hiragana/Katakana/Kanji, ánh xạ từng ký tự sang dataset tương ứng; nếu thiếu stroke paths thì chỉ cho phép chế độ học phù hợp, không hiển thị chức năng luyện viết không khả dụng.
