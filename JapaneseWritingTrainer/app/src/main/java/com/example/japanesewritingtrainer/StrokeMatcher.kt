@@ -78,8 +78,20 @@ object StrokeMatcher {
                 (1f - normalizedLengthError) * 35f
             ).coerceIn(0f, 100f)
 
+        // Các nét ngắn (ví dụ nét 5–8 của 電) nhạy với sai số cảm ứng:
+        // chỉ cần rê dài thêm vài đơn vị là tỷ lệ độ dài tăng mạnh.
+        // Nới dung sai tương đối cho nét ngắn, nhưng vẫn giữ ngưỡng dưới
+        // để nét chấm/đoạn quá ngắn không thể được chấp nhận.
+        val lengthTolerance = if (reference.length <= viewBoxSize * config.shortStrokeLengthRatio) {
+            config.copy(
+                minLengthRatio = config.shortStrokeMinLengthRatio,
+                maxLengthRatio = config.shortStrokeMaxLengthRatio
+            )
+        } else {
+            config
+        }
         val lengthWithinTolerance =
-            lengthRatio in config.minLengthRatio..config.maxLengthRatio
+            lengthRatio in lengthTolerance.minLengthRatio..lengthTolerance.maxLengthRatio
 
         val endpointTolerance = diagonal * config.maxEndpointErrorRatio
         val directionReversed =
@@ -170,7 +182,10 @@ object StrokeMatcher {
         val directionDetectionMargin: Float = 1f,
         val minLengthRatio: Float = 0.75f,
         val maxLengthRatio: Float = 1.35f,
-        val incorrectLengthScoreCap: Float = 59f
+        val incorrectLengthScoreCap: Float = 59f,
+        val shortStrokeLengthRatio: Float = 0.14f,
+        val shortStrokeMinLengthRatio: Float = 0.65f,
+        val shortStrokeMaxLengthRatio: Float = 1.65f
     ) {
         init {
             require(acceptanceScore in 0f..100f)
@@ -181,6 +196,10 @@ object StrokeMatcher {
             require(maxLengthRatio >= 1f && maxLengthRatio.isFinite())
             require(minLengthRatio < maxLengthRatio)
             require(incorrectLengthScoreCap in 0f..100f)
+            require(shortStrokeLengthRatio > 0f && shortStrokeLengthRatio <= 1f)
+            require(shortStrokeMinLengthRatio in 0f..1f)
+            require(shortStrokeMaxLengthRatio >= 1f && shortStrokeMaxLengthRatio.isFinite())
+            require(shortStrokeMinLengthRatio < shortStrokeMaxLengthRatio)
         }
     }
 
