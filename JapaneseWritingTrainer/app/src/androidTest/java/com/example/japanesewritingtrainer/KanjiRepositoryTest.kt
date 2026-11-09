@@ -57,6 +57,30 @@ class KanjiRepositoryTest {
         assertTrue(characters.any { it.character == "電" && it.strokes.size == 13 })
     }
 
+    @Test
+    fun kanjiCharactersProduceAnIndependentLearningDeck() {
+        val characters = KanjiStrokeRepository.load(ApplicationProvider.getApplicationContext())
+        val catalog = DeckFactory.fromCharacters(characters)
+        val deck = catalog.decks.single { it.characterType == "kanji" }
+        val cards = catalog.cardsForDeck(deck.id)
+
+        assertEquals("japanese_kanji", deck.id)
+        assertEquals(86, deck.cardCount)
+        assertEquals(86, cards.size)
+        assertTrue(cards.all { it.id.startsWith("kanji_") && it.deckId == deck.id })
+
+        val plan = LearningSessionPlanner.plan(
+            deck = deck,
+            cards = cards,
+            progressByCardId = emptyMap(),
+            nowEpochMillis = 1_000L,
+            newCardLimit = 10
+        )
+        assertEquals(10, plan.newCards.size)
+        assertEquals(76, plan.remainingNewCount)
+        assertTrue(plan.newCards.all { it.kind == SessionCardKind.NEW })
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun rejectsDuplicateKanjiIds() {
         KanjiRepository.parseDataset(
