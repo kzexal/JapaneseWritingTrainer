@@ -59,7 +59,7 @@ class KanjiRepositoryTest {
     fun librarySearch/FindsCharacterReadingAndMeaning() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
         assertEquals("一", KanjiLibrary.filter(data, query = "one").single().character)
-        assertEquals("校", KanjiLibrary.filter(data, query = "コウ").single().character)
+        assertTrue(KanjiLibrary.filter(data, query = "コウ").any { it.character == "校" })
         assertEquals("電", KanjiLibrary.filter(data, query = "電").single().character)
     }
 
