@@ -316,7 +316,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry; người dùng xác nhận 6 tests PASS. Android instrumentation tests cho KanjiRepository và KanjiLibrary search/filter đã được người dùng chạy PASS.
 - [ ] Kiểm tra workbook không có stroke geometry; đánh giá nguồn stroke data có thể dùng hợp pháp và attribution/license trước khi tích hợp. Không tự tạo path dựa trên StrokeCount.
 - [x] Xây dựng `KanjiData` và `KanjiRepository` đọc/validate metadata JSON độc lập với `CharacterData` và Room card progress; chưa tích hợp upsert vào card/session nên chưa tác động tiến độ học.
-- [x] Xây dựng Kanji metadata library screen: lưới ký tự, tìm kiếm trên metadata, lọc JLPT/bộ thủ và trang chi tiết; chưa tạo deck/card học hoặc ghi vào Room/FSRS.
+- [x] Xây dựng Kanji metadata library screen: lưới ký tự, tìm kiếm trên metadata, lọc JLPT/bộ thủ và trang chi tiết; chưa tạo card học hoặc ghi vào Room/FSRS.
+- [x] Đưa Kanji thành tab deck ngang hàng với Hiragana/Katakana; lưu lựa chọn deck cục bộ. Khi chọn Kanji, ẩn các chức năng luyện kana chưa được hỗ trợ.
+- [x] Overlay thông báo kết quả Guided/Recall lên vùng Canvas để thông báo đúng/sai không làm thay đổi chiều cao vùng viết; chờ người dùng kiểm tra UI trên thiết bị.
 - [ ] Tích hợp card Kanji vào session/FSRS theo ID ổn định; chỉ bật writing modes khi có stroke geometry hợp lệ.
 - [ ] Bảo đảm Kanji card IDs không va chạm với Hiragana/Katakana/Vocabulary; tiến độ các bộ hiện có được giữ nguyên.
 - [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation.
