@@ -63,6 +63,7 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
             name: defaultdict(list) for name in ("Reading", "Example", "ExampleMeaning")
         }
         group_counts: Counter[str] = Counter()
+        row_records: dict[int, dict[str, Any]] = {}
         non_empty_rows = 0
 
         for row_number, row in enumerate(rows, start=2):
@@ -77,6 +78,7 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
                 header: values[index] if index < len(values) else None
                 for index, header in enumerate(headers)
             }
+            row_records[row_number] = row_by_header
             for index, header in enumerate(headers):
                 value = normalize(values[index] if index < len(values) else None)
                 if value is not None:
@@ -116,6 +118,22 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
                 print("    none")
             for value, row_numbers in sorted(repeated, key=lambda item: item[1][0]):
                 print(f"    {display_value(value)} -> rows {', '.join(map(str, row_numbers))}")
+
+        print("\nFull rows containing repeated values:")
+        repeated_row_numbers = sorted({
+            row_number
+            for occurrences in duplicate_rows.values()
+            for row_numbers in occurrences.values()
+            if len(row_numbers) > 1
+            for row_number in row_numbers
+        })
+        if not repeated_row_numbers:
+            print("  none")
+        for row_number in repeated_row_numbers:
+            record = row_records[row_number]
+            print(f"  Row {row_number}:")
+            for header in headers:
+                print(f"    {header}: {display_value(record.get(header), limit=240)}")
 
         print("\nMain radical group counts:")
         if group_counts:
