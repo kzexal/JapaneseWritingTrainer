@@ -33,9 +33,9 @@ JapaneseWritingTrainer/
 ├── README.md
 ├── DEVELOPMENT_STANDARDS.md
 ├── Japanese Writing Trainer – Project Specification.md
-├── THIRD_PARTY_NOTICES.md
 ├── vocabulary.xlsx
 └── JapaneseWritingTrainer/
+    ├── THIRD_PARTY_NOTICES.md
     ├── app/
     │   └── src/main/
     │       ├── assets/characters/
@@ -117,7 +117,7 @@ python tools/import_kanjivg_strokes.py --source-dir tools/vendor/kanjivg/kanji
 
 Công cụ đối chiếu từng ký tự và số nét với workbook, giữ thứ tự nét từ SVG và sinh `app/src/main/assets/characters/kanji_strokes.json`. Nếu thiếu SVG hoặc số nét không khớp, công cụ dừng với lỗi thay vì tạo geometry không hợp lệ.
 
-Dữ liệu KanjiVG được phân phối theo CC BY-SA 3.0. Xem `THIRD_PARTY_NOTICES.md` để biết thông tin ghi công và giấy phép. Khi phân phối ứng dụng, cần giữ thông tin ghi công và tuân thủ điều kiện của giấy phép đối với phần dữ liệu phái sinh.
+Dữ liệu KanjiVG được phân phối theo CC BY-SA 3.0. Xem `JapaneseWritingTrainer/THIRD_PARTY_NOTICES.md` để biết thông tin ghi công và giấy phép. Khi phân phối ứng dụng, cần giữ thông tin ghi công và tuân thủ điều kiện của giấy phép đối với phần dữ liệu phái sinh.
 
 ## Biên dịch thư viện Rust JNI
 
