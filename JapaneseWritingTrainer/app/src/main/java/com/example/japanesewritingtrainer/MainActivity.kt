@@ -286,7 +286,22 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.HOME -> {
                                         if (selectedDeckType == "kanji") {
-                                            KanjiLibraryScreen(modifier = Modifier.weight(1f))
+                                            KanjiLibraryScreen(
+                                                modifier = Modifier.weight(1f),
+                                                onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
+                                                    practiceLogScope.launch {
+                                                        practiceLogRepository.add(
+                                                            PracticeLog(
+                                                                cardId = characterId,
+                                                                mode = mode,
+                                                                rating = null,
+                                                                durationMs = durationMs,
+                                                                timestampEpochMillis = finishedAt
+                                                            )
+                                                        )
+                                                    }
+                                                }
+                                            )
                                         } else {
                                             HomeScreen(
                                                 characters = selectedCharacters,
