@@ -257,8 +257,8 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                // Kanji hiện là một deck độc lập; các chức năng luyện tập kana
-                                // được ẩn cho đến khi Kanji có card và stroke geometry phù hợp.
+                                // Kanji là deck độc lập. Guided thủ công đã có; chức năng Learning/FSRS
+                                // sẽ được mở khi Kanji có card và policy học tương ứng.
                                 if (selectedDeckType != "kanji") {
                                     // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
                                     // cho Canvas và các nút thao tác trong màn hình luyện viết.
