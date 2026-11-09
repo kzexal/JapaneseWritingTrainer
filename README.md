@@ -90,6 +90,16 @@ Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
 
 Không cần chạy lại toàn bộ build/test chỉ để chỉnh sửa tài liệu. Khi thay đổi mã nguồn, chạy các lệnh kiểm thử phù hợp trước khi sử dụng bản build mới.
 
+## Audit sheet Vocabulary trước khi tích hợp
+
+Trước khi thiết kế Vocabulary Deck, có thể kiểm tra cấu trúc sheet bằng công cụ chỉ đọc:
+
+```powershell
+python tools/audit_vocabulary.py
+```
+
+Công cụ in header thực tế, số dòng dữ liệu, số ô có dữ liệu, số giá trị trùng theo từng cột và một số dòng mẫu. Có thể tăng số dòng mẫu bằng `--sample-rows 10`. Công cụ không sửa workbook và không sinh hoặc thay đổi dữ liệu ứng dụng.
+
 ## Cập nhật dữ liệu Kanji từ Excel
 
 Workbook `vocabulary.xlsx` ở thư mục gốc repository là nguồn dữ liệu metadata Kanji. Generator chỉ đọc workbook, không chỉnh sửa file Excel. Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
