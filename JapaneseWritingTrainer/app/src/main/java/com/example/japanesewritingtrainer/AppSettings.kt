@@ -90,7 +90,7 @@ class AppSettings(context: Context) {
         const val KEY_SHOW_HINTS = "show_hints"
         const val KEY_SELECTED_CHARACTER_TYPE = "selected_character_type"
         const val DEFAULT_CHARACTER_TYPE = "hiragana"
-        val SUPPORTED_CHARACTER_TYPES = setOf("hiragana", "katakana")
+        val SUPPORTED_CHARACTER_TYPES = setOf("hiragana", "katakana", "kanji")
         const val DEFAULT_NEW_CARDS_PER_DAY = 10
         const val MIN_NEW_CARDS_PER_DAY = 0
         const val MAX_NEW_CARDS_PER_DAY = 50
