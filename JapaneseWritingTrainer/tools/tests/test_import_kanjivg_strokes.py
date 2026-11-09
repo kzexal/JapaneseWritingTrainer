@@ -1,8 +1,17 @@
+import importlib.util
 import tempfile
 import unittest
 from pathlib import Path
 
-from import_kanjivg_strokes import build_stroke_dataset, parse_svg_strokes, source_filename
+MODULE_PATH = Path(__file__).resolve().parents[1] / "import_kanjivg_strokes.py"
+SPEC = importlib.util.spec_from_file_location("import_kanjivg_strokes", MODULE_PATH)
+kanjivg_importer = importlib.util.module_from_spec(SPEC)
+assert SPEC.loader is not None
+SPEC.loader.exec_module(kanjivg_importer)
+
+build_stroke_dataset = kanjivg_importer.build_stroke_dataset
+parse_svg_strokes = kanjivg_importer.parse_svg_strokes
+source_filename = kanjivg_importer.source_filename
 
 
 SVG_TEMPLATE = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 109 109">
