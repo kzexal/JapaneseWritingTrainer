@@ -205,33 +205,49 @@ class MainActivity : ComponentActivity() {
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
                                     TabRow(
-                                        selectedTabIndex = if (selectedDeckType == "katakana") 1 else 0,
+                                        selectedTabIndex = when (selectedDeckType) {
+                                            "katakana" -> 1
+                                            "kanji" -> 2
+                                            else -> 0
+                                        },
                                         modifier = Modifier.weight(1f)
                                     ) {
-                                    Tab(
-                                        selected = selectedDeckType == "hiragana",
-                                        onClick = {
-                                            if (selectedDeckType != "hiragana") {
-                                                selectedDeckType = "hiragana"
-                                                appSettings.setSelectedCharacterType("hiragana")
-                                                selectedIndex = 0
-                                            }
-                                            selectedScreen = MainScreen.HOME
-                                        },
-                                        text = { Text("Hiragana") }
-                                    )
-                                    Tab(
-                                        selected = selectedDeckType == "katakana",
-                                        onClick = {
-                                            if (selectedDeckType != "katakana") {
-                                                selectedDeckType = "katakana"
-                                                appSettings.setSelectedCharacterType("katakana")
-                                                selectedIndex = 0
-                                            }
-                                            selectedScreen = MainScreen.HOME
-                                        },
-                                        text = { Text("Katakana") }
-                                    )
+                                        Tab(
+                                            selected = selectedDeckType == "hiragana",
+                                            onClick = {
+                                                if (selectedDeckType != "hiragana") {
+                                                    selectedDeckType = "hiragana"
+                                                    appSettings.setSelectedCharacterType("hiragana")
+                                                    selectedIndex = 0
+                                                }
+                                                selectedScreen = MainScreen.HOME
+                                            },
+                                            text = { Text("Hiragana") }
+                                        )
+                                        Tab(
+                                            selected = selectedDeckType == "katakana",
+                                            onClick = {
+                                                if (selectedDeckType != "katakana") {
+                                                    selectedDeckType = "katakana"
+                                                    appSettings.setSelectedCharacterType("katakana")
+                                                    selectedIndex = 0
+                                                }
+                                                selectedScreen = MainScreen.HOME
+                                            },
+                                            text = { Text("Katakana") }
+                                        )
+                                        Tab(
+                                            selected = selectedDeckType == "kanji",
+                                            onClick = {
+                                                if (selectedDeckType != "kanji") {
+                                                    selectedDeckType = "kanji"
+                                                    appSettings.setSelectedCharacterType("kanji")
+                                                    selectedIndex = 0
+                                                }
+                                                selectedScreen = MainScreen.HOME
+                                            },
+                                            text = { Text("Kanji") }
+                                        )
                                     }
                                     IconButton(onClick = { selectedScreen = MainScreen.SETTINGS }) {
                                         Icon(
@@ -241,21 +257,25 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
-                                // cho Canvas và các nút thao tác trong màn hình luyện viết.
-                                ScrollableTabRow(
-                                    selectedTabIndex = MainScreen.entries
-                                        .filter { it != MainScreen.SETTINGS }
-                                        .indexOf(selectedScreen).coerceAtLeast(0),
-                                    modifier = Modifier.fillMaxWidth(),
-                                    edgePadding = 8.dp
-                                ) {
-                                    MainScreen.entries.filter { it != MainScreen.SETTINGS }.forEach { screen ->
-                                        Tab(
-                                            selected = selectedScreen == screen,
-                                            onClick = { selectedScreen = screen },
-                                            text = { Text(screen.label, maxLines = 1, softWrap = false) }
-                                        )
+                                // Kanji hiện là một deck độc lập; các chức năng luyện tập kana
+                                // được ẩn cho đến khi Kanji có card và stroke geometry phù hợp.
+                                if (selectedDeckType != "kanji") {
+                                    // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
+                                    // cho Canvas và các nút thao tác trong màn hình luyện viết.
+                                    ScrollableTabRow(
+                                        selectedTabIndex = MainScreen.entries
+                                            .filter { it != MainScreen.SETTINGS }
+                                            .indexOf(selectedScreen).coerceAtLeast(0),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        edgePadding = 8.dp
+                                    ) {
+                                        MainScreen.entries.filter { it != MainScreen.SETTINGS }.forEach { screen ->
+                                            Tab(
+                                                selected = selectedScreen == screen,
+                                                onClick = { selectedScreen = screen },
+                                                text = { Text(screen.label, maxLines = 1, softWrap = false) }
+                                            )
+                                        }
                                     }
                                 }
 
@@ -264,15 +284,21 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
-                                    MainScreen.HOME -> HomeScreen(
-                                        characters = selectedCharacters,
-                                        deckName = characterTypeLabel(selectedDeckType),
-                                        newCardsPerDay = selectedNewCardsPerDay,
-                                        onStartLearning = { selectedScreen = MainScreen.LEARNING },
-                                        onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
-                                        onOpenFreePractice = { selectedScreen = MainScreen.FREE },
-                                        modifier = Modifier.weight(1f)
-                                    )
+                                    MainScreen.HOME -> {
+                                        if (selectedDeckType == "kanji") {
+                                            KanjiLibraryScreen(modifier = Modifier.weight(1f))
+                                        } else {
+                                            HomeScreen(
+                                                characters = selectedCharacters,
+                                                deckName = characterTypeLabel(selectedDeckType),
+                                                newCardsPerDay = selectedNewCardsPerDay,
+                                                onStartLearning = { selectedScreen = MainScreen.LEARNING },
+                                                onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
+                                                onOpenFreePractice = { selectedScreen = MainScreen.FREE },
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        }
+                                    }
 
                                     MainScreen.LEARNING -> LearningSessionScreen(
                                         characters = selectedCharacters,
@@ -301,10 +327,6 @@ class MainActivity : ComponentActivity() {
                                                 )
                                             }
                                         },
-                                        modifier = Modifier.weight(1f)
-                                    )
-
-                                    MainScreen.KANJI_LIBRARY -> KanjiLibraryScreen(
                                         modifier = Modifier.weight(1f)
                                     )
 
@@ -468,7 +490,6 @@ private enum class MainScreen(val label: String) {
     GUIDE("Hướng dẫn"),
     FREE("Luyện tự do"),
     LIBRARY("Thư viện"),
-    KANJI_LIBRARY("Kanji"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
     STATISTICS("Thống kê"),
