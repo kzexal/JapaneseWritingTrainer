@@ -55,3 +55,21 @@ class KanjiRepositoryTest {
         )
     }
 }
+
+
+    @Test
+    fun librarySearchFindsCharacterReadingAndMeaning() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+        assertEquals("一", KanjiLibrary.filter(data, query = "one").single().character)
+        assertEquals("校", KanjiLibrary.filter(data, query = "コウ").single().character)
+        assertEquals("電", KanjiLibrary.filter(data, query = "電").single().character)
+    }
+
+    @Test
+    fun libraryFiltersByJlptAndRadical() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+        assertEquals(86, KanjiLibrary.filter(data, jlpt = "N5").size)
+        assertTrue(KanjiLibrary.filter(data, radical = "一 (1)").any { it.character == "一" })
+        assertTrue(KanjiLibrary.availableJlptLevels(data).contains("N5"))
+        assertTrue(KanjiLibrary.availableRadicals(data).isNotEmpty())
+    }
