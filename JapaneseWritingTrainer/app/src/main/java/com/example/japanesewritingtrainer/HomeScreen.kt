@@ -154,7 +154,7 @@ fun HomeScreen(
                 onClick = onOpenFreePractice,
                 modifier = Modifier.weight(1f)
             ) {
-                Text("Luyện tự do")
+                Text("Luyện Guided")
             }
         }
     }
