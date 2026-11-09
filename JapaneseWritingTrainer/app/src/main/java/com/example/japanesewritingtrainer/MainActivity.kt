@@ -156,18 +156,17 @@ class MainActivity : ComponentActivity() {
                                     context,
                                     "characters/katakana.json"
                                 )
-                                require(
-                                    (hiragana + katakana).map { it.id }.distinct().size ==
-                                        hiragana.size + katakana.size
-                                ) {
+                                val kanji = KanjiStrokeRepository.load(context)
+                                val allCharacters = hiragana + katakana + kanji
+                                require(allCharacters.map { it.id }.distinct().size == allCharacters.size) {
                                     "Character IDs must be unique across datasets."
                                 }
-                                hiragana + katakana
+                                allCharacters
                             }
                             loadError = null
                         } catch (exception: Exception) {
                             loadError = exception.localizedMessage
-                                ?: "Không thể tải dữ liệu Hiragana và Katakana."
+                                ?: "Không thể tải dữ liệu Hiragana, Katakana và Kanji."
                         }
                     }
 
@@ -188,7 +187,7 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 CircularProgressIndicator()
                                 Text(
-                                    "Đang tải dữ liệu Hiragana và Katakana...",
+                                    "Đang tải dữ liệu Hiragana, Katakana và Kanji...",
                                     modifier = Modifier.padding(top = 12.dp)
                                 )
                             }
@@ -257,9 +256,8 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                // Kanji là deck độc lập. Guided thủ công đã có; chức năng Learning/FSRS
-                                // sẽ được mở khi Kanji có card và policy học tương ứng.
-                                if (selectedDeckType != "kanji") {
+                                // Các deck dùng chung hệ thống Learning, History và Statistics.
+                                
                                     // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
                                     // cho Canvas và các nút thao tác trong màn hình luyện viết.
                                     ScrollableTabRow(
@@ -285,25 +283,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.HOME -> {
-                                        if (selectedDeckType == "kanji") {
-                                            KanjiLibraryScreen(
-                                                modifier = Modifier.weight(1f),
-                                                onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
-                                                    practiceLogScope.launch {
-                                                        practiceLogRepository.add(
-                                                            PracticeLog(
-                                                                cardId = characterId,
-                                                                mode = mode,
-                                                                rating = null,
-                                                                durationMs = durationMs,
-                                                                timestampEpochMillis = finishedAt
-                                                            )
-                                                        )
-                                                    }
-                                                }
-                                            )
-                                        } else {
-                                            HomeScreen(
+                                        HomeScreen(
                                                 characters = selectedCharacters,
                                                 deckName = characterTypeLabel(selectedDeckType),
                                                 newCardsPerDay = selectedNewCardsPerDay,
@@ -324,7 +304,24 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
-                                    MainScreen.LIBRARY -> CharacterLibraryScreen(
+                                    MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
+                                        KanjiLibraryScreen(
+                                            modifier = Modifier.weight(1f),
+                                            onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
+                                                practiceLogScope.launch {
+                                                    practiceLogRepository.add(
+                                                        PracticeLog(
+                                                            cardId = characterId,
+                                                            mode = mode,
+                                                            rating = null,
+                                                            durationMs = durationMs,
+                                                            timestampEpochMillis = finishedAt
+                                                        )
+                                                    )
+                                                }
+                                            }
+                                        )
+                                    } else CharacterLibraryScreen(
                                         characters = selectedCharacters,
                                         deckName = characterTypeLabel(selectedDeckType),
                                         showGrid = showGrid,
