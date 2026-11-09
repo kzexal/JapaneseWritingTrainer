@@ -219,7 +219,6 @@ fun LearningSessionScreen(
                             modifier = Modifier.weight(1f),
                             character = character,
                             initialMode = WritingMode.RECALL,
-                            showModeSelector = false,
                             allowEditingAfterCompletion = false,
                             showGrid = showGrid,
                             showHints = showHints,
