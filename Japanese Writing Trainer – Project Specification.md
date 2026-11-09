@@ -339,7 +339,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Upsert theo khóa ổn định; thay đổi nội dung không reset FSRS progress; bỏ dòng khỏi Excel không tự động xóa card/progress.
 - [ ] Ghi import trong transaction; lỗi giữa chừng phải rollback.
 - [ ] Với từ có Hiragana/Katakana/Kanji, ánh xạ từng ký tự sang dataset tương ứng; nếu thiếu stroke paths thì chỉ cho phép chế độ học phù hợp, không hiển thị chức năng luyện viết không khả dụng.
-- [ ] Bổ sung tests cho import lại, update, rollback, backup/restore và bảo toàn progress/history. Đã có Android instrumentation tests cho VocabularyRepository: asset 198 records, ID ổn định, đồng âm, ví dụ trùng, null metadata, tìm kiếm và lọc nhóm; chờ người dùng chạy.
+- [x] Tạo `VocabularyData`, `VocabularyRepository` và `VocabularyLibrary` để parse/validate JSON, tìm kiếm và lọc nhóm độc lập với Room/FSRS. Android instrumentation tests cho asset 198 records, ID ổn định, đồng âm, ví dụ trùng, null metadata, tìm kiếm và lọc nhóm đã được người dùng chạy PASS.
+- [x] Thêm màn hình Vocabulary Library chỉ đọc: lưới từ vựng, tìm kiếm đa trường, lọc 15 nhóm và trang chi tiết hiển thị cách đọc, nghĩa, ví dụ, radicals và mnemonics. Màn hình chưa tạo card, chưa thay đổi progress/history và chưa tích hợp FSRS.
 - [ ] Kiểm tra thực tế một nhóm từ vựng có kana và Kanji trên thiết bị Android.
 
 **Definition of done:** dữ liệu Vocabulary từ workbook xuất hiện thành deck có thể học/ôn tập; import lại không nhân đôi card hoặc reset tiến độ; người học phân biệt được luyện Japanese và Reading.
