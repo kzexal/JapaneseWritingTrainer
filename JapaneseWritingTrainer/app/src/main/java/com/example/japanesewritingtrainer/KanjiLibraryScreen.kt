@@ -248,6 +248,7 @@ private fun KanjiDetail(
     }
 }
 
+@Composable
 private fun KanjiDetailRow(label: String, value: String?) {
     if (!value.isNullOrBlank()) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
