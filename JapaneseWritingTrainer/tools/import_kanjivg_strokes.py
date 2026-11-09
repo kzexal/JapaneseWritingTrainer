@@ -18,8 +18,6 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any
 
-from generate_kanji import parse_workbook
-
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE_DIR = PROJECT_ROOT / "tools/vendor/kanjivg/kanji"
 DEFAULT_OUTPUT = PROJECT_ROOT / "app/src/main/assets/characters/kanji_strokes.json"
@@ -160,6 +158,10 @@ def main() -> None:
         help="Output JSON path (default: app/src/main/assets/characters/kanji_strokes.json)",
     )
     args = parser.parse_args()
+
+    # Import lazily so the pure SVG parser can be unit-tested without loading
+    # the workbook generator as a top-level module dependency.
+    from generate_kanji import parse_workbook
 
     metadata = parse_workbook()
     dataset = build_stroke_dataset(metadata, args.source_dir)
