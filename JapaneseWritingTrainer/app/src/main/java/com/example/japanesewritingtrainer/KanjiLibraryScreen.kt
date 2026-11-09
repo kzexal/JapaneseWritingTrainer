@@ -35,11 +35,12 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-/** Metadata-only Kanji browser. Writing practice is intentionally unavailable until stroke paths exist. */
+/** Kanji browser backed by workbook metadata and validated KanjiVG stroke geometry. */
 @Composable
 fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
     val context = LocalContext.current.applicationContext
     var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
+    var writingCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList())}
     var isLoading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var query by remember { mutableStateOf("") }
@@ -49,7 +50,11 @@ fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
 
     LaunchedEffect(context) {
         try {
-            records = withContext(Dispatchers.IO) { KanjiRepository.load(context) }
+            val loaded = withContext(Dispatchers.IO) {
+                KanjiRepository.load(context) to KanjiStrokeRepository.load(context)
+            }
+            records = loaded.first
+            writingCharacters = loaded.second
             loadError = null
         } catch (exception: Exception) {
             loadError = exception.localizedMessage ?: "Không thể tải dữ liệu Kanji."
@@ -77,6 +82,7 @@ fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
 
         selectedKanji != null -> KanjiDetail(
             kanji = selectedKanji,
+            character = writingCharacters.firstOrNull { it.id == selectedKanji.id },
             onBack = { selectedKanjiId = null },
             modifier = modifier
         )
@@ -195,38 +201,45 @@ fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
 @Composable
 private fun KanjiDetail(
     kanji: KanjiData,
+    character: CharacterData?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 20.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
+        verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        OutlinedButton(onClick = onBack) { Text("Quay lại thư viện") }
-        Text(kanji.character, fontSize = 76.sp, style = MaterialTheme.typography.displayLarge)
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            OutlinedButton(onClick = onBack) { Text("Quay lại") }
+            Text(
+                "${kanji.character} · ${kanji.meaning ?: "Chưa có nghĩa"}",
+                modifier = Modifier.padding(start = 10.dp),
+                style = MaterialTheme.typography.titleLarge,
+                maxLines = 1
+            )
+        }
         Text(
-            kanji.meaning ?: "Chưa có nghĩa",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        KanjiDetailRow("Số nét", kanji.strokeCount.toString())
-        KanjiDetailRow("Onyomi", kanji.onyomi)
-        KanjiDetailRow("Kunyomi", kanji.kunyomi)
-        KanjiDetailRow("Bộ thủ", kanji.radical)
-        KanjiDetailRow("JLPT", kanji.jlpt)
-        KanjiDetailRow("Từ ví dụ", kanji.exampleWords)
-        KanjiDetailRow("Ghi chú", kanji.notes)
-        KanjiDetailRow("Tags", kanji.tags)
-        Text(
-            "Dữ liệu hiện tại chỉ gồm thông tin Kanji, chưa có dữ liệu thứ tự và hình học nét viết nên chưa hỗ trợ luyện viết.",
+            "${kanji.strokeCount} nét · ${kanji.jlpt ?: "Chưa phân loại"}",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
+        Text(
+            "On: ${kanji.onyomi ?: "—"}   Kun: ${kanji.kunyomi ?: "—"}",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+        if (character == null) {
+            Text("Không có dữ liệu nét viết cho Kanji này.", color = MaterialTheme.colorScheme.error)
+        } else {
+            WritingCanvas(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                character = character,
+                initialMode = WritingMode.GUIDED
+            )
+        }
     }
 }
 
-@Composable
 private fun KanjiDetailRow(label: String, value: String?) {
     if (!value.isNullOrBlank()) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
