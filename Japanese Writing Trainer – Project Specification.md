@@ -310,12 +310,12 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 **Các công việc triển khai:**
 
-- [ ] Hoàn thiện inventory/validation cho toàn bộ workbook; kiểm tra duplicate, ô thiếu, kiểu dữ liệu, dòng trống và phân bố JLPT/radical; không hard-code số lượng bản ghi.
+- [x] Hoàn thiện inventory workbook hiện tại và Python generator validation (duplicate, ô thiếu/kiểu dữ liệu, StrokeCount); không hard-code số lượng bản ghi.
 - [x] Thiết kế schema JSON metadata riêng, có schemaVersion và source; không ép dữ liệu metadata vào `CharacterData` vốn yêu cầu stroke paths hợp lệ.
 - [x] Tạo `tools/generate_kanji.py` đọc sheet `Kanji`, chuẩn hóa chuỗi `None`/`null`, sinh ID theo Unicode code point và JSON metadata; workbook gốc không bị sửa. Chờ người dùng chạy generator và xác nhận đầu ra thực tế.
-- [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry. Chờ người dùng chạy test; cần mở rộng thêm test update/thêm bản ghi khi hoàn thiện upsert.
+- [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry; người dùng xác nhận 6 tests PASS. Thêm Android instrumentation tests cho KanjiRepository (chờ chạy trên máy người dùng).
 - [ ] Kiểm tra workbook không có stroke geometry; đánh giá nguồn stroke data có thể dùng hợp pháp và attribution/license trước khi tích hợp. Không tự tạo path dựa trên StrokeCount.
-- [ ] Xây dựng repository đọc Kanji metadata và cơ chế upsert nội dung tách khỏi Room card progress; việc nạp dataset mới không được reset tiến độ.
+- [x] Xây dựng `KanjiData` và `KanjiRepository` đọc/validate metadata JSON độc lập với `CharacterData` và Room card progress; chưa tích hợp upsert vào card/session nên chưa tác động tiến độ học.
 - [ ] Xây dựng deck/library và tra cứu/lọc dựa trên các trường thực tế: JLPT, radical, tags, readings và meaning.
 - [ ] Tích hợp card Kanji vào session/FSRS theo ID ổn định; chỉ bật writing modes khi có stroke geometry hợp lệ.
 - [ ] Bảo đảm Kanji card IDs không va chạm với Hiragana/Katakana/Vocabulary; tiến độ các bộ hiện có được giữ nguyên.
