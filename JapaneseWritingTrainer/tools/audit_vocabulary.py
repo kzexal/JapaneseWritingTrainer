@@ -2,15 +2,15 @@
 """Read-only inventory of the Vocabulary sheet in vocabulary.xlsx.
 
 Run from the Android project directory:
-    python tools/audit_vocabulary.py
-    python tools/audit_vocabulary.py --sample-rows 10
+    py -3.13 tools/audit_vocabulary.py
+    py -3.13 tools/audit_vocabulary.py --sample-rows 10
 
 This tool never modifies the workbook or application assets.
 """
 from __future__ import annotations
 
 import argparse
-from collections import Counter
+from collections import Counter, defaultdict
 from pathlib import Path
 from typing import Any
 
@@ -21,10 +21,17 @@ DEFAULT_WORKBOOK = PROJECT_ROOT.parent / "vocabulary.xlsx"
 DEFAULT_SHEET = "Vocabulary"
 
 
-def display_value(value: Any, limit: int = 100) -> str:
+def normalize(value: Any) -> str | None:
     if value is None:
+        return None
+    result = " ".join(str(value).split())
+    return result or None
+
+
+def display_value(value: Any, limit: int = 100) -> str:
+    text = normalize(value)
+    if text is None:
         return "<empty>"
-    text = " ".join(str(value).split())
     return text if len(text) <= limit else text[: limit - 1] + "…"
 
 
@@ -44,24 +51,45 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
         sheet = workbook[sheet_name]
         rows = sheet.iter_rows(values_only=True)
         header_values = next(rows, ())
-        headers = [display_value(value) for value in header_values]
-        if not any(value != "<empty>" for value in headers):
+        headers = [normalize(value) or "" for value in header_values]
+        if not any(headers):
             raise ValueError(f"{sheet_name!r} has no header row")
+        if len(headers) != len(set(headers)):
+            raise ValueError(f"{sheet_name!r} contains duplicate column headers")
 
-        column_values: list[list[Any]] = [[] for _ in headers]
-        non_empty_rows = 0
+        column_values: list[list[str]] = [[] for _ in headers]
         samples: list[tuple[int, tuple[Any, ...]]] = []
+        duplicate_rows: dict[str, dict[str, list[int]]] = {
+            name: defaultdict(list) for name in ("Reading", "Example", "ExampleMeaning")
+        }
+        group_counts: Counter[str] = Counter()
+        non_empty_rows = 0
+
         for row_number, row in enumerate(rows, start=2):
             values = tuple(row[: len(headers)])
-            if not any(value is not None and str(value).strip() for value in values):
+            if not any(normalize(value) is not None for value in values):
                 continue
             non_empty_rows += 1
             if len(samples) < sample_rows:
                 samples.append((row_number, values))
-            for index in range(len(headers)):
-                value = values[index] if index < len(values) else None
-                if value is not None and str(value).strip():
+
+            row_by_header = {
+                header: values[index] if index < len(values) else None
+                for index, header in enumerate(headers)
+            }
+            for index, header in enumerate(headers):
+                value = normalize(values[index] if index < len(values) else None)
+                if value is not None:
                     column_values[index].append(value)
+
+            for header, occurrences in duplicate_rows.items():
+                value = normalize(row_by_header.get(header))
+                if value is not None:
+                    occurrences[value].append(row_number)
+
+            group = normalize(row_by_header.get("Nhóm bộ thủ chính"))
+            if group is not None:
+                group_counts[group] += 1
 
         print(f"\nSheet: {sheet_name}")
         print(f"Header columns: {len(headers)}")
@@ -69,12 +97,32 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
         print("\nColumn inventory:")
         for index, header in enumerate(headers, start=1):
             values = column_values[index - 1]
-            normalized = [str(value).strip().casefold() for value in values]
-            duplicates = sum(count - 1 for count in Counter(normalized).values() if count > 1)
+            counts = Counter(value.casefold() for value in values)
+            duplicate_excess = sum(count - 1 for count in counts.values() if count > 1)
             print(
                 f"  {index:>2}. {header}: populated={len(values)}, "
-                f"distinct={len(set(normalized))}, duplicate_values={duplicates}"
+                f"distinct={len(counts)}, duplicate_values={duplicate_excess}"
             )
+
+        print("\nRepeated values (row numbers included):")
+        for header, occurrences in duplicate_rows.items():
+            repeated = [
+                (value, row_numbers)
+                for value, row_numbers in occurrences.items()
+                if len(row_numbers) > 1
+            ]
+            print(f"  {header}:")
+            if not repeated:
+                print("    none")
+            for value, row_numbers in sorted(repeated, key=lambda item: item[1][0]):
+                print(f"    {display_value(value)} -> rows {', '.join(map(str, row_numbers))}")
+
+        print("\nMain radical group counts:")
+        if group_counts:
+            for group, count in group_counts.most_common():
+                print(f"  {group}: {count}")
+        else:
+            print("  no values")
 
         print("\nSample rows:")
         for row_number, values in samples:
@@ -89,12 +137,7 @@ def audit_sheet(workbook_path: Path, sheet_name: str, sample_rows: int) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--workbook",
-        type=Path,
-        default=DEFAULT_WORKBOOK,
-        help=f"Workbook path (default: {DEFAULT_WORKBOOK})",
-    )
+    parser.add_argument("--workbook", type=Path, default=DEFAULT_WORKBOOK)
     parser.add_argument("--sheet", default=DEFAULT_SHEET)
     parser.add_argument("--sample-rows", type=int, default=5)
     args = parser.parse_args()
