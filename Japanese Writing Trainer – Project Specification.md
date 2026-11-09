@@ -331,7 +331,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 **Mục tiêu:** đưa sheet Vocabulary trong cùng workbook vào ứng dụng offline, tạo Vocabulary Deck/Card từ dữ liệu thực tế của file.
 
 - [x] Audit sheet Vocabulary và toàn bộ 11 header. Xác nhận 198 dòng; Japanese/Reading/Vietnamese/Example/ExampleMeaning/Nhóm bộ thủ chính/Radicals/Mnemonics/JLPT/Notes/Tags. Japanese có 198 giá trị duy nhất; Reading có một giá trị trùng (`はる`, 春 và 貼る); Example và ExampleMeaning có các giá trị trùng hợp lệ giữa những từ khác nhau. JLPT, Notes và Tags hiện để trống. Có 15 nhóm, trong đó `Nhóm Không Kanji` có 17 từ.
-- [ ] Thiết kế Vocabulary model riêng với CharacterData vì một từ vựng có thể chứa nhiều ký tự và nhiều loại script.
+- [x] Thiết kế `VocabularyData` riêng với `CharacterData`; model lưu Japanese, Reading, nghĩa, ví dụ, nhóm bộ thủ, radicals và mnemonics, không yêu cầu stroke geometry.
 - [ ] Xác định chế độ luyện: viết Japanese chính tả hoặc viết Reading/kana; cho phép người học chọn rõ ràng, không tự thay thế Kanji bằng kana.
 - [x] Tạo Python generator `tools/generate_vocabulary.py` và schema JSON metadata riêng; ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook; chưa chạy xác nhận trên workbook thật.
 - [ ] Hỗ trợ nạp dữ liệu từ workbook trong repository và quy trình cập nhật/import lại có preview; không bắt buộc người dùng chọn file nếu dữ liệu đã được đóng gói sẵn, nhưng vẫn thiết kế để thay workbook có kiểm soát.
@@ -339,7 +339,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Upsert theo khóa ổn định; thay đổi nội dung không reset FSRS progress; bỏ dòng khỏi Excel không tự động xóa card/progress.
 - [ ] Ghi import trong transaction; lỗi giữa chừng phải rollback.
 - [ ] Với từ có Hiragana/Katakana/Kanji, ánh xạ từng ký tự sang dataset tương ứng; nếu thiếu stroke paths thì chỉ cho phép chế độ học phù hợp, không hiển thị chức năng luyện viết không khả dụng.
-- [ ] Bổ sung tests cho parse workbook, duplicate, import lại, update, rollback, backup/restore và bảo toàn progress/history.
+- [ ] Bổ sung tests cho import lại, update, rollback, backup/restore và bảo toàn progress/history. Đã có Android instrumentation tests cho VocabularyRepository: asset 198 records, ID ổn định, đồng âm, ví dụ trùng, null metadata, tìm kiếm và lọc nhóm; chờ người dùng chạy.
 - [ ] Kiểm tra thực tế một nhóm từ vựng có kana và Kanji trên thiết bị Android.
 
 **Definition of done:** dữ liệu Vocabulary từ workbook xuất hiện thành deck có thể học/ôn tập; import lại không nhân đôi card hoặc reset tiến độ; người học phân biệt được luyện Japanese và Reading.
