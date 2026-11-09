@@ -343,6 +343,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.VOCABULARY -> VocabularyLibraryScreen(
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = selectedCharacters,
                                         modifier = Modifier.weight(1f)
@@ -508,6 +512,7 @@ private enum class MainScreen(val label: String) {
     GUIDE("Hướng dẫn"),
     FREE("Luyện Guided"),
     LIBRARY("Thư viện"),
+    VOCABULARY("Từ vựng"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
     STATISTICS("Thống kê"),
