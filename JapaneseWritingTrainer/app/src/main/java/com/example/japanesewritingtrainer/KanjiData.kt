@@ -73,3 +73,38 @@ object KanjiRepository {
         return optString(key).trim().takeIf { it.isNotEmpty() }
     }
 }
+
+
+/** Pure search/filter operations for the future Kanji Library UI. */
+object KanjiLibrary {
+
+    fun filter(
+        source: List<KanjiData>,
+        query: String = "",
+        jlpt: String? = null,
+        radical: String? = null
+    ): List<KanjiData> {
+        val normalizedQuery = query.trim().lowercase()
+        return source.filter { item ->
+            (jlpt == null || item.jlpt.equals(jlpt, ignoreCase = true)) &&
+                (radical == null || item.radical.equals(radical, ignoreCase = true)) &&
+                (normalizedQuery.isEmpty() || searchableText(item).contains(normalizedQuery))
+        }
+    }
+
+    fun availableJlptLevels(source: List<KanjiData>): List<String> =
+        source.mapNotNull { it.jlpt?.trim()?.takeIf(String::isNotEmpty) }
+            .distinct()
+            .sorted()
+
+    fun availableRadicals(source: List<KanjiData>): List<String> =
+        source.mapNotNull { it.radical?.trim()?.takeIf(String::isNotEmpty) }
+            .distinct()
+            .sorted()
+
+    private fun searchableText(item: KanjiData): String =
+        listOfNotNull(
+            item.character, item.onyomi, item.kunyomi, item.meaning,
+            item.radical, item.exampleWords, item.notes, item.jlpt, item.tags
+        ).joinToString(" ").lowercase()
+}
