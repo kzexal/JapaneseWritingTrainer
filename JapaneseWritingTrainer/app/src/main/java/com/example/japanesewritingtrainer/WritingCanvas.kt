@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -248,6 +249,65 @@ fun WritingCanvas(
             ) {
                 Text("Tự do")
             }
+            }
+        }
+
+        // Dành sẵn một vùng feedback cố định bên ngoài Canvas.
+        // Nội dung đúng/sai thay đổi không che vùng vẽ và không làm Canvas co giãn.
+        if (mode.requiresStrokeValidation && totalStrokes > 0) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(64.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(
+                        text = when {
+                            isGuidedComplete && mode == WritingMode.RECALL ->
+                                "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
+                            isGuidedComplete ->
+                                "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
+                            mode == WritingMode.RECALL ->
+                                "Tự nhớ và viết · Nét ${completedStrokes + 1} / $totalStrokes"
+                            else ->
+                                "Nét ${completedStrokes + 1} / $totalStrokes"
+                        },
+                        color = if (isGuidedComplete) Color(0xFF2E7D32) else MaterialTheme.colorScheme.onSurface
+                    )
+                    if (latestAnalysisFailed) {
+                        Text(
+                            text = "Không đủ dữ liệu để đánh giá nét này. Hãy viết lại.",
+                            color = Color(0xFFEF6C00)
+                        )
+                    } else if (latestMatch != null) {
+                        Text(
+                            text = if (latestMatch.accepted) {
+                                "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
+                            } else if (latestMatch.directionReversed) {
+                                "Sai chiều viết nét · " + latestMatch.score.toInt() + "/100"
+                            } else if (!latestMatch.directionCorrect) {
+                                "Sai vị trí bắt đầu hoặc kết thúc nét · " + latestMatch.score.toInt() + "/100"
+                            } else if (!latestMatch.lengthWithinTolerance) {
+                                val lengthMessage = if (latestMatch.lengthRatio < 1f) {
+                                    "Nét quá ngắn"
+                                } else {
+                                    "Nét quá dài"
+                                }
+                                "$lengthMessage · " + latestMatch.score.toInt() + "/100"
+                            } else {
+                                "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
+                            },
+                            color = if (latestMatch.accepted) {
+                                Color(0xFF2E7D32)
+                            } else {
+                                Color(0xFFEF6C00)
+                            }
+                        )
+                    }
+                }
             }
         }
 
@@ -517,64 +577,6 @@ fun WritingCanvas(
 
                 strokes.forEach { drawPath(it, Color.Black, style = InkStyle) }
                 drawPath(currentPath, Color.Black, style = InkStyle)
-            }
-
-            // Feedback được phủ lên Canvas thay vì chiếm thêm chiều cao trong Column.
-            // Vì vậy vùng viết giữ nguyên kích thước khi kết quả đúng/sai thay đổi.
-            if (mode.requiresStrokeValidation && totalStrokes > 0) {
-                Column(
-                    modifier = Modifier
-                        .align(Alignment.TopCenter)
-                        .fillMaxWidth()
-                        .padding(8.dp)
-                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.94f))
-                        .padding(horizontal = 8.dp, vertical = 6.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = when {
-                            isGuidedComplete && mode == WritingMode.RECALL ->
-                                "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
-                            isGuidedComplete ->
-                                "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
-                            mode == WritingMode.RECALL ->
-                                "Tự nhớ và viết · Nét ${completedStrokes + 1} / $totalStrokes"
-                            else ->
-                                "Nét ${completedStrokes + 1} / $totalStrokes"
-                        },
-                        color = if (isGuidedComplete) Color(0xFF2E7D32) else MaterialTheme.colorScheme.onSurface
-                    )
-                    if (latestAnalysisFailed) {
-                        Text(
-                            text = "Không đủ dữ liệu để đánh giá nét này. Hãy viết lại.",
-                            color = Color(0xFFEF6C00)
-                        )
-                    } else if (latestMatch != null) {
-                        Text(
-                            text = if (latestMatch.accepted) {
-                                "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
-                            } else if (latestMatch.directionReversed) {
-                                "Sai chiều viết nét · " + latestMatch.score.toInt() + "/100"
-                            } else if (!latestMatch.directionCorrect) {
-                                "Sai vị trí bắt đầu hoặc kết thúc nét · " + latestMatch.score.toInt() + "/100"
-                            } else if (!latestMatch.lengthWithinTolerance) {
-                                val lengthMessage = if (latestMatch.lengthRatio < 1f) {
-                                    "Nét quá ngắn"
-                                } else {
-                                    "Nét quá dài"
-                                }
-                                "$lengthMessage · " + latestMatch.score.toInt() + "/100"
-                            } else {
-                                "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
-                            },
-                            color = if (latestMatch.accepted) {
-                                Color(0xFF2E7D32)
-                            } else {
-                                Color(0xFFEF6C00)
-                            }
-                        )
-                    }
-                }
             }
 
             if (showHints &&
