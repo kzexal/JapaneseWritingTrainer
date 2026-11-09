@@ -64,7 +64,7 @@ class AppSettingsTest {
     }
 
     @Test
-    fun onlyHiraganaAndKatakanaDecksCanBeSelected() {
+    fun allSupportedDecksCanBeSelectedAndInvalidValuesPreserveSelection() {
         val settings = AppSettings(context)
 
         settings.setSelectedCharacterType("katakana")
@@ -74,10 +74,10 @@ class AppSettingsTest {
         assertEquals("kanji", AppSettings(context).getSelectedCharacterType())
 
         settings.setSelectedCharacterType("all")
-        assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
+        assertEquals("kanji", AppSettings(context).getSelectedCharacterType())
 
         settings.setSelectedCharacterType("unsupported")
-        assertEquals("katakana", AppSettings(context).getSelectedCharacterType())
+        assertEquals("kanji", AppSettings(context).getSelectedCharacterType())
     }
 
     @Test
