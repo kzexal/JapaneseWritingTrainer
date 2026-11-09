@@ -54,11 +54,9 @@ class KanjiRepositoryTest {
             """.trimIndent()
         )
     }
-}
-
 
     @Test
-    fun librarySearchFindsCharacterReadingAndMeaning() {
+    fun librarySearch/FindsCharacterReadingAndMeaning() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
         assertEquals("一", KanjiLibrary.filter(data, query = "one").single().character)
         assertEquals("校", KanjiLibrary.filter(data, query = "コウ").single().character)
@@ -73,3 +71,5 @@ class KanjiRepositoryTest {
         assertTrue(KanjiLibrary.availableJlptLevels(data).contains("N5"))
         assertTrue(KanjiLibrary.availableRadicals(data).isNotEmpty())
     }
+
+}
