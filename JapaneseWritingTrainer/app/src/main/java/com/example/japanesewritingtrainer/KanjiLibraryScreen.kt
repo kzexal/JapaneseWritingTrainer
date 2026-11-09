@@ -37,7 +37,10 @@ import kotlinx.coroutines.withContext
 
 /** Kanji browser backed by workbook metadata and validated KanjiVG stroke geometry. */
 @Composable
-fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
+fun KanjiLibraryScreen(
+    modifier: Modifier = Modifier,
+    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null
+) {
     val context = LocalContext.current.applicationContext
     var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
     var writingCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList())}
@@ -83,6 +86,7 @@ fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
         selectedKanji != null -> KanjiDetail(
             kanji = selectedKanji,
             character = writingCharacters.firstOrNull { it.id == selectedKanji.id },
+            onPracticeFinished = onPracticeFinished,
             onBack = { selectedKanjiId = null },
             modifier = modifier
         )
@@ -202,6 +206,7 @@ fun KanjiLibraryScreen(modifier: Modifier = Modifier) {
 private fun KanjiDetail(
     kanji: KanjiData,
     character: CharacterData?,
+    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)?,
     onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -234,7 +239,10 @@ private fun KanjiDetail(
             WritingCanvas(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 character = character,
-                initialMode = WritingMode.GUIDED
+                initialMode = WritingMode.GUIDED,
+                onPracticeFinished = { mode, durationMs, finishedAt ->
+                    onPracticeFinished?.invoke(kanji.id, mode, durationMs, finishedAt)
+                }
             )
         }
     }
