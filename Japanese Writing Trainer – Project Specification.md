@@ -1,6 +1,6 @@
 # Japanese Writing Trainer – Project Specification
 
-*Phiên bản 2.0 · Cập nhật: 08/11/2026 · Baseline: nhánh `main`*
+*Phiên bản 2.0 · Cập nhật: 09/11/2026 · Baseline: nhánh `main`*
 
 > Tài liệu này mô tả trạng thái thực tế của mã nguồn trên `main` và kế hoạch phát triển tiếp theo. Nhãn **Implemented** nghĩa là đã có triển khai trong mã nguồn; chưa đồng nghĩa mọi hành vi đã được kiểm chứng trên thiết bị thật. Không dùng trạng thái hoặc kết quả kiểm thử từ nhánh khác làm bằng chứng cho `main`.
 
@@ -313,10 +313,10 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Hoàn thiện inventory workbook hiện tại và Python generator validation (duplicate, ô thiếu/kiểu dữ liệu, StrokeCount); không hard-code số lượng bản ghi.
 - [x] Thiết kế schema JSON metadata riêng, có schemaVersion và source; không ép dữ liệu metadata vào `CharacterData` vốn yêu cầu stroke paths hợp lệ.
 - [x] Tạo `tools/generate_kanji.py` đọc sheet `Kanji`, chuẩn hóa chuỗi `None`/`null`, sinh ID theo Unicode code point và JSON metadata; workbook gốc không bị sửa. Chờ người dùng chạy generator và xác nhận đầu ra thực tế.
-- [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry; người dùng xác nhận 6 tests PASS. Thêm Android instrumentation tests cho KanjiRepository (chờ chạy trên máy người dùng).
+- [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry; người dùng xác nhận 6 tests PASS. Android instrumentation tests cho KanjiRepository và KanjiLibrary search/filter đã được người dùng chạy PASS.
 - [ ] Kiểm tra workbook không có stroke geometry; đánh giá nguồn stroke data có thể dùng hợp pháp và attribution/license trước khi tích hợp. Không tự tạo path dựa trên StrokeCount.
 - [x] Xây dựng `KanjiData` và `KanjiRepository` đọc/validate metadata JSON độc lập với `CharacterData` và Room card progress; chưa tích hợp upsert vào card/session nên chưa tác động tiến độ học.
-- [ ] Xây dựng deck/library và tra cứu/lọc dựa trên các trường thực tế: JLPT, radical, tags, readings và meaning.
+- [x] Xây dựng Kanji metadata library screen: lưới ký tự, tìm kiếm trên metadata, lọc JLPT/bộ thủ và trang chi tiết; chưa tạo deck/card học hoặc ghi vào Room/FSRS.
 - [ ] Tích hợp card Kanji vào session/FSRS theo ID ổn định; chỉ bật writing modes khi có stroke geometry hợp lệ.
 - [ ] Bảo đảm Kanji card IDs không va chạm với Hiragana/Katakana/Vocabulary; tiến độ các bộ hiện có được giữ nguyên.
 - [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation.
