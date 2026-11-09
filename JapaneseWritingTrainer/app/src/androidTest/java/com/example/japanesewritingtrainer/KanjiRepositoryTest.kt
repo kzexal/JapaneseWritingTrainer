@@ -43,6 +43,20 @@ class KanjiRepositoryTest {
         assertEquals("One", parsed.single().meaning)
     }
 
+    @Test
+    fun generatedKanjiStrokeAssetMatchesMetadataAndCanBeConvertedForGuidedWriting() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val metadata = KanjiRepository.load(context)
+        val characters = KanjiStrokeRepository.load(context)
+        assertEquals(86, characters.size)
+        assertEquals(metadata.map { it.id }.toSet(), characters.map { it.id }.toSet())
+        assertTrue(characters.all { it.type == "kanji" })
+        assertTrue(characters.all { it.strokeCount == it.strokes.size })
+        assertTrue(characters.all { it.strokes.map(StrokeData::order) == (1..it.strokeCount).toList() })
+        assertTrue(characters.any { it.character == "一" && it.strokes.size == 1 })
+        assertTrue(characters.any { it.character == "電" && it.strokes.size == 13 })
+    }
+
     @Test(expected = IllegalArgumentException::class)
     fun rejectsDuplicateKanjiIds() {
         KanjiRepository.parseDataset(
