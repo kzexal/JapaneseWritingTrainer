@@ -314,15 +314,15 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thiết kế schema JSON metadata riêng, có schemaVersion và source; không ép dữ liệu metadata vào `CharacterData` vốn yêu cầu stroke paths hợp lệ.
 - [x] Tạo `tools/generate_kanji.py` đọc sheet `Kanji`, chuẩn hóa chuỗi `None`/`null`, sinh ID theo Unicode code point và JSON metadata; workbook gốc không bị sửa. Chờ người dùng chạy generator và xác nhận đầu ra thực tế.
 - [x] Thêm Python unit tests cho normalize null, Unicode ID, duplicate Kanji, StrokeCount không hợp lệ và schema JSON không chứa geometry; người dùng xác nhận 6 tests PASS. Android instrumentation tests cho KanjiRepository và KanjiLibrary search/filter đã được người dùng chạy PASS.
-- [ ] Kiểm tra workbook không có stroke geometry; đánh giá nguồn stroke data có thể dùng hợp pháp và attribution/license trước khi tích hợp. Không tự tạo path dựa trên StrokeCount.
+- [x] Kiểm tra workbook không có stroke geometry; dùng KanjiVG stroke paths theo license CC BY-SA 3.0 và bổ sung attribution trong THIRD_PARTY_NOTICES.md. Không tự tạo path dựa trên StrokeCount.
 - [x] Xây dựng `KanjiData` và `KanjiRepository` đọc/validate metadata JSON độc lập với `CharacterData` và Room card progress; chưa tích hợp upsert vào card/session nên chưa tác động tiến độ học.
-- [x] Xây dựng Kanji metadata library screen: lưới ký tự, tìm kiếm trên metadata, lọc JLPT/bộ thủ và trang chi tiết; chưa tạo card học hoặc ghi vào Room/FSRS.
-- [x] Đưa Kanji thành tab deck ngang hàng với Hiragana/Katakana; lưu lựa chọn deck cục bộ. Khi chọn Kanji, ẩn các chức năng luyện kana chưa được hỗ trợ.
-- [x] Overlay thông báo kết quả Guided/Recall lên vùng Canvas để thông báo đúng/sai không làm thay đổi chiều cao vùng viết; chờ người dùng kiểm tra UI trên thiết bị.
-- [ ] Tích hợp card Kanji vào session/FSRS theo ID ổn định; chỉ bật writing modes khi có stroke geometry hợp lệ.
-- [ ] Bảo đảm Kanji card IDs không va chạm với Hiragana/Katakana/Vocabulary; tiến độ các bộ hiện có được giữ nguyên.
-- [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation.
-- [ ] Kiểm tra thủ công thư viện, tìm kiếm, lọc, học và ôn Kanji trên thiết bị Android thật.
+- [x] Xây dựng Kanji library screen: lưới ký tự, tìm kiếm metadata, lọc JLPT/bộ thủ, trang chi tiết và Guided Writing dùng stroke geometry KanjiVG.
+- [x] Đưa Kanji thành tab deck ngang hàng với Hiragana/Katakana; lưu lựa chọn deck cục bộ. Kanji deck dùng chung Home, Learning, FSRS, History, Statistics và Guided Library.
+- [x] Đặt feedback Guided ở vùng riêng cố định phía trên Canvas để không che nét cuối hoặc làm thay đổi vùng viết; người dùng đã kiểm tra Guided kana PASS.
+- [x] Tích hợp Kanji vào DeckFactory/LearningSessionPlanner bằng ID ổn định từ Unicode; dùng FSRS/session/Room hiện có và chỉ cung cấp Guided khi geometry hợp lệ. Build/test mới đang chờ người dùng chạy.
+- [x] Kanji IDs có prefix kanji_ và codepoint; thêm regression test deck/planner, không thay đổi card IDs hay progress của Hiragana/Katakana.
+- [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation (chưa có workbook upsert vào Room ở phase này).
+- [ ] Chạy build + instrumentation mới, sau đó kiểm tra thủ công Kanji Home, giới hạn chữ mới, Learning/FSRS, Guided Library, History/Statistics trên thiết bị Android thật.
 
 **Definition of done:** nội dung Kanji được sinh từ workbook bằng quy trình có thể lặp lại; thêm Kanji mới không cần sửa code ứng dụng hoặc hard-code số lượng; cập nhật metadata không reset tiến độ; dữ liệu bị bỏ khỏi workbook không tự động xóa lịch sử học. Kiến trúc parser/validator/upsert đủ độc lập để hỗ trợ import trực tiếp trong app ở giai đoạn sau, nhưng Phase 6 chưa triển khai chức năng đó.
 
