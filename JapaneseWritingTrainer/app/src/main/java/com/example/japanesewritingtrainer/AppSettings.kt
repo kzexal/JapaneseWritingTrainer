@@ -55,6 +55,7 @@ class AppSettings(context: Context) {
     private fun dailyLimitKey(characterType: String): String? = when (characterType) {
         "hiragana" -> KEY_HIRAGANA_NEW_CARDS_PER_DAY
         "katakana" -> KEY_KATAKANA_NEW_CARDS_PER_DAY
+        "kanji" -> KEY_KANJI_NEW_CARDS_PER_DAY
         else -> null
     }
 
@@ -86,6 +87,7 @@ class AppSettings(context: Context) {
         const val KEY_NEW_CARDS_PER_DAY = "new_cards_per_day"
         const val KEY_HIRAGANA_NEW_CARDS_PER_DAY = "hiragana_new_cards_per_day"
         const val KEY_KATAKANA_NEW_CARDS_PER_DAY = "katakana_new_cards_per_day"
+        const val KEY_KANJI_NEW_CARDS_PER_DAY = "kanji_new_cards_per_day"
         const val KEY_SHOW_GRID = "show_grid"
         const val KEY_SHOW_HINTS = "show_hints"
         const val KEY_SELECTED_CHARACTER_TYPE = "selected_character_type"
