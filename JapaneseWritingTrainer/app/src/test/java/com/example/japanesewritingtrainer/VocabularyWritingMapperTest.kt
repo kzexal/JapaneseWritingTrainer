@@ -122,7 +122,7 @@ class VocabularyWritingMapperTest {
             listOf(character("コ", "katakana"), character("ヒ", "katakana"))
         )
 
-        assertEquals(listOf("ー", "フ", "ー"), sequence.unsupportedSymbols)
+        assertEquals(listOf("ー", "フ"), sequence.unsupportedSymbols)
         assertFalse(sequence.isWritable)
     }
 }
