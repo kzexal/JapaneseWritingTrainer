@@ -95,6 +95,25 @@ class PracticeStatisticsTest {
     }
 
     @Test
+    fun activitiesAcrossDifferentDecksOnTheSameDayCountAsOneStreakDay() {
+        val zone = java.time.ZoneId.of("Asia/Ho_Chi_Minh")
+        val today = java.time.LocalDate.of(2026, 11, 19)
+        val logs = listOf(
+            logOn("hiragana_a", today.minusDays(1), zone),
+            logOn("vocab_japanese_海", today, zone),
+            logOn("vocab_reading_海", today, zone),
+            logOn("kanji_日", today.minusDays(2), zone),
+            logOn("katakana_a", today.minusDays(2), zone)
+        )
+        val now = today.atTime(23, 59).atZone(zone).toInstant().toEpochMilli()
+
+        val streak = calculatePracticeStreak(logs, now, zone)
+
+        assertEquals(3, streak.currentDays)
+        assertEquals(3, streak.longestDays)
+    }
+
+    @Test
     fun currentStreakCanContinueFromYesterdayButExpiresAfterOneMissedDay() {
         val zone = java.time.ZoneOffset.UTC
         val today = java.time.LocalDate.of(2026, 11, 6)
