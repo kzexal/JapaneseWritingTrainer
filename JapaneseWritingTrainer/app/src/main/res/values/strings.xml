@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">JapaneseWritingTrainer</string>
+    <string name="widget_title">Japanese Writing Trainer</string>
+    <string name="widget_current_streak">%1$d ngày liên tiếp</string>
+    <string name="widget_current_streak_placeholder">0 ngày liên tiếp</string>
+    <string name="widget_studied_today">✓ Đã học hôm nay</string>
+    <string name="widget_not_studied_today">Chưa học hôm nay</string>
+    <string name="widget_longest_streak">Kỷ lục: %1$d ngày</string>
+    <string name="widget_longest_streak_placeholder">Kỷ lục: 0 ngày</string>
+    <string name="widget_description">Theo dõi chuỗi ngày luyện viết của bạn.</string>
 </resources>
