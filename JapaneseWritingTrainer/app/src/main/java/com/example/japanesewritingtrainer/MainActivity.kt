@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        PracticeStreakWidgetProvider.requestUpdate(applicationContext)
         setContent {
             val context = LocalContext.current.applicationContext
             val appSettings = remember(context) { AppSettings(context) }
