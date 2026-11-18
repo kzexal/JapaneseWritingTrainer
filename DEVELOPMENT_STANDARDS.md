@@ -22,6 +22,9 @@ These rules apply to all development work in this repository. They are intended 
   - Room persists user progress and practice history.
   - Rust FSRS-rs provides the FSRS memory-state calculations through JNI.
   - Character/deck assets remain static content, separate from per-user progress.
+- Daily streak is derived from successfully persisted learning/practice activity, not app opens, browsing, or widget views.
+- Streak day is based on the device's local calendar date; multiple activities across decks on one date count as one day.
+- Statistics and the Android home-screen widget must share the same streak calculation/source of truth. The widget is read-only and must never mutate CardProgress, PracticeLog, or FSRS state.
 - Do not add network, account, analytics, or cloud dependencies to the offline-first MVP without an explicit product decision.
 
 ## 3. FSRS and learning-state invariants
