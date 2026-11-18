@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -215,18 +216,20 @@ fun VocabularyLearningSessionScreen(
                                     "Ký tự ${progress.completedCharacterCount + 1}/${sequence.characters.size}",
                                     style = MaterialTheme.typography.labelMedium
                                 )
-                                WritingCanvas(
-                                    modifier = Modifier.weight(1f),
-                                    character = glyph,
-                                    initialMode = WritingMode.RECALL,
-                                    allowEditingAfterCompletion = false,
-                                    showGrid = showGrid,
-                                    showHints = showHints,
-                                    onCompleted = {
-                                        progress = progress.completeCurrentCharacter()
-                                        if (progress.isComplete) awaitingRating = true
-                                    }
-                                )
+                                key(current.card.id, progress.completedCharacterCount) {
+                                    WritingCanvas(
+                                        modifier = Modifier.weight(1f),
+                                        character = glyph,
+                                        initialMode = WritingMode.RECALL,
+                                        allowEditingAfterCompletion = false,
+                                        showGrid = showGrid,
+                                        showHints = showHints,
+                                        onCompleted = {
+                                            progress = progress.completeCurrentCharacter()
+                                            if (progress.isComplete) awaitingRating = true
+                                        }
+                                    )
+                                }
                             }
                         } else {
                             Column(
