@@ -29,11 +29,15 @@ interface CardProgressStore {
 class CardProgressRepository internal constructor(
     private val dao: CardProgressDao,
     private val practiceLogDao: PracticeLogDao? = null,
-    private val database: WritingTrainerDatabase? = null
+    private val database: WritingTrainerDatabase? = null,
+    private val widgetContext: Context? = null
 ) : CardProgressStore {
 
     constructor(context: Context) : this(
-        WritingTrainerDatabase.getInstance(context.applicationContext)
+        dao = WritingTrainerDatabase.getInstance(context.applicationContext).cardProgressDao(),
+        practiceLogDao = WritingTrainerDatabase.getInstance(context.applicationContext).practiceLogDao(),
+        database = WritingTrainerDatabase.getInstance(context.applicationContext),
+        widgetContext = context.applicationContext
     )
 
     private constructor(database: WritingTrainerDatabase) : this(
@@ -73,6 +77,7 @@ class CardProgressRepository internal constructor(
         } else {
             write()
         }
+        widgetContext?.let(PracticeStreakWidgetProvider::requestUpdate)
     }
 
     override suspend fun delete(cardId: String) {
