@@ -89,7 +89,7 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 | Room persistence | **Implemented** | Lưu card progress và practice log |
 | Database migrations | **Implemented** | Schema hiện tại version 3, có migration 1→2 và 2→3 |
 | Practice history | **Implemented** | Lưu mode, rating, thời lượng và timestamp |
-| Statistics | **Implemented** | Có thống kê tiến độ, accuracy, streak và trạng thái card |
+| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card; streak hiện được tính theo log của deck đang xem, sẽ mở rộng thành streak toàn ứng dụng |\n| Daily streak | **In progress** | Đã có phép tính chuỗi ngày trong Statistics; cần thống nhất streak toàn ứng dụng, quy tắc ngày học và hiển thị đồng bộ với widget |\n| Android home-screen widget | **Planned** | Widget ngoài màn hình chính hiển thị streak và trạng thái học hôm nay; chỉ đọc dữ liệu học cục bộ |
 | Settings | **Implemented** | Theme, số card mới/ngày, grid, hints; lưu bằng SharedPreferences |
 | JSON backup/restore | **Implemented** | Có kiểm tra dữ liệu và restore theo transaction |
 | Backup compatibility tests | **In progress** | Mở rộng kiểm thử dữ liệu sai, dữ liệu cũ và trường hợp biên |
@@ -334,9 +334,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Thiết kế `VocabularyData` riêng với `CharacterData`; model lưu Japanese, Reading, nghĩa, ví dụ, nhóm bộ thủ, radicals và mnemonics, không yêu cầu stroke geometry.
 - [x] Xác định hai mục tiêu nội dung độc lập ở domain layer: `JAPANESE` dùng nguyên văn trường Japanese; `READING` dùng nguyên văn trường Reading. Không tự chuyển Kanji thành Kana.
 - [x] Tạo `VocabularyWritingMapper`: ánh xạ từng Unicode code point sang CharacterData có stroke geometry hợp lệ; giữ nguyên thứ tự và ký tự lặp; bỏ qua khoảng trắng/dấu câu; trả về danh sách glyph chưa hỗ trợ thay vì đoán hoặc thay thế.
-- [x] Bổ sung JVM unit tests cho lựa chọn Japanese/Reading, không thay Kanji bằng Kana, thứ tự/ký tự lặp, ký tự thiếu geometry, dấu câu và ký tự chưa hỗ trợ. Chờ người dùng chạy kiểm thử local.
+- [x] Bổ sung JVM unit tests cho lựa chọn Japanese/Reading, không thay Kanji bằng Kana, thứ tự/ký tự lặp, ký tự thiếu geometry, dấu câu và ký tự chưa hỗ trợ; người dùng xác nhận toàn bộ test PASS.
 - [ ] Tích hợp hai mục tiêu trên vào UI phiên học; chỉ bật bắt đầu luyện khi toàn bộ glyph cần viết đều có geometry hợp lệ.
-- [x] Tạo Python generator `tools/generate_vocabulary.py` và schema JSON metadata riêng; ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook; chưa chạy xác nhận trên workbook thật.
+- [x] Tạo và chạy Python generator `tools/generate_vocabulary.py` trên workbook thật; xác nhận JSON có 198 records, 198 ID duy nhất và 198 Japanese duy nhất. ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook.
 - [ ] Hỗ trợ nạp dữ liệu từ workbook trong repository và quy trình cập nhật/import lại có preview; không bắt buộc người dùng chọn file nếu dữ liệu đã được đóng gói sẵn, nhưng vẫn thiết kế để thay workbook có kiểm soát.
 - [x] Generator kiểm tra header, Japanese trống/trùng, Reading và Vietnamese bắt buộc; chuẩn hóa chuỗi `None`/`null`/blank thành JSON null. Python unit tests đã được bổ sung nhưng đang chờ người dùng chạy. Audit tool in chi tiết các dòng có giá trị trùng.
 - [ ] Upsert theo khóa ổn định; thay đổi nội dung không reset FSRS progress; bỏ dòng khỏi Excel không tự động xóa card/progress.
@@ -348,13 +348,45 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 
 **Definition of done:** dữ liệu Vocabulary từ workbook xuất hiện thành deck có thể học/ôn tập; import lại không nhân đôi card hoặc reset tiến độ; người học phân biệt được luyện Japanese và Reading.
 
+### Phase 8 — Daily Streak và Android Home-screen Widget
+
+**Mục tiêu:** xây dựng streak học tập thống nhất cho toàn ứng dụng và cung cấp widget Android để người dùng nhìn thấy tiến độ ngay trên màn hình chính mà không cần mở app.
+
+**Quy tắc streak:**
+- Một ngày lịch được tính là **1 streak-day** nếu có ít nhất một hoạt động luyện/học thực tế được ghi nhận thành công trong ngày đó.
+- Nhiều lần luyện, nhiều card hoặc nhiều deck trong cùng một ngày vẫn chỉ tính là một streak-day.
+- Mở ứng dụng, xem thư viện, tìm kiếm từ vựng, thay đổi cài đặt hoặc mở widget không được tính là hoạt động học.
+- Streak được tính toàn ứng dụng, không phụ thuộc deck Hiragana, Katakana, Kanji hay Vocabulary.
+- Dùng timestamp của PracticeLog và ngày lịch theo múi giờ thiết bị; không dùng số lần mở app hoặc bộ đếm tăng độc lập.
+- Current streak tiếp tục được giữ qua ngày hiện tại hoặc ngày liền trước theo quy tắc hiện có; bỏ lỡ trọn một ngày sẽ làm current streak về 0. Longest streak không giảm.
+- Không tự tạo streak freeze, grace day hoặc cơ chế khôi phục streak nếu chưa có yêu cầu riêng.
+- Streak chỉ là thống kê/động lực; không ảnh hưởng FSRS, due date, rating, giới hạn card mới hoặc kết quả luyện viết.
+
+**Widget:**
+- Là Android App Widget đặt trên Home Screen của launcher, không phải một màn hình bên trong ứng dụng.
+- Hiển thị tối thiểu current streak, trạng thái đã/chưa học hôm nay và longest streak; có thể có biểu diễn hoạt động 7 ngày gần nhất nếu kích thước cho phép.
+- Dữ liệu widget phải lấy từ cùng nguồn PracticeLog/streak calculation với Statistics; không duy trì một bộ đếm streak độc lập có nguy cơ lệch dữ liệu.
+- Widget cập nhật sau khi một hoạt động học được lưu thành công, khi app/thiết bị khởi động lại phù hợp, và khi ngày lịch thay đổi để trạng thái hôm nay chính xác.
+- Chạm widget mở ứng dụng tới luồng học phù hợp; không thực hiện rating hoặc thay đổi tiến độ trực tiếp từ widget.
+- Widget hoạt động offline, không yêu cầu đăng nhập, cloud sync hoặc quyền nhạy cảm.
+
+**Công việc:**
+- [ ] Tách phép tính streak dùng chung khỏi phạm vi lọc theo deck; định nghĩa API/domain model cho toàn ứng dụng.
+- [ ] Bổ sung unit tests cho ngày đầu tiên, nhiều hoạt động cùng ngày, chuỗi liên tiếp, bỏ lỡ một ngày, hôm nay chưa học nhưng hôm qua đã học, longest streak và múi giờ/ngày đổi.
+- [ ] Cập nhật Statistics để current/longest streak phản ánh toàn ứng dụng, không chỉ deck đang chọn.
+- [ ] Chọn và triển khai Android App Widget phù hợp với minSdk/Compose hiện tại; ưu tiên dùng chung domain logic và không thêm backend.
+- [ ] Kiểm thử widget khi thêm/xóa khỏi Home Screen, sau khi học xong, force-stop/mở lại, khởi động lại thiết bị và qua thời điểm nửa đêm.
+- [ ] Đảm bảo backup/restore giữ được dữ liệu nguồn để streak được tái tạo chính xác; không cần lưu một bộ đếm streak thứ hai nếu có thể suy ra an toàn từ PracticeLog.
+
+**Definition of done:** streak toàn ứng dụng được tính nhất quán theo ngày lịch; Statistics và widget hiển thị cùng một kết quả; widget cập nhật từ dữ liệu thực, hoạt động offline và không làm thay đổi CardProgress/FSRS.
+
 ### Nguyên tắc thứ tự và phạm vi
 
 1. Hoàn tất Phase 4: README và tab Hướng dẫn học trong ứng dụng; clean install trên emulator/thiết bị phụ.
 2. Hoàn tất Phase 5 Katakana.
 3. Hoàn tất Phase 6 Kanji bằng pipeline Excel → Python validator/generator → JSON assets; thiết kế parser/validator/upsert theo hướng có thể tái sử dụng cho import trực tiếp trong app về sau, nhưng chưa triển khai UI import.
-4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tái sử dụng nguyên tắc nguồn dữ liệu và cập nhật an toàn đã xây dựng ở Phase 6.
-5. Sau khi Katakana và Kanji hoàn thành, xử lý attribution/license, signing keystore và các bước phát hành cuối; Grammar có thể được xem xét sau.
+4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tích hợp card/FSRS và Guided Writing theo lựa chọn Japanese hoặc Reading.
+5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; xử lý attribution/license, signing keystore và các bước phát hành cuối; Grammar có thể được xem xét sau.
 6. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
 ## 7. Acceptance criteria
