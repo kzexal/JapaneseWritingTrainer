@@ -29,8 +29,7 @@
         <receiver
             android:name=".PracticeStreakWidgetProvider"
             android:exported="true"
-            android:label="@string/widget_title"
-            android:permission="android.permission.BIND_APPWIDGET">
+            android:label="@string/widget_title">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.DATE_CHANGED" />
