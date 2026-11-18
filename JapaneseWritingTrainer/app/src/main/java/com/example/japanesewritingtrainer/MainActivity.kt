@@ -408,6 +408,7 @@ class MainActivity : ComponentActivity() {
                                                         withContext(Dispatchers.IO) {
                                                             backupRestoreManager.restoreFromJson(json)
                                                         }
+                                                        PracticeStreakWidgetProvider.requestUpdate(context)
                                                         Toast.makeText(
                                                             context,
                                                             "Khôi phục dữ liệu thành công.",
