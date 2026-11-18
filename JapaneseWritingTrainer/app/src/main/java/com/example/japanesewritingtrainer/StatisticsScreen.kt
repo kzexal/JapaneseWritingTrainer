@@ -40,6 +40,7 @@ fun StatisticsScreen(
     val progress by progressRepository.observeAll().collectAsState(initial = emptyList())
     val scope = rememberCoroutineScope()
     var logs by remember { mutableStateOf<List<PracticeLog>>(emptyList()) }
+    var allLogs by remember { mutableStateOf<List<PracticeLog>>(emptyList()) }
     var isLoadingLogs by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
@@ -47,8 +48,10 @@ fun StatisticsScreen(
         scope.launch {
             isLoadingLogs = true
             try {
+                val storedLogs = logRepository.getAll()
+                allLogs = storedLogs
                 val selectedCardIds = characters.map { it.id }.toSet()
-                logs = logRepository.getAll().filter { it.cardId in selectedCardIds }
+                logs = storedLogs.filter { it.cardId in selectedCardIds }
                 errorMessage = null
             } catch (exception: Exception) {
                 errorMessage = exception.localizedMessage ?: "Không thể tải thống kê luyện viết."
@@ -75,7 +78,8 @@ fun StatisticsScreen(
     val practicedIds = deckProgress.filter { it.reviewCount > 0 }.map { it.cardId }.toSet() +
         logs.asSequence().map { it.cardId }.filter { it in characterIds }.toSet()
     val practicedCards = practicedIds.size
-    val streak = remember(logs) { calculatePracticeStreak(logs) }
+    // Streak is app-wide: Vocabulary and character decks share the same local-day sequence.
+    val streak = remember(allLogs) { calculatePracticeStreak(allLogs) }
     val totalDuration = totalPracticeDurationMs(logs)
     val completion = if (totalCards == 0) 0f else (learned.toFloat() / totalCards).coerceIn(0f, 1f)
 
@@ -135,6 +139,11 @@ fun StatisticsScreen(
             StatisticValueCard("Chính xác", "$accuracy%", Modifier.weight(1f))
         }
 
+        Text(
+            "Chuỗi ngày được tính trên toàn bộ deck.",
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
