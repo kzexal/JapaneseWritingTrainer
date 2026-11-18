@@ -143,6 +143,37 @@ class PracticeStatisticsTest {
         assertEquals(2, streak.longestDays)
     }
 
+    @Test
+    fun widgetStateShowsTodayAndUsesTheSameCrossDeckStreak() {
+        val zone = java.time.ZoneId.of("Asia/Ho_Chi_Minh")
+        val today = java.time.LocalDate.of(2026, 11, 19)
+        val logs = listOf(
+            logOn("hiragana_a", today.minusDays(1), zone),
+            logOn("vocab_japanese_海", today, zone),
+            logOn("kanji_日", today, zone)
+        )
+        val now = today.atTime(21, 0).atZone(zone).toInstant().toEpochMilli()
+
+        val state = buildPracticeStreakWidgetState(logs, now, zone)
+
+        assertEquals(2, state.currentStreakDays)
+        assertEquals(2, state.longestStreakDays)
+        assertEquals(true, state.practicedToday)
+    }
+
+    @Test
+    fun widgetStateShowsNotStudiedTodayWhenOnlyYesterdayHasActivity() {
+        val zone = java.time.ZoneId.of("Asia/Ho_Chi_Minh")
+        val today = java.time.LocalDate.of(2026, 11, 19)
+        val logs = listOf(logOn("vocab_reading_海", today.minusDays(1), zone))
+        val now = today.atTime(9, 0).atZone(zone).toInstant().toEpochMilli()
+
+        val state = buildPracticeStreakWidgetState(logs, now, zone)
+
+        assertEquals(1, state.currentStreakDays)
+        assertEquals(false, state.practicedToday)
+    }
+
     private fun logOn(
         cardId: String,
         date: java.time.LocalDate,
