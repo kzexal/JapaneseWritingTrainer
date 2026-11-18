@@ -89,7 +89,7 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 | Room persistence | **Implemented** | Lưu card progress và practice log |
 | Database migrations | **Implemented** | Schema hiện tại version 3, có migration 1→2 và 2→3 |
 | Practice history | **Implemented** | Lưu mode, rating, thời lượng và timestamp |
-| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card; streak hiện được tính theo log của deck đang xem, sẽ mở rộng thành streak toàn ứng dụng |\n| Daily streak | **In progress** | Đã có phép tính chuỗi ngày trong Statistics; cần thống nhất streak toàn ứng dụng, quy tắc ngày học và hiển thị đồng bộ với widget |\n| Android home-screen widget | **Planned** | Widget ngoài màn hình chính hiển thị streak và trạng thái học hôm nay; chỉ đọc dữ liệu học cục bộ |
+| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card theo deck đang xem; current/longest streak được tính từ PracticeLog của toàn ứng dụng |\n| Daily streak | **In progress** | Statistics đã dùng streak toàn ứng dụng theo ngày lịch thiết bị; widget và kiểm thử thực tế còn pending |\n| Android home-screen widget | **Planned** | Widget ngoài màn hình chính hiển thị streak và trạng thái học hôm nay; chỉ đọc dữ liệu học cục bộ |
 | Settings | **Implemented** | Theme, số card mới/ngày, grid, hints; lưu bằng SharedPreferences |
 | JSON backup/restore | **Implemented** | Có kiểm tra dữ liệu và restore theo transaction |
 | Backup compatibility tests | **In progress** | Mở rộng kiểm thử dữ liệu sai, dữ liệu cũ và trường hợp biên |
@@ -376,9 +376,9 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - Widget hoạt động offline, không yêu cầu đăng nhập, cloud sync hoặc quyền nhạy cảm.
 
 **Công việc:**
-- [ ] Tách phép tính streak dùng chung khỏi phạm vi lọc theo deck; định nghĩa API/domain model cho toàn ứng dụng.
-- [ ] Bổ sung unit tests cho ngày đầu tiên, nhiều hoạt động cùng ngày, chuỗi liên tiếp, bỏ lỡ một ngày, hôm nay chưa học nhưng hôm qua đã học, longest streak và múi giờ/ngày đổi.
-- [ ] Cập nhật Statistics để current/longest streak phản ánh toàn ứng dụng, không chỉ deck đang chọn.
+- [x] Dùng chung phép tính streak độc lập với deck; đầu vào là toàn bộ PracticeLog đã lưu trên thiết bị.
+- [x] Bổ sung unit tests cho ngày đầu tiên, nhiều hoạt động cùng ngày trên nhiều deck, chuỗi liên tiếp, bỏ lỡ một ngày, hôm nay chưa học nhưng hôm qua đã học, longest streak và múi giờ thiết bị.
+- [x] Cập nhật Statistics để current/longest streak phản ánh toàn ứng dụng, không chỉ deck đang chọn. Các chỉ số tiến độ/accuracy/thời lượng khác vẫn theo deck đang xem.
 - [ ] Chọn và triển khai Android App Widget phù hợp với minSdk/Compose hiện tại; ưu tiên dùng chung domain logic và không thêm backend.
 - [ ] Kiểm thử widget khi thêm/xóa khỏi Home Screen, sau khi học xong, force-stop/mở lại, khởi động lại thiết bị và qua thời điểm nửa đêm.
 - [ ] Đảm bảo backup/restore giữ được dữ liệu nguồn để streak được tái tạo chính xác; không cần lưu một bộ đếm streak thứ hai nếu có thể suy ra an toàn từ PracticeLog.
