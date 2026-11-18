@@ -292,6 +292,7 @@ fun VocabularyLearningSessionScreen(
                             style = MaterialTheme.typography.bodyMedium
                         )
                         OutlinedButton(onClick = {
+                            attemptVersion++
                             snapshot = coordinator.retryDifficultCards()
                         }) { Text("Luyện lại các thẻ khó") }
                     } else {
