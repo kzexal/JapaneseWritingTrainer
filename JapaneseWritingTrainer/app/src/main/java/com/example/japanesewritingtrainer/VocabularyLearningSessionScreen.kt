@@ -42,6 +42,7 @@ fun VocabularyLearningSessionScreen(
     newCardsPerDay: Int = 10,
     showGrid: Boolean = true,
     showHints: Boolean = true,
+    onBack: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -144,7 +145,14 @@ fun VocabularyLearningSessionScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text("Luyện viết từ vựng", style = MaterialTheme.typography.titleLarge)
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            OutlinedButton(onClick = onBack) { Text("Quay lại") }
+            Text("Luyện viết từ vựng", style = MaterialTheme.typography.titleLarge)
+        }
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             FilterChip(
                 selected = target == VocabularyWritingTarget.JAPANESE,
