@@ -347,6 +347,13 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.weight(1f)
                                     )
 
+                                    MainScreen.VOCABULARY_LEARNING -> VocabularyLearningSessionScreen(
+                                        availableCharacters = characters,
+                                        showGrid = showGrid,
+                                        showHints = showHints,
+                                        modifier = Modifier.weight(1f)
+                                    )
+
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = selectedCharacters,
                                         modifier = Modifier.weight(1f)
@@ -513,6 +520,7 @@ private enum class MainScreen(val label: String) {
     FREE("Luyện Guided"),
     LIBRARY("Thư viện"),
     VOCABULARY("Từ vựng"),
+    VOCABULARY_LEARNING("Luyện từ"),
     LEARNING("Ôn tập"),
     HISTORY("Lịch sử"),
     STATISTICS("Thống kê"),
