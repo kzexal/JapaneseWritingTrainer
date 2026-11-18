@@ -8,6 +8,7 @@
 - **Katakana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Kanji:** 86 ký tự lấy từ sheet `Kanji` trong workbook `vocabulary.xlsx`; metadata được quản lý riêng với stroke geometry.
 - **Vocabulary:** thư viện tra cứu 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc theo 15 nhóm và xem ví dụ/ghi nhớ; hiện là thư viện nội dung chỉ đọc, chưa tạo card FSRS.
+- **Daily streak:** Statistics hiện có tính chuỗi ngày theo lịch sử của deck đang xem; roadmap mở rộng thành streak toàn ứng dụng và Android Home-screen Widget.
 - Mỗi bộ chữ có thể được chọn thành deck học riêng; tiến độ được lưu theo ID ổn định của ký tự.
 - Thư viện ký tự hỗ trợ tìm kiếm; Kanji hỗ trợ lọc theo JLPT và bộ thủ.
 - Guided Writing luyện từng nét theo đúng thứ tự, sử dụng stroke geometry.
@@ -171,6 +172,7 @@ Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiể
 
 - Hoàn thiện kiểm thử thực tế cho Kanji Learning, Guided Writing, History và Statistics.
 - Hoàn thiện Vocabulary Deck: chọn rõ mục tiêu luyện Japanese hoặc Reading, ánh xạ stroke data theo từng ký tự và tích hợp card/FSRS mà không làm thay đổi tiến độ hiện có.
+- Hoàn thiện streak toàn ứng dụng và Android Home-screen Widget; widget chỉ đọc dữ liệu PracticeLog và không thay đổi tiến độ FSRS.
 - Kiểm tra an toàn luồng cập nhật nội dung: thêm Kanji mới không cần hard-code số lượng; cập nhật metadata không reset tiến độ; bỏ dòng khỏi workbook không tự xóa lịch sử học.
 - Rà soát backup/restore với dữ liệu Kanji.
 - Hoàn thiện nhận diện ứng dụng (app icon/adaptive icon), thông tin phiên bản và chuẩn bị bản phát hành.
