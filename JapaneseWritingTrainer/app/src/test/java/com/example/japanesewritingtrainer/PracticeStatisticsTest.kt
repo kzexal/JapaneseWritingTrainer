@@ -81,7 +81,7 @@ class PracticeStatisticsTest {
         val zone = java.time.ZoneId.of("Asia/Ho_Chi_Minh")
         val today = java.time.LocalDate.of(2026, 11, 19)
         val logs = listOf(logOn("vocab_japanese_海", today, zone))
-        val now = today.atTime(8, 0).atZone(zone).toInstant().toEpochMilli()
+        val now = today.atTime(20, 0).atZone(zone).toInstant().toEpochMilli()
 
         val streak = calculatePracticeStreak(logs, now, zone)
 
