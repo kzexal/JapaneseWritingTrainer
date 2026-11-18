@@ -89,7 +89,7 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 | Room persistence | **Implemented** | Lưu card progress và practice log |
 | Database migrations | **Implemented** | Schema hiện tại version 3, có migration 1→2 và 2→3 |
 | Practice history | **Implemented** | Lưu mode, rating, thời lượng và timestamp |
-| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card theo deck đang xem; current/longest streak được tính từ PracticeLog của toàn ứng dụng |\n| Daily streak | **In progress** | Statistics đã dùng streak toàn ứng dụng theo ngày lịch thiết bị; widget và kiểm thử thực tế còn pending |\n| Android home-screen widget | **Implemented; device verification pending** | RemoteViews App Widget đọc PracticeLog, hiển thị current/longest streak và trạng thái hôm nay; tự refresh sau khi lưu log, restore backup, khởi động lại và đổi ngày/múi giờ |
+| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card theo deck đang xem; current/longest streak được tính từ PracticeLog của toàn ứng dụng |\n| Daily streak | **In progress** | Statistics đã dùng streak toàn ứng dụng theo ngày lịch thiết bị; widget và kiểm thử thực tế còn pending |\n| Android home-screen widget | **Implemented; device verification pending** | RemoteViews App Widget đọc PracticeLog, hiển thị current/longest streak và trạng thái hôm nay; tự refresh khi mở app, sau khi lưu log/restore backup, khởi động lại và đổi ngày/múi giờ |
 | Settings | **Implemented** | Theme, số card mới/ngày, grid, hints; lưu bằng SharedPreferences |
 | JSON backup/restore | **Implemented** | Có kiểm tra dữ liệu và restore theo transaction |
 | Backup compatibility tests | **In progress** | Mở rộng kiểm thử dữ liệu sai, dữ liệu cũ và trường hợp biên |
