@@ -188,6 +188,7 @@ fun VocabularyLearningSessionScreen(
 
                 val current = session.current
                 if (current != null) {
+                    val vocabularyItem = vocabulary.firstOrNull { it.id == current.card.characterId }
                     val sequence = activeCatalog.sequencesByCardId[current.card.id]
                     if (sequence == null) {
                         Text(
@@ -207,10 +208,20 @@ fun VocabularyLearningSessionScreen(
                             },
                             style = MaterialTheme.typography.labelLarge
                         )
-                        Text(
-                            "${current.card.character} · ${current.card.reading}",
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        if (vocabularyItem != null) {
+                            Text(
+                                if (target == VocabularyWritingTarget.JAPANESE) {
+                                    "Cách đọc: ${vocabularyItem.reading}"
+                                } else {
+                                    "Từ tiếng Nhật: ${vocabularyItem.japanese}"
+                                },
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Text(
+                                "Nghĩa: ${vocabularyItem.vietnamese}",
+                                style = MaterialTheme.typography.bodyLarge
+                            )
+                        }
 
                         if (!awaitingRating) {
                             val glyph = progress.currentCharacter
