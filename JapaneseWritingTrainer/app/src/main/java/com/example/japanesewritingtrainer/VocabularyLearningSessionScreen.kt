@@ -57,6 +57,7 @@ fun VocabularyLearningSessionScreen(
     var isSaving by remember { mutableStateOf(false) }
     var awaitingRating by remember { mutableStateOf(false) }
     var newCardsStudiedToday by remember { mutableIntStateOf(0) }
+    var attemptVersion by remember { mutableIntStateOf(0) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(context) {
@@ -74,6 +75,7 @@ fun VocabularyLearningSessionScreen(
         val records = vocabulary
         if (records.isEmpty()) return
         scope.launch {
+            attemptVersion++
             isLoading = true
             snapshot = null
             awaitingRating = false
@@ -126,6 +128,7 @@ fun VocabularyLearningSessionScreen(
                         currentCatalog.cards.map { it.id }
                     )
                 }
+                if (rating == ReviewRating.AGAIN) attemptVersion++
                 awaitingRating = false
                 errorMessage = null
             } catch (exception: Exception) {
@@ -192,7 +195,7 @@ fun VocabularyLearningSessionScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                     } else {
-                        var progress by remember(current.card.id) {
+                        var progress by remember(current.card.id, attemptVersion) {
                             mutableStateOf(VocabularyWritingProgress(sequence))
                         }
                         Text(
