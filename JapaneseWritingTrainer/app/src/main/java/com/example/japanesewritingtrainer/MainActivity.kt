@@ -3,6 +3,7 @@ package com.example.japanesewritingtrainer
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
@@ -21,6 +22,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MenuBook
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.ScrollableTabRow
@@ -28,6 +33,7 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -41,6 +47,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.japanesewritingtrainer.ui.theme.JapaneseWritingTrainerTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -93,6 +100,19 @@ class MainActivity : ComponentActivity() {
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
+                    var navigationHistory by remember { mutableStateOf(listOf<MainScreen>()) }
+
+                    fun navigateTo(screen: MainScreen) {
+                        if (screen != selectedScreen) {
+                            navigationHistory = navigationHistory + selectedScreen
+                            selectedScreen = screen
+                        }
+                    }
+
+                    BackHandler(enabled = navigationHistory.isNotEmpty()) {
+                        selectedScreen = navigationHistory.last()
+                        navigationHistory = navigationHistory.dropLast(1)
+                    }
                     val backupRestoreManager = remember(context) { BackupRestoreManager(context) }
                     var pendingRestoreJson by remember { mutableStateOf<String?>(null) }
 
@@ -220,7 +240,7 @@ class MainActivity : ComponentActivity() {
                                         style = MaterialTheme.typography.titleLarge,
                                         modifier = Modifier.weight(1f)
                                     )
-                                    IconButton(onClick = { selectedScreen = MainScreen.SETTINGS }) {
+                                    IconButton(onClick = { navigateTo(MainScreen.SETTINGS) }) {
                                         Icon(Icons.Filled.Settings, contentDescription = "Cài đặt")
                                     }
                                 }
@@ -243,7 +263,7 @@ class MainActivity : ComponentActivity() {
                                                     appSettings.setSelectedCharacterType(type)
                                                     selectedIndex = 0
                                                     if (selectedScreen == MainScreen.LEARNING) {
-                                                        selectedScreen = MainScreen.HOME
+                                                        navigateTo(MainScreen.HOME)
                                                     }
                                                 },
                                                 label = { Text(characterTypeLabel(type)) }
@@ -257,10 +277,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.LIBRARY }) {
+                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.LIBRARY) }) {
                                             Text("Chữ cái")
                                         }
-                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.VOCABULARY }) {
+                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.VOCABULARY) }) {
                                             Text("Từ vựng")
                                         }
                                     }
@@ -270,10 +290,10 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.STATISTICS }) {
+                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.STATISTICS) }) {
                                             Text("Tổng quan")
                                         }
-                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.HISTORY }) {
+                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.HISTORY) }) {
                                             Text("Lịch sử")
                                         }
                                     }
@@ -290,11 +310,11 @@ class MainActivity : ComponentActivity() {
                                                 characters = selectedCharacters,
                                                 deckName = characterTypeLabel(selectedDeckType),
                                                 newCardsPerDay = selectedNewCardsPerDay,
-                                                onStartLearning = { selectedScreen = MainScreen.LEARNING },
-                                                onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
+                                                onStartLearning = { navigateTo(MainScreen.LEARNING) },
+                                                onOpenLibrary = { navigateTo(MainScreen.LIBRARY) },
                                                 onOpenFreePractice = { characterId ->
                                                     selectedIndex = selectedCharacters.indexOfFirst { it.id == characterId }.coerceAtLeast(0)
-                                                    selectedScreen = MainScreen.FREE
+                                                    navigateTo(MainScreen.FREE)
                                                 },
                                                 modifier = Modifier.weight(1f)
                                             )
@@ -365,7 +385,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.SETTINGS -> SettingsScreen(
-                                        onBackClick = { selectedScreen = MainScreen.HOME },
+                                        onBackClick = { navigateTo(MainScreen.HOME) },
                                         themeMode = themeMode,
                                         onThemeModeChange = { mode ->
                                             themeMode = mode
@@ -506,24 +526,16 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 if (selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
-                                    androidx.compose.material3.NavigationBar {
+                                    Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
                                         Row(
-                                            modifier = Modifier.fillMaxWidth(),
-                                            horizontalArrangement = Arrangement.SpaceEvenly,
+                                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(56.dp),
+                                            horizontalArrangement = Arrangement.SpaceAround,
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
-                                            TextButton(onClick = { selectedScreen = MainScreen.HOME }) {
-                                                Text("Học")
-                                            }
-                                            TextButton(onClick = { selectedScreen = MainScreen.LEARNING }) {
-                                                Text("Ôn tập")
-                                            }
-                                            TextButton(onClick = { selectedScreen = MainScreen.LIBRARY }) {
-                                                Text("Thư viện")
-                                            }
-                                            TextButton(onClick = { selectedScreen = MainScreen.STATISTICS }) {
-                                                Text("Thống kê")
-                                            }
+                                            BottomNavIcon(Icons.Filled.Home, "Học", selectedScreen == MainScreen.HOME) { navigateTo(MainScreen.HOME) }
+                                            BottomNavIcon(Icons.Filled.Edit, "Ôn tập", selectedScreen == MainScreen.LEARNING) { navigateTo(MainScreen.LEARNING) }
+                                            BottomNavIcon(Icons.Filled.MenuBook, "Thư viện", selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY) { navigateTo(MainScreen.LIBRARY) }
+                                            BottomNavIcon(Icons.Filled.BarChart, "Thống kê", selectedScreen == MainScreen.STATISTICS || selectedScreen == MainScreen.HISTORY) { navigateTo(MainScreen.STATISTICS) }
                                         }
                                     }
                                 }
@@ -533,6 +545,17 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BottomNavIcon(icon: ImageVector, label: String, selected: Boolean, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        Icon(
+            imageVector = icon,
+            contentDescription = label,
+            tint = if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
