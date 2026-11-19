@@ -18,7 +18,7 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 | Launcher icon | Đã gắn ảnh dự án; chờ xác minh trên thiết bị | Adaptive icon và round adaptive icon dùng `res/drawable/icon.png`; Android launcher tự áp dụng mask bo góc |
 | UI redesign P0/P1 | Đã triển khai trên `main`; chờ build và kiểm tra thiết bị | Bảng màu sáng/tối, typography, shape, bottom navigation, bộ chọn deck và Home dạng character-first; giữ nguyên Room/FSRS/session logic |
 | UI còn lại | Đã triển khai theo phạm vi sản phẩm hiện tại; chờ rà soát tổng thể trên thiết bị | Không yêu cầu dynamic color/Material You toggle hoặc nhiều kích thước widget; widget chỉ cần 2×1 |
-| Release signing | Chưa cấu hình | Chưa có signingConfig cho keystore phát hành |
+| Release signing | Gradle hỗ trợ biến môi trường; keystore chưa được tạo | Bốn biến JAPANESE_WRITING_TRAINER_* được đọc ngoài repository; chưa có chữ ký phát hành để xác minh |
 | Release build | Chưa xác minh | Chưa có bằng chứng `assembleRelease` hoặc cài đặt bản Release đã ký |
 | Third-party data attribution | Đã có notice trong repo và màn Nguồn dữ liệu trong Cài đặt | OpenJLPT metadata CC BY-SA 4.0; KanjiVG stroke geometry CC BY-SA 3.0; vẫn cần rà soát cách phân phối dữ liệu phái sinh trước khi phát hành |
 | Android Auto Backup | Cần quyết định sản phẩm | Manifest đang bật backup và include Room database + SharedPreferences cho cloud backup/device transfer |
@@ -49,7 +49,7 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 
 - [ ] Tạo release keystore trên máy phát hành.
 - [ ] Lưu keystore và mật khẩu ngoài repository; không commit keystore, mật khẩu hoặc signing properties.
-- [ ] Cấu hình Gradle đọc signing credentials từ biến môi trường hoặc file properties nằm ngoài Git.
+- [x] Cấu hình Gradle đọc signing credentials từ bốn biến môi trường; thiếu một phần credentials sẽ làm build dừng rõ ràng.\n- [ ] Tạo keystore trên máy phát hành và cấu hình bốn biến môi trường trong phiên build.
 - [ ] Tạo ít nhất hai bản sao lưu keystore ở nơi an toàn; mất keystore có thể khiến việc cập nhật ứng dụng đã phát hành trở nên không thể.
 - [ ] Xác minh chữ ký và certificate của APK/AAB phát hành.
 
