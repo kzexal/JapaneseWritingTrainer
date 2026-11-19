@@ -28,6 +28,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.Locale
 
@@ -46,6 +50,13 @@ fun PracticeHistoryScreen(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     val characterStats = remember(logs) { buildCharacterPracticeStats(logs) }
+    val logsByDate = remember(logs) {
+        val zone = ZoneId.systemDefault()
+        logs.groupBy { Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate() }
+            .mapValues { (_, dayLogs) -> dayLogs.sortedByDescending { it.timestampEpochMillis } }
+            .toList()
+            .sortedByDescending { it.first }
+    }
     val needsPractice = remember(characterStats) {
         characterStats.filter { it.ratedAttempts >= 2 }
             .sortedByDescending { it.againRate }
@@ -172,7 +183,16 @@ fun PracticeHistoryScreen(
                     modifier = Modifier.weight(1f).fillMaxWidth(),
                     verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    items(logs, key = { it.id }) { log ->
+                    logsByDate.forEach { (date, dayLogs) ->
+                        item(key = "history-date-$date") {
+                            Text(
+                                date.format(DateTimeFormatter.ofPattern("EEEE, dd/MM/yyyy", Locale.getDefault())),
+                                modifier = Modifier.padding(top = 6.dp),
+                                style = MaterialTheme.typography.titleSmall,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        items(dayLogs, key = { it.id }) { log ->
                         val character = charactersById[log.cardId]
                         Card(modifier = Modifier.fillMaxWidth()) {
                             Row(
@@ -205,6 +225,7 @@ fun PracticeHistoryScreen(
                                     )
                                 }
                             }
+                        }
                         }
                     }
                 }
