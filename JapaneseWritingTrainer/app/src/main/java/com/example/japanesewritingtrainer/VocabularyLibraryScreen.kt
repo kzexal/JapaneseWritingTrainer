@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
@@ -90,87 +91,92 @@ fun VocabularyLibraryScreen(
                 VocabularyLibrary.filter(records, query, selectedGroup)
             }
 
-            Column(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 145.dp),
                 modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Thư viện từ vựng", style = MaterialTheme.typography.headlineSmall)
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Tìm từ tiếng Nhật, cách đọc hoặc nghĩa") },
-                    singleLine = true
-                )
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    item {
-                        FilterChip(
-                            selected = selectedGroup == null,
-                            onClick = { selectedGroup = null },
-                            label = { Text("Tất cả") }
+                item(span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Thư viện từ vựng", style = MaterialTheme.typography.headlineSmall)
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = { query = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text("Tìm từ tiếng Nhật, cách đọc hoặc nghĩa") },
+                            singleLine = true
                         )
-                    }
-                    items(groups.size) { index ->
-                        val group = groups[index]
-                        FilterChip(
-                            selected = selectedGroup == group,
-                            onClick = {
-                                selectedGroup = if (selectedGroup == group) null else group
-                            },
-                            label = { Text(group) }
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            item {
+                                FilterChip(
+                                    selected = selectedGroup == null,
+                                    onClick = { selectedGroup = null },
+                                    label = { Text("Tất cả") }
+                                )
+                            }
+                            items(groups.size) { index ->
+                                val group = groups[index]
+                                FilterChip(
+                                    selected = selectedGroup == group,
+                                    onClick = {
+                                        selectedGroup = if (selectedGroup == group) null else group
+                                    },
+                                    label = { Text(group) }
+                                )
+                            }
+                        }
+                        Text(
+                            "${filtered.size} / ${records.size} từ vựng",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
                 }
-                Text(
-                    "${filtered.size} / ${records.size} từ vựng",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
                 if (filtered.isEmpty()) {
-                    Text(
-                        "Không tìm thấy từ vựng phù hợp.",
-                        modifier = Modifier.padding(top = 20.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    item(span = { GridItemSpan(maxLineSpan) }, contentType = "empty") {
+                        Text(
+                            "Không tìm thấy từ vựng phù hợp.",
+                            modifier = Modifier.padding(top = 20.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 145.dp),
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(filtered, key = { it.id }) { item ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { selectedVocabularyId = item.id }
+                    items(
+                        items = filtered,
+                        key = { it.id },
+                        contentType = { "vocabulary" }
+                    ) { item ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { selectedVocabularyId = item.id }
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp),
+                                verticalArrangement = Arrangement.spacedBy(4.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 14.dp),
-                                    verticalArrangement = Arrangement.spacedBy(4.dp)
-                                ) {
+                                Text(
+                                    item.japanese,
+                                    fontSize = 27.sp,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                Text(
+                                    item.reading,
+                                    style = MaterialTheme.typography.bodyMedium
+                                )
+                                Text(
+                                    item.vietnamese,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium
+                                )
+                                item.group?.let {
                                     Text(
-                                        item.japanese,
-                                        fontSize = 27.sp,
-                                        fontWeight = FontWeight.Medium
+                                        it,
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                        maxLines = 2
                                     )
-                                    Text(
-                                        item.reading,
-                                        style = MaterialTheme.typography.bodyMedium
-                                    )
-                                    Text(
-                                        item.vietnamese,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Medium
-                                    )
-                                    item.group?.let {
-                                        Text(
-                                            it,
-                                            style = MaterialTheme.typography.labelSmall,
-                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                            maxLines = 2
-                                        )
-                                    }
                                 }
                             }
                         }
