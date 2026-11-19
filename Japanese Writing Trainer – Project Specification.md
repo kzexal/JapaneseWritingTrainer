@@ -426,5 +426,6 @@ Một phase hoặc tính năng chỉ được đánh dấu hoàn thành khi:
 
 - [Development Standards](DEVELOPMENT_STANDARDS.md)
 - [README](README.md)
+- [Release readiness checklist](RELEASE_CHECKLIST.md)
 - [FSRS Rust bridge source](JapaneseWritingTrainer/native/fsrs-bridge/)
 - [Android application source](JapaneseWritingTrainer/app/src/main/)
