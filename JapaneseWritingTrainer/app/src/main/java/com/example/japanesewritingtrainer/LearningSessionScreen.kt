@@ -15,6 +15,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +48,7 @@ fun LearningSessionScreen(
     val context = LocalContext.current.applicationContext
     val coordinator = remember(context) { LearningSessionCoordinator(context) }
     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
+    val firstTraceRepository = remember(context) { FirstTraceRepository(context) }
     val catalog = remember(characters) { DeckFactory.fromCharacters(characters) }
     val deck = remember(catalog, deckType) {
         catalog.decks.firstOrNull { it.characterType == deckType }
@@ -237,15 +239,24 @@ fun LearningSessionScreen(
                             color = MaterialTheme.colorScheme.error
                         )
                     } else if (!awaitingRating) {
-                        WritingCanvas(
-                            modifier = Modifier.weight(1f),
-                            character = character,
-                            initialMode = WritingMode.RECALL,
-                            allowEditingAfterCompletion = false,
-                            showGrid = showGrid,
-                            showHints = showHints,
-                            onCompleted = { awaitingRating = true }
-                        )
+                        val needsFirstTrace = current.kind == SessionCardKind.NEW &&
+                            !firstTraceRepository.hasCompleted(character.id)
+                        key(current.card.id, needsFirstTrace) {
+                            WritingCanvas(
+                                modifier = Modifier.weight(1f),
+                                character = character,
+                                initialMode = if (needsFirstTrace) WritingMode.TRACE else WritingMode.RECALL,
+                                allowEditingAfterCompletion = false,
+                                showGrid = showGrid,
+                                showHints = showHints,
+                                onTraceFinished = if (needsFirstTrace) {
+                                    {
+                                        firstTraceRepository.markCompleted(character.id)
+                                    }
+                                } else null,
+                                onCompleted = { awaitingRating = true }
+                            )
+                        }
                         if (errorMessage != null) {
                             Text(errorMessage.orEmpty(), color = MaterialTheme.colorScheme.error)
                         }
