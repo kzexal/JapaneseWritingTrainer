@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import androidx.compose.foundation.clickable
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -68,6 +69,10 @@ fun KanjiLibraryScreen(
     }
 
     val selectedKanji = records.firstOrNull { it.id == selectedKanjiId }
+    BackHandler(enabled = selectedKanji != null) {
+        selectedKanjiId = null
+        onDetailStateChanged(false)
+    }
     when {
         isLoading -> Column(
             modifier = modifier.fillMaxSize(),
