@@ -7,13 +7,18 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.Build
+import android.util.SizeF
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
-/** Read-only launcher widget backed by the same PracticeLog streak calculation as Statistics. */
+/** Responsive, read-only launcher widget backed by the app's existing repositories. */
 class PracticeStreakWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
@@ -54,32 +59,15 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                 val appContext = context.applicationContext
                 val logs = PracticeLogRepository(appContext).getAll()
                 val progress = CardProgressRepository(appContext).getAll()
-                val dueCount = progress.count { it.isDue(System.currentTimeMillis()) }
-                val state = buildPracticeStreakWidgetState(logs)
-                val views = RemoteViews(context.packageName, R.layout.widget_practice_streak).apply {
-                    setTextViewText(
-                        R.id.widget_due_count,
-                        context.getString(R.string.widget_due_count, dueCount)
-                    )
-                    setTextViewText(
-                        R.id.widget_current_streak,
-                        context.getString(R.string.widget_current_streak, state.currentStreakDays)
-                    )
-                    setTextViewText(
-                        R.id.widget_today_status,
-                        context.getString(
-                            if (state.practicedToday) {
-                                R.string.widget_studied_today
-                            } else {
-                                R.string.widget_not_studied_today
-                            }
-                        )
-                    )
-                    setTextViewText(
-                        R.id.widget_longest_streak,
-                        context.getString(R.string.widget_longest_streak, state.longestStreakDays)
-                    )
-                }
+                val now = System.currentTimeMillis()
+                val dueCount = progress.count { it.isDue(now) }
+                val state = buildPracticeStreakWidgetState(logs, now)
+                val zone = ZoneId.systemDefault()
+                val practicedDates = logs.map {
+                    Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
+                }.toSet()
+                val today = LocalDate.now(zone)
+
                 val openAppIntent = Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
@@ -89,8 +77,93 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                     openAppIntent,
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
-                views.setOnClickPendingIntent(R.id.widget_root, openAppPendingIntent)
-                widgetIds.forEach { manager.updateAppWidget(it, views) }
+
+                fun createViews(layoutId: Int, includeDots: Boolean): RemoteViews =
+                    RemoteViews(context.packageName, layoutId).apply {
+                        setTextViewText(
+                            R.id.widget_due_count,
+                            context.getString(R.string.widget_due_count, dueCount)
+                        )
+                        setTextViewText(
+                            R.id.widget_current_streak,
+                            context.getString(R.string.widget_current_streak, state.currentStreakDays)
+                        )
+                        if (layoutId != R.layout.widget_practice_streak_small) {
+                            setTextViewText(
+                                R.id.widget_today_status,
+                                context.getString(
+                                    if (state.practicedToday) R.string.widget_studied_today
+                                    else if (dueCount == 0) R.string.widget_new_cards_today
+                                    else R.string.widget_not_studied_today
+                                )
+                            )
+                        }
+                        if (layoutId == R.layout.widget_practice_streak_medium) {
+                            setTextViewText(
+                                R.id.widget_longest_streak,
+                                context.getString(R.string.widget_longest_streak, state.longestStreakDays)
+                            )
+                            if (includeDots) {
+                                for (offset in 6 downTo 0) {
+                                    val date = today.minusDays(offset.toLong())
+                                    val viewId = when (offset) {
+                                        6 -> R.id.widget_day_1
+                                        5 -> R.id.widget_day_2
+                                        4 -> R.id.widget_day_3
+                                        3 -> R.id.widget_day_4
+                                        2 -> R.id.widget_day_5
+                                        1 -> R.id.widget_day_6
+                                        else -> R.id.widget_day_7
+                                    }
+                                    setTextColor(
+                                        viewId,
+                                        context.getColor(
+                                            if (date in practicedDates) R.color.widget_day_done
+                                            else R.color.widget_day_empty
+                                        )
+                                    )
+                                    setContentDescription(
+                                        viewId,
+                                        context.getString(
+                                            if (date in practicedDates) R.string.widget_day_done
+                                            else R.string.widget_day_empty
+                                        )
+                                    )
+                                }
+                            }
+                        }
+                        setOnClickPendingIntent(R.id.widget_root, openAppPendingIntent)
+                        setContentDescription(
+                            R.id.widget_root,
+                            context.getString(
+                                R.string.widget_accessibility_description,
+                                dueCount,
+                                state.currentStreakDays
+                            )
+                        )
+                    }
+
+                widgetIds.forEach { widgetId ->
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                        val responsiveViews = mapOf(
+                            SizeF(110f, 110f) to createViews(
+                                R.layout.widget_practice_streak_small, false
+                            ),
+                            SizeF(250f, 110f) to createViews(
+                                R.layout.widget_practice_streak_medium, true
+                            ),
+                            SizeF(250f, 55f) to createViews(
+                                R.layout.widget_practice_streak_wide, false
+                            )
+                        )
+                        manager.updateAppWidget(widgetId, RemoteViews(responsiveViews))
+                    } else {
+                        manager.updateAppWidget(
+                            widgetId,
+                            createViews(R.layout.widget_practice_streak_medium, true)
+                        )
+                    }
+                }
             } finally {
                 pendingResult.finish()
             }
