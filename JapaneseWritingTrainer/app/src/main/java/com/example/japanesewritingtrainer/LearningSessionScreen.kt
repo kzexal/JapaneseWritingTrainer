@@ -78,7 +78,7 @@ fun LearningSessionScreen(
     var errorMessage by remember { mutableStateOf<String?>(null) }
     var showExitConfirmation by remember { mutableStateOf(false) }
 
-    BackHandler(enabled = snapshot?.current != null || showExitConfirmation) {
+    BackHandler(enabled = snapshot != null || showExitConfirmation) {
         if (!showExitConfirmation) showExitConfirmation = true
     }
 
@@ -206,7 +206,7 @@ fun LearningSessionScreen(
             Text("Ôn tập ${characterTypeLabel(deckType)}", style = MaterialTheme.typography.titleLarge)
             IconButton(
                 onClick = { showExitConfirmation = true },
-                enabled = snapshot?.current != null
+                enabled = snapshot != null
             ) {
                 Icon(Icons.Filled.Close, contentDescription = "Thoát phiên học")
             }
