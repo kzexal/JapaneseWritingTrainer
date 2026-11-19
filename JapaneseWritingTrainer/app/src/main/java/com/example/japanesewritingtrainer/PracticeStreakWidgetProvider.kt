@@ -74,11 +74,11 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                 ).apply {
                     setTextViewText(
                         R.id.widget_current_streak,
-                        context.getString(R.string.widget_current_streak, streak)
+                        streak.toString()
                     )
                     setTextViewText(
                         R.id.widget_due_count,
-                        context.getString(R.string.widget_due_count, dueCount)
+                        dueCount.toString()
                     )
                     setOnClickPendingIntent(R.id.widget_root, openAppPendingIntent)
                     setContentDescription(
