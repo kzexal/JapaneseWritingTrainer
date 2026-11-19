@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
@@ -71,7 +72,7 @@ fun HomeScreen(
     val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
 
     Column(modifier = modifier.fillMaxSize().padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        verticalArrangement = Arrangement.SpaceEvenly) {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text("Chào mừng bạn trở lại", style = MaterialTheme.typography.titleMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant)
@@ -112,11 +113,26 @@ fun HomeScreen(
                         color = MaterialTheme.colorScheme.onPrimaryContainer)
                 }
                 if (heroCharacter != null) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(heroCharacter.character, fontSize = 56.sp, lineHeight = 64.sp,
-                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onPrimaryContainer)
-                        Text(heroCharacter.reading, style = MaterialTheme.typography.labelLarge,
-                            color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Column(
+                        modifier = Modifier.width(if (deckName.equals("Kanji", ignoreCase = true)) 48.dp else 64.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Text(
+                            heroCharacter.character,
+                            fontSize = if (deckName.equals("Kanji", ignoreCase = true)) 40.sp else 52.sp,
+                            lineHeight = if (deckName.equals("Kanji", ignoreCase = true)) 48.sp else 60.sp,
+                            fontWeight = FontWeight.Medium,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer,
+                            maxLines = 1
+                        )
+                        if (!deckName.equals("Kanji", ignoreCase = true)) {
+                            Text(
+                                heroCharacter.reading,
+                                style = MaterialTheme.typography.labelMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer,
+                                maxLines = 1
+                            )
+                        }
                     }
                 }
             }
