@@ -21,6 +21,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -95,6 +97,12 @@ fun ReviewOverviewScreen(
         }
     }
 
+    val warningColor = if (MaterialTheme.colorScheme.background.luminance() < 0.5f) {
+        Color(0xFFE6B85C)
+    } else {
+        Color(0xFFC98A1B)
+    }
+
     Column(
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 8.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
@@ -107,7 +115,7 @@ fun ReviewOverviewScreen(
                 label = "Đến hạn hôm nay",
                 value = dueCards.size,
                 modifier = Modifier.weight(1f),
-                valueColor = MaterialTheme.colorScheme.error
+                valueColor = warningColor
             )
             OverviewCountCard(
                 label = "Chữ mới còn lại",
