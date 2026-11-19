@@ -193,7 +193,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Mở workflow Rust bridge trên push `main` và pull request vào `main`.
 - [x] Bổ sung Android JVM unit tests và debug APK build vào CI.
 - [ ] Kiểm tra kết quả CI thực tế sau commit.
-- [ ] Rà soát và loại bỏ các build artifacts/IDE files đã bị track từ trước, sau khi xác nhận không có runtime dependency.
+- [x] Rà soát và loại bỏ các build artifacts/IDE files đã bị track từ trước; giữ nguyên Cargo.lock, mã nguồn Rust và JNI libraries trong app/src/main/jniLibs/.
 
 ### Phase 1 — Ổn định learning system
 
