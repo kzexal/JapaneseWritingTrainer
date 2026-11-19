@@ -1,6 +1,5 @@
 package com.example.japanesewritingtrainer
 
-import android.os.Build
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,8 +28,6 @@ fun SettingsScreen(
     onBackClick: () -> Unit,
     themeMode: AppThemeMode,
     onThemeModeChange: (AppThemeMode) -> Unit,
-    dynamicColorEnabled: Boolean,
-    onDynamicColorEnabledChange: (Boolean) -> Unit,
     hiraganaNewCardsPerDay: Int,
     onHiraganaNewCardsPerDayChange: (Int) -> Unit,
     katakanaNewCardsPerDay: Int,
@@ -108,27 +105,6 @@ fun SettingsScreen(
                     }
                 }
 
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text("Màu theo hình nền")
-                        Text(
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-                                "Dùng bảng màu hệ thống Android 12+ thay cho màu thương hiệu."
-                            else
-                                "Chỉ khả dụng trên Android 12 trở lên.",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-                    Switch(
-                        checked = dynamicColorEnabled,
-                        onCheckedChange = onDynamicColorEnabledChange,
-                        enabled = Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
-                    )
-                }
             }
         }
 
