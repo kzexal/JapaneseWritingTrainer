@@ -82,35 +82,30 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
 
                 fun createViews(layoutId: Int, includeDots: Boolean): RemoteViews =
                     RemoteViews(context.packageName, layoutId).apply {
-                        setTextViewText(
-                            R.id.widget_due_count,
-                            context.getString(
-                                if (dueCount == 0 && !state.practicedToday) {
-                                    R.string.widget_new_cards_today
-                                } else {
-                                    R.string.widget_due_count
-                                },
-                                dueCount
-                            )
-                        )
+                        val dueLabel = if (dueCount == 0 && !state.practicedToday) {
+                            context.getString(R.string.widget_new_cards_today)
+                        } else {
+                            context.getString(R.string.widget_due_count, dueCount)
+                        }
+                        setTextViewText(R.id.widget_due_count, dueLabel)
                         setTextViewText(
                             R.id.widget_current_streak,
                             context.getString(R.string.widget_current_streak, state.currentStreakDays)
                         )
                         if (layoutId != R.layout.widget_practice_streak_small) {
-                            setTextViewText(
-                                R.id.widget_today_status,
-                                context.getString(
-                                    if (state.practicedToday) R.string.widget_studied_today
-                                    else if (streakAtRisk) R.string.widget_streak_at_risk
-                                    else if (dueCount == 0) R.string.widget_new_cards_today
-                                    else R.string.widget_not_studied_today
-                                )
-                            )
-                        )
-                        if (streakAtRisk) {
-                            setTextColor(R.id.widget_current_streak, context.getColor(R.color.widget_streak_warning))
+                            val statusRes = when {
+                                state.practicedToday -> R.string.widget_studied_today
+                                streakAtRisk -> R.string.widget_streak_at_risk
+                                dueCount == 0 -> R.string.widget_new_cards_today
+                                else -> R.string.widget_not_studied_today
+                            }
+                            setTextViewText(R.id.widget_today_status, context.getString(statusRes))
                         }
+                        if (streakAtRisk) {
+                            setTextColor(
+                                R.id.widget_current_streak,
+                                context.getColor(R.color.widget_streak_warning)
+                            )
                         }
                         if (layoutId == R.layout.widget_practice_streak_medium) {
                             setTextViewText(
