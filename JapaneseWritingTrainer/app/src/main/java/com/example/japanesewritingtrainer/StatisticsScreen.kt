@@ -118,7 +118,7 @@ fun StatisticsScreen(
                     progress = { completion },
                     modifier = Modifier.fillMaxWidth()
                 )
-                Text("$learned / $totalCards chữ đã tốt nghiệp sang Review")
+                Text("$learned / $totalCards chữ đã thuộc")
             }
         }
 
@@ -180,9 +180,9 @@ fun StatisticsScreen(
             modifier = Modifier.weight(1f).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            item { StatusProgressRow("Review · Đã tốt nghiệp", learned, totalCards) }
-            item { StatusProgressRow("Learning / Relearning", learning, totalCards) }
-            item { StatusProgressRow("New · Chưa học", newCards, totalCards) }
+            item { StatusProgressRow("Đã thuộc", learned, totalCards) }
+            item { StatusProgressRow("Đang học · Học lại", learning, totalCards) }
+            item { StatusProgressRow("Chưa học", newCards, totalCards) }
             item {
                 Text(
                     "Thống kê được tổng hợp từ tiến độ và lịch sử lưu trên thiết bị.",
