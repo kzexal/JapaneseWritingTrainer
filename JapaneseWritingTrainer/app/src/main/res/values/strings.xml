@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">JapaneseWritingTrainer</string>
     <string name="widget_title">Japanese Writing Trainer</string>
+    <string name="widget_due_count">%1$d chữ cần ôn</string>
+    <string name="widget_due_count_placeholder">0 chữ cần ôn</string>
     <string name="widget_current_streak">%1$d ngày liên tiếp</string>
     <string name="widget_current_streak_placeholder">0 ngày liên tiếp</string>
     <string name="widget_studied_today">✓ Đã học hôm nay</string>
