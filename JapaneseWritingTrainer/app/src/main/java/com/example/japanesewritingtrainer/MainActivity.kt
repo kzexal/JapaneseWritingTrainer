@@ -355,6 +355,7 @@ class MainActivity : ComponentActivity() {
                                         deckName = characterTypeLabel(selectedDeckType),
                                         showGrid = showGrid,
                                         showHints = showHints,
+                                        onDetailStateChanged = { isLibraryDetail = it },
                                         onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
                                             practiceLogScope.launch {
                                                 practiceLogRepository.add(
