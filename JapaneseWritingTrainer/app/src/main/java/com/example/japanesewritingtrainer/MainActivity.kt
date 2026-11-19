@@ -202,84 +202,83 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                                 horizontalAlignment = Alignment.CenterHorizontally
                             ) {
-                                // Hai deck là hai tab chính; Cài đặt dùng chung nằm ở góc phải.
+                                // Top bar gọn, bộ chọn bộ chữ tách biệt khỏi điều hướng chính.
                                 Row(
-                                    modifier = Modifier.fillMaxWidth(),
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 8.dp),
                                     verticalAlignment = Alignment.CenterVertically
                                 ) {
-                                    TabRow(
-                                        selectedTabIndex = when (selectedDeckType) {
-                                            "katakana" -> 1
-                                            "kanji" -> 2
-                                            else -> 0
+                                    Text(
+                                        text = when (selectedScreen) {
+                                            MainScreen.HOME -> "Học"
+                                            MainScreen.LEARNING -> "Ôn tập"
+                                            MainScreen.LIBRARY, MainScreen.VOCABULARY -> "Thư viện"
+                                            MainScreen.STATISTICS, MainScreen.HISTORY -> "Thống kê"
+                                            MainScreen.SETTINGS -> "Cài đặt"
+                                            else -> "Luyện viết"
                                         },
+                                        style = MaterialTheme.typography.titleLarge,
                                         modifier = Modifier.weight(1f)
-                                    ) {
-                                        Tab(
-                                            selected = selectedDeckType == "hiragana",
-                                            onClick = {
-                                                if (selectedDeckType != "hiragana") {
-                                                    selectedDeckType = "hiragana"
-                                                    appSettings.setSelectedCharacterType("hiragana")
-                                                    selectedIndex = 0
-                                                }
-                                                selectedScreen = MainScreen.HOME
-                                            },
-                                            text = { Text("Hiragana") }
-                                        )
-                                        Tab(
-                                            selected = selectedDeckType == "katakana",
-                                            onClick = {
-                                                if (selectedDeckType != "katakana") {
-                                                    selectedDeckType = "katakana"
-                                                    appSettings.setSelectedCharacterType("katakana")
-                                                    selectedIndex = 0
-                                                }
-                                                selectedScreen = MainScreen.HOME
-                                            },
-                                            text = { Text("Katakana") }
-                                        )
-                                        Tab(
-                                            selected = selectedDeckType == "kanji",
-                                            onClick = {
-                                                if (selectedDeckType != "kanji") {
-                                                    selectedDeckType = "kanji"
-                                                    appSettings.setSelectedCharacterType("kanji")
-                                                    selectedIndex = 0
-                                                }
-                                                selectedScreen = MainScreen.HOME
-                                            },
-                                            text = { Text("Kanji") }
-                                        )
-                                    }
+                                    )
                                     IconButton(onClick = { selectedScreen = MainScreen.SETTINGS }) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Settings,
-                                            contentDescription = "Cài đặt"
-                                        )
+                                        Icon(Icons.Filled.Settings, contentDescription = "Cài đặt")
                                     }
                                 }
 
-                                // Các deck dùng chung hệ thống Learning, History và Statistics.
-                                
-                                    // Điều hướng chức năng cuộn ngang trên một hàng để nhường chiều cao
-                                    // cho Canvas và các nút thao tác trong màn hình luyện viết.
-                                    ScrollableTabRow(
-                                        selectedTabIndex = MainScreen.entries
-                                            .filter { it != MainScreen.SETTINGS }
-                                            .indexOf(selectedScreen).coerceAtLeast(0),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        edgePadding = 8.dp
+                                if (selectedScreen == MainScreen.HOME ||
+                                    selectedScreen == MainScreen.LEARNING ||
+                                    selectedScreen == MainScreen.LIBRARY ||
+                                    selectedScreen == MainScreen.VOCABULARY
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        MainScreen.entries.filter { it != MainScreen.SETTINGS }.forEach { screen ->
-                                            Tab(
-                                                selected = selectedScreen == screen,
-                                                onClick = { selectedScreen = screen },
-                                                text = { Text(screen.label, maxLines = 1, softWrap = false) }
+                                        listOf("hiragana", "katakana", "kanji").forEach { type ->
+                                            val selected = selectedDeckType == type
+                                            androidx.compose.material3.FilterChip(
+                                                selected = selected,
+                                                onClick = {
+                                                    selectedDeckType = type
+                                                    appSettings.setSelectedCharacterType(type)
+                                                    selectedIndex = 0
+                                                    if (selectedScreen == MainScreen.LEARNING) {
+                                                        selectedScreen = MainScreen.HOME
+                                                    }
+                                                },
+                                                label = { Text(characterTypeLabel(type)) }
                                             )
                                         }
                                     }
+                                }
 
+                                if (selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.LIBRARY }) {
+                                            Text("Chữ cái")
+                                        }
+                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.VOCABULARY }) {
+                                            Text("Từ vựng")
+                                        }
+                                    }
+                                }
+                                if (selectedScreen == MainScreen.STATISTICS || selectedScreen == MainScreen.HISTORY) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                    ) {
+                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.STATISTICS }) {
+                                            Text("Tổng quan")
+                                        }
+                                        androidx.compose.material3.TextButton(onClick = { selectedScreen = MainScreen.HISTORY }) {
+                                            Text("Lịch sử")
+                                        }
+                                    }
+                                }
+
+                                // Nội dung từng màn hình giữ nguyên các ViewModel/repository hiện có.
                                 when (selectedScreen) {
                                     MainScreen.GUIDE -> LearningGuideScreen(
                                         modifier = Modifier.weight(1f)
@@ -500,6 +499,33 @@ class MainActivity : ComponentActivity() {
                                         }
                                     }
                                     }
+                                }
+
+                                androidx.compose.material3.NavigationBar {
+                                    androidx.compose.material3.NavigationBarItem(
+                                        selected = selectedScreen == MainScreen.HOME,
+                                        onClick = { selectedScreen = MainScreen.HOME },
+                                        icon = {},
+                                        label = { Text("Học") }
+                                    )
+                                    androidx.compose.material3.NavigationBarItem(
+                                        selected = selectedScreen == MainScreen.LEARNING,
+                                        onClick = { selectedScreen = MainScreen.LEARNING },
+                                        icon = {},
+                                        label = { Text("Ôn tập") }
+                                    )
+                                    androidx.compose.material3.NavigationBarItem(
+                                        selected = selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY,
+                                        onClick = { selectedScreen = MainScreen.LIBRARY },
+                                        icon = {},
+                                        label = { Text("Thư viện") }
+                                    )
+                                    androidx.compose.material3.NavigationBarItem(
+                                        selected = selectedScreen == MainScreen.STATISTICS || selectedScreen == MainScreen.HISTORY,
+                                        onClick = { selectedScreen = MainScreen.STATISTICS },
+                                        icon = {},
+                                        label = { Text("Thống kê") }
+                                    )
                                 }
                             }
                         }
