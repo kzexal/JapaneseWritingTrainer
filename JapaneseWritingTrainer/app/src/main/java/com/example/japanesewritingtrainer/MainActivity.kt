@@ -101,12 +101,14 @@ class MainActivity : ComponentActivity() {
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
+                    var isLibraryDetail by remember { mutableStateOf(false) }
                     var navigationHistory by remember { mutableStateOf(listOf<MainScreen>()) }
 
                     fun navigateTo(screen: MainScreen) {
                         if (screen != selectedScreen) {
                             navigationHistory = navigationHistory + selectedScreen
                             selectedScreen = screen
+                            isLibraryDetail = false
                         }
                     }
 
@@ -246,10 +248,10 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                if (selectedScreen == MainScreen.HOME ||
+                                if (!isLibraryDetail && (selectedScreen == MainScreen.HOME ||
                                     selectedScreen == MainScreen.LEARNING ||
                                     selectedScreen == MainScreen.LIBRARY ||
-                                    selectedScreen == MainScreen.VOCABULARY
+                                    selectedScreen == MainScreen.VOCABULARY)
                                 ) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp),
@@ -273,7 +275,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                if (selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY) {
+                                if (!isLibraryDetail && (selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY)) {
                                     Row(
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -333,6 +335,7 @@ class MainActivity : ComponentActivity() {
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
                                         KanjiLibraryScreen(
                                             modifier = Modifier.weight(1f),
+                                            onDetailStateChanged = { isLibraryDetail = it },
                                             onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
                                                 practiceLogScope.launch {
                                                     practiceLogRepository.add(
@@ -526,7 +529,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
-                                if (selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
+                                if (!isLibraryDetail && selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
                                     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
                                         Row(
                                             modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(56.dp),
