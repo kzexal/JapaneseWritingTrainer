@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_practice_streak_background"
+    android:clickable="true"
+    android:focusable="true"
+    android:gravity="center_vertical"
+    android:orientation="vertical"
+    android:padding="12dp">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="CẦN ÔN" android:textColor="@color/widget_secondary" android:textSize="11sp" android:textStyle="bold" />
+    <TextView android:id="@+id/widget_due_count" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/widget_due_count_placeholder" android:textColor="@color/widget_title" android:textSize="25sp" android:textStyle="bold" />
+    <TextView android:id="@+id/widget_current_streak" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="@string/widget_current_streak_placeholder" android:textColor="@color/widget_accent" android:textSize="12sp" android:textStyle="bold" />
+</LinearLayout>
