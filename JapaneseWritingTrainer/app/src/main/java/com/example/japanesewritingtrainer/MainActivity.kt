@@ -374,9 +374,6 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.VOCABULARY -> VocabularyLibraryScreen(
-                                        availableCharacters = characters,
-                                        showGrid = showGrid,
-                                        showHints = showHints,
                                         modifier = Modifier.weight(1f)
                                     )
 
