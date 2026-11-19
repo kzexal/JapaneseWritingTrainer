@@ -1,5 +1,6 @@
 package com.example.japanesewritingtrainer
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,6 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
@@ -54,6 +56,8 @@ fun SettingsScreen(
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
+    val uriHandler = LocalUriHandler.current
+    var showSourcesDialog by remember { androidx.compose.runtime.mutableStateOf(false) }
     val versionName = remember(context) {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
             ?: "Không xác định"
@@ -294,20 +298,21 @@ fun SettingsScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(16.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
-                    "Ghi công dữ liệu",
+                    "Nguồn dữ liệu và giấy phép",
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    "Dữ liệu thứ tự nét Hiragana và Katakana được chuyển đổi từ KanjiVG. " +
-                        "Copyright © Ulrich Apel. Licensed under Creative Commons " +
-                        "Attribution-ShareAlike 3.0 (CC BY-SA 3.0). " +
-                        "Nguồn: https://github.com/KanjiVG/kanjivg",
+                    "Ứng dụng sử dụng dữ liệu Kanji từ OpenJLPT và hình học nét từ KanjiVG. " +
+                        "Thông tin ghi công và điều khoản ShareAlike được trình bày riêng bên dưới.",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                OutlinedButton(onClick = { showSourcesDialog = true }) {
+                    Text("Xem nguồn và giấy phép")
+                }
             }
         }
 
@@ -315,6 +320,64 @@ fun SettingsScreen(
             text = "Japanese Writing Trainer · Phiên bản $versionName",
             style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+    }
+
+    if (showSourcesDialog) {
+        AlertDialog(
+            onDismissRequest = { showSourcesDialog = false },
+            title = { Text("Nguồn dữ liệu và giấy phép") },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    Text(
+                        "Kanji metadata: OpenJLPT, dựa trên KANJIDIC2 (EDRDG) và danh sách JLPT cộng đồng của Jonathan Waller. " +
+                            "Dữ liệu OpenJLPT được phân phối theo CC BY-SA 4.0; dữ liệu phái sinh phải giữ điều khoản ShareAlike.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "OpenJLPT: https://github.com/evanclan/OpenJLPT",
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://github.com/evanclan/OpenJLPT")
+                        },
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "EDRDG license: https://www.edrdg.org/edrdg/licence.html",
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://www.edrdg.org/edrdg/licence.html")
+                        },
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "JLPT levels are community approximations, not official lists published by JLPT.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "Stroke geometry: KanjiVG, copyright © Ulrich Apel and contributors, licensed under CC BY-SA 3.0.",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "KanjiVG: https://github.com/KanjiVG/kanjivg",
+                        modifier = Modifier.clickable {
+                            uriHandler.openUri("https://github.com/KanjiVG/kanjivg")
+                        },
+                        color = MaterialTheme.colorScheme.primary,
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        "CC BY-SA 4.0: https://creativecommons.org/licenses/by-sa/4.0/\n" +
+                            "CC BY-SA 3.0: https://creativecommons.org/licenses/by-sa/3.0/",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+            },
+            confirmButton = {
+                Button(onClick = { showSourcesDialog = false }) {
+                    Text("Đóng")
+                }
+            }
         )
     }
 
