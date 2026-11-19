@@ -1,6 +1,5 @@
 package com.example.japanesewritingtrainer
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -8,14 +7,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -50,8 +43,7 @@ fun LearningSessionScreen(
     showGrid: Boolean = true,
     showHints: Boolean = true,
     deckType: String = "hiragana",
-    modifier: Modifier = Modifier,
-    onExit: () -> Unit = {}
+    modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
     val coordinator = remember(context) { LearningSessionCoordinator(context) }
@@ -76,31 +68,6 @@ fun LearningSessionScreen(
     var awaitingRating by remember { mutableStateOf(false) }
     var traceCompletedCardId by remember { mutableStateOf<String?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
-    var showExitConfirmation by remember { mutableStateOf(false) }
-
-    BackHandler(enabled = snapshot != null || showExitConfirmation) {
-        if (!showExitConfirmation) showExitConfirmation = true
-    }
-
-    if (showExitConfirmation) {
-        AlertDialog(
-            onDismissRequest = { showExitConfirmation = false },
-            title = { Text("Thoát phiên học?") },
-            text = { Text("Tiến độ đã lưu vẫn được giữ nguyên. Bạn có muốn kết thúc phiên hiện tại không?") },
-            confirmButton = {
-                Button(onClick = {
-                    showExitConfirmation = false
-                    onExit()
-                }) { Text("Thoát") }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { showExitConfirmation = false }) {
-                    Text("Tiếp tục học")
-                }
-            }
-        )
-    }
-
     LaunchedEffect(coordinator, deck, deckCards, newCardsPerDay) {
         isLoading = true
         snapshot = null
@@ -198,19 +165,7 @@ fun LearningSessionScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text("Ôn tập ${characterTypeLabel(deckType)}", style = MaterialTheme.typography.titleLarge)
-            IconButton(
-                onClick = { showExitConfirmation = true },
-                enabled = snapshot != null
-            ) {
-                Icon(Icons.Filled.Close, contentDescription = "Thoát phiên học")
-            }
-        }
+        Text("Ôn tập ${characterTypeLabel(deckType)}", style = MaterialTheme.typography.titleLarge)
 
         when {
             isLoading -> {
@@ -259,16 +214,8 @@ fun LearningSessionScreen(
                         )
                     }
                 }
-                LinearProgressIndicator(
-                    progress = {
-                        if (session.totalCount == 0) 0f
-                        else (session.completedCount.toFloat() / session.totalCount).coerceIn(0f, 1f)
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
                 Text(
-                    "Phiên này ${session.completedCount}/${session.totalCount}  ·  " +
-                        "Chữ mới hôm nay: $newCardsStudiedToday/$newCardsPerDay",
+                    "Chữ mới hôm nay: $newCardsStudiedToday/$newCardsPerDay",
                     style = MaterialTheme.typography.labelMedium
                 )
 
