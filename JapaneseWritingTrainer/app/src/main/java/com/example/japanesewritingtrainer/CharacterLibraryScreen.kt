@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -196,7 +198,7 @@ fun CharacterLibraryScreen(
                         Text(
                             progress.statusLabel(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                            color = progress.statusColor()
                         )
                     }
                 }
@@ -249,7 +251,7 @@ private fun CharacterDetailContent(
             Text(
                 progress.statusLabel(),
                 style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary
+                color = progress.statusColor()
             )
         }
         WritingCanvas(
@@ -269,4 +271,12 @@ private fun CardProgress?.statusLabel(): String = when (this?.status ?: CardStat
     CardStatus.NEW -> "Mới"
     CardStatus.LEARNING, CardStatus.RELEARNING -> "Đang học"
     CardStatus.REVIEW -> "Đã thuộc"
+}
+
+
+@Composable
+private fun CardProgress?.statusColor(): Color = when (this?.status ?: CardStatus.NEW) {
+    CardStatus.NEW -> if (isSystemInDarkTheme()) Color(0xFF8AB4F8) else Color(0xFF246BB2)
+    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.error
+    CardStatus.REVIEW -> MaterialTheme.colorScheme.tertiary
 }
