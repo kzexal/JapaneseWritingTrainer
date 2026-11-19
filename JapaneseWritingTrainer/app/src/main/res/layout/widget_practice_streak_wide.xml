@@ -8,8 +8,8 @@
     android:focusable="true"
     android:gravity="center"
     android:orientation="horizontal"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp">
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp">
 
     <TextView
         android:id="@+id/widget_current_streak"
@@ -17,15 +17,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:gravity="center"
-        android:text="0"
+        android:text="🔥 0"
         android:textColor="@color/widget_accent"
-        android:textSize="25sp"
+        android:textSize="23sp"
         android:textStyle="bold" />
 
-    <View
-        android:layout_width="1dp"
+    <TextView
+        android:layout_width="wrap_content"
         android:layout_height="28dp"
-        android:background="@color/widget_day_empty" />
+        android:gravity="center"
+        android:text="│"
+        android:textColor="@color/widget_day_empty"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/widget_due_count"
