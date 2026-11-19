@@ -100,7 +100,9 @@ fun KanjiLibraryScreen(
 
         else -> {
             val radicals = remember(records) { KanjiLibrary.availableRadicals(records) }
-            val filtered = remember(records, query, selectedRadical) {\n                KanjiLibrary.filter(records, query, null, selectedRadical)\n            }
+            val filtered = remember(records, query, selectedRadical) {
+                KanjiLibrary.filter(records, query, null, selectedRadical)
+            }
 
             LazyVerticalGrid(
                 columns = GridCells.Adaptive(minSize = 100.dp),
