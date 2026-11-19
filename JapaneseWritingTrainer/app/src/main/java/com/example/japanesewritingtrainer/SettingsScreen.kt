@@ -19,7 +19,10 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import android.app.TimePickerDialog
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -57,7 +60,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val uriHandler = LocalUriHandler.current
-    var showSourcesDialog by remember { androidx.compose.runtime.mutableStateOf(false) }
+    var showSourcesDialog by remember { mutableStateOf(false) }
     val versionName = remember(context) {
         context.packageManager.getPackageInfo(context.packageName, 0).versionName
             ?: "Không xác định"
