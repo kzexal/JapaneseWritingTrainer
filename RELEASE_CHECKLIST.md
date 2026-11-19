@@ -11,11 +11,13 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 | --- | --- | --- |
 | Chức năng học cốt lõi | PASS theo xác nhận kiểm thử gần nhất | Hiragana, Katakana, Kanji, Vocabulary, Session/FSRS, History, Statistics |
 | Backup/restore JSON | PASS theo xác nhận kiểm thử gần nhất | Có validation và Room transaction; backup chứa CardProgress và PracticeLog |
-| Daily streak và App Widget | PASS theo xác nhận kiểm thử gần nhất | Widget dùng PracticeLog và cùng phép tính với Statistics |
+| Daily streak và App Widget | Chức năng nền có sẵn; UI widget đang được làm mới | Widget hiện hiển thị số chữ đến hạn, streak và trạng thái hôm nay; chưa hoàn tất 3 layout 2×2, 4×2, 4×1 theo spec |
 | Debug build và tests | PASS theo xác nhận người dùng | Unit tests, instrumentation tests và assembleDebug |
 | Application ID | Đã cố định | `com.example.japanesewritingtrainer` |
 | Version | Chưa bump cho release | Hiện `versionCode = 2`, `versionName = 1.1`; chỉ tăng khi chốt bản phát hành |
 | Launcher icon | Đã gắn ảnh dự án; chờ xác minh trên thiết bị | Adaptive icon và round adaptive icon dùng `res/drawable/icon.png`; Android launcher tự áp dụng mask bo góc |
+| UI redesign P0/P1 | Đã triển khai trên `main`; chờ build và kiểm tra thiết bị | Bảng màu sáng/tối, typography, shape, bottom navigation, bộ chọn deck và Home dạng character-first; giữ nguyên Room/FSRS/session logic |
+| UI redesign P2/P3/P4 | Chưa hoàn tất | Widget responsive 3 kích thước, các màn còn lại, Material You toggle, animation và accessibility review còn lại |
 | Release signing | Chưa cấu hình | Chưa có signingConfig cho keystore phát hành |
 | Release build | Chưa xác minh | Chưa có bằng chứng `assembleRelease` hoặc cài đặt bản Release đã ký |
 | KanjiVG attribution | Đã có notice | Cần rà soát điều kiện CC BY-SA 3.0 và cách phân phối dữ liệu phái sinh trước khi phát hành công khai |
@@ -30,6 +32,18 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 - [ ] Kiểm tra icon thực tế trên thiết bị; xác nhận ảnh không bị phóng to/cắt ngoài ý muốn.
 - [ ] Xem trước icon trên nền sáng/tối và trên nhiều launcher.
 - [ ] Giữ tên ứng dụng nhất quán giữa launcher, widget và màn hình thông tin ứng dụng.
+
+### 1.1 Thiết kế lại giao diện
+
+- [x] Áp dụng bảng màu thương hiệu sáng/tối với seed `#6667AB`; dynamic color mặc định tắt.
+- [x] Thiết lập typography và hình khối Material 3 dùng chung.
+- [x] Thay hai hàng tab bằng bottom navigation 4 mục; gom Từ vựng vào Thư viện và Lịch sử vào Thống kê.
+- [x] Làm mới màn Học: thẻ hành động chính, thống kê dạng chip, tiến độ và lưới ký tự theo trạng thái.
+- [x] Làm mới widget hiện tại: hiển thị số chữ đến hạn, streak, trạng thái hôm nay; màu nền/chữ có bản sáng và tối.
+- [ ] Hoàn thiện ba kích thước widget (2×2, 4×2, 4×1), trạng thái đầy đủ và preview.
+- [ ] Hoàn thiện các màn Luyện viết, Ôn tập, Thư viện, Thống kê, Cài đặt theo spec.
+- [ ] Kiểm tra font scale 1.3×, TalkBack, tương phản, landscape/portrait và giảm animation.
+- [ ] Chạy build và toàn bộ kiểm thử liên quan UI trên thiết bị thật.
 
 ### 2. Signing và bảo vệ khóa
 
