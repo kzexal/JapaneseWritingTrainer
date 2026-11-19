@@ -206,9 +206,9 @@ fun StatisticsScreen(
         ) {
             item { StatisticsActivityHeatmap(logs = logs) }
             item { StatisticsWeeklyTrends(logs = logs) }
+            item { StatusProgressRow("Mới", newCards, totalCards, MaterialTheme.colorScheme.primary) }
+            item { StatusProgressRow("Đang học · Học lại", learning, totalCards, MaterialTheme.colorScheme.error) }
             item { StatusProgressRow("Đã thuộc", learned, totalCards, MaterialTheme.colorScheme.tertiary) }
-            item { StatusProgressRow("Đang học · Học lại", learning, totalCards, MaterialTheme.colorScheme.primary) }
-            item { StatusProgressRow("Chưa học", newCards, totalCards, MaterialTheme.colorScheme.outline) }
             item {
                 Text(
                     "Thống kê được tổng hợp từ tiến độ và lịch sử lưu trên thiết bị.",
