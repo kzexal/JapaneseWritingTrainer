@@ -1,58 +1,64 @@
 package com.example.japanesewritingtrainer.ui.theme
 
-import android.app.Activity
-import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+private val BrandPrimary = Color(0xFF6667AB)
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = BrandPrimary,
+    onPrimary = Color(0xFFFFFFFF),
+    primaryContainer = Color(0xFFE4E3FF),
+    onPrimaryContainer = Color(0xFF1E1E5A),
+    secondary = Color(0xFF5F6088),
+    secondaryContainer = Color(0xFFE3E1F4),
+    tertiary = Color(0xFF3E8E6B),
+    onTertiary = Color(0xFFFFFFFF),
+    tertiaryContainer = Color(0xFFD5F0E1),
+    onTertiaryContainer = Color(0xFF102F22),
+    error = Color(0xFFBA1A1A),
+    background = Color(0xFFFBF9FF),
+    surface = Color(0xFFFBF9FF),
+    surfaceContainer = Color(0xFFF1EFF8),
+    surfaceContainerHigh = Color(0xFFEAE8F3),
+    onBackground = Color(0xFF1B1B21),
+    onSurface = Color(0xFF1B1B21),
+    onSurfaceVariant = Color(0xFF5C5C6B),
+    outline = Color(0xFF7A7A8C)
+)
 
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+private val DarkColorScheme = darkColorScheme(
+    primary = Color(0xFFBFC0FF),
+    onPrimary = Color(0xFF2E2F72),
+    primaryContainer = Color(0xFF4B4C91),
+    onPrimaryContainer = Color(0xFFE2E0FF),
+    secondary = Color(0xFFC5C4E0),
+    secondaryContainer = Color(0xFF444560),
+    tertiary = Color(0xFF8FD5B0),
+    onTertiary = Color(0xFF153727),
+    tertiaryContainer = Color(0xFF28513D),
+    onTertiaryContainer = Color(0xFFB0F0CA),
+    error = Color(0xFFFFB4AB),
+    background = Color(0xFF131318),
+    surface = Color(0xFF131318),
+    surfaceContainer = Color(0xFF1F1F25),
+    surfaceContainerHigh = Color(0xFF2A2A31),
+    onBackground = Color(0xFFE4E1E9),
+    onSurface = Color(0xFFE4E1E9),
+    onSurfaceVariant = Color(0xFFC7C5D0),
+    outline = Color(0xFF918F9A)
 )
 
 @Composable
 fun JapaneseWritingTrainerTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
-
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
-    }
-
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    MaterialTheme(colorScheme = colorScheme, typography = Typography, content = content)
 }
