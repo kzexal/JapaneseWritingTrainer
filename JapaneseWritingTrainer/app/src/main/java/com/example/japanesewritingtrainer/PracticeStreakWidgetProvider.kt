@@ -74,7 +74,7 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                 ).apply {
                     setTextViewText(
                         R.id.widget_current_streak,
-                        streak.toString()
+                        "🔥 $streak"
                     )
                     setTextViewText(
                         R.id.widget_due_count,
