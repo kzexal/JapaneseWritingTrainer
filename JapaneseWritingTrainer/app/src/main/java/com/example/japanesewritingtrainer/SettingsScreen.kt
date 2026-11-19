@@ -182,6 +182,21 @@ fun SettingsScreen(
         Card(modifier = Modifier.fillMaxWidth()) {
             Column(
                 modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Widget màn hình chính", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Widget hiển thị số ngày streak và số chữ cần ôn. Để thêm widget, nhấn giữ vùng trống " +
+                        "trên màn hình chính, chọn Widget, tìm Japanese Writing Trainer rồi kéo widget 2×1 vào màn hình.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
