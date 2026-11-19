@@ -80,7 +80,7 @@ fun ReviewOverviewScreen(
                 }
                 val character = charactersById[card.characterId] ?: return@mapNotNull null
                 ReviewOverviewCard(character, progress.status, dueAt)
-            }.sortedBy { it.dueAtEpochMillis }.take(12)
+            }.sortedBy { it.dueAtEpochMillis }
 
             val studiedToday = logRepository.countDistinctNewCardsSince(
                 localDayStartEpochMillis(),
