@@ -26,6 +26,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -192,9 +193,9 @@ fun StatisticsScreen(
         ) {
             item { StatisticsActivityHeatmap(logs = logs) }
             item { StatisticsWeeklyTrends(logs = logs) }
-            item { StatusProgressRow("Đã thuộc", learned, totalCards) }
-            item { StatusProgressRow("Đang học · Học lại", learning, totalCards) }
-            item { StatusProgressRow("Chưa học", newCards, totalCards) }
+            item { StatusProgressRow("Đã thuộc", learned, totalCards, MaterialTheme.colorScheme.tertiary) }
+            item { StatusProgressRow("Đang học · Học lại", learning, totalCards, MaterialTheme.colorScheme.primary) }
+            item { StatusProgressRow("Chưa học", newCards, totalCards, MaterialTheme.colorScheme.outline) }
             item {
                 Text(
                     "Thống kê được tổng hợp từ tiến độ và lịch sử lưu trên thiết bị.",
@@ -226,7 +227,7 @@ private fun StatisticValueCard(label: String, value: String, modifier: Modifier 
 }
 
 @Composable
-private fun StatusProgressRow(label: String, count: Int, total: Int) {
+private fun StatusProgressRow(label: String, count: Int, total: Int, indicatorColor: Color) {
     val fraction = if (total == 0) 0f else count.toFloat() / total
     Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
         Row(
@@ -236,7 +237,11 @@ private fun StatusProgressRow(label: String, count: Int, total: Int) {
             Text(label, style = MaterialTheme.typography.bodyMedium)
             Text("$count / $total", style = MaterialTheme.typography.bodyMedium)
         }
-        LinearProgressIndicator(progress = { fraction }, modifier = Modifier.fillMaxWidth())
+        LinearProgressIndicator(
+            progress = { fraction },
+            modifier = Modifier.fillMaxWidth(),
+            color = indicatorColor
+        )
     }
 }
 
