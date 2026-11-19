@@ -3,4 +3,6 @@
     <color name="widget_title">#E2E0FF</color>
     <color name="widget_accent">#BFC0FF</color>
     <color name="widget_secondary">#C7C5D0</color>
+    <color name="widget_day_done">#8FD5B0</color>
+    <color name="widget_day_empty">#666571</color>
 </resources>
