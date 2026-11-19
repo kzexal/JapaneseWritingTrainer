@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocalFireDepartment
+import androidx.compose.material3.Icon
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -46,11 +49,13 @@ fun HomeScreen(
     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
     var progressById by remember { mutableStateOf<Map<String, CardProgress>>(emptyMap()) }
     var newCardsStudiedToday by remember { mutableIntStateOf(0) }
+    var currentStreakDays by remember { mutableIntStateOf(0) }
 
     LaunchedEffect(repository, practiceLogRepository, characters) {
         progressById = repository.getAll().associateBy { it.cardId }
         newCardsStudiedToday = practiceLogRepository
             .countDistinctNewCardsSince(localDayStartEpochMillis(), characters.map { it.id })
+        currentStreakDays = calculatePracticeStreak(practiceLogRepository.getAll()).currentDays
     }
 
     val now = System.currentTimeMillis()
@@ -71,12 +76,45 @@ fun HomeScreen(
     val canStart = dueCount > 0 || availableNewCount > 0
     val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
 
-    Column(modifier = modifier.fillMaxSize().padding(horizontal = 20.dp),
-        verticalArrangement = Arrangement.SpaceEvenly) {
-        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-            Text("Chào mừng bạn trở lại", style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant)
-            Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+    Column(
+        modifier = modifier.fillMaxSize().padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text(
+                    "Chào mừng bạn trở lại",
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
+            }
+            Surface(
+                shape = RoundedCornerShape(999.dp),
+                color = MaterialTheme.colorScheme.tertiaryContainer
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(6.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.LocalFireDepartment,
+                        contentDescription = "Chuỗi ngày học",
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                    Text(
+                        "$currentStreakDays ngày",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                    )
+                }
+            }
         }
 
         Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp),
@@ -141,7 +179,7 @@ fun HomeScreen(
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             SummaryChip("Đã thuộc", learnedCount.toString(), Modifier.weight(1f))
             SummaryChip("Cần ôn", dueCount.toString(), Modifier.weight(1f))
-            SummaryChip("Đang học", learningCount.toString(), Modifier.weight(1f))
+            SummaryChip("Chữ mới", newCount.toString(), Modifier.weight(1f))
         }
 
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -150,10 +188,10 @@ fun HomeScreen(
             Text("${(fraction * 100).toInt()}%", style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
         }
-        androidx.compose.material3.LinearProgressIndicator(progress = { fraction },
-            modifier = Modifier.fillMaxWidth())
-
-
+        androidx.compose.material3.LinearProgressIndicator(
+            progress = { fraction },
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 
