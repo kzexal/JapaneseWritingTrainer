@@ -19,6 +19,10 @@
 - Sao lưu và khôi phục dữ liệu học tập bằng tệp JSON.
 - Hoạt động offline; không yêu cầu đăng nhập hoặc đồng bộ nhiều thiết bị.
 
+## Chuẩn bị phát hành
+
+Checklist phát hành Android (icon, signing keystore, version, Release build, quyền và giấy phép) được theo dõi tại [RELEASE_CHECKLIST.md](RELEASE_CHECKLIST.md). Debug build thành công không thay thế việc xác minh Release APK/AAB đã ký.
+
 ## Công nghệ
 
 - Kotlin
