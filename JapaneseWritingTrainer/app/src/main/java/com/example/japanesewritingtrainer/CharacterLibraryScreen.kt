@@ -176,13 +176,27 @@ fun CharacterLibraryScreen(
                 contentType = { "character" }
             ) { character ->
                 val progress = progressById[character.id]
+                val status = progress?.status ?: CardStatus.NEW
+                val statusContainerColor = when (status) {
+                    CardStatus.NEW -> MaterialTheme.colorScheme.surfaceContainerHigh
+                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.primaryContainer
+                    CardStatus.REVIEW -> MaterialTheme.colorScheme.tertiaryContainer
+                }
+                val statusContentColor = when (status) {
+                    CardStatus.NEW -> MaterialTheme.colorScheme.onSurface
+                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.onPrimaryContainer
+                    CardStatus.REVIEW -> MaterialTheme.colorScheme.onTertiaryContainer
+                }
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable {
                             selectedCharacterId = character.id
                             onDetailStateChanged(true)
-                        }
+                        },
+                    colors = androidx.compose.material3.CardDefaults.cardColors(
+                        containerColor = statusContainerColor
+                    )
                 ) {
                     Column(
                         modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
@@ -196,9 +210,9 @@ fun CharacterLibraryScreen(
                             fontWeight = FontWeight.Medium
                         )
                         Text(
-                            progress.statusLabel(),
+                            if (status == CardStatus.REVIEW) "✓ ${progress.statusLabel()}" else progress.statusLabel(),
                             style = MaterialTheme.typography.labelSmall,
-                            color = progress.statusColor()
+                            color = statusContentColor
                         )
                     }
                 }
