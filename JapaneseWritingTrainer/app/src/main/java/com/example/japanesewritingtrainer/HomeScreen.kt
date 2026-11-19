@@ -30,6 +30,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
@@ -78,6 +80,9 @@ fun HomeScreen(
     val heroCharacter = dueCharacters.firstOrNull() ?: newCharacters.firstOrNull()
     val canStart = dueCount > 0 || availableNewCount > 0
     val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
+    val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
+    val streakAccent = if (isDarkTheme) Color(0xFFFFB59A) else Color(0xFFD9693F)
+    val streakAccentContainer = if (isDarkTheme) Color(0xFF5C2E1B) else Color(0xFFFFE2D6)
 
     Column(
         modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp),
@@ -99,7 +104,7 @@ fun HomeScreen(
             Surface(
                 modifier = Modifier.semantics(mergeDescendants = true) {},
                 shape = RoundedCornerShape(999.dp),
-                color = MaterialTheme.colorScheme.tertiaryContainer
+                color = streakAccentContainer
             ) {
                 Row(
                     modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp),
@@ -109,13 +114,13 @@ fun HomeScreen(
                     Icon(
                         imageVector = Icons.Filled.LocalFireDepartment,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onTertiaryContainer
+                        tint = streakAccent
                     )
                     Text(
                         "$currentStreakDays ngày",
                         style = MaterialTheme.typography.labelLarge,
                         fontWeight = FontWeight.SemiBold,
-                        color = MaterialTheme.colorScheme.onTertiaryContainer
+                        color = streakAccent
                     )
                 }
             }
