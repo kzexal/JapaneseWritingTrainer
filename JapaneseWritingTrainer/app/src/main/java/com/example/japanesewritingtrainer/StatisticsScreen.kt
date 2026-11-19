@@ -27,6 +27,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
@@ -34,6 +36,7 @@ import java.util.Locale
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 /** Tổng quan tiến độ học và thời gian luyện viết của các bộ ký tự đã nạp. */
 @Composable
@@ -294,6 +297,16 @@ private fun StatisticsActivityHeatmap(logs: List<PracticeLog>) {
                                     .fillMaxWidth()
                                     .height(12.dp)
                                     .background(color, RoundedCornerShape(3.dp))
+                                    .semantics {
+                                        val formattedDate = date.format(
+                                            DateTimeFormatter.ofPattern("dd/MM/yyyy", Locale.getDefault())
+                                        )
+                                        contentDescription = if (count == 0) {
+                                            "$formattedDate: không có hoạt động luyện tập"
+                                        } else {
+                                            "$formattedDate: đã luyện $count chữ khác nhau"
+                                        }
+                                    }
                             )
                         }
                     }
