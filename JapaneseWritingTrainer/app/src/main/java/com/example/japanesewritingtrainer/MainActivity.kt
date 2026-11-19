@@ -291,7 +291,10 @@ class MainActivity : ComponentActivity() {
                                                 newCardsPerDay = selectedNewCardsPerDay,
                                                 onStartLearning = { selectedScreen = MainScreen.LEARNING },
                                                 onOpenLibrary = { selectedScreen = MainScreen.LIBRARY },
-                                                onOpenFreePractice = { selectedScreen = MainScreen.FREE },
+                                                onOpenFreePractice = { characterId ->
+                                                    selectedIndex = selectedCharacters.indexOfFirst { it.id == characterId }.coerceAtLeast(0)
+                                                    selectedScreen = MainScreen.FREE
+                                                },
                                                 modifier = Modifier.weight(1f)
                                             )
                                     }
@@ -501,6 +504,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
 
+                                if (selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
                                 androidx.compose.material3.NavigationBar {
                                     androidx.compose.material3.NavigationBarItem(
                                         selected = selectedScreen == MainScreen.HOME,
@@ -526,6 +530,7 @@ class MainActivity : ComponentActivity() {
                                         icon = {},
                                         label = { Text("Thống kê") }
                                     )
+                                }
                                 }
                             }
                         }
