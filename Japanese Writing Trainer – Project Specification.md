@@ -10,7 +10,7 @@
 
 Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana, Katakana, Kanji và từ vựng bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
 
-Ứng dụng theo định hướng **offline-first**: dữ liệu Hiragana, Katakana, Kanji và Vocabulary được đóng gói trong ứng dụng; tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Hiragana và Katakana hiện có 71 ký tự mỗi bộ; Kanji có 86 ký tự N5; Vocabulary có 198 mục từ. Kiến trúc content/deck/card tách biệt để hỗ trợ mở rộng mà không làm mất tiến độ.
+Ứng dụng theo định hướng **offline-first**: dữ liệu Hiragana, Katakana, Kanji và Vocabulary được đóng gói trong ứng dụng; tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Hiragana và Katakana hiện có 71 ký tự mỗi bộ; Kanji có 1.031 ký tự thuộc các danh sách học N5–N2 (phân loại JLPT tham khảo, không phải danh sách chính thức); Vocabulary có 198 mục từ. Kiến trúc content/deck/card tách biệt để hỗ trợ mở rộng mà không làm mất tiến độ.
 
 ### 1.2 Nền tảng và công nghệ hiện tại
 
@@ -31,7 +31,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.3 Mục tiêu phiên bản hiện tại
 
-- Dataset: 71 Hiragana, 71 Katakana, 86 Kanji và 198 mục từ Vocabulary; mỗi deck có tiến độ riêng.
+- Dataset: 71 Hiragana, 71 Katakana, 1.031 Kanji (N5–N2) và 198 mục từ Vocabulary; mỗi deck có tiến độ riêng.
 - Hỗ trợ Trace, Guided Writing, Recall Writing và Free Practice.
 - Lưu tiến độ theo từng card và lịch sử luyện tập.
 - Lập lịch học mới, học lại và ôn tập bằng FSRS.
@@ -321,6 +321,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Đặt feedback Guided ở vùng riêng cố định phía trên Canvas để không che nét cuối hoặc làm thay đổi vùng viết; người dùng đã kiểm tra Guided kana PASS.
 - [x] Tích hợp Kanji vào DeckFactory/LearningSessionPlanner bằng ID ổn định từ Unicode; dùng FSRS/session/Room hiện có và chỉ cung cấp Guided khi geometry hợp lệ. Build/test mới đang chờ người dùng chạy.
 - [x] Kanji IDs có prefix kanji_ và codepoint; thêm regression test deck/planner, không thay đổi card IDs hay progress của Hiragana/Katakana.
+- [x] Mở rộng metadata Kanji từ N5 lên N5–N2: 1.031 ký tự duy nhất (N5: 86, N4: 160, N3: 387, N2: 398); giữ nguyên ID Unicode của dữ liệu cũ. Phân loại JLPT là danh sách học cộng đồng, không phải danh sách chính thức.
+- [ ] Xác minh trên thiết bị rằng 1.031 metadata records khớp đầy đủ với stroke geometry KanjiVG; repository có validation chặn thiếu/thừa ID, sai glyph, số nét và thứ tự nét.
 - [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation (chưa có workbook upsert vào Room ở phase này).
 - [ ] Chạy build + instrumentation mới, sau đó kiểm tra thủ công Kanji Home, giới hạn chữ mới, Learning/FSRS, Guided Library, History/Statistics trên thiết bị Android thật.
 
