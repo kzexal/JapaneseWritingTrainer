@@ -67,6 +67,8 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                     Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
                 }.toSet()
                 val today = LocalDate.now(zone)
+                val hourOfDay = java.time.ZonedDateTime.now(zone).hour
+                val streakAtRisk = hourOfDay >= 18 && !state.practicedToday
 
                 val openAppIntent = Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -82,7 +84,14 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                     RemoteViews(context.packageName, layoutId).apply {
                         setTextViewText(
                             R.id.widget_due_count,
-                            context.getString(R.string.widget_due_count, dueCount)
+                            context.getString(
+                                if (dueCount == 0 && !state.practicedToday) {
+                                    R.string.widget_new_cards_today
+                                } else {
+                                    R.string.widget_due_count
+                                },
+                                dueCount
+                            )
                         )
                         setTextViewText(
                             R.id.widget_current_streak,
@@ -93,10 +102,15 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                                 R.id.widget_today_status,
                                 context.getString(
                                     if (state.practicedToday) R.string.widget_studied_today
+                                    else if (streakAtRisk) R.string.widget_streak_at_risk
                                     else if (dueCount == 0) R.string.widget_new_cards_today
                                     else R.string.widget_not_studied_today
                                 )
                             )
+                        )
+                        if (streakAtRisk) {
+                            setTextColor(R.id.widget_current_streak, context.getColor(R.color.widget_streak_warning))
+                        }
                         }
                         if (layoutId == R.layout.widget_practice_streak_medium) {
                             setTextViewText(
