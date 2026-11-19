@@ -43,6 +43,7 @@ fun CharacterLibraryScreen(
     showGrid: Boolean = true,
     showHints: Boolean = true,
     onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
+    onDetailStateChanged: (Boolean) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -61,7 +62,10 @@ fun CharacterLibraryScreen(
         CharacterDetailContent(
             character = selectedCharacter,
             progress = progressById[selectedCharacter.id],
-            onBack = { selectedCharacterId = null },
+            onBack = {
+                selectedCharacterId = null
+                onDetailStateChanged(false)
+            },
             showGrid = showGrid,
             showHints = showHints,
             onPracticeFinished = onPracticeFinished,
@@ -140,7 +144,10 @@ fun CharacterLibraryScreen(
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { selectedCharacterId = character.id }
+                            .clickable {
+                                selectedCharacterId = character.id
+                                onDetailStateChanged(true)
+                            }
                     ) {
                         Column(
                             modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
@@ -213,11 +220,6 @@ private fun CharacterDetailContent(
                 color = MaterialTheme.colorScheme.primary
             )
         }
-        Text(
-            "Luyện viết theo chế độ Guided: ứng dụng hướng dẫn thứ tự, chiều viết và kiểm tra từng nét.",
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
         WritingCanvas(
             modifier = Modifier.weight(1f),
             character = character,
