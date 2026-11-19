@@ -186,30 +186,38 @@ fun HomeScreen(
         }
 
         Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            SummaryChip("Đã thuộc", learnedCount.toString(), Modifier.weight(1f))
-            SummaryChip("Cần ôn", dueCount.toString(), Modifier.weight(1f))
-            SummaryChip("Chữ mới", newCount.toString(), Modifier.weight(1f))
+            SummaryChip(
+                "Mới", newCount.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            SummaryChip(
+                "Đang học", learningCount.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.errorContainer,
+                MaterialTheme.colorScheme.onErrorContainer
+            )
+            SummaryChip(
+                "Đã thuộc", learnedCount.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer
+            )
         }
-
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Tiến độ $deckName", style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.weight(1f))
-            Text("${(fraction * 100).toInt()}%", style = MaterialTheme.typography.labelLarge,
-                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
-        }
-        androidx.compose.material3.LinearProgressIndicator(
-            progress = { fraction },
-            modifier = Modifier.fillMaxWidth()
-        )
     }
 }
 
 @Composable
-private fun SummaryChip(label: String, value: String, modifier: Modifier = Modifier) {
+private fun SummaryChip(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    containerColor: Color,
+    contentColor: Color
+) {
     Surface(
         modifier = modifier.semantics(mergeDescendants = true) {},
         shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer
+        color = containerColor,
+        contentColor = contentColor
     ) {
         Column(modifier = Modifier.padding(vertical = 9.dp, horizontal = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
