@@ -20,7 +20,7 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 | UI redesign P2/P3/P4 | Chưa hoàn tất | Widget responsive 3 kích thước, các màn còn lại, Material You toggle, animation và accessibility review còn lại |
 | Release signing | Chưa cấu hình | Chưa có signingConfig cho keystore phát hành |
 | Release build | Chưa xác minh | Chưa có bằng chứng `assembleRelease` hoặc cài đặt bản Release đã ký |
-| KanjiVG attribution | Đã có notice | Cần rà soát điều kiện CC BY-SA 3.0 và cách phân phối dữ liệu phái sinh trước khi phát hành công khai |
+| Third-party data attribution | Đã có notice trong repo và màn Nguồn dữ liệu trong Cài đặt | OpenJLPT metadata CC BY-SA 4.0; KanjiVG stroke geometry CC BY-SA 3.0; vẫn cần rà soát cách phân phối dữ liệu phái sinh trước khi phát hành |
 | Android Auto Backup | Cần quyết định sản phẩm | Manifest đang bật backup và include Room database + SharedPreferences cho cloud backup/device transfer |
 
 ## Việc cần làm
@@ -66,7 +66,8 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 - [ ] Quyết định có giữ Android Auto Backup hay chỉ dùng JSON backup thủ công. Hiện manifest bật `allowBackup` và backup rules bao gồm database + SharedPreferences; đây là cơ chế hệ điều hành, khác với đồng bộ trong ứng dụng.
 - [ ] Xác nhận phạm vi dữ liệu được sao lưu: JSON backup thủ công chứa CardProgress và PracticeLog, không chứa cài đặt SharedPreferences hoặc content assets.
 - [ ] Rà soát quyền trong merged manifest; chỉ giữ quyền cần thiết cho tính năng hiện tại.
-- [ ] Rà soát KanjiVG CC BY-SA 3.0, attribution và nghĩa vụ ShareAlike đối với dữ liệu hình học được phân phối.
+- [x] Ghi nhận nguồn và license trong THIRD_PARTY_NOTICES.md và màn Nguồn dữ liệu trong Cài đặt: OpenJLPT/KANJIDIC2 (CC BY-SA 4.0) và KanjiVG (CC BY-SA 3.0).
+- [ ] Rà soát cuối cùng cách phân phối các dataset phái sinh theo nghĩa vụ ShareAlike trước khi phát hành công khai.
 - [ ] Bổ sung thông tin phiên bản, ghi chú phát hành và hướng dẫn backup trước khi nâng cấp.
 
 ## Quy tắc bảo vệ dữ liệu
