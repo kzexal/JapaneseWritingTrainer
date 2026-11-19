@@ -51,7 +51,7 @@ fun KanjiLibraryScreen(
     var selectedRadical by remember { mutableStateOf<String?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(context, progressRepository) {
+    LaunchedEffect(context) {
         try {
             val loaded = withContext(Dispatchers.IO) {
                 KanjiRepository.load(context) to KanjiStrokeRepository.load(context)
@@ -235,7 +235,6 @@ private fun KanjiDetail(
     }
 }
 
-@Composable
 @Composable
 private fun KanjiDetailRow(label: String, value: String?) {
     if (!value.isNullOrBlank()) {
