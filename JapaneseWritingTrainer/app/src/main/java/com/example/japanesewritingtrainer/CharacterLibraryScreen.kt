@@ -267,5 +267,5 @@ private fun CharacterDetailContent(
 private fun CardProgress?.statusLabel(): String = when (this?.status ?: CardStatus.NEW) {
     CardStatus.NEW -> "Mới"
     CardStatus.LEARNING, CardStatus.RELEARNING -> "Đang học"
-    CardStatus.REVIEW -> "Đã học"
+    CardStatus.REVIEW -> "Đã thuộc"
 }
