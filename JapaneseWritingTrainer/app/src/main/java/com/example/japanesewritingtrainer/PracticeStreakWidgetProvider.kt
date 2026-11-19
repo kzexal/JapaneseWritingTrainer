@@ -31,6 +31,15 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
         }
     }
 
+    override fun onAppWidgetOptionsChanged(
+        context: Context,
+        appWidgetManager: AppWidgetManager,
+        appWidgetId: Int,
+        newOptions: android.os.Bundle
+    ) {
+        updateWidgets(context, appWidgetManager, intArrayOf(appWidgetId), goAsync())
+    }
+
     override fun onReceive(context: Context, intent: Intent) {
         super.onReceive(context, intent)
         when (intent.action) {
@@ -167,9 +176,17 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                         )
                         manager.updateAppWidget(widgetId, RemoteViews(responsiveViews))
                     } else {
+                        val options = manager.getAppWidgetOptions(widgetId)
+                        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
+                        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
+                        val layoutId = when {
+                            minHeight < 90 && minWidth >= 200 -> R.layout.widget_practice_streak_wide
+                            minWidth < 200 && minHeight >= 90 -> R.layout.widget_practice_streak_small
+                            else -> R.layout.widget_practice_streak_medium
+                        }
                         manager.updateAppWidget(
                             widgetId,
-                            createViews(R.layout.widget_practice_streak_medium, true)
+                            createViews(layoutId, layoutId == R.layout.widget_practice_streak_medium)
                         )
                     }
                 }
