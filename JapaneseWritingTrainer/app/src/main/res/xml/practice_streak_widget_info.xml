@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/widget_description"
-    android:initialLayout="@layout/widget_practice_streak"
-    android:minHeight="120dp"
-    android:minWidth="180dp"
-    android:previewLayout="@layout/widget_practice_streak"
+    android:initialLayout="@layout/widget_practice_streak_medium"
+    android:minHeight="110dp"
+    android:minWidth="110dp"
+    android:minResizeHeight="55dp"
+    android:minResizeWidth="110dp"
+    android:previewLayout="@layout/widget_practice_streak_medium"
     android:resizeMode="horizontal|vertical"
     android:updatePeriodMillis="0"
     android:widgetCategory="home_screen" />
