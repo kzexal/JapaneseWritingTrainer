@@ -81,6 +81,7 @@ fun WritingCanvas(
     showGrid: Boolean = true,
     showHints: Boolean = true,
     onCompleted: (() -> Unit)? = null,
+    onTraceFinished: (() -> Unit)? = null,
     onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null
 ) {
     val strokes = remember(character?.id) { mutableStateListOf<Path>() }
@@ -538,16 +539,33 @@ fun WritingCanvas(
         }
 
         if (mode != WritingMode.RECALL || isGuidedComplete) {
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                OutlinedButton(onClick = { showTemplate = !showTemplate }) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    modifier = Modifier.weight(1f),
+                    onClick = { showTemplate = !showTemplate }
+                ) {
                     Text(if (showTemplate) "Ẩn mẫu" else "Hiện mẫu")
                 }
                 OutlinedButton(
+                    modifier = Modifier.weight(1f),
                     onClick = { playToken++ },
                     enabled = !isAnimating && templatePaths.isNotEmpty()
                 ) {
                     Text("Xem thứ tự nét")
                 }
+            }
+        }
+
+        if (mode == WritingMode.TRACE) {
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = { onTraceFinished?.invoke() },
+                enabled = templatePaths.isNotEmpty()
+            ) {
+                Text("Hoàn tất đồ mẫu · Tự viết")
             }
         }
 
