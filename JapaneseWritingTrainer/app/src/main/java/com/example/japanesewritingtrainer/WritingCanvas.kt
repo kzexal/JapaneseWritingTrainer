@@ -5,6 +5,7 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.layout.Arrangement
@@ -17,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -516,13 +518,21 @@ fun WritingCanvas(
                 consecutiveFailedAttempts >= 2 &&
                 !isGuidedComplete
             ) {
-                OutlinedButton(
+                Surface(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
-                        .padding(8.dp),
-                    onClick = { showTemplate = !showTemplate }
+                        .padding(8.dp)
+                        .clickable { showTemplate = !showTemplate },
+                    shape = MaterialTheme.shapes.small,
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
+                    contentColor = MaterialTheme.colorScheme.primary,
+                    tonalElevation = 2.dp
                 ) {
-                    Text(if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý")
+                    Text(
+                        text = if (showTemplate) "Ẩn gợi ý" else "Xem gợi ý",
+                        modifier = Modifier.padding(horizontal = 9.dp, vertical = 4.dp),
+                        style = MaterialTheme.typography.labelSmall
+                    )
                 }
             }
         }
