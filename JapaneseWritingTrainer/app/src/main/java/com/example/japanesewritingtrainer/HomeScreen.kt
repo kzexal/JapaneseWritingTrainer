@@ -79,7 +79,6 @@ fun HomeScreen(
     val availableNewCount = minOf(newCount, remainingDailyNewCount)
     val heroCharacter = dueCharacters.firstOrNull() ?: newCharacters.firstOrNull()
     val canStart = dueCount > 0 || availableNewCount > 0
-    val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
     val isDarkTheme = MaterialTheme.colorScheme.background.luminance() < 0.5f
     val streakAccent = if (isDarkTheme) Color(0xFFFFB59A) else Color(0xFFD9693F)
     val streakAccentContainer = if (isDarkTheme) Color(0xFF5C2E1B) else Color(0xFFFFE2D6)
@@ -223,7 +222,7 @@ private fun SummaryChip(
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Text(label, style = MaterialTheme.typography.labelSmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+                color = contentColor.copy(alpha = 0.82f), textAlign = TextAlign.Center)
         }
     }
 }
