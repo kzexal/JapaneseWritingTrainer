@@ -44,6 +44,9 @@ fun KanjiLibraryScreen(
     onDetailStateChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext
+    val progressRepository = remember(context) { CardProgressRepository(context) }
+    var progressById by remember { mutableStateOf<Map<String, CardProgress>>(emptyMap()) }
+    var selectedStatus by remember { mutableStateOf("all") }
     var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
     var writingCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList())}
     var isLoading by remember { mutableStateOf(true) }
@@ -53,8 +56,9 @@ fun KanjiLibraryScreen(
     var selectedRadical by remember { mutableStateOf<String?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(context) {
+    LaunchedEffect(context, progressRepository) {
         try {
+            progressById = progressRepository.getAll().associateBy { it.cardId }
             val loaded = withContext(Dispatchers.IO) {
                 KanjiRepository.load(context) to KanjiStrokeRepository.load(context)
             }
@@ -103,8 +107,16 @@ fun KanjiLibraryScreen(
         else -> {
             val jlptLevels = remember(records) { KanjiLibrary.availableJlptLevels(records) }
             val radicals = remember(records) { KanjiLibrary.availableRadicals(records) }
-            val filtered = remember(records, query, selectedJlpt, selectedRadical) {
-                KanjiLibrary.filter(records, query, selectedJlpt, selectedRadical)
+            val filtered = remember(records, query, selectedJlpt, selectedRadical, selectedStatus, progressById) {
+                KanjiLibrary.filter(records, query, selectedJlpt, selectedRadical).filter { kanji ->
+                    val status = progressById[kanji.id]?.status ?: CardStatus.NEW
+                    when (selectedStatus) {
+                        "new" -> status == CardStatus.NEW
+                        "learning" -> status == CardStatus.LEARNING || status == CardStatus.RELEARNING
+                        "learned" -> status == CardStatus.REVIEW
+                        else -> true
+                    }
+                }
             }
 
             Column(
@@ -160,6 +172,24 @@ fun KanjiLibraryScreen(
                     }
                 }
 
+                Text("Trạng thái học", style = MaterialTheme.typography.labelLarge)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        "all" to "Tất cả",
+                        "new" to "Mới",
+                        "learning" to "Đang học",
+                        "learned" to "Đã thuộc"
+                    ).forEach { (value, label) ->
+                        item {
+                            FilterChip(
+                                selected = selectedStatus == value,
+                                onClick = { selectedStatus = value },
+                                label = { Text(label) }
+                            )
+                        }
+                    }
+                }
+
                 Text(
                     "${filtered.size} / ${records.size} Kanji",
                     style = MaterialTheme.typography.labelMedium,
@@ -198,6 +228,11 @@ fun KanjiLibraryScreen(
                                         style = MaterialTheme.typography.bodyMedium,
                                         fontWeight = FontWeight.Medium,
                                         maxLines = 2
+                                    )
+                                    Text(
+                                        kanjiProgressStatusLabel(progressById[kanji.id]),
+                                        style = MaterialTheme.typography.labelSmall,
+                                        color = MaterialTheme.colorScheme.primary
                                     )
                                     Text(
                                         "${kanji.strokeCount} nét · ${kanji.jlpt ?: "Chưa phân loại"}",
@@ -258,6 +293,13 @@ private fun KanjiDetail(
             )
         }
     }
+}
+
+@Composable
+private fun kanjiProgressStatusLabel(progress: CardProgress?): String = when (progress?.status ?: CardStatus.NEW) {
+    CardStatus.NEW -> "Mới"
+    CardStatus.LEARNING, CardStatus.RELEARNING -> "Đang học"
+    CardStatus.REVIEW -> "Đã thuộc"
 }
 
 @Composable
