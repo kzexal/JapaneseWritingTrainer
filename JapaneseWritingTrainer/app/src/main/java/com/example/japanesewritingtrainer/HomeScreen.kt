@@ -1,17 +1,25 @@
 package com.example.japanesewritingtrainer
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,12 +29,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
-/** Trang chủ tổng quan tiến độ và lối tắt tới các hoạt động học chính. */
 @Composable
 fun HomeScreen(
     characters: List<CharacterData>,
@@ -50,124 +59,127 @@ fun HomeScreen(
     }
 
     val now = System.currentTimeMillis()
-    val learnedCount = characters.count {
-        progressById[it.id]?.status == CardStatus.REVIEW
-    }
+    val learnedCount = characters.count { progressById[it.id]?.status == CardStatus.REVIEW }
     val learningCount = characters.count {
         progressById[it.id]?.status in setOf(CardStatus.LEARNING, CardStatus.RELEARNING)
     }
-    val dueCount = characters.count {
-        progressById[it.id]?.isDue(now) == true
+    val dueCharacters = characters.filter { progressById[it.id]?.isDue(now) == true }
+    val newCharacters = characters.filter {
+        progressById[it.id] == null ||
+            progressById[it.id]?.status !in setOf(CardStatus.REVIEW, CardStatus.LEARNING, CardStatus.RELEARNING)
     }
-    val newCount = (characters.size - learnedCount - learningCount).coerceAtLeast(0)
+    val dueCount = dueCharacters.size
+    val newCount = newCharacters.size
     val remainingDailyNewCount = (newCardsPerDay - newCardsStudiedToday).coerceAtLeast(0)
     val availableNewCount = minOf(newCount, remainingDailyNewCount)
+    val heroCharacter = dueCharacters.firstOrNull() ?: newCharacters.firstOrNull()
+    val canStart = dueCount > 0 || availableNewCount > 0
+    val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
 
-    Column(
-        modifier = modifier.fillMaxSize().padding(20.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.SemiBold)
-        Text(
-            "Luyện viết và ghi nhớ mặt chữ qua các phiên học ngắn.",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text("Tiến độ $deckName", style = MaterialTheme.typography.titleMedium)
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    SummaryValue("Đã thuộc", "$learnedCount / ${characters.size}")
-                    SummaryValue("Cần ôn", dueCount.toString())
-                    SummaryValue("Chữ mới", newCount.toString())
-                }
-                Text(
-                    "$learningCount chữ đang trong Learning / Relearning.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                val fraction = if (characters.isEmpty()) 0f
-                    else learnedCount.toFloat() / characters.size
-                androidx.compose.material3.LinearProgressIndicator(
-                    progress = { fraction },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                Text(
-                    "${(fraction * 100).toInt()}% hoàn thành",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
+    Column(modifier = modifier.fillMaxSize().padding(horizontal = 20.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text("Chào mừng bạn trở lại", style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
         }
 
-        Card(modifier = Modifier.fillMaxWidth()) {
-            Column(
-                modifier = Modifier.padding(18.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                Text("Bài học hôm nay", style = MaterialTheme.typography.titleMedium)
-                Text(
-                    if (dueCount > 0) {
-                        "Bạn có $dueCount ký tự đến hạn ôn tập."
-                    } else {
-                        "Không có ký tự đến hạn. Bạn có thể học thêm chữ mới."
-                    },
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Text(
-                    "Đã học mới hôm nay: $newCardsStudiedToday / $newCardsPerDay. " +
-                        "Còn có thể học $availableNewCount chữ mới.",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-                Button(
-                    onClick = onStartLearning,
-                    enabled = dueCount > 0 || availableNewCount > 0,
-                    modifier = Modifier.fillMaxWidth().height(56.dp)
-                ) {
-                    Text(
-                        if (dueCount > 0) "Ôn tập và học bài mới" else "Học bài mới",
-                        style = MaterialTheme.typography.titleMedium
-                    )
+        Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(26.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primaryContainer)) {
+            Row(modifier = Modifier.fillMaxWidth().padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(7.dp)) {
+                    Text(when {
+                        dueCount > 0 -> "Đến lượt ôn tập"
+                        availableNewCount > 0 -> "Sẵn sàng học chữ mới"
+                        else -> "Bạn đã hoàn thành hôm nay"
+                    }, style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.SemiBold)
+                    Text(when {
+                        dueCount > 0 -> "Còn $dueCount chữ đang chờ bạn."
+                        availableNewCount > 0 -> "Khám phá thêm một vài ký tự mới nhé."
+                        else -> "Một chút luyện tập mỗi ngày tạo nên khác biệt."
+                    }, style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    Button(onClick = onStartLearning, enabled = canStart,
+                        modifier = Modifier.fillMaxWidth().height(48.dp)) {
+                        Text(when {
+                            dueCount > 0 -> "Ôn $dueCount chữ"
+                            availableNewCount > 0 -> "Học chữ mới"
+                            else -> "Đã hoàn thành"
+                        })
+                    }
+                    Text("Hôm nay: $newCardsStudiedToday / $newCardsPerDay chữ mới",
+                        style = MaterialTheme.typography.labelMedium,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                }
+                if (heroCharacter != null) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(heroCharacter.character, fontSize = 72.sp, lineHeight = 80.sp,
+                            fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onPrimaryContainer)
+                        Text(heroCharacter.reading, style = MaterialTheme.typography.labelLarge,
+                            color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }
                 }
             }
         }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            OutlinedButton(
-                onClick = onOpenLibrary,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Thư viện")
-            }
-            OutlinedButton(
-                onClick = onOpenFreePractice,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text("Luyện Guided")
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            SummaryChip("Đã thuộc", learnedCount.toString(), Modifier.weight(1f))
+            SummaryChip("Cần ôn", dueCount.toString(), Modifier.weight(1f))
+            SummaryChip("Đang học", learningCount.toString(), Modifier.weight(1f))
+        }
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Tiến độ $deckName", style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.weight(1f))
+            Text("\${(fraction * 100).toInt()}%", style = MaterialTheme.typography.labelLarge,
+                color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
+        }
+        androidx.compose.material3.LinearProgressIndicator(progress = { fraction },
+            modifier = Modifier.fillMaxWidth())
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text("Bảng chữ cái", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+            TextButton(onClick = onOpenLibrary) { Text("Thư viện") }
+        }
+
+        LazyVerticalGrid(columns = GridCells.Fixed(5), modifier = Modifier.weight(1f).fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            items(characters, key = { it.id }) { character ->
+                val status = progressById[character.id]?.status
+                val background = when (status) {
+                    CardStatus.REVIEW -> MaterialTheme.colorScheme.tertiaryContainer
+                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.primaryContainer
+                    else -> MaterialTheme.colorScheme.surfaceContainerHigh
+                }
+                val foreground = when (status) {
+                    CardStatus.REVIEW -> MaterialTheme.colorScheme.onTertiaryContainer
+                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.onPrimaryContainer
+                    else -> MaterialTheme.colorScheme.onSurface
+                }
+                Column(modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(background)
+                    .clickable(onClick = onOpenFreePractice).padding(vertical = 7.dp, horizontal = 2.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(character.character, fontSize = 26.sp, color = foreground)
+                    Text(character.reading, style = MaterialTheme.typography.labelSmall,
+                        color = foreground, maxLines = 1)
+                }
             }
         }
     }
 }
 
 @Composable
-private fun SummaryValue(label: String, value: String) {
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        Text(value, fontSize = 20.sp, fontWeight = FontWeight.SemiBold)
-        Text(
-            label,
-            style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
+private fun SummaryChip(label: String, value: String, modifier: Modifier = Modifier) {
+    Surface(modifier = modifier, shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer) {
+        Column(modifier = Modifier.padding(vertical = 9.dp, horizontal = 6.dp),
+            horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(label, style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+        }
     }
 }
