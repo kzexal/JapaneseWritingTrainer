@@ -249,6 +249,7 @@ fun LearningSessionScreen(
                                 allowEditingAfterCompletion = false,
                                 showGrid = showGrid,
                                 showHints = showHints,
+                                expandedCanvas = true,
                                 onTraceFinished = if (needsFirstTrace) {
                                     {
                                         firstTraceRepository.markCompleted(character.id)
