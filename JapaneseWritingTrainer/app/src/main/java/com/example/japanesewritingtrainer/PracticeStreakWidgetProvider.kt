@@ -51,9 +51,16 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
     ) {
         CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {
             try {
-                val logs = PracticeLogRepository(context.applicationContext).getAll()
+                val appContext = context.applicationContext
+                val logs = PracticeLogRepository(appContext).getAll()
+                val progress = CardProgressRepository(appContext).getAll()
+                val dueCount = progress.count { it.isDue(System.currentTimeMillis()) }
                 val state = buildPracticeStreakWidgetState(logs)
                 val views = RemoteViews(context.packageName, R.layout.widget_practice_streak).apply {
+                    setTextViewText(
+                        R.id.widget_due_count,
+                        context.getString(R.string.widget_due_count, dueCount)
+                    )
                     setTextViewText(
                         R.id.widget_current_streak,
                         context.getString(R.string.widget_current_streak, state.currentStreakDays)
