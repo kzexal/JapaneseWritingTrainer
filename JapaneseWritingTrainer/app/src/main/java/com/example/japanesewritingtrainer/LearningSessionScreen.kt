@@ -66,6 +66,7 @@ fun LearningSessionScreen(
     var isLoading by remember { mutableStateOf(true) }
     var isSaving by remember { mutableStateOf(false) }
     var awaitingRating by remember { mutableStateOf(false) }
+    var traceCompletedCardId by remember { mutableStateOf<String?>(null) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(coordinator, deck, deckCards, newCardsPerDay) {
@@ -240,6 +241,7 @@ fun LearningSessionScreen(
                         )
                     } else if (!awaitingRating) {
                         val needsFirstTrace = current.kind == SessionCardKind.NEW &&
+                            traceCompletedCardId != character.id &&
                             !firstTraceRepository.hasCompleted(character.id)
                         key(current.card.id, needsFirstTrace) {
                             WritingCanvas(
@@ -252,6 +254,7 @@ fun LearningSessionScreen(
                                 onTraceFinished = if (needsFirstTrace) {
                                     {
                                         firstTraceRepository.markCompleted(character.id)
+                                        traceCompletedCardId = character.id
                                     }
                                 } else null,
                                 onCompleted = { awaitingRating = true }
