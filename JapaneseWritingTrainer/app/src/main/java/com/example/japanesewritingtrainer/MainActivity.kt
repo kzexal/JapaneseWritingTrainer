@@ -1,6 +1,8 @@
 package com.example.japanesewritingtrainer
 
 import android.os.Bundle
+import android.os.Build
+import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
@@ -48,6 +50,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.example.japanesewritingtrainer.ui.theme.JapaneseWritingTrainerTheme
 import kotlinx.coroutines.Dispatchers
@@ -74,6 +77,20 @@ class MainActivity : ComponentActivity() {
             }
             var showGrid by remember { mutableStateOf(appSettings.getShowGrid()) }
             var showHints by remember { mutableStateOf(appSettings.getShowHints()) }
+            var reminderEnabled by remember { mutableStateOf(appSettings.getReminderEnabled()) }
+            var reminderHour by remember { mutableIntStateOf(appSettings.getReminderHour()) }
+            var reminderMinute by remember { mutableIntStateOf(appSettings.getReminderMinute()) }
+            val reminderPermissionLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) { granted ->
+                if (granted) {
+                    reminderEnabled = true
+                    appSettings.setReminderEnabled(true)
+                    ReminderScheduler.schedule(context, reminderHour, reminderMinute)
+                } else {
+                    Toast.makeText(context, "Bạn chưa cấp quyền thông báo nên nhắc học chưa được bật.", Toast.LENGTH_LONG).show()
+                }
+            }
             val systemDarkTheme = isSystemInDarkTheme()
             val darkTheme = when (themeMode) {
                 AppThemeMode.SYSTEM -> systemDarkTheme
@@ -442,6 +459,31 @@ class MainActivity : ComponentActivity() {
                                         onShowHintsChange = { enabled ->
                                             showHints = enabled
                                             appSettings.setShowHints(enabled)
+                                        },
+                                        reminderEnabled = reminderEnabled,
+                                        reminderHour = reminderHour,
+                                        reminderMinute = reminderMinute,
+                                        onReminderEnabledChange = { enabled ->
+                                            if (!enabled) {
+                                                reminderEnabled = false
+                                                appSettings.setReminderEnabled(false)
+                                                ReminderScheduler.cancel(context)
+                                            } else if (
+                                                Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+                                                ContextCompat.checkSelfPermission(context, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
+                                            ) {
+                                                reminderPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+                                            } else {
+                                                reminderEnabled = true
+                                                appSettings.setReminderEnabled(true)
+                                                ReminderScheduler.schedule(context, reminderHour, reminderMinute)
+                                            }
+                                        },
+                                        onReminderTimeChange = { hour, minute ->
+                                            reminderHour = hour
+                                            reminderMinute = minute
+                                            appSettings.setReminderTime(hour, minute)
+                                            if (reminderEnabled) ReminderScheduler.schedule(context, hour, minute)
                                         },
                                         onBackupClick = {
                                             backupLauncher.launch("JapaneseWritingTrainer-backup.json")
