@@ -270,7 +270,8 @@ class MainActivity : ComponentActivity() {
                                                     appSettings.setSelectedCharacterType(type)
                                                     selectedIndex = 0
                                                     if (selectedScreen == MainScreen.LEARNING) {
-                                                        navigateTo(MainScreen.HOME)
+                                                        // Keep the user on the Review tab and refresh its deck overview.
+                                                        showActiveReviewSession = false
                                                     }
                                                 },
                                                 label = { Text(characterTypeLabel(type)) }
