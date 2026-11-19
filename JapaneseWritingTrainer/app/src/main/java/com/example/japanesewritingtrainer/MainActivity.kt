@@ -606,7 +606,7 @@ class MainActivity : ComponentActivity() {
                                 if (!isLibraryDetail && selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
                                     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
                                         Row(
-                                            modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp).height(56.dp),
+                                            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp).height(64.dp),
                                             horizontalArrangement = Arrangement.SpaceAround,
                                             verticalAlignment = Alignment.CenterVertically
                                         ) {
@@ -628,24 +628,35 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 private fun BottomNavIcon(icon: ImageVector, label: String, selected: Boolean, onClick: () -> Unit) {
-    Surface(
-        shape = androidx.compose.foundation.shape.CircleShape,
-        color = if (selected) MaterialTheme.colorScheme.secondaryContainer
-        else MaterialTheme.colorScheme.surface
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        IconButton(
-            onClick = onClick,
-            modifier = Modifier.semantics {
-                stateDescription = if (selected) "Đang chọn" else "Chưa chọn"
-            }
+        Surface(
+            shape = androidx.compose.foundation.shape.CircleShape,
+            color = if (selected) MaterialTheme.colorScheme.secondaryContainer
+            else MaterialTheme.colorScheme.surface
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = label,
-                tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
-                else MaterialTheme.colorScheme.onSurfaceVariant
-            )
+            IconButton(
+                onClick = onClick,
+                modifier = Modifier.semantics {
+                    stateDescription = if (selected) "Đang chọn" else "Chưa chọn"
+                }
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = label,
+                    tint = if (selected) MaterialTheme.colorScheme.onSecondaryContainer
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
         }
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelSmall,
+            color = if (selected) MaterialTheme.colorScheme.primary
+            else MaterialTheme.colorScheme.onSurfaceVariant
+        )
     }
 }
 
