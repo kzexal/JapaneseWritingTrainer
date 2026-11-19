@@ -7,9 +7,9 @@
 - **Hiragana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Katakana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Kanji:** 86 ký tự lấy từ sheet `Kanji` trong workbook `vocabulary.xlsx`; metadata được quản lý riêng với stroke geometry.
-- **Vocabulary:** 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc 15 nhóm và xem chi tiết. Có thể luyện viết theo hai mục tiêu độc lập **Japanese** hoặc **Reading**; các từ có đủ stroke geometry được đưa vào phiên học dùng chung Session/Room/FSRS, còn từ thiếu geometry vẫn được giữ trong thư viện.
+- **Vocabulary:** 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc 15 nhóm và xem chi tiết. Đây là thư viện tra cứu; không có phiên luyện viết Japanese/Reading.
 - **Daily streak:** streak được tính trên toàn bộ hoạt động học đã lưu của mọi deck; Statistics và Android Home-screen Widget dùng chung dữ liệu PracticeLog và cùng phép tính.
-- Hiragana, Katakana và Kanji có deck riêng; Vocabulary có mục tiêu luyện Japanese/Reading với tiến độ độc lập. Tiến độ được lưu theo ID ổn định.
+- Hiragana, Katakana và Kanji có deck riêng. Chọn một ký tự trong thư viện để mở màn hình luyện viết.
 - Thư viện ký tự hỗ trợ tìm kiếm; Kanji hỗ trợ lọc theo JLPT và bộ thủ.
 - Guided Writing luyện từng nét theo đúng thứ tự, sử dụng stroke geometry.
 - Ôn tập theo FSRS-6 với các mức Again, Hard, Good và Easy.
@@ -118,7 +118,7 @@ py -3.13 tools/generate_vocabulary.py
 
 Kết quả được ghi vào `app/src/main/assets/characters/vocabulary.json`. ID được tạo từ toàn bộ Unicode code point của trường `Japanese`, không phụ thuộc vị trí dòng. Vì vậy, hai từ đồng âm như `春` và `貼る` vẫn là hai card riêng; các câu ví dụ trùng nhau cũng không làm các card bị gộp. Khi thêm từ hoặc sắp xếp lại workbook, ID hiện có không đổi.
 
-Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống. Ứng dụng đọc JSON qua `VocabularyRepository`. Từ thư viện **Từ vựng**, người học có thể mở phiên luyện viết theo Japanese hoặc Reading; mỗi mục tiêu có card ID và tiến độ FSRS độc lập. Từ thiếu stroke geometry không được đưa vào phiên viết và vẫn hiển thị trong thư viện.
+Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống. Ứng dụng đọc JSON qua `VocabularyRepository`. Dữ liệu Vocabulary chỉ phục vụ tra cứu và xem chi tiết; không tạo phiên luyện viết Japanese/Reading.
 
 ## Cập nhật dữ liệu Kanji từ Excel
 
@@ -176,7 +176,7 @@ Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo backup m�
 
 ## Trạng thái và công việc còn lại
 
-- Đã tích hợp Vocabulary writing session theo Japanese/Reading và dùng chung Session Coordinator, Room, FSRS; các bài kiểm tra gần nhất đã PASS.
+- Vocabulary hiện chỉ dùng để tra cứu; tính năng luyện viết Japanese/Reading đã được gỡ khỏi giao diện.
 - Streak toàn ứng dụng và Android Home-screen Widget đã triển khai; unit tests, build, instrumentation và kiểm tra widget trên thiết bị đã PASS.
 - Backup/restore lưu CardProgress và PracticeLog, có validation và transaction; các kiểm thử edge case và kiểm tra khôi phục trên thiết bị đã PASS.
 - Tiếp tục rà soát quy trình cập nhật nội dung từ workbook, đặc biệt tính ổn định ID và nguyên tắc không tự xóa progress khi bỏ dòng khỏi workbook.
