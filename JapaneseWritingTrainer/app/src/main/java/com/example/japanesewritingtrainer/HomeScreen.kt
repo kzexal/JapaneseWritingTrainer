@@ -1,7 +1,5 @@
 package com.example.japanesewritingtrainer
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,9 +7,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -29,7 +24,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -94,14 +88,17 @@ fun HomeScreen(
                         dueCount > 0 -> "Đến lượt ôn tập"
                         availableNewCount > 0 -> "Sẵn sàng học chữ mới"
                         else -> "Bạn đã hoàn thành hôm nay"
-                    }, style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer, fontWeight = FontWeight.SemiBold)
+                    }, modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.titleSmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        fontWeight = FontWeight.SemiBold, maxLines = 2)
                     Text(when {
                         dueCount > 0 -> "Còn $dueCount chữ đang chờ bạn."
                         availableNewCount > 0 -> "Khám phá thêm một vài ký tự mới nhé."
                         else -> "Một chút luyện tập mỗi ngày tạo nên khác biệt."
-                    }, style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer)
+                    }, modifier = Modifier.fillMaxWidth(),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer, maxLines = 2)
                     Button(onClick = onStartLearning, enabled = canStart,
                         modifier = Modifier.fillMaxWidth().height(48.dp)) {
                         Text(when {
@@ -116,7 +113,7 @@ fun HomeScreen(
                 }
                 if (heroCharacter != null) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(heroCharacter.character, fontSize = 72.sp, lineHeight = 80.sp,
+                        Text(heroCharacter.character, fontSize = 56.sp, lineHeight = 64.sp,
                             fontWeight = FontWeight.Medium, color = MaterialTheme.colorScheme.onPrimaryContainer)
                         Text(heroCharacter.reading, style = MaterialTheme.typography.labelLarge,
                             color = MaterialTheme.colorScheme.onPrimaryContainer)
@@ -140,34 +137,7 @@ fun HomeScreen(
         androidx.compose.material3.LinearProgressIndicator(progress = { fraction },
             modifier = Modifier.fillMaxWidth())
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Text("Bảng chữ cái", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
-            TextButton(onClick = onOpenLibrary) { Text("Thư viện") }
-        }
 
-        LazyVerticalGrid(columns = GridCells.Fixed(5), modifier = Modifier.weight(1f).fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            items(characters, key = { it.id }) { character ->
-                val status = progressById[character.id]?.status
-                val background = when (status) {
-                    CardStatus.REVIEW -> MaterialTheme.colorScheme.tertiaryContainer
-                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.primaryContainer
-                    else -> MaterialTheme.colorScheme.surfaceContainerHigh
-                }
-                val foreground = when (status) {
-                    CardStatus.REVIEW -> MaterialTheme.colorScheme.onTertiaryContainer
-                    CardStatus.LEARNING, CardStatus.RELEARNING -> MaterialTheme.colorScheme.onPrimaryContainer
-                    else -> MaterialTheme.colorScheme.onSurface
-                }
-                Column(modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(background)
-                    .clickable { onOpenFreePractice(character.id) }.padding(vertical = 7.dp, horizontal = 2.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(character.character, fontSize = 26.sp, color = foreground)
-                    Text(character.reading, style = MaterialTheme.typography.labelSmall,
-                        color = foreground, maxLines = 1)
-                }
-            }
-        }
     }
 }
 
