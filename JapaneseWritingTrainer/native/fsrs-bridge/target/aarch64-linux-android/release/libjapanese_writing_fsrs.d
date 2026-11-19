@@ -1,1 +1,0 @@
-C:\Users\buidu\Downloads\JapaneseWritingTrainer\JapaneseWritingTrainer\native\fsrs-bridge\target\aarch64-linux-android\release\libjapanese_writing_fsrs.so: C:\Users\buidu\Downloads\JapaneseWritingTrainer\JapaneseWritingTrainer\native\fsrs-bridge\src\lib.rs
