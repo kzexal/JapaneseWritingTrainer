@@ -16,6 +16,7 @@ import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
+import android.app.TimePickerDialog
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -38,6 +39,11 @@ fun SettingsScreen(
     onShowGridChange: (Boolean) -> Unit,
     showHints: Boolean,
     onShowHintsChange: (Boolean) -> Unit,
+    reminderEnabled: Boolean,
+    reminderHour: Int,
+    reminderMinute: Int,
+    onReminderEnabledChange: (Boolean) -> Unit,
+    onReminderTimeChange: (Int, Int) -> Unit,
     onBackupClick: () -> Unit,
     onRestoreClick: () -> Unit,
     restoreConfirmationVisible: Boolean,
@@ -176,6 +182,47 @@ fun SettingsScreen(
                         )
                     }
                     Switch(checked = showHints, onCheckedChange = onShowHintsChange)
+                }
+            }
+        }
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+            Column(
+                modifier = Modifier.padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text("Nhắc học", style = MaterialTheme.typography.titleMedium)
+                Text(
+                    "Ứng dụng sẽ gửi thông báo mỗi ngày vào giờ bạn chọn.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text("Bật nhắc học", modifier = Modifier.weight(1f))
+                    Switch(checked = reminderEnabled, onCheckedChange = onReminderEnabledChange)
+                }
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text("Giờ nhắc")
+                        Text(
+                            String.format(java.util.Locale.getDefault(), "%02d:%02d", reminderHour, reminderMinute),
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                    OutlinedButton(onClick = {
+                        TimePickerDialog(
+                            context,
+                            { _, hour, minute -> onReminderTimeChange(hour, minute) },
+                            reminderHour,
+                            reminderMinute,
+                            true
+                        ).show()
+                    }) { Text("Chọn giờ") }
                 }
             }
         }
