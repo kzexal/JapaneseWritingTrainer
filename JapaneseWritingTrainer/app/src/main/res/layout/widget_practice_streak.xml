@@ -13,18 +13,28 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/widget_title"
-        android:textColor="#202124"
-        android:textSize="14sp"
+        android:textColor="#1E1E5A"
+        android:textSize="13sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/widget_due_count"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/widget_due_count_placeholder"
+        android:textColor="#1E1E5A"
+        android:textSize="25sp"
         android:textStyle="bold" />
 
     <TextView
         android:id="@+id/widget_current_streak"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="4dp"
         android:text="@string/widget_current_streak_placeholder"
-        android:textColor="#202124"
-        android:textSize="25sp"
+        android:textColor="#6667AB"
+        android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
@@ -33,15 +43,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
         android:text="@string/widget_not_studied_today"
-        android:textColor="#4B5563"
-        android:textSize="13sp" />
+        android:textColor="#5C5C6B"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/widget_longest_streak"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="4dp"
         android:text="@string/widget_longest_streak_placeholder"
-        android:textColor="#4B5563"
-        android:textSize="12sp" />
+        android:textColor="#5C5C6B"
+        android:textSize="11sp" />
 </LinearLayout>
