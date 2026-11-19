@@ -43,7 +43,7 @@ fun HomeScreen(
     newCardsPerDay: Int,
     onStartLearning: () -> Unit,
     onOpenLibrary: () -> Unit,
-    onOpenFreePractice: () -> Unit,
+    onOpenFreePractice: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -160,7 +160,7 @@ fun HomeScreen(
                     else -> MaterialTheme.colorScheme.onSurface
                 }
                 Column(modifier = Modifier.clip(RoundedCornerShape(14.dp)).background(background)
-                    .clickable(onClick = onOpenFreePractice).padding(vertical = 7.dp, horizontal = 2.dp),
+                    .clickable { onOpenFreePractice(character.id) }.padding(vertical = 7.dp, horizontal = 2.dp),
                     horizontalAlignment = Alignment.CenterHorizontally) {
                     Text(character.character, fontSize = 26.sp, color = foreground)
                     Text(character.reading, style = MaterialTheme.typography.labelSmall,
