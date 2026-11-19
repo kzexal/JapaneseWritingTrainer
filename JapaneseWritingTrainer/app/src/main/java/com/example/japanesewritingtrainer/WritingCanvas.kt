@@ -80,6 +80,7 @@ fun WritingCanvas(
     allowEditingAfterCompletion: Boolean = true,
     showGrid: Boolean = true,
     showHints: Boolean = true,
+    expandedCanvas: Boolean = false,
     onCompleted: (() -> Unit)? = null,
     onTraceFinished: (() -> Unit)? = null,
     onPracticeFinished: ((PracticeMode, Long, Long) -> Unit)? = null
@@ -167,9 +168,9 @@ fun WritingCanvas(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(16.dp),
+            .padding(if (expandedCanvas) 12.dp else 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
+        verticalArrangement = Arrangement.spacedBy(if (expandedCanvas) 10.dp else 12.dp)
     ) {
         if (character != null) {
             Text(
@@ -184,7 +185,7 @@ fun WritingCanvas(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(84.dp),
+                    .height(if (expandedCanvas) 76.dp else 84.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
