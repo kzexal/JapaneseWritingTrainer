@@ -338,7 +338,8 @@ class MainActivity : ComponentActivity() {
                                         showGrid = showGrid,
                                         showHints = showHints,
                                         deckType = selectedDeckType,
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.weight(1f),
+                                        onExit = { navigateTo(MainScreen.HOME) }
                                     )
 
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
