@@ -53,6 +53,7 @@ fun CharacterLibraryScreen(
     var selectedCharacterId by remember { mutableStateOf<String?>(null) }
     var query by remember { mutableStateOf("") }
     var selectedGroup by remember { mutableStateOf("all") }
+    var selectedStatus by remember { mutableStateOf("all") }
 
     LaunchedEffect(progressRepository, characters) {
         progressById = progressRepository.getAll().associateBy { it.cardId }
@@ -82,7 +83,7 @@ fun CharacterLibraryScreen(
     val groups = remember(characters) {
         characters.map { it.group }.distinct().sorted()
     }
-    val filteredCharacters = remember(characters, query, selectedGroup) {
+    val filteredCharacters = remember(characters, query, selectedGroup, selectedStatus, progressById) {
         characters.filter { character ->
             val matchesGroup = selectedGroup == "all" || character.group == selectedGroup
             val normalizedQuery = query.trim().lowercase()
@@ -90,7 +91,14 @@ fun CharacterLibraryScreen(
                 character.character.lowercase().contains(normalizedQuery) ||
                 character.reading.lowercase().contains(normalizedQuery) ||
                 character.id.lowercase().contains(normalizedQuery)
-            matchesGroup && matchesQuery
+            val status = progressById[character.id]?.status ?: CardStatus.NEW
+            val matchesStatus = when (selectedStatus) {
+                "new" -> status == CardStatus.NEW
+                "learning" -> status == CardStatus.LEARNING || status == CardStatus.RELEARNING
+                "learned" -> status == CardStatus.REVIEW
+                else -> true
+            }
+            matchesGroup && matchesQuery && matchesStatus
         }
     }
 
@@ -109,6 +117,7 @@ fun CharacterLibraryScreen(
             label = { Text("Tìm ký tự hoặc romaji") },
             singleLine = true
         )
+        Text("Nhóm ký tự", style = MaterialTheme.typography.labelLarge)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             item {
                 FilterChip(
@@ -124,6 +133,23 @@ fun CharacterLibraryScreen(
                     onClick = { selectedGroup = group },
                     label = { Text(group.uppercase()) }
                 )
+            }
+        }
+        Text("Trạng thái học", style = MaterialTheme.typography.labelLarge)
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            listOf(
+                "all" to "Tất cả",
+                "new" to "Mới",
+                "learning" to "Đang học",
+                "learned" to "Đã thuộc"
+            ).forEach { (value, label) ->
+                item {
+                    FilterChip(
+                        selected = selectedStatus == value,
+                        onClick = { selectedStatus = value },
+                        label = { Text(label) }
+                    )
+                }
             }
         }
         Text(
