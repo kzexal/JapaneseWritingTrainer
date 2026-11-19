@@ -13,8 +13,6 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -109,7 +107,7 @@ fun CharacterLibraryScreen(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        item(span = { GridItemSpan(maxLineSpan) }) {
+        item(span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text("Thư viện $deckName", style = MaterialTheme.typography.headlineSmall)
                 OutlinedTextField(
@@ -162,7 +160,7 @@ fun CharacterLibraryScreen(
             }
         }
         if (filteredCharacters.isEmpty()) {
-            item(span = { GridItemSpan(maxLineSpan) }) {
+            item(span = { GridItemSpan(maxLineSpan) }, contentType = "empty") {
                 Text(
                     "Không tìm thấy ký tự phù hợp.",
                     modifier = Modifier.padding(top = 16.dp),
@@ -170,7 +168,11 @@ fun CharacterLibraryScreen(
                 )
             }
         } else {
-            items(filteredCharacters, key = { it.id }) { character ->
+            items(
+                items = filteredCharacters,
+                key = { it.id },
+                contentType = { "character" }
+            ) { character ->
                 val progress = progressById[character.id]
                 Card(
                     modifier = Modifier
