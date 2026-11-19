@@ -207,7 +207,7 @@ fun WritingCanvas(
                             else ->
                                 "Nét ${completedStrokes + 1} / $totalStrokes"
                         },
-                        color = if (isGuidedComplete) Color(0xFF2E7D32) else MaterialTheme.colorScheme.onSurface
+                        color = MaterialTheme.colorScheme.onSurface
                     )
                     if (latestAnalysisFailed) {
                         Text(
@@ -215,7 +215,7 @@ fun WritingCanvas(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                             maxLines = 2,
-                            color = Color(0xFFEF6C00)
+                            color = MaterialTheme.colorScheme.error
                         )
                     } else if (latestMatch != null) {
                         Text(
@@ -239,9 +239,9 @@ fun WritingCanvas(
                                 "Nét chưa khớp mẫu · " + latestMatch.score.toInt() + "/100"
                             },
                             color = if (latestMatch.accepted) {
-                                Color(0xFF2E7D32)
+                                MaterialTheme.colorScheme.onSurface
                             } else {
-                                Color(0xFFEF6C00)
+                                MaterialTheme.colorScheme.error
                             }
                         )
                     }
