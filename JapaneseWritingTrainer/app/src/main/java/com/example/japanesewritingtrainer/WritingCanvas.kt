@@ -155,7 +155,7 @@ fun WritingCanvas(
         animProgress.animateTo(
             targetValue = templatePaths.size.toFloat(),
             animationSpec = tween(
-                durationMillis = 350,
+                durationMillis = 800 * templatePaths.size,
                 easing = LinearEasing
             )
         )
