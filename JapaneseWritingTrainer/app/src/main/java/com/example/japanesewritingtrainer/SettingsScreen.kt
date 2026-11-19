@@ -22,6 +22,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -167,7 +169,11 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Switch(checked = showGrid, onCheckedChange = onShowGridChange)
+                    Switch(
+                        checked = showGrid,
+                        onCheckedChange = onShowGridChange,
+                        modifier = Modifier.semantics { contentDescription = "Hiển thị lưới viết" }
+                    )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -181,7 +187,11 @@ fun SettingsScreen(
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     }
-                    Switch(checked = showHints, onCheckedChange = onShowHintsChange)
+                    Switch(
+                        checked = showHints,
+                        onCheckedChange = onShowHintsChange,
+                        modifier = Modifier.semantics { contentDescription = "Hiển thị gợi ý" }
+                    )
                 }
             }
         }
@@ -199,7 +209,11 @@ fun SettingsScreen(
                 )
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("Bật nhắc học", modifier = Modifier.weight(1f))
-                    Switch(checked = reminderEnabled, onCheckedChange = onReminderEnabledChange)
+                    Switch(
+                        checked = reminderEnabled,
+                        onCheckedChange = onReminderEnabledChange,
+                        modifier = Modifier.semantics { contentDescription = "Bật nhắc học hằng ngày" }
+                    )
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
