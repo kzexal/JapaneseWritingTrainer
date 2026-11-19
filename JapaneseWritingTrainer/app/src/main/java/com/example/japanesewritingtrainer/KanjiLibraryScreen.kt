@@ -10,10 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilterChip
@@ -44,21 +43,16 @@ fun KanjiLibraryScreen(
     onDetailStateChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext
-    val progressRepository = remember(context) { CardProgressRepository(context) }
-    var progressById by remember { mutableStateOf<Map<String, CardProgress>>(emptyMap()) }
-    var selectedStatus by remember { mutableStateOf("all") }
     var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
     var writingCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList())}
     var isLoading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var query by remember { mutableStateOf("") }
-    var selectedJlpt by remember { mutableStateOf<String?>(null) }
     var selectedRadical by remember { mutableStateOf<String?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(context, progressRepository) {
         try {
-            progressById = progressRepository.getAll().associateBy { it.cardId }
             val loaded = withContext(Dispatchers.IO) {
                 KanjiRepository.load(context) to KanjiStrokeRepository.load(context)
             }
@@ -105,141 +99,87 @@ fun KanjiLibraryScreen(
         )
 
         else -> {
-            val jlptLevels = remember(records) { KanjiLibrary.availableJlptLevels(records) }
             val radicals = remember(records) { KanjiLibrary.availableRadicals(records) }
-            val filtered = remember(records, query, selectedJlpt, selectedRadical, selectedStatus, progressById) {
-                KanjiLibrary.filter(records, query, selectedJlpt, selectedRadical).filter { kanji ->
-                    val status = progressById[kanji.id]?.status ?: CardStatus.NEW
-                    when (selectedStatus) {
-                        "new" -> status == CardStatus.NEW
-                        "learning" -> status == CardStatus.LEARNING || status == CardStatus.RELEARNING
-                        "learned" -> status == CardStatus.REVIEW
-                        else -> true
-                    }
-                }
-            }
+            val filtered = remember(records, query, selectedRadical) {\n                KanjiLibrary.filter(records, query, null, selectedRadical)\n            }
 
-            Column(
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 100.dp),
                 modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text("Thư viện Kanji", style = MaterialTheme.typography.headlineSmall)
-                OutlinedTextField(
-                    value = query,
-                    onValueChange = { query = it },
-                    modifier = Modifier.fillMaxWidth(),
-                    label = { Text("Tìm Kanji, âm đọc hoặc nghĩa") },
-                    singleLine = true
-                )
-
-                Text("JLPT", style = MaterialTheme.typography.labelLarge)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    item {
-                        FilterChip(
-                            selected = selectedJlpt == null,
-                            onClick = { selectedJlpt = null },
-                            label = { Text("Tất cả") }
+                item(span = { GridItemSpan(maxLineSpan) }) {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("Thư viện Kanji", style = MaterialTheme.typography.headlineSmall)
+                        OutlinedTextField(
+                            value = query,
+                            onValueChange = { query = it },
+                            modifier = Modifier.fillMaxWidth(),
+                            label = { Text("Tìm Kanji, âm đọc hoặc nghĩa") },
+                            singleLine = true
                         )
-                    }
-                    items(jlptLevels.size) { index ->
-                        val level = jlptLevels[index]
-                        FilterChip(
-                            selected = selectedJlpt == level,
-                            onClick = { selectedJlpt = if (selectedJlpt == level) null else level },
-                            label = { Text(level) }
-                        )
-                    }
-                }
-
-                Text("Bộ thủ", style = MaterialTheme.typography.labelLarge)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    item {
-                        FilterChip(
-                            selected = selectedRadical == null,
-                            onClick = { selectedRadical = null },
-                            label = { Text("Tất cả") }
-                        )
-                    }
-                    items(radicals.size) { index ->
-                        val radical = radicals[index]
-                        FilterChip(
-                            selected = selectedRadical == radical,
-                            onClick = {
-                                selectedRadical = if (selectedRadical == radical) null else radical
-                            },
-                            label = { Text(radical) }
-                        )
-                    }
-                }
-
-                Text("Trạng thái học", style = MaterialTheme.typography.labelLarge)
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    listOf(
-                        "all" to "Tất cả",
-                        "new" to "Mới",
-                        "learning" to "Đang học",
-                        "learned" to "Đã thuộc"
-                    ).forEach { (value, label) ->
-                        item {
-                            FilterChip(
-                                selected = selectedStatus == value,
-                                onClick = { selectedStatus = value },
-                                label = { Text(label) }
-                            )
+                        Text("Bộ thủ", style = MaterialTheme.typography.labelLarge)
+                        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                            item {
+                                FilterChip(
+                                    selected = selectedRadical == null,
+                                    onClick = { selectedRadical = null },
+                                    label = { Text("Tất cả") }
+                                )
+                            }
+                            items(radicals.size) { index ->
+                                val radical = radicals[index]
+                                FilterChip(
+                                    selected = selectedRadical == radical,
+                                    onClick = {
+                                        selectedRadical = if (selectedRadical == radical) null else radical
+                                    },
+                                    label = { Text(radical) }
+                                )
+                            }
                         }
+                        Text(
+                            "${filtered.size} / ${records.size} Kanji",
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
-
-                Text(
-                    "${filtered.size} / ${records.size} Kanji",
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
                 if (filtered.isEmpty()) {
-                    Text(
-                        "Không tìm thấy Kanji phù hợp.",
-                        modifier = Modifier.padding(top = 20.dp),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Text(
+                            "Không tìm thấy Kanji phù hợp.",
+                            modifier = Modifier.padding(top = 16.dp),
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
                 } else {
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 100.dp),
-                        modifier = Modifier.weight(1f).fillMaxWidth(),
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        items(filtered, key = { it.id }) { kanji ->
-                            Card(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
+                    items(filtered, key = { it.id }) { kanji ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
                                     selectedKanjiId = kanji.id
                                     onDetailStateChanged(true)
                                 }
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.spacedBy(3.dp)
                             ) {
-                                Column(
-                                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
-                                    horizontalAlignment = Alignment.CenterHorizontally,
-                                    verticalArrangement = Arrangement.spacedBy(3.dp)
-                                ) {
-                                    Text(kanji.character, fontSize = 34.sp)
-                                    Text(
-                                        kanji.meaning ?: "Chưa có nghĩa",
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        fontWeight = FontWeight.Medium,
-                                        maxLines = 2
-                                    )
-                                    Text(
-                                        kanjiProgressStatusLabel(progressById[kanji.id]),
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.primary
-                                    )
-                                    Text(
-                                        "${kanji.strokeCount} nét · ${kanji.jlpt ?: "Chưa phân loại"}",
-                                        style = MaterialTheme.typography.labelSmall,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                }
+                                Text(kanji.character, fontSize = 34.sp)
+                                Text(
+                                    kanji.meaning ?: "Chưa có nghĩa",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    fontWeight = FontWeight.Medium,
+                                    maxLines = 2
+                                )
+                                Text(
+                                    "${kanji.strokeCount} nét · ${kanji.jlpt ?: "Chưa phân loại"}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
                             }
                         }
                     }
@@ -296,12 +236,6 @@ private fun KanjiDetail(
 }
 
 @Composable
-private fun kanjiProgressStatusLabel(progress: CardProgress?): String = when (progress?.status ?: CardStatus.NEW) {
-    CardStatus.NEW -> "Mới"
-    CardStatus.LEARNING, CardStatus.RELEARNING -> "Đang học"
-    CardStatus.REVIEW -> "Đã thuộc"
-}
-
 @Composable
 private fun KanjiDetailRow(label: String, value: String?) {
     if (!value.isNullOrBlank()) {
