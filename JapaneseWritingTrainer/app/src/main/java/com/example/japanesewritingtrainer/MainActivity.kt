@@ -281,12 +281,16 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.LIBRARY) }) {
-                                            Text("Chữ cái")
-                                        }
-                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.VOCABULARY) }) {
-                                            Text("Từ vựng")
-                                        }
+                                        androidx.compose.material3.FilterChip(
+                                            selected = selectedScreen == MainScreen.LIBRARY,
+                                            onClick = { navigateTo(MainScreen.LIBRARY) },
+                                            label = { Text("Chữ cái") }
+                                        )
+                                        androidx.compose.material3.FilterChip(
+                                            selected = selectedScreen == MainScreen.VOCABULARY,
+                                            onClick = { navigateTo(MainScreen.VOCABULARY) },
+                                            label = { Text("Từ vựng") }
+                                        )
                                     }
                                 }
                                 if (selectedScreen == MainScreen.STATISTICS || selectedScreen == MainScreen.HISTORY) {
@@ -294,12 +298,16 @@ class MainActivity : ComponentActivity() {
                                         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                                     ) {
-                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.STATISTICS) }) {
-                                            Text("Tổng quan")
-                                        }
-                                        androidx.compose.material3.TextButton(onClick = { navigateTo(MainScreen.HISTORY) }) {
-                                            Text("Lịch sử")
-                                        }
+                                        androidx.compose.material3.FilterChip(
+                                            selected = selectedScreen == MainScreen.STATISTICS,
+                                            onClick = { navigateTo(MainScreen.STATISTICS) },
+                                            label = { Text("Tổng quan") }
+                                        )
+                                        androidx.compose.material3.FilterChip(
+                                            selected = selectedScreen == MainScreen.HISTORY,
+                                            onClick = { navigateTo(MainScreen.HISTORY) },
+                                            label = { Text("Lịch sử") }
+                                        )
                                     }
                                 }
 
