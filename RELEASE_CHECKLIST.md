@@ -15,7 +15,7 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 | Debug build và tests | PASS theo xác nhận người dùng | Unit tests, instrumentation tests và assembleDebug |
 | Application ID | Đã cố định | `com.example.japanesewritingtrainer` |
 | Version | Chưa bump cho release | Hiện `versionCode = 2`, `versionName = 1.1`; chỉ tăng khi chốt bản phát hành |
-| Launcher icon | Chưa sẵn sàng | Icon hiện tại vẫn là hình mẫu Android robot trên nền xanh dạng grid; cần thiết kế icon riêng và adaptive icon |
+| Launcher icon | Đã gắn ảnh dự án; chờ xác minh trên thiết bị | Adaptive icon và round adaptive icon dùng `res/drawable/icon.png`; Android launcher tự áp dụng mask bo góc |
 | Release signing | Chưa cấu hình | Chưa có signingConfig cho keystore phát hành |
 | Release build | Chưa xác minh | Chưa có bằng chứng `assembleRelease` hoặc cài đặt bản Release đã ký |
 | KanjiVG attribution | Đã có notice | Cần rà soát điều kiện CC BY-SA 3.0 và cách phân phối dữ liệu phái sinh trước khi phát hành công khai |
@@ -25,9 +25,9 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 
 ### 1. Nhận diện ứng dụng
 
-- [ ] Thiết kế launcher icon riêng, dễ nhận ra ở kích thước nhỏ.
-- [ ] Tạo adaptive icon foreground/background; kiểm tra safe zone và mask hình tròn/vuông/bo góc.
-- [ ] Kiểm tra monochrome icon trên launcher Android hỗ trợ themed icons.
+- [x] Gắn ảnh dự án làm launcher icon.
+- [x] Dùng adaptive icon để launcher tự bo góc theo mask của thiết bị.
+- [ ] Kiểm tra icon thực tế trên thiết bị; xác nhận ảnh không bị phóng to/cắt ngoài ý muốn.
 - [ ] Xem trước icon trên nền sáng/tối và trên nhiều launcher.
 - [ ] Giữ tên ứng dụng nhất quán giữa launcher, widget và màn hình thông tin ứng dụng.
 
