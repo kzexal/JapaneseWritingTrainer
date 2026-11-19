@@ -36,13 +36,15 @@ HEADERS = (
 )
 SOURCE_ROWS = (
     ("Kanji metadata", "OpenJLPT", "CC BY-SA 4.0", "https://github.com/evanclan/OpenJLPT",
-     "N4/N3/N2 level assignments and readings/meanings; derived from KANJIDIC2 and Jonathan Waller's community lists."),
+     "Kanji metadata derived from KANJIDIC2 and Jonathan Waller's community JLPT lists. Adapted dataset remains CC BY-SA 4.0."),
+    ("Kanji readings and meanings", "KANJIDIC2 / EDRDG", "CC BY-SA 4.0", "https://www.edrdg.org/edrdg/licence.html",
+     "Upstream source for Kanji readings, meanings, stroke counts and radicals."),
+    ("JLPT level assignments", "Jonathan Waller's JLPT Resources", "CC BY", "https://www.tanos.co.uk/jlpt/",
+     "Community-standard level assignments; not an official JLPT list."),
     ("JLPT level note", "OpenJLPT / Jonathan Waller", "Unofficial community classification",
-     "https://www.tanos.co.uk/jlpt/", "JLPT does not publish official post-2010 kanji lists; treat levels as study-list approximations."),
+     "https://github.com/evanclan/OpenJLPT", "JLPT does not publish official post-2010 Kanji lists; treat levels as study-list approximations."),
     ("Stroke order", "KanjiVG / Ulrich Apel and contributors", "CC BY-SA 3.0",
-     "https://kanjivg.tagaini.net/", "Stroke paths are derived from KanjiVG and distributed via kanji-db-data."),
-    ("Stroke data distribution", "kanji-db-data", "CC BY-SA 4.0",
-     "https://github.com/uball/kanji-db-data", "Inline SVG stroke paths from kits/anki-joyo-kanji.tsv."),
+     "https://kanjivg.tagaini.net/", "Stroke paths are derived directly from KanjiVG; retain attribution and ShareAlike terms."),
 )
 
 def clean(value: Any) -> Any:
