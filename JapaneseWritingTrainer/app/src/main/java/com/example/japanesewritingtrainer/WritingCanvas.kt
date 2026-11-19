@@ -61,6 +61,7 @@ private val TemplateStyle = Stroke(width = 6f, cap = StrokeCap.Round, join = Str
 private val TemplateColor = Color(0xFFD0D0D0)
 private val AnimationColor = Color(0xFF1E88E5)
 private val NumberColor = Color(0xFFD32F2F)
+private val AcceptedNumberColor = Color(0xFF2E7D32)
 private val CompletedGuideColor = Color(0xFFBDBDBD)
 private val WaitingGuideColor = Color(0xFFE8E8E8)
 
@@ -473,7 +474,11 @@ fun WritingCanvas(
                     measures.forEachIndexed { index, measure ->
                         val start = transformer.toCanvas(measure.getPosition(0f))
                         val isNextStroke = index == completedStrokes && !isGuidedComplete
-                        val numberColor = if (isNextStroke) NumberColor else CompletedGuideColor
+                        val numberColor = when {
+                            index < completedStrokes -> AcceptedNumberColor
+                            isNextStroke -> NumberColor
+                            else -> CompletedGuideColor
+                        }
 
                         drawCircle(
                             color = numberColor,
