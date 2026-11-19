@@ -255,9 +255,9 @@ private fun StatisticsActivityHeatmap(logs: List<PracticeLog>) {
     val today = LocalDate.now(zone)
     val startDate = today.minusDays(83)
     val counts = remember(logs, today) {
-        logs.groupingBy {
+        logs.groupBy {
             Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
-        }.eachCount()
+        }.mapValues { (_, dayLogs) -> dayLogs.map { it.cardId }.distinct().size }
     }
     val maxCount = (counts.filterKeys { it >= startDate && it <= today }.values.maxOrNull() ?: 1).coerceAtLeast(1)
 
@@ -300,7 +300,7 @@ private fun StatisticsActivityHeatmap(logs: List<PracticeLog>) {
                 }
             }
             Text(
-                "Mỗi ô là một ngày; màu đậm hơn biểu thị nhiều lượt luyện hơn.",
+                "Mỗi ô là một ngày; màu đậm hơn biểu thị nhiều chữ khác nhau được luyện hơn.",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
