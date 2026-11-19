@@ -115,6 +115,7 @@ class MainActivity : ComponentActivity() {
                     BackHandler(enabled = navigationHistory.isNotEmpty()) {
                         selectedScreen = navigationHistory.last()
                         navigationHistory = navigationHistory.dropLast(1)
+                        isLibraryDetail = false
                     }
                     val backupRestoreManager = remember(context) { BackupRestoreManager(context) }
                     var pendingRestoreJson by remember { mutableStateOf<String?>(null) }
