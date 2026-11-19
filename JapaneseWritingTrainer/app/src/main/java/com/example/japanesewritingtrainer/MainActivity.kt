@@ -17,7 +17,6 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material.icons.Icons
@@ -28,6 +27,7 @@ import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -506,32 +506,26 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 if (selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
-                                androidx.compose.material3.NavigationBar {
-                                    androidx.compose.material3.NavigationBarItem(
-                                        selected = selectedScreen == MainScreen.HOME,
-                                        onClick = { selectedScreen = MainScreen.HOME },
-                                        icon = {},
-                                        label = { Text("Học") }
-                                    )
-                                    androidx.compose.material3.NavigationBarItem(
-                                        selected = selectedScreen == MainScreen.LEARNING,
-                                        onClick = { selectedScreen = MainScreen.LEARNING },
-                                        icon = {},
-                                        label = { Text("Ôn tập") }
-                                    )
-                                    androidx.compose.material3.NavigationBarItem(
-                                        selected = selectedScreen == MainScreen.LIBRARY || selectedScreen == MainScreen.VOCABULARY,
-                                        onClick = { selectedScreen = MainScreen.LIBRARY },
-                                        icon = {},
-                                        label = { Text("Thư viện") }
-                                    )
-                                    androidx.compose.material3.NavigationBarItem(
-                                        selected = selectedScreen == MainScreen.STATISTICS || selectedScreen == MainScreen.HISTORY,
-                                        onClick = { selectedScreen = MainScreen.STATISTICS },
-                                        icon = {},
-                                        label = { Text("Thống kê") }
-                                    )
-                                }
+                                    androidx.compose.material3.NavigationBar {
+                                        Row(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            horizontalArrangement = Arrangement.SpaceEvenly,
+                                            verticalAlignment = Alignment.CenterVertically
+                                        ) {
+                                            TextButton(onClick = { selectedScreen = MainScreen.HOME }) {
+                                                Text("Học")
+                                            }
+                                            TextButton(onClick = { selectedScreen = MainScreen.LEARNING }) {
+                                                Text("Ôn tập")
+                                            }
+                                            TextButton(onClick = { selectedScreen = MainScreen.LIBRARY }) {
+                                                Text("Thư viện")
+                                            }
+                                            TextButton(onClick = { selectedScreen = MainScreen.STATISTICS }) {
+                                                Text("Thống kê")
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
