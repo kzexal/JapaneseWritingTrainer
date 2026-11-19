@@ -10,4 +10,6 @@
     <color name="widget_title">#1E1E5A</color>
     <color name="widget_accent">#6667AB</color>
     <color name="widget_secondary">#5C5C6B</color>
+    <color name="widget_day_done">#3E8E6B</color>
+    <color name="widget_day_empty">#A7A5B2</color>
 </resources>
