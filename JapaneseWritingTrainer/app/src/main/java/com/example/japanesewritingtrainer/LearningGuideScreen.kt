@@ -35,7 +35,7 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
         GuideSection(
             title = "1. Bắt đầu học",
             items = listOf(
-                "Chọn một bộ ở thanh trên cùng: Hiragana, Katakana hoặc Kanji. Mở Thư viện (Hiragana/Katakana) hoặc tab Kanji để tìm chữ và vào chi tiết Guided.",
+                "Chọn một bộ Hiragana, Katakana hoặc Kanji ở thanh chọn phía trên. Mở Thư viện để tìm ký tự, xem thông tin và chọn chữ muốn luyện Guided.",
                 "Chọn một ký tự để xem cách đọc, số nét và thứ tự viết.",
                 "Nên học từng nhóm nhỏ, viết chậm và chú ý hướng đi của từng nét trước khi tăng tốc."
             )
@@ -83,8 +83,9 @@ fun LearningGuideScreen(modifier: Modifier = Modifier) {
         GuideSection(
             title = "6. Nội dung hiện có và lộ trình",
             items = listOf(
-                "Hiragana và Katakana có thể học độc lập qua các chế độ luyện viết và ôn tập.",
-                "Kanji có thư viện metadata và Guided Writing dựa trên dữ liệu thứ tự/hình học nét KanjiVG; mỗi chữ có thể được mở và luyện Guided trực tiếp. Hệ thống card/FSRS cho Kanji sẽ được tích hợp ở giai đoạn tiếp theo."
+                "Hiragana, Katakana và Kanji là các deck độc lập; mỗi deck có tiến độ, lịch ôn FSRS và lịch sử riêng.",
+                "Kanji có dữ liệu từ N5 đến N2, thư viện metadata và Guided Writing dựa trên hình học nét KanjiVG. Chọn Kanji ở thanh bộ chữ, mở Thư viện rồi chạm vào ký tự để luyện viết.",
+                "Thư viện Từ vựng cho phép tìm kiếm từ tiếng Nhật, cách đọc, nghĩa và lọc theo nhóm; đây là phần tra cứu nội dung riêng."
             )
         )
     }
