@@ -91,6 +91,13 @@ class MainActivity : ComponentActivity() {
                     Toast.makeText(context, "Bạn chưa cấp quyền thông báo nên nhắc học chưa được bật.", Toast.LENGTH_LONG).show()
                 }
             }
+            LaunchedEffect(reminderEnabled, reminderHour, reminderMinute) {
+                if (reminderEnabled) {
+                    ReminderScheduler.schedule(context, reminderHour, reminderMinute)
+                } else {
+                    ReminderScheduler.cancel(context)
+                }
+            }
             val systemDarkTheme = isSystemInDarkTheme()
             val darkTheme = when (themeMode) {
                 AppThemeMode.SYSTEM -> systemDarkTheme
