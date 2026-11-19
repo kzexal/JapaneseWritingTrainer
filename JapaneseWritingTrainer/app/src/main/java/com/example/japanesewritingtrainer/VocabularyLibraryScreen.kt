@@ -38,9 +38,6 @@ import kotlinx.coroutines.withContext
 /** Workbook-backed Vocabulary browser. It is read-only and does not create learner cards. */
 @Composable
 fun VocabularyLibraryScreen(
-    availableCharacters: List<CharacterData>,
-    showGrid: Boolean,
-    showHints: Boolean,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current.applicationContext
@@ -50,18 +47,6 @@ fun VocabularyLibraryScreen(
     var query by remember { mutableStateOf("") }
     var selectedGroup by remember { mutableStateOf<String?>(null) }
     var selectedVocabularyId by remember { mutableStateOf<String?>(null) }
-    var isLearning by remember { mutableStateOf(false) }
-
-    if (isLearning) {
-        VocabularyLearningSessionScreen(
-            availableCharacters = availableCharacters,
-            showGrid = showGrid,
-            showHints = showHints,
-            onBack = { isLearning = false },
-            modifier = modifier
-        )
-        return
-    }
 
     LaunchedEffect(context) {
         try {
@@ -109,16 +94,7 @@ fun VocabularyLibraryScreen(
                 modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text("Thư viện từ vựng", style = MaterialTheme.typography.headlineSmall)
-                    OutlinedButton(onClick = { isLearning = true }) {
-                        Text("Luyện viết")
-                    }
-                }
+                Text("Thư viện từ vựng", style = MaterialTheme.typography.headlineSmall)
                 OutlinedTextField(
                     value = query,
                     onValueChange = { query = it },
