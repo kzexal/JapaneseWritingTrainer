@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.rememberScrollState
@@ -102,101 +103,99 @@ fun CharacterLibraryScreen(
         }
     }
 
-    Column(
+    LazyVerticalGrid(
+        columns = GridCells.Adaptive(minSize = 88.dp),
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            "Thư viện $deckName",
-            style = MaterialTheme.typography.headlineSmall
-        )
-        OutlinedTextField(
-            value = query,
-            onValueChange = { query = it },
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Tìm ký tự hoặc romaji") },
-            singleLine = true
-        )
-        Text("Nhóm ký tự", style = MaterialTheme.typography.labelLarge)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            item {
-                FilterChip(
-                    selected = selectedGroup == "all",
-                    onClick = { selectedGroup = "all" },
-                    label = { Text("Tất cả") }
+        item(span = { GridItemSpan(maxLineSpan) }) {
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text("Thư viện $deckName", style = MaterialTheme.typography.headlineSmall)
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = { query = it },
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Tìm ký tự hoặc romaji") },
+                    singleLine = true
                 )
-            }
-            items(groups.size) { index ->
-                val group = groups[index]
-                FilterChip(
-                    selected = selectedGroup == group,
-                    onClick = { selectedGroup = group },
-                    label = { Text(group.uppercase()) }
-                )
-            }
-        }
-        Text("Trạng thái học", style = MaterialTheme.typography.labelLarge)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            listOf(
-                "all" to "Tất cả",
-                "new" to "Mới",
-                "learning" to "Đang học",
-                "learned" to "Đã thuộc"
-            ).forEach { (value, label) ->
-                item {
-                    FilterChip(
-                        selected = selectedStatus == value,
-                        onClick = { selectedStatus = value },
-                        label = { Text(label) }
-                    )
+                Text("Nhóm ký tự", style = MaterialTheme.typography.labelLarge)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    item {
+                        FilterChip(
+                            selected = selectedGroup == "all",
+                            onClick = { selectedGroup = "all" },
+                            label = { Text("Tất cả") }
+                        )
+                    }
+                    items(groups.size) { index ->
+                        val group = groups[index]
+                        FilterChip(
+                            selected = selectedGroup == group,
+                            onClick = { selectedGroup = group },
+                            label = { Text(group.uppercase()) }
+                        )
+                    }
                 }
-            }
-        }
-        Text(
-            "${filteredCharacters.size} / ${characters.size} ký tự",
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSurfaceVariant
-        )
-        if (filteredCharacters.isEmpty()) {
-            Text(
-                "Không tìm thấy ký tự phù hợp.",
-                modifier = Modifier.padding(top = 24.dp),
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
-        } else {
-            LazyVerticalGrid(
-                columns = GridCells.Adaptive(minSize = 88.dp),
-                modifier = Modifier.weight(1f).fillMaxWidth(),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                items(filteredCharacters, key = { it.id }) { character ->
-                    val progress = progressById[character.id]
-                    Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                selectedCharacterId = character.id
-                                onDetailStateChanged(true)
-                            }
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.spacedBy(3.dp)
-                        ) {
-                            Text(character.character, fontSize = 32.sp)
-                            Text(
-                                character.reading,
-                                style = MaterialTheme.typography.bodyMedium,
-                                fontWeight = FontWeight.Medium
-                            )
-                            Text(
-                                progress.statusLabel(),
-                                style = MaterialTheme.typography.labelSmall,
-                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                Text("Trạng thái học", style = MaterialTheme.typography.labelLarge)
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    listOf(
+                        "all" to "Tất cả",
+                        "new" to "Mới",
+                        "learning" to "Đang học",
+                        "learned" to "Đã thuộc"
+                    ).forEach { (value, label) ->
+                        item {
+                            FilterChip(
+                                selected = selectedStatus == value,
+                                onClick = { selectedStatus = value },
+                                label = { Text(label) }
                             )
                         }
+                    }
+                }
+                Text(
+                    "${filteredCharacters.size} / ${characters.size} ký tự",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        }
+        if (filteredCharacters.isEmpty()) {
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Text(
+                    "Không tìm thấy ký tự phù hợp.",
+                    modifier = Modifier.padding(top = 16.dp),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+            }
+        } else {
+            items(filteredCharacters, key = { it.id }) { character ->
+                val progress = progressById[character.id]
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable {
+                            selectedCharacterId = character.id
+                            onDetailStateChanged(true)
+                        }
+                ) {
+                    Column(
+                        modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        Text(character.character, fontSize = 32.sp)
+                        Text(
+                            character.reading,
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.Medium
+                        )
+                        Text(
+                            progress.statusLabel(),
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
                     }
                 }
             }
