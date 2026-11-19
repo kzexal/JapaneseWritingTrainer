@@ -59,12 +59,12 @@ import androidx.compose.ui.unit.sp
 private val InkStyle = Stroke(width = 14f, cap = StrokeCap.Round, join = StrokeJoin.Round)
 private val TemplateStyle = Stroke(width = 6f, cap = StrokeCap.Round, join = StrokeJoin.Round)
 
-private val TemplateColor = Color(0xFFD0D0D0)
+private val TemplateColor = Color(0xFF909090)
 private val AnimationColor = Color(0xFF1E88E5)
 private val NumberColor = Color(0xFFD32F2F)
 private val AcceptedNumberColor = Color(0xFF2E7D32)
-private val CompletedGuideColor = Color(0xFFBDBDBD)
-private val WaitingGuideColor = Color(0xFFE8E8E8)
+private val CompletedGuideColor = Color(0xFF8A8A8A)
+private val WaitingGuideColor = Color(0xFF949494)
 
 /**
  * Màn hình luyện viết:
