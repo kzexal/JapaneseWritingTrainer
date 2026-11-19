@@ -181,13 +181,16 @@ fun WritingCanvas(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(64.dp),
+                    .height(84.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                        maxLines = 2,
                         text = when {
                             isGuidedComplete && mode == WritingMode.RECALL ->
                                 "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
@@ -203,10 +206,16 @@ fun WritingCanvas(
                     if (latestAnalysisFailed) {
                         Text(
                             text = "Không đủ dữ liệu để đánh giá nét này. Hãy viết lại.",
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 2,
                             color = Color(0xFFEF6C00)
                         )
                     } else if (latestMatch != null) {
                         Text(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+                            maxLines = 2,
                             text = if (latestMatch.accepted) {
                                 "Nét khá giống mẫu · " + latestMatch.score.toInt() + "/100"
                             } else if (latestMatch.directionReversed) {
