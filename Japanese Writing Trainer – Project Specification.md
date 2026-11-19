@@ -393,7 +393,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 2. Hoàn tất Phase 5 Katakana.
 3. Hoàn tất Phase 6 Kanji bằng pipeline Excel → Python validator/generator → JSON assets; thiết kế parser/validator/upsert theo hướng có thể tái sử dụng cho import trực tiếp trong app về sau, nhưng chưa triển khai UI import.
 4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tích hợp card/FSRS và Guided Writing theo lựa chọn Japanese hoặc Reading.
-5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; các kiểm tra mới nhất đã PASS. Đã bổ sung ghi công OpenJLPT/KANJIDIC2 và KanjiVG trong repo và trong Cài đặt. Công việc tiếp theo tập trung vào rà soát ShareAlike cuối cùng, signing keystore, xác minh app icon và đóng gói phát hành; Grammar có thể được xem xét sau.
+5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; các kiểm tra mới nhất đã PASS. Đã bổ sung ghi công OpenJLPT/KANJIDIC2 và KanjiVG trong repo và trong Cài đặt. Công việc tiếp theo tập trung vào rà soát ShareAlike cuối cùng, tạo release keystore trên máy phát hành (Gradle đã hỗ trợ đọc credentials qua biến môi trường), xác minh app icon và kiểm tra bản Release đã ký; Grammar có thể được xem xét sau.
 6. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
 ## 7. Acceptance criteria
