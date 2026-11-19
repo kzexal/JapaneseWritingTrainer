@@ -4,6 +4,29 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Release credentials are supplied only through the local environment.
+// Never place keystore files or passwords in the repository.
+val releaseStoreFile = providers.environmentVariable("JAPANESE_WRITING_TRAINER_KEYSTORE").orNull
+val releaseStorePassword = providers.environmentVariable("JAPANESE_WRITING_TRAINER_STORE_PASSWORD").orNull
+val releaseKeyAlias = providers.environmentVariable("JAPANESE_WRITING_TRAINER_KEY_ALIAS").orNull
+val releaseKeyPassword = providers.environmentVariable("JAPANESE_WRITING_TRAINER_KEY_PASSWORD").orNull
+
+val releaseSigningValues = listOf(
+    releaseStoreFile,
+    releaseStorePassword,
+    releaseKeyAlias,
+    releaseKeyPassword
+)
+val hasAnyReleaseSigningValue = releaseSigningValues.any { !it.isNullOrBlank() }
+val hasCompleteReleaseSigning = releaseSigningValues.all { !it.isNullOrBlank() }
+
+if (hasAnyReleaseSigningValue && !hasCompleteReleaseSigning) {
+    error(
+        "Release signing is partially configured. Set all four " +
+            "JAPANESE_WRITING_TRAINER_* signing environment variables."
+    )
+}
+
 android {
     namespace = "com.example.japanesewritingtrainer"
     compileSdk {
@@ -20,8 +43,22 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
+    signingConfigs {
+        if (hasCompleteReleaseSigning) {
+            create("release") {
+                storeFile = file(requireNotNull(releaseStoreFile))
+                storePassword = requireNotNull(releaseStorePassword)
+                keyAlias = requireNotNull(releaseKeyAlias)
+                keyPassword = requireNotNull(releaseKeyPassword)
+            }
+        }
+    }
+
     buildTypes {
         release {
+            if (hasCompleteReleaseSigning) {
+                signingConfig = signingConfigs.getByName("release")
+            }
             optimization {
                 enable = true
                 packageScope = setOf("androidx.**", "kotlin.**", "kotlinx.**")
