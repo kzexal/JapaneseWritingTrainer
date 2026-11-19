@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
@@ -48,9 +47,11 @@ import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.graphics.drawscope.translate
 import androidx.compose.ui.graphics.vector.PathParser
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.drawText
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -203,10 +204,18 @@ fun WritingCanvas(
                                 "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
                             isGuidedComplete ->
                                 "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
-                            mode == WritingMode.RECALL ->
-                                "Tự nhớ và viết · Nét ${completedStrokes + 1} / $totalStrokes"
-                            else ->
-                                "Nét ${completedStrokes + 1} / $totalStrokes"
+                            else -> buildAnnotatedString {
+                                if (mode == WritingMode.RECALL) append("Tự nhớ và viết · ")
+                                append("Nét ")
+                                if (expandedCanvas) {
+                                    withStyle(SpanStyle(color = AcceptedNumberColor)) {
+                                        append((completedStrokes + 1).toString())
+                                    }
+                                } else {
+                                    append((completedStrokes + 1).toString())
+                                }
+                                append(" / $totalStrokes")
+                            }
                         },
                         color = MaterialTheme.colorScheme.onSurface
                     )
@@ -531,8 +540,7 @@ fun WritingCanvas(
                     modifier = Modifier
                         .align(Alignment.TopEnd)
                         .padding(8.dp)
-                        .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
-                        .clickable(role = Role.Button) { showTemplate = !showTemplate },
+                        .clickable { showTemplate = !showTemplate },
                     shape = MaterialTheme.shapes.small,
                     color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
                     contentColor = MaterialTheme.colorScheme.primary,
