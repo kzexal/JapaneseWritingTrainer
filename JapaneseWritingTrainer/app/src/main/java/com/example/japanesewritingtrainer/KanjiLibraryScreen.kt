@@ -110,7 +110,7 @@ fun KanjiLibraryScreen(
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                item(span = { GridItemSpan(maxLineSpan) }) {
+                item(span = { GridItemSpan(maxLineSpan) }, contentType = "header") {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Text("Thư viện Kanji", style = MaterialTheme.typography.headlineSmall)
                         OutlinedTextField(
@@ -148,7 +148,7 @@ fun KanjiLibraryScreen(
                     }
                 }
                 if (filtered.isEmpty()) {
-                    item(span = { GridItemSpan(maxLineSpan) }) {
+                    item(span = { GridItemSpan(maxLineSpan) }, contentType = "empty") {
                         Text(
                             "Không tìm thấy Kanji phù hợp.",
                             modifier = Modifier.padding(top = 16.dp),
@@ -156,7 +156,11 @@ fun KanjiLibraryScreen(
                         )
                     }
                 } else {
-                    items(filtered, key = { it.id }) { kanji ->
+                    items(
+                        items = filtered,
+                        key = { it.id },
+                        contentType = { "kanji" }
+                    ) { kanji ->
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
