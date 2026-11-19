@@ -39,7 +39,8 @@ import kotlinx.coroutines.withContext
 @Composable
 fun KanjiLibraryScreen(
     modifier: Modifier = Modifier,
-    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null
+    onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
+    onDetailStateChanged: (Boolean) -> Unit = {}
 ) {
     val context = LocalContext.current.applicationContext
     var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
@@ -87,7 +88,10 @@ fun KanjiLibraryScreen(
             kanji = selectedKanji,
             character = writingCharacters.firstOrNull { it.id == selectedKanji.id },
             onPracticeFinished = onPracticeFinished,
-            onBack = { selectedKanjiId = null },
+            onBack = {
+                selectedKanjiId = null
+                onDetailStateChanged(false)
+            },
             modifier = modifier
         )
 
@@ -173,7 +177,10 @@ fun KanjiLibraryScreen(
                             Card(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .clickable { selectedKanjiId = kanji.id }
+                                    .clickable {
+                                    selectedKanjiId = kanji.id
+                                    onDetailStateChanged(true)
+                                }
                             ) {
                                 Column(
                                     modifier = Modifier.padding(horizontal = 8.dp, vertical = 12.dp),
