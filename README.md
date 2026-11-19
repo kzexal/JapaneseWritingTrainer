@@ -148,6 +148,15 @@ Android Auto Backup là cơ chế riêng của hệ điều hành; xem RELEASE_C
 
 Các chức năng học cốt lõi, lưu tiến độ, FSRS, backup/restore, thư viện dữ liệu, thống kê và widget đã được triển khai trên main. Debug build và các kiểm tra local/device gần nhất đã được người dùng xác nhận PASS.
 
-Gradle hỗ trợ cấu hình signing bằng bốn biến môi trường: JAPANESE_WRITING_TRAINER_KEYSTORE, JAPANESE_WRITING_TRAINER_STORE_PASSWORD, JAPANESE_WRITING_TRAINER_KEY_ALIAS và JAPANESE_WRITING_TRAINER_KEY_PASSWORD. Khi chưa cấu hình biến nào, Release build không được ký; nếu chỉ cấu hình thiếu một phần, Gradle sẽ dừng với thông báo lỗi. Keystore và mật khẩu phải được tạo/lưu ngoài repository, không gửi qua chat và không commit vào Git.
+Gradle hỗ trợ cấu hình signing bằng bốn biến môi trường: JAPANESE_WRITING_TRAINER_KEYSTORE, JAPANESE_WRITING_TRAINER_STORE_PASSWORD, JAPANESE_WRITING_TRAINER_KEY_ALIAS và JAPANESE_WRITING_TRAINER_KEY_PASSWORD. Khi chưa cấu hình biến nào, Release build không được ký; nếu chỉ cấu hình thiếu một phần, Gradle sẽ dừng với thông báo lỗi.
+
+Ví dụ tạo keystore trên Windows PowerShell (lệnh sẽ yêu cầu nhập mật khẩu; không thêm mật khẩu trực tiếp vào command):
+
+~~~powershell
+New-Item -ItemType Directory -Force "$env:USERPROFILE\android-signing"
+keytool -genkeypair -v -keystore "$env:USERPROFILE\android-signing\japanese-writing-trainer-release.jks" -alias japanese-writing-trainer -keyalg RSA -keysize 4096 -validity 10000
+~~~
+
+Sau khi tạo, đặt bốn biến môi trường nêu trên trong môi trường build local; biến KEYSTORE phải trỏ tới đúng file .jks. Tạo ít nhất hai bản sao lưu keystore ở các vị trí an toàn độc lập. Không gửi keystore/mật khẩu qua chat, không đặt file trong repository và không commit vào Git.
 
 Ứng dụng chưa được xem là sẵn sàng phát hành công khai cho đến khi có keystore thực tế, xác minh icon trên thiết bị, rà soát license/backup policy và kiểm tra bản Release đã ký. Theo dõi các bước tại RELEASE_CHECKLIST.md. Không commit keystore, mật khẩu hoặc signing properties vào repository.
