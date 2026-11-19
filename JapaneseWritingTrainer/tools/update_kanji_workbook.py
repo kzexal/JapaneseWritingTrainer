@@ -11,11 +11,24 @@ from __future__ import annotations
 import argparse
 import json
 from pathlib import Path
+import subprocess
+import sys
 from typing import Any
 
-from openpyxl import load_workbook
-from openpyxl.styles import Alignment, Font, PatternFill
-from openpyxl.utils import get_column_letter
+# Install the sole third-party dependency on first run so the script works
+# with a normal Python installation without a separate setup step.
+try:
+    from openpyxl import load_workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+    from openpyxl.utils import get_column_letter
+except ModuleNotFoundError as exc:
+    if exc.name != "openpyxl":
+        raise
+    print("Missing dependency: openpyxl. Installing it for this Python interpreter...")
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "openpyxl"])
+    from openpyxl import load_workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+    from openpyxl.utils import get_column_letter
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_WORKBOOK = REPO_ROOT / "vocabulary.xlsx"
