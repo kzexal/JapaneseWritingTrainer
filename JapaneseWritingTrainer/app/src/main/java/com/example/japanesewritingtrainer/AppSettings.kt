@@ -23,13 +23,6 @@ class AppSettings(context: Context) {
     fun getThemeMode(): AppThemeMode =
         AppThemeMode.fromStorage(preferences.getString(KEY_THEME_MODE, null))
 
-    fun getDynamicColorEnabled(): Boolean =
-        preferences.getBoolean(KEY_DYNAMIC_COLOR_ENABLED, false)
-
-    fun setDynamicColorEnabled(enabled: Boolean) {
-        preferences.edit().putBoolean(KEY_DYNAMIC_COLOR_ENABLED, enabled).apply()
-    }
-
     fun setThemeMode(mode: AppThemeMode) {
         preferences.edit().putString(KEY_THEME_MODE, mode.storageValue).apply()
     }
@@ -91,7 +84,6 @@ class AppSettings(context: Context) {
 
     private companion object {
         const val KEY_THEME_MODE = "theme_mode"
-        const val KEY_DYNAMIC_COLOR_ENABLED = "dynamic_color_enabled"
         const val KEY_NEW_CARDS_PER_DAY = "new_cards_per_day"
         const val KEY_HIRAGANA_NEW_CARDS_PER_DAY = "hiragana_new_cards_per_day"
         const val KEY_KATAKANA_NEW_CARDS_PER_DAY = "katakana_new_cards_per_day"
