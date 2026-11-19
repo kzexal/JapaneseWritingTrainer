@@ -137,9 +137,21 @@ fun StatisticsScreen(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            StatisticValueCard("Đang học", learning.toString(), Modifier.weight(1f))
-            StatisticValueCard("Mới", newCards.toString(), Modifier.weight(1f))
-            StatisticValueCard("Đến hạn", dueCards.toString(), Modifier.weight(1f))
+            StatisticValueCard(
+                "Mới", newCards.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.primaryContainer,
+                MaterialTheme.colorScheme.onPrimaryContainer
+            )
+            StatisticValueCard(
+                "Đang học", learning.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.errorContainer,
+                MaterialTheme.colorScheme.onErrorContainer
+            )
+            StatisticValueCard(
+                "Đã thuộc", learned.toString(), Modifier.weight(1f),
+                MaterialTheme.colorScheme.tertiaryContainer,
+                MaterialTheme.colorScheme.onTertiaryContainer
+            )
         }
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -209,8 +221,17 @@ fun StatisticsScreen(
 }
 
 @Composable
-private fun StatisticValueCard(label: String, value: String, modifier: Modifier = Modifier) {
-    Card(modifier = modifier) {
+private fun StatisticValueCard(
+    label: String,
+    value: String,
+    modifier: Modifier = Modifier,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = containerColor, contentColor = contentColor)
+    ) {
         Column(
             modifier = Modifier.fillMaxWidth().padding(10.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
