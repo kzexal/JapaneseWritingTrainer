@@ -1,6 +1,9 @@
 package com.example.japanesewritingtrainer
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +30,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import java.util.Locale
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 /** Tổng quan tiến độ học và thời gian luyện viết của các bộ ký tự đã nạp. */
 @Composable
@@ -180,6 +186,8 @@ fun StatisticsScreen(
             modifier = Modifier.weight(1f).fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
+            item { StatisticsActivityHeatmap(logs = logs) }
+            item { StatisticsWeeklyTrends(logs = logs) }
             item { StatusProgressRow("Đã thuộc", learned, totalCards) }
             item { StatusProgressRow("Đang học · Học lại", learning, totalCards) }
             item { StatusProgressRow("Chưa học", newCards, totalCards) }
@@ -238,3 +246,145 @@ private fun formatStatisticsDuration(durationMs: Long): String {
         else -> "${durationMs.coerceAtLeast(0L) / 1_000L} giây"
     }
 }
+
+
+@Composable
+private fun StatisticsActivityHeatmap(logs: List<PracticeLog>) {
+    val zone = ZoneId.systemDefault()
+    val today = LocalDate.now(zone)
+    val startDate = today.minusDays(83)
+    val counts = remember(logs, today) {
+        logs.groupingBy {
+            Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
+        }.eachCount()
+    }
+    val maxCount = (counts.filterKeys { it >= startDate && it <= today }.values.maxOrNull() ?: 1).coerceAtLeast(1)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Text("Hoạt động 12 tuần", style = MaterialTheme.typography.titleMedium)
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(3.dp)
+            ) {
+                repeat(12) { week ->
+                    Column(
+                        modifier = Modifier.weight(1f),
+                        verticalArrangement = Arrangement.spacedBy(3.dp)
+                    ) {
+                        repeat(7) { day ->
+                            val date = startDate.plusDays((week * 7 + day).toLong())
+                            val count = counts[date] ?: 0
+                            val intensity = if (count == 0) 0f else (count.toFloat() / maxCount).coerceIn(0.18f, 1f)
+                            val color = if (count == 0) {
+                                MaterialTheme.colorScheme.surfaceContainerHighest
+                            } else {
+                                androidx.compose.ui.graphics.lerp(
+                                    MaterialTheme.colorScheme.primaryContainer,
+                                    MaterialTheme.colorScheme.primary,
+                                    intensity
+                                )
+                            }
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(12.dp)
+                                    .background(color, RoundedCornerShape(3.dp))
+                            )
+                        }
+                    }
+                }
+            }
+            Text(
+                "Mỗi ô là một ngày; màu đậm hơn biểu thị nhiều lượt luyện hơn.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+@Composable
+private fun StatisticsWeeklyTrends(logs: List<PracticeLog>) {
+    val zone = ZoneId.systemDefault()
+    val today = LocalDate.now(zone)
+    val thisMonday = today.with(java.time.DayOfWeek.MONDAY)
+    val weeks = remember(logs, thisMonday) {
+        (5 downTo 0).map { offset ->
+            val start = thisMonday.minusWeeks(offset.toLong())
+            val end = start.plusDays(7)
+            val weekLogs = logs.filter {
+                val date = Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
+                date >= start && date < end
+            }
+            val firstSuccessfulCards = logs
+                .filter { it.rating == ReviewRating.GOOD || it.rating == ReviewRating.EASY }
+                .groupBy { it.cardId }
+                .count { (cardId, successfulLogs) ->
+                    val firstSuccess = successfulLogs.minOf { it.timestampEpochMillis }
+                    val firstSuccessDate = Instant.ofEpochMilli(firstSuccess).atZone(zone).toLocalDate()
+                    firstSuccessDate >= start && firstSuccessDate < end
+                }
+            val rated = weekLogs.filter { it.rating != null }
+            val successRate = if (rated.isEmpty()) 0 else {
+                rated.count { it.rating == ReviewRating.GOOD || it.rating == ReviewRating.EASY } * 100 / rated.size
+            }
+            WeeklyTrend(start, firstSuccessfulCards, successRate)
+        }
+    }
+    val maxLearned = (weeks.maxOfOrNull { it.newlySuccessfulCards } ?: 0).coerceAtLeast(1)
+
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(14.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            Text("Xu hướng 6 tuần", style = MaterialTheme.typography.titleMedium)
+            Text("Chữ lần đầu đạt Good/Easy", style = MaterialTheme.typography.bodySmall)
+            weeks.forEach { week ->
+                Column(verticalArrangement = Arrangement.spacedBy(3.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text("${week.start.dayOfMonth}/${week.start.monthValue}", style = MaterialTheme.typography.labelSmall)
+                        Text(week.newlySuccessfulCards.toString(), style = MaterialTheme.typography.labelSmall)
+                    }
+                    LinearProgressIndicator(
+                        progress = { week.newlySuccessfulCards.toFloat() / maxLearned },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+            Text("Tỷ lệ Good/Easy", style = MaterialTheme.typography.bodySmall)
+            weeks.forEach { week ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("${week.start.dayOfMonth}/${week.start.monthValue}", style = MaterialTheme.typography.labelSmall)
+                    Text("${week.successRate}%", style = MaterialTheme.typography.labelSmall)
+                }
+                LinearProgressIndicator(
+                    progress = { week.successRate / 100f },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            Text(
+                "Số chữ được tính theo lần đầu có đánh giá Good/Easy trong lịch sử; tỷ lệ chỉ tính các lượt có tự đánh giá.",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+        }
+    }
+}
+
+private data class WeeklyTrend(
+    val start: LocalDate,
+    val newlySuccessfulCards: Int,
+    val successRate: Int
+)
