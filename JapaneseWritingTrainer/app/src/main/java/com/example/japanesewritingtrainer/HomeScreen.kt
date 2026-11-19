@@ -134,7 +134,7 @@ fun HomeScreen(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text("Tiến độ $deckName", style = MaterialTheme.typography.titleMedium,
                 modifier = Modifier.weight(1f))
-            Text("\${(fraction * 100).toInt()}%", style = MaterialTheme.typography.labelLarge,
+            Text("${(fraction * 100).toInt()}%", style = MaterialTheme.typography.labelLarge,
                 color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
         }
         androidx.compose.material3.LinearProgressIndicator(progress = { fraction },
