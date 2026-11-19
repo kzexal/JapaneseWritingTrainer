@@ -11,13 +11,13 @@ Tài liệu này ghi nhận các việc cần hoàn tất trước khi tạo b�
 | --- | --- | --- |
 | Chức năng học cốt lõi | PASS theo xác nhận kiểm thử gần nhất | Hiragana, Katakana, Kanji, Vocabulary, Session/FSRS, History, Statistics |
 | Backup/restore JSON | PASS theo xác nhận kiểm thử gần nhất | Có validation và Room transaction; backup chứa CardProgress và PracticeLog |
-| Daily streak và App Widget | Chức năng nền có sẵn; UI widget đang được làm mới | Widget hiện hiển thị số chữ đến hạn, streak và trạng thái hôm nay; chưa hoàn tất 3 layout 2×2, 4×2, 4×1 theo spec |
+| Daily streak và App Widget | PASS theo xác nhận kiểm tra thiết bị | Phạm vi widget hiện tại là một layout 2×1; hiển thị streak và số thẻ đến hạn |
 | Debug build và tests | PASS theo xác nhận người dùng | Unit tests, instrumentation tests và assembleDebug |
 | Application ID | Đã cố định | `com.example.japanesewritingtrainer` |
 | Version | Chưa bump cho release | Hiện `versionCode = 2`, `versionName = 1.1`; chỉ tăng khi chốt bản phát hành |
 | Launcher icon | Đã gắn ảnh dự án; chờ xác minh trên thiết bị | Adaptive icon và round adaptive icon dùng `res/drawable/icon.png`; Android launcher tự áp dụng mask bo góc |
 | UI redesign P0/P1 | Đã triển khai trên `main`; chờ build và kiểm tra thiết bị | Bảng màu sáng/tối, typography, shape, bottom navigation, bộ chọn deck và Home dạng character-first; giữ nguyên Room/FSRS/session logic |
-| UI redesign P2/P3/P4 | Chưa hoàn tất | Widget responsive 3 kích thước, các màn còn lại, Material You toggle, animation và accessibility review còn lại |
+| UI còn lại | Đã triển khai theo phạm vi sản phẩm hiện tại; chờ rà soát tổng thể trên thiết bị | Không yêu cầu dynamic color/Material You toggle hoặc nhiều kích thước widget; widget chỉ cần 2×1 |
 | Release signing | Chưa cấu hình | Chưa có signingConfig cho keystore phát hành |
 | Release build | Chưa xác minh | Chưa có bằng chứng `assembleRelease` hoặc cài đặt bản Release đã ký |
 | Third-party data attribution | Đã có notice trong repo và màn Nguồn dữ liệu trong Cài đặt | OpenJLPT metadata CC BY-SA 4.0; KanjiVG stroke geometry CC BY-SA 3.0; vẫn cần rà soát cách phân phối dữ liệu phái sinh trước khi phát hành |
