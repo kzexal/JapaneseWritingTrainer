@@ -199,22 +199,24 @@ fun WritingCanvas(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         maxLines = 2,
-                        text = when {
-                            isGuidedComplete && mode == WritingMode.RECALL ->
-                                "Hoàn thành! Hãy đối chiếu bài viết với mẫu."
-                            isGuidedComplete ->
-                                "Hoàn thành! Bạn đã viết đủ $totalStrokes nét."
-                            else -> buildAnnotatedString {
-                                if (mode == WritingMode.RECALL) append("Tự nhớ và viết · ")
-                                append("Nét ")
-                                if (expandedCanvas) {
-                                    withStyle(SpanStyle(color = AcceptedNumberColor)) {
+                        text = buildAnnotatedString {
+                            when {
+                                isGuidedComplete && mode == WritingMode.RECALL ->
+                                    append("Hoàn thành! Hãy đối chiếu bài viết với mẫu.")
+                                isGuidedComplete ->
+                                    append("Hoàn thành! Bạn đã viết đủ $totalStrokes nét.")
+                                else -> {
+                                    if (mode == WritingMode.RECALL) append("Tự nhớ và viết · ")
+                                    append("Nét ")
+                                    if (expandedCanvas) {
+                                        withStyle(SpanStyle(color = AcceptedNumberColor)) {
+                                            append((completedStrokes + 1).toString())
+                                        }
+                                    } else {
                                         append((completedStrokes + 1).toString())
                                     }
-                                } else {
-                                    append((completedStrokes + 1).toString())
+                                    append(" / $totalStrokes")
                                 }
-                                append(" / $totalStrokes")
                             }
                         },
                         color = MaterialTheme.colorScheme.onSurface
