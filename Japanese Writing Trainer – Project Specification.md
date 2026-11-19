@@ -1,6 +1,6 @@
 # Japanese Writing Trainer – Project Specification
 
-*Phiên bản 2.0 · Cập nhật: 09/11/2026 · Baseline: nhánh `main`*
+*Phiên bản 2.1 · Cập nhật: 19/11/2026 · Baseline: nhánh `main`*
 
 > Tài liệu này mô tả trạng thái thực tế của mã nguồn trên `main` và kế hoạch phát triển tiếp theo. Nhãn **Implemented** nghĩa là đã có triển khai trong mã nguồn; chưa đồng nghĩa mọi hành vi đã được kiểm chứng trên thiết bị thật. Không dùng trạng thái hoặc kết quả kiểm thử từ nhánh khác làm bằng chứng cho `main`.
 
@@ -8,9 +8,9 @@
 
 ### 1.1 Tầm nhìn
 
-Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana và Katakana bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
+Japanese Writing Trainer là ứng dụng Android hỗ trợ người học tiếng Nhật luyện viết Hiragana, Katakana, Kanji và từ vựng bằng cảm ứng, kết hợp hướng dẫn thứ tự nét, tự viết từ trí nhớ và ôn tập lặp lại ngắt quãng (SRS).
 
-Ứng dụng theo định hướng **offline-first**: dữ liệu ký tự được đóng gói trong ứng dụng, tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Dataset hiện tại có 46 Hiragana và 46 Katakana cơ bản; hai script đang được mở rộng đồng bộ lên 71 ký tự mỗi bộ (bổ sung dakuten/handakuten). Kiến trúc deck/card và dữ liệu ký tự được tách riêng để tiếp tục mở rộng.
+Ứng dụng theo định hướng **offline-first**: dữ liệu Hiragana, Katakana, Kanji và Vocabulary được đóng gói trong ứng dụng; tiến độ và lịch sử luyện tập được lưu cục bộ trên thiết bị. Hiragana và Katakana hiện có 71 ký tự mỗi bộ; Kanji có 86 ký tự N5; Vocabulary có 198 mục từ. Kiến trúc content/deck/card tách biệt để hỗ trợ mở rộng mà không làm mất tiến độ.
 
 ### 1.2 Nền tảng và công nghệ hiện tại
 
@@ -31,7 +31,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.3 Mục tiêu phiên bản hiện tại
 
-- Mục tiêu dataset: 71 Hiragana và 71 Katakana (46 ký tự cơ bản + 25 dakuten/handakuten mỗi bộ), có thể chọn từng bộ hoặc học kết hợp.
+- Dataset: 71 Hiragana, 71 Katakana, 86 Kanji và 198 mục từ Vocabulary; mỗi deck có tiến độ riêng.
 - Hỗ trợ Trace, Guided Writing, Recall Writing và Free Practice.
 - Lưu tiến độ theo từng card và lịch sử luyện tập.
 - Lập lịch học mới, học lại và ôn tập bằng FSRS.
@@ -40,7 +40,7 @@ Các phiên bản dependency và Gradle wrapper là nguồn chính xác cho cấ
 
 ### 1.4 Ngoài phạm vi hiện tại
 
-Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase và đồng bộ Anki chưa thuộc phạm vi triển khai hiện tại. Kanji lấy dữ liệu từ workbook đã có trên GitHub và import Vocabulary được đưa vào roadmap ở Phase 6–7. Hoàn thiện nội dung và chức năng trước; attribution/license, signing key và đóng gói phát hành chính thức được để sau khi Katakana và Kanji hoàn thành.
+Nhận diện chữ viết bằng AI/CNN, tài khoản người dùng, đồng bộ cloud, Firebase và đồng bộ Anki không thuộc phạm vi hiện tại. Workbook Excel vẫn được cập nhật trên máy tính và xử lý bằng Python generator; chưa triển khai UI import workbook trực tiếp. Ứng dụng tiếp tục single-device/offline-first.
 
 ## 2. Trạng thái chức năng
 
@@ -89,10 +89,10 @@ Katakana mở rộng, Kanji, import dữ liệu từ workbook Excel, nhận di�
 | Room persistence | **Implemented** | Lưu card progress và practice log |
 | Database migrations | **Implemented** | Schema hiện tại version 3, có migration 1→2 và 2→3 |
 | Practice history | **Implemented** | Lưu mode, rating, thời lượng và timestamp |
-| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card theo deck đang xem; current/longest streak được tính từ PracticeLog của toàn ứng dụng |\n| Daily streak | **In progress** | Statistics đã dùng streak toàn ứng dụng theo ngày lịch thiết bị; widget và kiểm thử thực tế còn pending |\n| Android home-screen widget | **Implemented; device verification pending** | RemoteViews App Widget đọc PracticeLog, hiển thị current/longest streak và trạng thái hôm nay; tự refresh khi mở app, sau khi lưu log/restore backup, khởi động lại và đổi ngày/múi giờ |
+| Statistics | **Implemented** | Có thống kê tiến độ, accuracy và trạng thái card theo deck đang xem; current/longest streak được tính từ PracticeLog của toàn ứng dụng |\n| Daily streak | **Implemented; device verified** | Streak toàn ứng dụng được tính từ PracticeLog theo ngày lịch thiết bị; người dùng xác nhận kiểm thử widget thực tế PASS |\n| Android home-screen widget | **Implemented; device verified** | RemoteViews App Widget đọc PracticeLog, hiển thị current/longest streak và trạng thái hôm nay; cập nhật sau khi lưu log/restore backup, khởi động lại và đổi ngày/múi giờ; người dùng xác nhận kiểm thử thực tế PASS |
 | Settings | **Implemented** | Theme, số card mới/ngày, grid, hints; lưu bằng SharedPreferences |
 | JSON backup/restore | **Implemented** | Có kiểm tra dữ liệu và restore theo transaction |
-| Backup compatibility tests | **In progress** | Mở rộng kiểm thử dữ liệu sai, dữ liệu cũ và trường hợp biên |
+| Backup compatibility tests | **Implemented; edge cases verified** | Kiểm thử malformed JSON, schema/format không hỗ trợ, ID trùng, enum/metadata sai và rollback transaction; kiểm tra backup/restore trên thiết bị đã PASS. Chưa hỗ trợ migration giữa các phiên bản backup khác schema |
 
 ## 3. Kiến trúc hiện tại
 
@@ -340,7 +340,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Tạo `VocabularyWritingProgress` để theo dõi tuần tự từng glyph trong một từ; chỉ hoàn tất thẻ khi toàn bộ glyph đã được viết. Bổ sung test cho tiến từng glyph, glyph lặp, reset, không vượt quá cuối chuỗi và từ thiếu geometry. Người dùng đã xác nhận toàn bộ test PASS.
 - [x] Tích hợp luyện viết từ vựng ngay bên trong deck `Từ vựng` (không tạo tab điều hướng riêng); từ thư viện có thể mở phiên luyện với lựa chọn mục tiêu Japanese/Reading. Phiên tạo deck riêng qua `VocabularyDeckFactory` và dùng chung Planner/Coordinator/Room/FSRS. Các từ thiếu geometry được loại khỏi deck luyện viết và vẫn hiển thị trong thư viện.
 - [x] Trong phiên, viết từng glyph theo đúng thứ tự; Canvas được reset riêng cho từng vị trí kể cả glyph lặp. Chỉ hiện một bộ nút rating sau khi hoàn thành toàn bộ từ; Again/retry đặt lại tiến độ viết.
-- [ ] Chạy unit tests/build mới và kiểm thử trên thiết bị một số từ gồm Hiragana, Katakana, Kanji, từ có glyph lặp và entry thiếu geometry.
+- [x] Chạy unit tests/build mới và kiểm thử trên thiết bị một số từ gồm Hiragana, Katakana, Kanji, từ có glyph lặp và entry thiếu geometry; người dùng xác nhận toàn bộ kiểm tra PASS.
 - [x] Tạo và chạy Python generator `tools/generate_vocabulary.py` trên workbook thật; xác nhận JSON có 198 records, 198 ID duy nhất và 198 Japanese duy nhất. ID `vocab_` được tạo từ toàn bộ Unicode code point của Japanese, không phụ thuộc dòng Excel. JSON giữ nguyên các từ đồng âm và ví dụ trùng thành các record riêng. Generator chỉ đọc workbook.
 - [ ] Hỗ trợ nạp dữ liệu từ workbook trong repository và quy trình cập nhật/import lại có preview; không bắt buộc người dùng chọn file nếu dữ liệu đã được đóng gói sẵn, nhưng vẫn thiết kế để thay workbook có kiểm soát.
 - [x] Generator kiểm tra header, Japanese trống/trùng, Reading và Vietnamese bắt buộc; chuẩn hóa chuỗi `None`/`null`/blank thành JSON null. Python unit tests đã được bổ sung nhưng đang chờ người dùng chạy. Audit tool in chi tiết các dòng có giá trị trùng.
@@ -349,7 +349,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [ ] Với từ có Hiragana/Katakana/Kanji, ánh xạ từng ký tự sang dataset tương ứng; nếu thiếu stroke paths thì chỉ cho phép chế độ học phù hợp, không hiển thị chức năng luyện viết không khả dụng.
 - [x] Tạo `VocabularyData`, `VocabularyRepository` và `VocabularyLibrary` để parse/validate JSON, tìm kiếm và lọc nhóm độc lập với Room/FSRS. Android instrumentation tests cho asset 198 records, ID ổn định, đồng âm, ví dụ trùng, null metadata, tìm kiếm và lọc nhóm đã được người dùng chạy PASS.
 - [x] Thêm màn hình Vocabulary Library chỉ đọc: lưới từ vựng, tìm kiếm đa trường, lọc 15 nhóm và trang chi tiết hiển thị cách đọc, nghĩa, ví dụ, radicals và mnemonics. Màn hình chưa tạo card, chưa thay đổi progress/history và chưa tích hợp FSRS.
-- [ ] Kiểm tra thực tế một nhóm từ vựng có kana và Kanji trên thiết bị Android.
+- [x] Kiểm tra thực tế phiên luyện từ vựng trên thiết bị Android; người dùng xác nhận các bài kiểm tra PASS.
 
 **Definition of done:** dữ liệu Vocabulary từ workbook xuất hiện thành deck có thể học/ôn tập; import lại không nhân đôi card hoặc reset tiến độ; người học phân biệt được luyện Japanese và Reading.
 
@@ -380,7 +380,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Bổ sung unit tests cho ngày đầu tiên, nhiều hoạt động cùng ngày trên nhiều deck, chuỗi liên tiếp, bỏ lỡ một ngày, hôm nay chưa học nhưng hôm qua đã học, longest streak và múi giờ thiết bị.
 - [x] Cập nhật Statistics để current/longest streak phản ánh toàn ứng dụng, không chỉ deck đang chọn. Các chỉ số tiến độ/accuracy/thời lượng khác vẫn theo deck đang xem.
 - [x] Triển khai Android RemoteViews App Widget, không thêm dependency hoặc backend; widget dùng chung hàm tính streak và chỉ đọc PracticeLog.
-- [ ] Kiểm thử widget khi thêm/xóa khỏi Home Screen, sau khi học xong, force-stop/mở lại, khởi động lại thiết bị và qua thời điểm nửa đêm.
+- [x] Kiểm thử widget khi thêm/xóa khỏi Home Screen, sau khi học xong, force-stop/mở lại, khởi động lại thiết bị và qua thời điểm đổi ngày; người dùng xác nhận các kiểm tra PASS.
 - [x] Backup/restore tiếp tục giữ nguyên PracticeLog làm nguồn dữ liệu; sau restore, widget được yêu cầu cập nhật và không lưu một bộ đếm streak thứ hai.
 
 **Definition of done:** streak toàn ứng dụng được tính nhất quán theo ngày lịch; Statistics và widget hiển thị cùng một kết quả; widget cập nhật từ dữ liệu thực, hoạt động offline và không làm thay đổi CardProgress/FSRS.
@@ -391,14 +391,14 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 2. Hoàn tất Phase 5 Katakana.
 3. Hoàn tất Phase 6 Kanji bằng pipeline Excel → Python validator/generator → JSON assets; thiết kế parser/validator/upsert theo hướng có thể tái sử dụng cho import trực tiếp trong app về sau, nhưng chưa triển khai UI import.
 4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tích hợp card/FSRS và Guided Writing theo lựa chọn Japanese hoặc Reading.
-5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; xử lý attribution/license, signing keystore và các bước phát hành cuối; Grammar có thể được xem xét sau.
+5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; các kiểm tra mới nhất đã PASS. Công việc tiếp theo tập trung vào attribution/license, signing keystore, app icon và đóng gói phát hành; Grammar có thể được xem xét sau.
 6. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
 ## 7. Acceptance criteria
 
 | ID | Tiêu chí | Trạng thái hiện tại |
 | --- | --- | --- |
-| AC-01 | Có dữ liệu Hiragana và Katakana mở rộng (71 ký tự mỗi bộ) | **Implemented; dataset generated, automated tests pending** |
+| AC-01 | Có dữ liệu Hiragana và Katakana mở rộng (71 ký tự mỗi bộ) | **Implemented; automated and device checks PASS** |
 | AC-02 | Viết nhiều nét bằng cảm ứng, Undo/Clear | **Implemented** |
 | AC-03 | Trace và hiển thị dữ liệu nét | **Implemented** |
 | AC-04 | Guided Writing và Recall Writing | **Implemented** |
@@ -426,5 +426,6 @@ Một phase hoặc tính năng chỉ được đánh dấu hoàn thành khi:
 
 - [Development Standards](DEVELOPMENT_STANDARDS.md)
 - [README](README.md)
+- [Release readiness checklist](RELEASE_CHECKLIST.md)
 - [FSRS Rust bridge source](JapaneseWritingTrainer/native/fsrs-bridge/)
 - [Android application source](JapaneseWritingTrainer/app/src/main/)
