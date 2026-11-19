@@ -1,6 +1,7 @@
 package com.example.japanesewritingtrainer
 
 import androidx.compose.foundation.clickable
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -58,6 +59,10 @@ fun CharacterLibraryScreen(
     }
 
     val selectedCharacter = characters.firstOrNull { it.id == selectedCharacterId }
+    BackHandler(enabled = selectedCharacter != null) {
+        selectedCharacterId = null
+        onDetailStateChanged(false)
+    }
     if (selectedCharacter != null) {
         CharacterDetailContent(
             character = selectedCharacter,
