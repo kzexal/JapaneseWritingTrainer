@@ -59,6 +59,23 @@ class AppSettings(context: Context) {
         else -> null
     }
 
+    fun getReminderEnabled(): Boolean = preferences.getBoolean(KEY_REMINDER_ENABLED, false)
+
+    fun setReminderEnabled(value: Boolean) {
+        preferences.edit().putBoolean(KEY_REMINDER_ENABLED, value).apply()
+    }
+
+    fun getReminderHour(): Int = preferences.getInt(KEY_REMINDER_HOUR, 20).coerceIn(0, 23)
+
+    fun getReminderMinute(): Int = preferences.getInt(KEY_REMINDER_MINUTE, 0).coerceIn(0, 59)
+
+    fun setReminderTime(hour: Int, minute: Int) {
+        preferences.edit()
+            .putInt(KEY_REMINDER_HOUR, hour.coerceIn(0, 23))
+            .putInt(KEY_REMINDER_MINUTE, minute.coerceIn(0, 59))
+            .apply()
+    }
+
     fun getShowGrid(): Boolean = preferences.getBoolean(KEY_SHOW_GRID, true)
 
     fun setShowGrid(value: Boolean) {
@@ -89,6 +106,9 @@ class AppSettings(context: Context) {
         const val KEY_KATAKANA_NEW_CARDS_PER_DAY = "katakana_new_cards_per_day"
         const val KEY_KANJI_NEW_CARDS_PER_DAY = "kanji_new_cards_per_day"
         const val KEY_SHOW_GRID = "show_grid"
+        const val KEY_REMINDER_ENABLED = "reminder_enabled"
+        const val KEY_REMINDER_HOUR = "reminder_hour"
+        const val KEY_REMINDER_MINUTE = "reminder_minute"
         const val KEY_SHOW_HINTS = "show_hints"
         const val KEY_SELECTED_CHARACTER_TYPE = "selected_character_type"
         const val DEFAULT_CHARACTER_TYPE = "hiragana"
