@@ -63,7 +63,6 @@ class MainActivity : ComponentActivity() {
             val context = LocalContext.current.applicationContext
             val appSettings = remember(context) { AppSettings(context) }
             var themeMode by remember { mutableStateOf(appSettings.getThemeMode()) }
-            var dynamicColorEnabled by remember { mutableStateOf(appSettings.getDynamicColorEnabled()) }
             var hiraganaNewCardsPerDay by remember {
                 mutableIntStateOf(appSettings.getNewCardsPerDay("hiragana"))
             }
@@ -82,7 +81,7 @@ class MainActivity : ComponentActivity() {
                 AppThemeMode.DARK -> true
             }
 
-            JapaneseWritingTrainerTheme(darkTheme = darkTheme, dynamicColor = dynamicColorEnabled) {
+            JapaneseWritingTrainerTheme(darkTheme = darkTheme) {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     val context = LocalContext.current.applicationContext
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
@@ -339,8 +338,7 @@ class MainActivity : ComponentActivity() {
                                         showGrid = showGrid,
                                         showHints = showHints,
                                         deckType = selectedDeckType,
-                                        modifier = Modifier.weight(1f),
-                                        onExit = { navigateTo(MainScreen.HOME) }
+                                        modifier = Modifier.weight(1f)
                                     )
 
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
@@ -403,11 +401,6 @@ class MainActivity : ComponentActivity() {
                                         onThemeModeChange = { mode ->
                                             themeMode = mode
                                             appSettings.setThemeMode(mode)
-                                        },
-                                        dynamicColorEnabled = dynamicColorEnabled,
-                                        onDynamicColorEnabledChange = { enabled ->
-                                            dynamicColorEnabled = enabled
-                                            appSettings.setDynamicColorEnabled(enabled)
                                         },
                                         hiraganaNewCardsPerDay = hiraganaNewCardsPerDay,
                                         onHiraganaNewCardsPerDayChange = { value ->
