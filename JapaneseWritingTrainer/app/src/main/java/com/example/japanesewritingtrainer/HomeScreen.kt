@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material.icons.Icons
@@ -29,6 +31,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.mergeDescendants
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -77,7 +81,7 @@ fun HomeScreen(
     val fraction = if (characters.isEmpty()) 0f else learnedCount.toFloat() / characters.size
 
     Column(
-        modifier = modifier.fillMaxSize().padding(horizontal = 20.dp),
+        modifier = modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(horizontal = 20.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Row(
@@ -85,7 +89,7 @@ fun HomeScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+            Column(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                 Text(
                     "Chào mừng bạn trở lại",
                     style = MaterialTheme.typography.titleSmall,
@@ -94,6 +98,7 @@ fun HomeScreen(
                 Text(deckName, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold)
             }
             Surface(
+                modifier = Modifier.semantics(mergeDescendants = true) {},
                 shape = RoundedCornerShape(999.dp),
                 color = MaterialTheme.colorScheme.tertiaryContainer
             ) {
@@ -104,7 +109,7 @@ fun HomeScreen(
                 ) {
                     Icon(
                         imageVector = Icons.Filled.LocalFireDepartment,
-                        contentDescription = "Chuỗi ngày học",
+                        contentDescription = null,
                         tint = MaterialTheme.colorScheme.onTertiaryContainer
                     )
                     Text(
@@ -152,7 +157,7 @@ fun HomeScreen(
                 }
                 if (heroCharacter != null) {
                     Column(
-                        modifier = Modifier.width(if (deckName.equals("Kanji", ignoreCase = true)) 48.dp else 64.dp),
+                        modifier = Modifier.widthIn(min = 48.dp, max = 96.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
@@ -197,8 +202,11 @@ fun HomeScreen(
 
 @Composable
 private fun SummaryChip(label: String, value: String, modifier: Modifier = Modifier) {
-    Surface(modifier = modifier, shape = RoundedCornerShape(16.dp),
-        color = MaterialTheme.colorScheme.surfaceContainer) {
+    Surface(
+        modifier = modifier.semantics(mergeDescendants = true) {},
+        shape = RoundedCornerShape(16.dp),
+        color = MaterialTheme.colorScheme.surfaceContainer
+    ) {
         Column(modifier = Modifier.padding(vertical = 9.dp, horizontal = 6.dp),
             horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text(value, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
