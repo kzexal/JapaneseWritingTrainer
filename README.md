@@ -7,9 +7,9 @@
 - **Hiragana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Katakana:** 71 ký tự (46 cơ bản + 25 Dakuten/Handakuten).
 - **Kanji:** 86 ký tự lấy từ sheet `Kanji` trong workbook `vocabulary.xlsx`; metadata được quản lý riêng với stroke geometry.
-- **Vocabulary:** thư viện tra cứu 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc theo 15 nhóm và xem ví dụ/ghi nhớ; hiện là thư viện nội dung chỉ đọc, chưa tạo card FSRS.
-- **Daily streak:** Statistics hiện có tính chuỗi ngày theo lịch sử của deck đang xem; roadmap mở rộng thành streak toàn ứng dụng và Android Home-screen Widget.
-- Mỗi bộ chữ có thể được chọn thành deck học riêng; tiến độ được lưu theo ID ổn định của ký tự.
+- **Vocabulary:** 198 từ từ sheet `Vocabulary`, hỗ trợ tìm kiếm đa trường, lọc 15 nhóm và xem chi tiết. Có thể luyện viết theo hai mục tiêu độc lập **Japanese** hoặc **Reading**; các từ có đủ stroke geometry được đưa vào phiên học dùng chung Session/Room/FSRS, còn từ thiếu geometry vẫn được giữ trong thư viện.
+- **Daily streak:** streak được tính trên toàn bộ hoạt động học đã lưu của mọi deck; Statistics và Android Home-screen Widget dùng chung dữ liệu PracticeLog và cùng phép tính.
+- Hiragana, Katakana và Kanji có deck riêng; Vocabulary có mục tiêu luyện Japanese/Reading với tiến độ độc lập. Tiến độ được lưu theo ID ổn định.
 - Thư viện ký tự hỗ trợ tìm kiếm; Kanji hỗ trợ lọc theo JLPT và bộ thủ.
 - Guided Writing luyện từng nét theo đúng thứ tự, sử dụng stroke geometry.
 - Ôn tập theo FSRS-6 với các mức Again, Hard, Good và Easy.
@@ -92,7 +92,7 @@ Mở PowerShell tại thư mục `JapaneseWritingTrainer/`:
 
 Không cần chạy lại toàn bộ build/test chỉ để chỉnh sửa tài liệu. Khi thay đổi mã nguồn, chạy các lệnh kiểm thử phù hợp trước khi sử dụng bản build mới.
 
-## Audit sheet Vocabulary trước khi tích hợp
+## Audit sheet Vocabulary
 
 Trước khi thiết kế Vocabulary Deck, có thể kiểm tra cấu trúc sheet bằng công cụ chỉ đọc:
 
@@ -114,7 +114,7 @@ py -3.13 tools/generate_vocabulary.py
 
 Kết quả được ghi vào `app/src/main/assets/characters/vocabulary.json`. ID được tạo từ toàn bộ Unicode code point của trường `Japanese`, không phụ thuộc vị trí dòng. Vì vậy, hai từ đồng âm như `春` và `貼る` vẫn là hai card riêng; các câu ví dụ trùng nhau cũng không làm các card bị gộp. Khi thêm từ hoặc sắp xếp lại workbook, ID hiện có không đổi.
 
-Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống. Ứng dụng đọc JSON qua `VocabularyRepository` và hiển thị trong mục **Từ vựng**; màn hình hiện hỗ trợ tìm kiếm, lọc nhóm và xem chi tiết, chưa đưa các từ vào hàng đợi học/FSRS.
+Các trường JLPT, Notes và Tags đang trống trong workbook sẽ được biểu diễn bằng JSON `null`. Generator yêu cầu Japanese, Reading và Vietnamese; các trường ví dụ, nhóm, radicals và mnemonics có thể để trống. Ứng dụng đọc JSON qua `VocabularyRepository`. Từ thư viện **Từ vựng**, người học có thể mở phiên luyện viết theo Japanese hoặc Reading; mỗi mục tiêu có card ID và tiến độ FSRS độc lập. Từ thiếu stroke geometry không được đưa vào phiên viết và vẫn hiển thị trong thư viện.
 
 ## Cập nhật dữ liệu Kanji từ Excel
 
@@ -164,17 +164,18 @@ Rust đảm nhiệm phép tính FSRS; Kotlin quản lý chính sách học, hàn
 
 ## Sao lưu và khôi phục
 
-Sử dụng chức năng sao lưu/khôi phục JSON trong ứng dụng để chủ động lưu dữ liệu học tập. Nên giữ bản sao lưu ở vị trí an toàn, tách khỏi thiết bị đang sử dụng. Không nên xem Android Auto Backup là bản sao lưu duy nhất vì khả năng khôi phục còn phụ thuộc thiết bị, tài khoản và cấu hình hệ thống.
+Sử dụng chức năng sao lưu/khôi phục JSON trong **Cài đặt** để lưu dữ liệu học tập. Tệp backup hiện chứa `CardProgress` (bao gồm trạng thái và FSRS memory/scheduling fields) cùng toàn bộ `PracticeLog`; dữ liệu ký tự tĩnh nằm trong app assets nên không cần xuất. Cài đặt giao diện và giới hạn thẻ mới lưu trong SharedPreferences không nằm trong tệp backup.
 
-Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo và kiểm tra tệp JSON backup.
+Khi khôi phục, ứng dụng yêu cầu xác nhận trước khi thay thế toàn bộ tiến độ và lịch sử hiện có. JSON được kiểm tra trước; dữ liệu chỉ được thay thế trong một Room transaction, nên lỗi parse/validation/ghi dữ liệu không để lại trạng thái khôi phục dở dang. Giữ ít nhất một bản sao ở vị trí an toàn, tách khỏi thiết bị. Không xem Android Auto Backup là bản sao lưu duy nhất.
 
-## Lộ trình tiếp theo
+Trước khi gỡ cài đặt hoặc chuyển thiết bị, hãy tạo backup mới và kiểm tra có thể đọc/khôi phục trên thiết bị mục tiêu. Restore là thao tác thay thế dữ liệu, không phải merge hai bộ tiến độ.
 
-- Hoàn thiện kiểm thử thực tế cho Kanji Learning, Guided Writing, History và Statistics.
-- Hoàn thiện Vocabulary Deck: chọn rõ mục tiêu luyện Japanese hoặc Reading, ánh xạ stroke data theo từng ký tự và tích hợp card/FSRS mà không làm thay đổi tiến độ hiện có.
-- Hoàn thiện streak toàn ứng dụng và Android Home-screen Widget; widget chỉ đọc dữ liệu PracticeLog và không thay đổi tiến độ FSRS.
-- Kiểm tra an toàn luồng cập nhật nội dung: thêm Kanji mới không cần hard-code số lượng; cập nhật metadata không reset tiến độ; bỏ dòng khỏi workbook không tự xóa lịch sử học.
-- Rà soát backup/restore với dữ liệu Kanji.
-- Hoàn thiện nhận diện ứng dụng (app icon/adaptive icon), thông tin phiên bản và chuẩn bị bản phát hành.
-- Đánh giá khả năng nhập workbook trực tiếp trong ứng dụng ở giai đoạn sau; hiện tại workbook trên PC vẫn là nguồn dữ liệu và công cụ Python tạo JSON.
+## Trạng thái và công việc còn lại
+
+- Đã tích hợp Vocabulary writing session theo Japanese/Reading và dùng chung Session Coordinator, Room, FSRS; các bài kiểm tra gần nhất đã PASS.
+- Streak toàn ứng dụng và Android Home-screen Widget đã triển khai; unit tests, build, instrumentation và kiểm tra widget trên thiết bị đã PASS.
+- Backup/restore lưu CardProgress và PracticeLog, có validation và transaction; các kiểm thử edge case và kiểm tra khôi phục trên thiết bị đã PASS.
+- Tiếp tục rà soát quy trình cập nhật nội dung từ workbook, đặc biệt tính ổn định ID và nguyên tắc không tự xóa progress khi bỏ dòng khỏi workbook.
+- Công việc trước bản phát hành: thiết kế app icon/adaptive icon, rà soát attribution/license KanjiVG, tạo và bảo vệ signing keystore, cập nhật version/changelog, tạo release APK/AAB và kiểm tra cài đặt/nâng cấp trên thiết bị.
+- Import workbook trực tiếp trong ứng dụng vẫn để giai đoạn sau; hiện tại workbook trên PC là nguồn dữ liệu và Python generator tạo JSON assets.
 
