@@ -8,5 +8,5 @@
     android:minResizeWidth="110dp"
     android:previewLayout="@layout/widget_practice_streak_medium"
     android:resizeMode="horizontal|vertical"
-    android:updatePeriodMillis="0"
+    android:updatePeriodMillis="1800000"
     android:widgetCategory="home_screen" />
