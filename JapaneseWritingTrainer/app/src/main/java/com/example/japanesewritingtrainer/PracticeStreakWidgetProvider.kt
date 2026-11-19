@@ -7,18 +7,13 @@ import android.content.BroadcastReceiver
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.util.SizeF
 import android.widget.RemoteViews
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.time.Instant
-import java.time.LocalDate
-import java.time.ZoneId
 
-/** Responsive, read-only launcher widget backed by the app's existing repositories. */
+/** Compact 2x1 widget showing only the current streak and due-card count. */
 class PracticeStreakWidgetProvider : AppWidgetProvider() {
 
     override fun onUpdate(
@@ -29,15 +24,6 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
         if (appWidgetIds.isNotEmpty()) {
             updateWidgets(context, appWidgetManager, appWidgetIds, goAsync())
         }
-    }
-
-    override fun onAppWidgetOptionsChanged(
-        context: Context,
-        appWidgetManager: AppWidgetManager,
-        appWidgetId: Int,
-        newOptions: android.os.Bundle
-    ) {
-        updateWidgets(context, appWidgetManager, intArrayOf(appWidgetId), goAsync())
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -70,14 +56,7 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                 val progress = CardProgressRepository(appContext).getAll()
                 val now = System.currentTimeMillis()
                 val dueCount = progress.count { it.isDue(now) }
-                val state = buildPracticeStreakWidgetState(logs, now)
-                val zone = ZoneId.systemDefault()
-                val practicedDates = logs.map {
-                    Instant.ofEpochMilli(it.timestampEpochMillis).atZone(zone).toLocalDate()
-                }.toSet()
-                val today = LocalDate.now(zone)
-                val hourOfDay = java.time.ZonedDateTime.now(zone).hour
-                val streakAtRisk = hourOfDay >= 18 && !state.practicedToday
+                val streak = buildPracticeStreakWidgetState(logs, now).currentStreakDays
 
                 val openAppIntent = Intent(context, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -89,106 +68,31 @@ class PracticeStreakWidgetProvider : AppWidgetProvider() {
                     PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                 )
 
-                fun createViews(layoutId: Int, includeDots: Boolean): RemoteViews =
-                    RemoteViews(context.packageName, layoutId).apply {
-                        val dueLabel = if (dueCount == 0 && !state.practicedToday) {
-                            context.getString(R.string.widget_new_cards_today)
-                        } else {
-                            context.getString(R.string.widget_due_count, dueCount)
-                        }
-                        setTextViewText(R.id.widget_due_count, dueLabel)
-                        setTextViewText(
-                            R.id.widget_current_streak,
-                            context.getString(R.string.widget_current_streak, state.currentStreakDays)
+                val views = RemoteViews(
+                    context.packageName,
+                    R.layout.widget_practice_streak_wide
+                ).apply {
+                    setTextViewText(
+                        R.id.widget_current_streak,
+                        context.getString(R.string.widget_current_streak, streak)
+                    )
+                    setTextViewText(
+                        R.id.widget_due_count,
+                        context.getString(R.string.widget_due_count, dueCount)
+                    )
+                    setOnClickPendingIntent(R.id.widget_root, openAppPendingIntent)
+                    setContentDescription(
+                        R.id.widget_root,
+                        context.getString(
+                            R.string.widget_accessibility_description,
+                            dueCount,
+                            streak
                         )
-                        if (layoutId != R.layout.widget_practice_streak_small) {
-                            val statusRes = when {
-                                state.practicedToday -> R.string.widget_studied_today
-                                streakAtRisk -> R.string.widget_streak_at_risk
-                                dueCount == 0 -> R.string.widget_new_cards_today
-                                else -> R.string.widget_not_studied_today
-                            }
-                            setTextViewText(R.id.widget_today_status, context.getString(statusRes))
-                        }
-                        if (streakAtRisk) {
-                            setTextColor(
-                                R.id.widget_current_streak,
-                                context.getColor(R.color.widget_streak_warning)
-                            )
-                        }
-                        if (layoutId == R.layout.widget_practice_streak_medium) {
-                            setTextViewText(
-                                R.id.widget_longest_streak,
-                                context.getString(R.string.widget_longest_streak, state.longestStreakDays)
-                            )
-                            if (includeDots) {
-                                for (offset in 6 downTo 0) {
-                                    val date = today.minusDays(offset.toLong())
-                                    val viewId = when (offset) {
-                                        6 -> R.id.widget_day_1
-                                        5 -> R.id.widget_day_2
-                                        4 -> R.id.widget_day_3
-                                        3 -> R.id.widget_day_4
-                                        2 -> R.id.widget_day_5
-                                        1 -> R.id.widget_day_6
-                                        else -> R.id.widget_day_7
-                                    }
-                                    setTextColor(
-                                        viewId,
-                                        context.getColor(
-                                            if (date in practicedDates) R.color.widget_day_done
-                                            else R.color.widget_day_empty
-                                        )
-                                    )
-                                    setContentDescription(
-                                        viewId,
-                                        context.getString(
-                                            if (date in practicedDates) R.string.widget_day_done
-                                            else R.string.widget_day_empty
-                                        )
-                                    )
-                                }
-                            }
-                        }
-                        setOnClickPendingIntent(R.id.widget_root, openAppPendingIntent)
-                        setContentDescription(
-                            R.id.widget_root,
-                            context.getString(
-                                R.string.widget_accessibility_description,
-                                dueCount,
-                                state.currentStreakDays
-                            )
-                        )
-                    }
+                    )
+                }
 
                 widgetIds.forEach { widgetId ->
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                        val responsiveViews = mapOf(
-                            SizeF(110f, 110f) to createViews(
-                                R.layout.widget_practice_streak_small, false
-                            ),
-                            SizeF(250f, 110f) to createViews(
-                                R.layout.widget_practice_streak_medium, true
-                            ),
-                            SizeF(250f, 55f) to createViews(
-                                R.layout.widget_practice_streak_wide, false
-                            )
-                        )
-                        manager.updateAppWidget(widgetId, RemoteViews(responsiveViews))
-                    } else {
-                        val options = manager.getAppWidgetOptions(widgetId)
-                        val minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH)
-                        val minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT)
-                        val layoutId = when {
-                            minHeight < 90 && minWidth >= 200 -> R.layout.widget_practice_streak_wide
-                            minWidth < 200 && minHeight >= 90 -> R.layout.widget_practice_streak_small
-                            else -> R.layout.widget_practice_streak_medium
-                        }
-                        manager.updateAppWidget(
-                            widgetId,
-                            createViews(layoutId, layoutId == R.layout.widget_practice_streak_medium)
-                        )
-                    }
+                    manager.updateAppWidget(widgetId, views)
                 }
             } finally {
                 pendingResult.finish()
