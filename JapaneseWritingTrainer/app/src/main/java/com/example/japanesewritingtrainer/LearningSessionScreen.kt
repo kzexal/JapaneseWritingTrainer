@@ -185,10 +185,32 @@ fun LearningSessionScreen(
             else -> {
                 val session = snapshot!!
                 deckProgress?.let { progress ->
-                    Text(
-                        "Đã học ${progress.learnedCards}/${progress.totalCards}  ·  Mới ${progress.newCards}  ·  Đang học ${progress.learningCards}  ·  Ôn tập ${progress.reviewCards}",
-                        style = MaterialTheme.typography.bodySmall
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            progress.newCards.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFF1976D2)
+                        )
+                        Text("  ·  ", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            progress.learningCards.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFFD32F2F)
+                        )
+                        Text("  ·  ", color = MaterialTheme.colorScheme.onSurfaceVariant)
+                        Text(
+                            progress.reviewCards.toString(),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = androidx.compose.ui.graphics.Color(0xFF2E7D32)
+                        )
+                    }
                 }
                 Text(
                     "Phiên này ${session.completedCount}/${session.totalCount}  ·  " +
