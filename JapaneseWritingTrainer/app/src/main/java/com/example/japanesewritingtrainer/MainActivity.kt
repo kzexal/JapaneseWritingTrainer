@@ -101,6 +101,7 @@ class MainActivity : ComponentActivity() {
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
+                    var showActiveReviewSession by remember { mutableStateOf(false) }
                     var isLibraryDetail by remember { mutableStateOf(false) }
                     var navigationHistory by remember { mutableStateOf(listOf<MainScreen>()) }
 
@@ -108,6 +109,7 @@ class MainActivity : ComponentActivity() {
                         if (screen != selectedScreen) {
                             navigationHistory = navigationHistory + selectedScreen
                             selectedScreen = screen
+                            showActiveReviewSession = false
                             isLibraryDetail = false
                         }
                     }
@@ -115,6 +117,7 @@ class MainActivity : ComponentActivity() {
                     BackHandler(enabled = navigationHistory.isNotEmpty()) {
                         selectedScreen = navigationHistory.last()
                         navigationHistory = navigationHistory.dropLast(1)
+                        showActiveReviewSession = false
                         isLibraryDetail = false
                     }
                     val backupRestoreManager = remember(context) { BackupRestoreManager(context) }
@@ -332,14 +335,26 @@ class MainActivity : ComponentActivity() {
                                             )
                                     }
 
-                                    MainScreen.LEARNING -> LearningSessionScreen(
-                                        characters = selectedCharacters,
-                                        newCardsPerDay = selectedNewCardsPerDay,
-                                        showGrid = showGrid,
-                                        showHints = showHints,
-                                        deckType = selectedDeckType,
-                                        modifier = Modifier.weight(1f)
-                                    )
+                                    MainScreen.LEARNING -> {
+                                        if (showActiveReviewSession) {
+                                            LearningSessionScreen(
+                                                characters = selectedCharacters,
+                                                newCardsPerDay = selectedNewCardsPerDay,
+                                                showGrid = showGrid,
+                                                showHints = showHints,
+                                                deckType = selectedDeckType,
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        } else {
+                                            ReviewOverviewScreen(
+                                                characters = selectedCharacters,
+                                                deckType = selectedDeckType,
+                                                newCardsPerDay = selectedNewCardsPerDay,
+                                                onStartReview = { showActiveReviewSession = true },
+                                                modifier = Modifier.weight(1f)
+                                            )
+                                        }
+                                    }
 
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
                                         KanjiLibraryScreen(
