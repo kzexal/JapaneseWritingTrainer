@@ -10,4 +10,8 @@
     <string name="widget_longest_streak">Kỷ lục: %1$d ngày</string>
     <string name="widget_longest_streak_placeholder">Kỷ lục: 0 ngày</string>
     <string name="widget_description">Theo dõi chuỗi ngày luyện viết của bạn.</string>
+    <string name="widget_new_cards_today">Học thêm chữ mới hôm nay</string>
+    <string name="widget_day_done">Đã học</string>
+    <string name="widget_day_empty">Chưa học</string>
+    <string name="widget_accessibility_description">Còn %1$d chữ cần ôn, chuỗi %2$d ngày. Chạm để mở ứng dụng.</string>
 </resources>
