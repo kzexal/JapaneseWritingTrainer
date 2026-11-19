@@ -48,6 +48,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -631,7 +633,12 @@ private fun BottomNavIcon(icon: ImageVector, label: String, selected: Boolean, o
         color = if (selected) MaterialTheme.colorScheme.secondaryContainer
         else MaterialTheme.colorScheme.surface
     ) {
-        IconButton(onClick = onClick) {
+        IconButton(
+            onClick = onClick,
+            modifier = Modifier.semantics {
+                stateDescription = if (selected) "Đang chọn" else "Chưa chọn"
+            }
+        ) {
             Icon(
                 imageVector = icon,
                 contentDescription = label,
