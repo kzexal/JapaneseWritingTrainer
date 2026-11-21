@@ -229,9 +229,8 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // Kana datasets are small and are loaded first. Kanji is loaded only
-                    // when the user selects that deck, so its large SVG dataset does not
-                    // delay the initial screen or the Kana decks.
+                    // Kana datasets are loaded for the initial screens. Kanji metadata is
+                    // preloaded separately in the background; its large SVG geometry stays lazy.
                     LaunchedEffect(context) {
                         try {
                             characters = withContext(Dispatchers.IO) {
