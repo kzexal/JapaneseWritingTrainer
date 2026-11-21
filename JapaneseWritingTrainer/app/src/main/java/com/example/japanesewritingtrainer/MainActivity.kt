@@ -272,8 +272,8 @@ class MainActivity : ComponentActivity() {
                     }
 
                     // Full geometry is needed for a learning session, not for browsing the library.
-                    LaunchedEffect(context, selectedDeckType, selectedScreen, kanjiWritingAttempt) {
-                        if (selectedDeckType != "kanji" ||
+                    LaunchedEffect(context, selectedDeckType, selectedScreen, kanjiWritingAttempt, kanjiMetadataLoaded) {
+                        if (selectedDeckType != "kanji" || !kanjiMetadataLoaded ||
                             selectedScreen !in setOf(MainScreen.LEARNING, MainScreen.FREE) ||
                             kanjiLoaded
                         ) return@LaunchedEffect
