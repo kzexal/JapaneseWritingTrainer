@@ -44,7 +44,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun StatisticsScreen(
     characters: List<CharacterData>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    refreshKey: Int = 0
 ) {
     val context = LocalContext.current.applicationContext
     val progressRepository = remember(context) { CardProgressRepository(context) }
@@ -73,7 +74,7 @@ fun StatisticsScreen(
         }
     }
 
-    LaunchedEffect(logRepository, characters) { loadLogs() }
+    LaunchedEffect(logRepository, characters, refreshKey) { loadLogs() }
 
     val totalCards = characters.size
     val characterIds = remember(characters) { characters.map { it.id }.toSet() }
