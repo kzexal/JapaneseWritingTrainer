@@ -1,6 +1,6 @@
 # Third-party data notices
 
-This repository distributes third-party datasets separately from the application source code. Each dataset retains its own applicable license.
+The application bundles third-party datasets as separate assets. Each dataset retains its own applicable license; these terms do not automatically apply to unrelated application source code.
 
 ## OpenJLPT Kanji metadata
 
@@ -34,3 +34,12 @@ follow Japanese references.
 Any adapted KanjiVG stroke geometry distributed with this project must retain
 appropriate attribution and comply with the applicable ShareAlike terms.
 This notice does not change the license of unrelated application source code.
+
+## Bundled offline notices
+
+The APK assets include:
+- `app/src/main/assets/third_party/OPENJLPT-NOTICE.md`
+- `app/src/main/assets/third_party/EDRDG-LICENCE.txt` (convenience copy; official statement remains authoritative)
+- `app/src/main/assets/third_party/KANJIVG-NOTICE.txt`
+
+The Creative Commons license texts are linked above. Consult the official license URLs for the complete legal code and current terms.
