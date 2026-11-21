@@ -113,6 +113,7 @@ class MainActivity : ComponentActivity() {
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
                     val practiceLogScope = rememberCoroutineScope()
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
+                    var kanjiMetadata by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
                     var selectedDeckType by remember {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
@@ -205,7 +206,7 @@ class MainActivity : ComponentActivity() {
                     // Đọc JSON trên background thread để tránh chặn giao diện lúc khởi động.
                     LaunchedEffect(context) {
                         try {
-                            characters = withContext(Dispatchers.IO) {
+                            val loadedData = withContext(Dispatchers.IO) {
                                 val hiragana = CharacterRepository.load(
                                     context,
                                     "characters/hiragana.json"
@@ -214,13 +215,15 @@ class MainActivity : ComponentActivity() {
                                     context,
                                     "characters/katakana.json"
                                 )
-                                val kanji = KanjiStrokeRepository.load(context)
-                                val allCharacters = hiragana + katakana + kanji
+                                val kanji = KanjiStrokeRepository.loadDataset(context)
+                                val allCharacters = hiragana + katakana + kanji.writingCharacters
                                 require(allCharacters.map { it.id }.distinct().size == allCharacters.size) {
                                     "Character IDs must be unique across datasets."
                                 }
-                                allCharacters
+                                allCharacters to kanji.metadata
                             }
+                            characters = loadedData.first
+                            kanjiMetadata = loadedData.second
                             loadError = null
                         } catch (exception: Exception) {
                             loadError = exception.localizedMessage
@@ -385,6 +388,8 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
                                         KanjiLibraryScreen(
+                                            records = kanjiMetadata,
+                                            writingCharacters = selectedCharacters,
                                             modifier = Modifier.weight(1f),
                                             onDetailStateChanged = { isLibraryDetail = it },
                                             onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
