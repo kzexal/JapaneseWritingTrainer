@@ -128,10 +128,10 @@ object KanjiLibrary {
         radical: String? = null
     ): List<KanjiData> {
         val normalizedQuery = query.trim().lowercase()
-        val radicalNumber = radical?.let(::radicalNumber)
+        val selectedRadicalNumber = radical?.let(::radicalNumber)
         return index.records.filter { item ->
             (jlpt == null || item.jlpt.equals(jlpt, ignoreCase = true)) &&
-                (radicalNumber == null || index.radicalNumberById[item.id] == radicalNumber) &&
+                (selectedRadicalNumber == null || index.radicalNumberById[item.id] == selectedRadicalNumber) &&
                 (normalizedQuery.isEmpty() ||
                     index.searchableTextById[item.id].orEmpty().contains(normalizedQuery))
         }
