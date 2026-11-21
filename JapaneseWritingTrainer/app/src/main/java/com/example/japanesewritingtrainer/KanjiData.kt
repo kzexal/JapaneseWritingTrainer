@@ -68,6 +68,22 @@ object KanjiRepository {
         return kanji
     }
 
+    /** Builds lightweight CharacterData summaries off the main thread for home/review/statistics. */
+    fun toCharacterSummaries(metadata: List<KanjiData>): List<CharacterData> =
+        metadata.map { item ->
+            CharacterData(
+                id = item.id,
+                character = item.character,
+                type = "kanji",
+                group = item.jlpt ?: "unclassified",
+                reading = listOfNotNull(item.onyomi, item.kunyomi)
+                    .joinToString(" · ").ifBlank { "Chưa có âm đọc" },
+                strokeCount = item.strokeCount,
+                viewBoxSize = 109f,
+                strokes = emptyList()
+            )
+        }
+
     private fun JSONObject.optionalText(key: String): String? {
         if (!has(key) || isNull(key)) return null
         return optString(key).trim().takeIf { it.isNotEmpty() }
@@ -117,15 +133,17 @@ object KanjiLibrary {
                 KanjiRadicalGroup(
                     number = number,
                     label = "${glyphs.distinct().joinToString("・")} ($number)",
-                    count = source.count { radicalNumber(it.radical) == number }
+                    count = glyphs.size
                 )
             }
 
     fun availableRadicals(source: List<KanjiData>): List<String> =
         availableRadicalGroups(source).map { it.label }
 
+    private val radicalNumberRegex = Regex("""\((\d+)\)\s*$""")
+
     private fun radicalNumber(value: String?): Int? =
-        Regex("""\((\d+)\)\s*$""").find(value.orEmpty())
+        radicalNumberRegex.find(value.orEmpty())
             ?.groupValues?.getOrNull(1)?.toIntOrNull()
 
     private fun searchableText(item: KanjiData): String =
