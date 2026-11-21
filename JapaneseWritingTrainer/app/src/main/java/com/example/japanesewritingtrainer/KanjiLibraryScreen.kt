@@ -48,7 +48,7 @@ fun KanjiLibraryScreen(
     var query by remember { mutableStateOf("") }
     var selectedRadicalNumber by remember { mutableStateOf<Int?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
-    var selectedWritingCharacter by remember { mutableStateOf<CharacterData?>(null) }
+    var loadedWritingCharacter by remember { mutableStateOf<CharacterData?>(null) }
     var geometryLoading by remember { mutableStateOf(false) }
     var geometryError by remember { mutableStateOf<String?>(null) }
     var geometryRetry by remember { mutableStateOf(0) }
@@ -59,22 +59,22 @@ fun KanjiLibraryScreen(
     }
     val selectedKanji = recordsById[selectedKanjiId]
     val selectedWritingCharacter = selectedKanji?.let {
-        writingCharactersById[it.id] ?: selectedWritingCharacter?.takeIf { loaded -> loaded.id == it.id }
+        writingCharactersById[it.id] ?: loadedWritingCharacter?.takeIf { loaded -> loaded.id == it.id }
     }
 
     LaunchedEffect(selectedKanjiId, writingCharacters, geometryRetry) {
         val kanjiId = selectedKanjiId ?: return@LaunchedEffect
         if (writingCharactersById.containsKey(kanjiId)) {
-            selectedWritingCharacter = null
+            loadedWritingCharacter = null
             geometryError = null
             return@LaunchedEffect
         }
         val record = recordsById[kanjiId] ?: return@LaunchedEffect
-        selectedWritingCharacter = null
+        loadedWritingCharacter = null
         geometryLoading = true
         geometryError = null
         try {
-            selectedWritingCharacter = withContext(Dispatchers.IO) {
+            loadedWritingCharacter = withContext(Dispatchers.IO) {
                 KanjiStrokeRepository.loadCharacter(context, kanjiId, record)
             }
         } catch (exception: Exception) {
@@ -91,13 +91,10 @@ fun KanjiLibraryScreen(
         selectedKanji != null -> KanjiDetail(
             kanji = selectedKanji,
             character = selectedWritingCharacter,
-            isLoading = geometryLoading,
-            loadError = geometryError,
-            onRetry = { geometryRetry++ },
             onPracticeFinished = onPracticeFinished,
             onBack = {
                 selectedKanjiId = null
-                selectedWritingCharacter = null
+                loadedWritingCharacter = null
                 geometryError = null
                 onDetailStateChanged(false)
             },
@@ -182,7 +179,7 @@ fun KanjiLibraryScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     selectedKanjiId = kanji.id
-                                    selectedWritingCharacter = writingCharactersById[kanji.id]
+                                    loadedWritingCharacter = writingCharactersById[kanji.id]
                                     geometryError = null
                                     onDetailStateChanged(true)
                                 }
