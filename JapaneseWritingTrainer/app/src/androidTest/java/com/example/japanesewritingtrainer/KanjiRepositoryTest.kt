@@ -183,6 +183,70 @@ class KanjiRepositoryTest {
         )
     }
 
+
+    @Test(expected = IllegalArgumentException::class)
+    fun strokeAssetRejectsNonContinuousStrokeOrder() {
+        val metadata = listOf(
+            KanjiData(
+                id = "kanji_4e8c", character = "二", strokeCount = 2,
+                onyomi = null, kunyomi = null, meaning = null, radical = null,
+                exampleWords = null, notes = null, jlpt = "N5", tags = null
+            )
+        )
+        KanjiStrokeRepository.combine(
+            metadata,
+            """
+            {"schemaVersion":1,"characters":[{
+              "id":"kanji_4e8c","character":"二","strokeCount":2,
+              "viewBoxSize":109,"strokes":[
+                {"order":1,"svgPath":"M 0 0 L 1 1"},
+                {"order":3,"svgPath":"M 1 1 L 2 2"}
+              ]
+            }]}
+            """.trimIndent()
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun strokeAssetRejectsEmptyStrokePath() {
+        val metadata = listOf(
+            KanjiData(
+                id = "kanji_4e00", character = "一", strokeCount = 1,
+                onyomi = null, kunyomi = null, meaning = null, radical = null,
+                exampleWords = null, notes = null, jlpt = "N5", tags = null
+            )
+        )
+        KanjiStrokeRepository.combine(
+            metadata,
+            """
+            {"schemaVersion":1,"characters":[{
+              "id":"kanji_4e00","character":"一","strokeCount":1,
+              "viewBoxSize":109,"strokes":[{"order":1,"svgPath":"  "}]
+            }]}
+            """.trimIndent()
+        )
+    }
+
+    @Test(expected = IllegalArgumentException::class)
+    fun strokeAssetRejectsInvalidViewBoxSize() {
+        val metadata = listOf(
+            KanjiData(
+                id = "kanji_4e00", character = "一", strokeCount = 1,
+                onyomi = null, kunyomi = null, meaning = null, radical = null,
+                exampleWords = null, notes = null, jlpt = "N5", tags = null
+            )
+        )
+        KanjiStrokeRepository.combine(
+            metadata,
+            """
+            {"schemaVersion":1,"characters":[{
+              "id":"kanji_4e00","character":"一","strokeCount":1,
+              "viewBoxSize":0,"strokes":[{"order":1,"svgPath":"M 0 0 L 1 1"}]
+            }]}
+            """.trimIndent()
+        )
+    }
+
     @Test
     fun librarySearchFindsCharacterReadingAndMeaning() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
