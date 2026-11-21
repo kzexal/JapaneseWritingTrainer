@@ -28,68 +28,35 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 
 /** Kanji browser backed by workbook metadata and validated KanjiVG stroke geometry. */
 @Composable
 fun KanjiLibraryScreen(
+    records: List<KanjiData>,
+    writingCharacters: List<CharacterData>,
     modifier: Modifier = Modifier,
     onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
     onDetailStateChanged: (Boolean) -> Unit = {}
 ) {
-    val context = LocalContext.current.applicationContext
-    var records by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
-    var writingCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList())}
-    var isLoading by remember { mutableStateOf(true) }
-    var loadError by remember { mutableStateOf<String?>(null) }
     var query by remember { mutableStateOf("") }
     var selectedRadicalNumber by remember { mutableStateOf<Int?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
-
-    LaunchedEffect(context) {
-        try {
-            val loaded = withContext(Dispatchers.IO) {
-                KanjiRepository.load(context) to KanjiStrokeRepository.load(context)
-            }
-            records = loaded.first
-            writingCharacters = loaded.second
-            loadError = null
-        } catch (exception: Exception) {
-            loadError = exception.localizedMessage ?: "Không thể tải dữ liệu Kanji."
-        } finally {
-            isLoading = false
-        }
+    val recordsById = remember(records) { records.associateBy { it.id } }
+    val writingCharactersById = remember(writingCharacters) {
+        writingCharacters.associateBy { it.id }
     }
-
-    val selectedKanji = records.firstOrNull { it.id == selectedKanjiId }
+    val selectedKanji = recordsById[selectedKanjiId]
     BackHandler(enabled = selectedKanji != null) {
         selectedKanjiId = null
         onDetailStateChanged(false)
     }
     when {
-        isLoading -> Column(
-            modifier = modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator()
-            Text("Đang tải dữ liệu Kanji...", modifier = Modifier.padding(top = 12.dp))
-        }
-
-        loadError != null -> Text(
-            "Không tải được dữ liệu Kanji: $loadError",
-            modifier = modifier.padding(16.dp),
-            color = MaterialTheme.colorScheme.error
-        )
-
         selectedKanji != null -> KanjiDetail(
             kanji = selectedKanji,
-            character = writingCharacters.firstOrNull { it.id == selectedKanji.id },
+            character = writingCharactersById[selectedKanji.id],
             onPracticeFinished = onPracticeFinished,
             onBack = {
                 selectedKanjiId = null
@@ -101,15 +68,11 @@ fun KanjiLibraryScreen(
         else -> {
             val radicals = remember(records) { KanjiLibrary.availableRadicalGroups(records) }
             val filtered = remember(records, query, selectedRadicalNumber) {
-                if (selectedRadicalNumber == null) {
-                    KanjiLibrary.filter(records, query)
-                } else {
-                    records.filter { kanji ->
-                        kanji.radical?.substringAfterLast("(")?.removeSuffix(")")
-                            ?.trim()?.toIntOrNull() == selectedRadicalNumber &&
-                            KanjiLibrary.filter(listOf(kanji), query).isNotEmpty()
-                    }
-                }
+                KanjiLibrary.filter(
+                    source = records,
+                    query = query,
+                    radical = selectedRadicalNumber?.let { "($it)" }
+                )
             }
 
             LazyVerticalGrid(
