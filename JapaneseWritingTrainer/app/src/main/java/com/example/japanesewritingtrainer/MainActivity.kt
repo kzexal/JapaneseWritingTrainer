@@ -120,6 +120,7 @@ class MainActivity : ComponentActivity() {
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiMetadata by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
+                    var kanjiSummaryCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiMetadataLoaded by remember { mutableStateOf(false) }
                     var kanjiLoaded by remember { mutableStateOf(false) }
                     var kanjiLoading by remember { mutableStateOf(false) }
@@ -131,21 +132,9 @@ class MainActivity : ComponentActivity() {
                     var selectedDeckType by remember {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
-                    val selectedCharacters = remember(characters, kanjiMetadata, selectedDeckType) {
+                    val selectedCharacters = remember(characters, kanjiSummaryCharacters, selectedDeckType) {
                         if (selectedDeckType == "kanji") {
-                            kanjiMetadata.map { item ->
-                                CharacterData(
-                                    id = item.id,
-                                    character = item.character,
-                                    type = "kanji",
-                                    group = item.jlpt ?: "unclassified",
-                                    reading = listOfNotNull(item.onyomi, item.kunyomi)
-                                        .joinToString(" · ").ifBlank { "Chưa có âm đọc" },
-                                    strokeCount = item.strokeCount,
-                                    viewBoxSize = 109f,
-                                    strokes = emptyList()
-                                )
-                            }
+                            kanjiSummaryCharacters
                         } else characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
                     }
                     val selectedWritingCharacters = remember(characters, kanjiCharacters, selectedDeckType, selectedCharacters) {
@@ -267,15 +256,21 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // The library needs metadata only; do not parse the large stroke asset here.
-                    LaunchedEffect(context, selectedDeckType, kanjiLoadAttempt) {
-                        if (selectedDeckType != "kanji" || kanjiMetadataLoaded) return@LaunchedEffect
+                    // Preload lightweight Kanji metadata in the background during app startup.
+                    // Deck selection can then show the library immediately without waiting for JSON parsing.
+                    // Stroke geometry remains lazy and is loaded only for an actual writing session.
+                    LaunchedEffect(context, kanjiLoadAttempt) {
+                        if (kanjiMetadataLoaded) return@LaunchedEffect
                         kanjiLoading = true
                         kanjiLoadError = null
                         try {
-                            kanjiMetadata = withContext(Dispatchers.IO) {
-                                KanjiStrokeRepository.loadMetadata(context)
+                            val loaded = withContext(Dispatchers.IO) {
+                                val metadata = KanjiStrokeRepository.loadMetadata(context)
+                                val summaries = KanjiRepository.toCharacterSummaries(metadata)
+                                metadata to summaries
                             }
+                            kanjiMetadata = loaded.first
+                            kanjiSummaryCharacters = loaded.second
                             kanjiMetadataLoaded = true
                         } catch (exception: Exception) {
                             kanjiLoadError = exception.localizedMessage
