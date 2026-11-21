@@ -170,7 +170,9 @@ class MainActivity : ComponentActivity() {
                             navigationHistory = navigationHistory + selectedScreen
                             if (selectedScreen == MainScreen.LIBRARY) libraryResetKey++
                             selectedScreen = screen
-                            visitedScreens = visitedScreens + screen
+                            if (screen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
+                                visitedScreens = visitedScreens + screen
+                            }
                             showActiveReviewSession = false
                             isLibraryDetail = false
                         }
@@ -752,7 +754,7 @@ private fun RetainedScreenHost(
     content: @Composable (MainScreen) -> Unit
 ) {
     Box(modifier.clipToBounds()) {
-        visitedScreens.forEach { screen ->
+        (visitedScreens + selectedScreen).forEach { screen ->
             key(screen) {
                 val isSelected = screen == selectedScreen
                 Box(
