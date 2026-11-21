@@ -75,6 +75,22 @@ class KanjiRepositoryTest {
     }
 
     @Test
+    fun everyKanjiGeometryShardCanLoadARepresentativeCharacter() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val metadata = KanjiRepository.load(context)
+        val representatives = metadata.groupBy {
+            (it.id.removePrefix("kanji_").toLong(16) and 0xF).toInt()
+        }.values.map { it.first() }
+
+        assertEquals(16, representatives.size)
+        representatives.forEach { record ->
+            val character = KanjiStrokeRepository.loadCharacter(context, record.id, record)
+            assertEquals(record.character, character.character)
+            assertEquals(record.strokeCount, character.strokes.size)
+        }
+    }
+
+    @Test
     fun kanjiCharactersProduceAnIndependentLearningDeck() {
         val characters = KanjiStrokeRepository.load(ApplicationProvider.getApplicationContext())
         val catalog = DeckFactory.fromCharacters(characters)
