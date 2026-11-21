@@ -75,7 +75,14 @@ object KanjiRepository {
 }
 
 
-/** Pure search/filter operations for the future Kanji Library UI. */
+/** One Kangxi radical group; variants sharing the same index are shown together. */
+data class KanjiRadicalGroup(
+    val number: Int,
+    val label: String,
+    val count: Int
+)
+
+/** Search/filter operations for the Kanji Library UI. */
 object KanjiLibrary {
 
     fun filter(
@@ -87,7 +94,7 @@ object KanjiLibrary {
         val normalizedQuery = query.trim().lowercase()
         return source.filter { item ->
             (jlpt == null || item.jlpt.equals(jlpt, ignoreCase = true)) &&
-                (radical == null || item.radical.equals(radical, ignoreCase = true)) &&
+                (radical == null || radicalNumber(item.radical) == radicalNumber(radical)) &&
                 (normalizedQuery.isEmpty() || searchableText(item).contains(normalizedQuery))
         }
     }
@@ -97,10 +104,29 @@ object KanjiLibrary {
             .distinct()
             .sorted()
 
+    fun availableRadicalGroups(source: List<KanjiData>): List<KanjiRadicalGroup> =
+        source.mapNotNull { item ->
+            val number = radicalNumber(item.radical) ?: return@mapNotNull null
+            val glyph = item.radical?.substringBeforeLast("(")?.trim()
+                ?.takeIf(String::isNotEmpty) ?: return@mapNotNull null
+            number to glyph
+        }
+            .groupBy({ it.first }, { it.second })
+            .toSortedMap()
+            .map { (number, glyphs) ->
+                KanjiRadicalGroup(
+                    number = number,
+                    label = "${glyphs.distinct().joinToString("・")} ($number)",
+                    count = source.count { radicalNumber(it.radical) == number }
+                )
+            }
+
     fun availableRadicals(source: List<KanjiData>): List<String> =
-        source.mapNotNull { it.radical?.trim()?.takeIf(String::isNotEmpty) }
-            .distinct()
-            .sorted()
+        availableRadicalGroups(source).map { it.label }
+
+    private fun radicalNumber(value: String?): Int? =
+        Regex("""\\((\\d+)\\)\\s*$""").find(value.orEmpty())
+            ?.groupValues?.getOrNull(1)?.toIntOrNull()
 
     private fun searchableText(item: KanjiData): String =
         listOfNotNull(
