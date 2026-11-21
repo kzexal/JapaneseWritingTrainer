@@ -42,7 +42,8 @@ fun ReviewOverviewScreen(
     deckType: String,
     newCardsPerDay: Int,
     onStartReview: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    refreshKey: Int = 0
 ) {
     val context = LocalContext.current.applicationContext
     val progressRepository = remember(context) { CardProgressRepository(context) }
@@ -53,7 +54,7 @@ fun ReviewOverviewScreen(
     var isLoading by remember { mutableStateOf(true) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
 
-    LaunchedEffect(characters, deckType, newCardsPerDay, progressRepository, logRepository) {
+    LaunchedEffect(characters, deckType, newCardsPerDay, progressRepository, logRepository, refreshKey) {
         isLoading = true
         try {
             val now = System.currentTimeMillis()
