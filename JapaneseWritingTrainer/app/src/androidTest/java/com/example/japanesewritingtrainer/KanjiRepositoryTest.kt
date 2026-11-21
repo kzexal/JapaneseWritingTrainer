@@ -264,4 +264,24 @@ class KanjiRepositoryTest {
         assertTrue(KanjiLibrary.availableRadicals(data).isNotEmpty())
     }
 
+    @Test
+    fun radicalGroupsAreMergedByKangxiIndexAndSortedNumerically() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+        val groups = KanjiLibrary.availableRadicalGroups(data)
+        assertEquals(groups.map { it.number }.sorted(), groups.map { it.number })
+        val river = groups.single { it.number == 47 }
+        assertEquals("巛・川 (47)", river.label)
+        assertEquals(2, river.count)
+        assertEquals(setOf("川", "州"), KanjiLibrary.filter(data, radical = "川 (47)")
+            .map { it.character }.toSet())
+    }
+
+    @Test
+    fun seaKanjiExistsAndBelongsToWaterRadical() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+        val sea = data.single { it.character == "海" }
+        assertEquals("水 (85)", sea.radical)
+        assertTrue(KanjiLibrary.filter(data, radical = "水 (85)").any { it.character == "海" })
+    }
+
 }
