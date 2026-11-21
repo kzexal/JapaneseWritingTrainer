@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -41,6 +42,7 @@ import kotlinx.coroutines.withContext
 fun KanjiLibraryScreen(
     records: List<KanjiData>,
     writingCharacters: List<CharacterData>,
+    resetKey: Int = 0,
     modifier: Modifier = Modifier,
     onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)? = null,
     onDetailStateChanged: (Boolean) -> Unit = {}
@@ -52,6 +54,7 @@ fun KanjiLibraryScreen(
     var geometryLoading by remember { mutableStateOf(false) }
     var geometryError by remember { mutableStateOf<String?>(null) }
     var geometryRetry by remember { mutableStateOf(0) }
+    val gridState = rememberLazyGridState()
     val context = LocalContext.current.applicationContext
     val recordsById = remember(records) { records.associateBy { it.id } }
     val writingCharactersById = remember(writingCharacters) {
@@ -83,6 +86,22 @@ fun KanjiLibraryScreen(
             geometryLoading = false
         }
     }
+    LaunchedEffect(resetKey) {
+        selectedKanjiId = null
+        loadedWritingCharacter = null
+        geometryError = null
+        onDetailStateChanged(false)
+    }
+
+    val radicals = remember(records) { KanjiLibrary.availableRadicalGroups(records) }
+    val filtered = remember(records, query, selectedRadicalNumber) {
+        KanjiLibrary.filter(
+            source = records,
+            query = query,
+            radical = selectedRadicalNumber?.let { "($it)" }
+        )
+    }
+
     BackHandler(enabled = selectedKanji != null) {
         selectedKanjiId = null
         onDetailStateChanged(false)
@@ -105,16 +124,8 @@ fun KanjiLibraryScreen(
         )
 
         else -> {
-            val radicals = remember(records) { KanjiLibrary.availableRadicalGroups(records) }
-            val filtered = remember(records, query, selectedRadicalNumber) {
-                KanjiLibrary.filter(
-                    source = records,
-                    query = query,
-                    radical = selectedRadicalNumber?.let { "($it)" }
-                )
-            }
-
             LazyVerticalGrid(
+                state = gridState,
                 columns = GridCells.Adaptive(minSize = 100.dp),
                 modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
