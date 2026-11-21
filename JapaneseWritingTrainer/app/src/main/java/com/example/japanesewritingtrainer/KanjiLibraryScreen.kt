@@ -93,10 +93,13 @@ fun KanjiLibraryScreen(
         onDetailStateChanged(false)
     }
 
-    val radicals = remember(records) { KanjiLibrary.availableRadicalGroups(records) }
-    val filtered = remember(records, query, selectedRadicalNumber) {
+    val libraryIndex = remember(records) { KanjiLibrary.createIndex(records) }
+    val radicals = remember(libraryIndex) {
+        KanjiLibrary.availableRadicalGroups(libraryIndex)
+    }
+    val filtered = remember(libraryIndex, query, selectedRadicalNumber) {
         KanjiLibrary.filter(
-            source = records,
+            index = libraryIndex,
             query = query,
             radical = selectedRadicalNumber?.let { "($it)" }
         )
