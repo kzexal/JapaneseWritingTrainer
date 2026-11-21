@@ -44,6 +44,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -764,17 +765,19 @@ private fun RetainedScreenHost(
 ) {
     Box(modifier.clipToBounds()) {
         visitedScreens.forEach { screen ->
-            val isSelected = screen == selectedScreen
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .zIndex(if (isSelected) 1f else 0f)
-                    .graphicsLayer {
-                        alpha = if (isSelected) 1f else 0f
-                        translationX = if (isSelected) 0f else size.width * 2f
-                    }
-            ) {
-                content(screen)
+            key(screen) {
+                val isSelected = screen == selectedScreen
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .zIndex(if (isSelected) 1f else 0f)
+                        .graphicsLayer {
+                            alpha = if (isSelected) 1f else 0f
+                            translationX = if (isSelected) 0f else size.width * 2f
+                        }
+                ) {
+                    content(screen)
+                }
             }
         }
     }
