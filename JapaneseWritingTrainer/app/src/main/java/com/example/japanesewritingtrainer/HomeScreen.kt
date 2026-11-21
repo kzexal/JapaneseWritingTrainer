@@ -47,7 +47,8 @@ fun HomeScreen(
     onStartLearning: () -> Unit,
     onOpenLibrary: () -> Unit,
     onOpenFreePractice: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    refreshKey: Int = 0
 ) {
     val context = LocalContext.current.applicationContext
     val repository = remember(context) { CardProgressRepository(context) }
@@ -56,7 +57,7 @@ fun HomeScreen(
     var newCardsStudiedToday by remember { mutableIntStateOf(0) }
     var currentStreakDays by remember { mutableIntStateOf(0) }
 
-    LaunchedEffect(repository, practiceLogRepository, characters) {
+    LaunchedEffect(repository, practiceLogRepository, characters, refreshKey) {
         progressById = repository.getAll().associateBy { it.cardId }
         newCardsStudiedToday = practiceLogRepository
             .countDistinctNewCardsSince(localDayStartEpochMillis(), characters.map { it.id })
