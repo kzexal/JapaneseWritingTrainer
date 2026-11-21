@@ -324,7 +324,8 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 - [x] Mở rộng metadata Kanji từ N5 lên N5–N2: 1.031 ký tự duy nhất (N5: 86, N4: 160, N3: 387, N2: 398); giữ nguyên ID Unicode của dữ liệu cũ. Phân loại JLPT là danh sách học cộng đồng, không phải danh sách chính thức.
 - [ ] Xác minh trên thiết bị rằng 1.031 metadata records khớp đầy đủ với stroke geometry KanjiVG; repository có validation chặn thiếu/thừa ID, sai glyph, số nét và thứ tự nét.
 - [ ] Kiểm thử import/update lặp lại, thêm Kanji, sửa metadata, bỏ dòng khỏi workbook, backup/restore và progress isolation (chưa có workbook upsert vào Room ở phase này).
-- [ ] Chạy build + instrumentation mới, sau đó kiểm tra thủ công Kanji Home, giới hạn chữ mới, Learning/FSRS, Guided Library, History/Statistics trên thiết bị Android thật.
+- [x] Bổ sung và chạy pass regression instrumentation tests cho metadata/stroke geometry: thiếu/thừa ID, sai glyph, sai stroke count/order, SVG path rỗng và viewBox không hợp lệ; người dùng xác nhận PASS.
+- [ ] Kiểm tra thủ công Kanji Home, giới hạn chữ mới, Learning/FSRS, Guided Library, History/Statistics trên thiết bị Android thật.
 
 **Definition of done:** nội dung Kanji được sinh từ workbook bằng quy trình có thể lặp lại; thêm Kanji mới không cần sửa code ứng dụng hoặc hard-code số lượng; cập nhật metadata không reset tiến độ; dữ liệu bị bỏ khỏi workbook không tự động xóa lịch sử học. Kiến trúc parser/validator/upsert đủ độc lập để hỗ trợ import trực tiếp trong app ở giai đoạn sau, nhưng Phase 6 chưa triển khai chức năng đó.
 
@@ -393,7 +394,7 @@ Roadmap dưới đây là kế hoạch từ trạng thái hiện tại trên `ma
 2. Hoàn tất Phase 5 Katakana.
 3. Hoàn tất Phase 6 Kanji bằng pipeline Excel → Python validator/generator → JSON assets; thiết kế parser/validator/upsert theo hướng có thể tái sử dụng cho import trực tiếp trong app về sau, nhưng chưa triển khai UI import.
 4. Hoàn tất Phase 7 import Vocabulary từ cùng workbook, tích hợp card/FSRS và Guided Writing theo lựa chọn Japanese hoặc Reading.
-5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; các kiểm tra mới nhất đã PASS. Đã bổ sung ghi công OpenJLPT/KANJIDIC2 và KanjiVG trong repo và trong Cài đặt. Công việc tiếp theo tập trung vào rà soát ShareAlike cuối cùng, tạo release keystore trên máy phát hành (Gradle đã hỗ trợ đọc credentials qua biến môi trường), xác minh app icon và kiểm tra bản Release đã ký; Grammar có thể được xem xét sau.
+5. Hoàn tất Phase 8 Daily Streak và Android Home-screen Widget; các kiểm tra mới nhất đã PASS. Đã bổ sung ghi công OpenJLPT/KANJIDIC2 và KanjiVG trong repo và trong Cài đặt; các bản notice/EDRDG licence tham chiếu cũng được đóng gói trong app assets để dùng offline. Việc xác nhận provenance/phiên bản workbook, quy trình cập nhật dữ liệu theo EDRDG và rà soát ShareAlike cuối cùng vẫn còn mở. Các bước tiếp theo gồm kiểm tra Kanji thủ công trên thiết bị, tạo release keystore trên máy phát hành (Gradle đã hỗ trợ đọc credentials qua biến môi trường), xác minh app icon và kiểm tra bản Release đã ký; Grammar có thể được xem xét sau.
 6. Không triển khai cloud sync, login, Firebase hoặc Anki sync trong các phase này; ứng dụng tiếp tục offline-first và single-device theo định hướng hiện tại.
 
 ## 7. Acceptance criteria
