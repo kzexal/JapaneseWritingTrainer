@@ -153,9 +153,11 @@ class MainActivity : ComponentActivity() {
                     var showActiveReviewSession by remember { mutableStateOf(false) }
                     var isLibraryDetail by remember { mutableStateOf(false) }
                     var navigationHistory by remember { mutableStateOf(listOf<MainScreen>()) }
+                    var screenRefreshKey by remember { mutableIntStateOf(0) }
 
                     fun navigateTo(screen: MainScreen) {
                         if (screen != selectedScreen) {
+                            screenRefreshKey++
                             navigationHistory = navigationHistory + selectedScreen
                             if (selectedScreen == MainScreen.LIBRARY) libraryResetKey++
                             selectedScreen = screen
@@ -168,6 +170,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     BackHandler(enabled = navigationHistory.isNotEmpty()) {
+                        screenRefreshKey++
                         selectedScreen = navigationHistory.last()
                         navigationHistory = navigationHistory.dropLast(1)
                         showActiveReviewSession = false
@@ -467,7 +470,8 @@ class MainActivity : ComponentActivity() {
                                                     selectedIndex = selectedCharacters.indexOfFirst { it.id == characterId }.coerceAtLeast(0)
                                                     navigateTo(MainScreen.FREE)
                                                 },
-                                                modifier = Modifier.fillMaxSize()
+                                                modifier = Modifier.fillMaxSize(),
+                                                refreshKey = screenRefreshKey
                                             )
                                     }
 
@@ -487,7 +491,8 @@ class MainActivity : ComponentActivity() {
                                                 deckType = selectedDeckType,
                                                 newCardsPerDay = selectedNewCardsPerDay,
                                                 onStartReview = { showActiveReviewSession = true },
-                                                modifier = Modifier.fillMaxSize()
+                                                modifier = Modifier.fillMaxSize(),
+                                                refreshKey = screenRefreshKey
                                             )
                                         }
                                     }
@@ -542,12 +547,14 @@ class MainActivity : ComponentActivity() {
 
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = selectedCharacters,
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier.fillMaxSize(),
+                                        refreshKey = screenRefreshKey
                                     )
 
                                     MainScreen.STATISTICS -> StatisticsScreen(
                                         characters = selectedCharacters,
-                                        modifier = Modifier.fillMaxSize()
+                                        modifier = Modifier.fillMaxSize(),
+                                        refreshKey = screenRefreshKey
                                     )
 
                                     MainScreen.SETTINGS -> SettingsScreen(
