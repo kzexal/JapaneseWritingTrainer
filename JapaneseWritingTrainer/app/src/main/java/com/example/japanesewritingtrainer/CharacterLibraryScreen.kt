@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
@@ -41,6 +42,7 @@ import androidx.compose.ui.unit.sp
 @Composable
 fun CharacterLibraryScreen(
     characters: List<CharacterData>,
+    resetKey: Int = 0,
     deckName: String = characters.firstOrNull()?.type?.let(::characterTypeLabel) ?: "ký tự",
     showGrid: Boolean = true,
     showHints: Boolean = true,
@@ -55,9 +57,15 @@ fun CharacterLibraryScreen(
     var query by remember { mutableStateOf("") }
     var selectedGroup by remember { mutableStateOf("all") }
     var selectedStatus by remember { mutableStateOf("all") }
+    val gridState = rememberLazyGridState()
 
     LaunchedEffect(progressRepository, characters) {
         progressById = progressRepository.getAll().associateBy { it.cardId }
+    }
+
+    LaunchedEffect(resetKey) {
+        selectedCharacterId = null
+        onDetailStateChanged(false)
     }
 
     val selectedCharacter = characters.firstOrNull { it.id == selectedCharacterId }
@@ -65,22 +73,6 @@ fun CharacterLibraryScreen(
         selectedCharacterId = null
         onDetailStateChanged(false)
     }
-    if (selectedCharacter != null) {
-        CharacterDetailContent(
-            character = selectedCharacter,
-            progress = progressById[selectedCharacter.id],
-            onBack = {
-                selectedCharacterId = null
-                onDetailStateChanged(false)
-            },
-            showGrid = showGrid,
-            showHints = showHints,
-            onPracticeFinished = onPracticeFinished,
-            modifier = modifier
-        )
-        return
-    }
-
     val groups = remember(characters) {
         characters.map { it.group }.distinct().sorted()
     }
@@ -102,8 +94,25 @@ fun CharacterLibraryScreen(
             matchesGroup && matchesQuery && matchesStatus
         }
     }
+    if (selectedCharacter != null) {
+        CharacterDetailContent(
+            character = selectedCharacter,
+            progress = progressById[selectedCharacter.id],
+            onBack = {
+                selectedCharacterId = null
+                onDetailStateChanged(false)
+            },
+            showGrid = showGrid,
+            showHints = showHints,
+            onPracticeFinished = onPracticeFinished,
+            modifier = modifier
+        )
+        return
+    }
+
 
     LazyVerticalGrid(
+        state = gridState,
         columns = GridCells.Adaptive(minSize = 88.dp),
         modifier = modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
