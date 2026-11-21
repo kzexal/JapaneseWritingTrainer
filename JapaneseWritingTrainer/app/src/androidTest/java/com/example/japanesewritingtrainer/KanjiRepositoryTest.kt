@@ -63,6 +63,18 @@ class KanjiRepositoryTest {
     }
 
     @Test
+    fun loadsOnlyTheRequestedKanjiGeometryFromTheStrokeAsset() {
+        val context = ApplicationProvider.getApplicationContext<Context>()
+        val sea = KanjiRepository.load(context).single { it.character == "海" }
+        val character = KanjiStrokeRepository.loadCharacter(context, sea.id, sea)
+
+        assertEquals(sea.id, character.id)
+        assertEquals("海", character.character)
+        assertEquals(sea.strokeCount, character.strokes.size)
+        assertEquals((1..sea.strokeCount).toList(), character.strokes.map { it.order })
+    }
+
+    @Test
     fun kanjiCharactersProduceAnIndependentLearningDeck() {
         val characters = KanjiStrokeRepository.load(ApplicationProvider.getApplicationContext())
         val catalog = DeckFactory.fromCharacters(characters)
