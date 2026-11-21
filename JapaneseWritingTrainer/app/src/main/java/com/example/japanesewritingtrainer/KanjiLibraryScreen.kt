@@ -141,7 +141,7 @@ fun KanjiLibraryScreen(
                             value = query,
                             onValueChange = { query = it },
                             modifier = Modifier.fillMaxWidth(),
-                            label = { Text("Tìm Kanji, âm đọc hoặc nghĩa") },
+                            label = { Text("Tìm Kanji, âm đọc, Romaji hoặc nghĩa") },
                             singleLine = true
                         )
                         Text("Bộ thủ", style = MaterialTheme.typography.labelLarge)
