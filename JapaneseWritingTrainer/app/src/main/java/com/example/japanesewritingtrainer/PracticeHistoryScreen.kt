@@ -38,7 +38,8 @@ import java.util.Locale
 @Composable
 fun PracticeHistoryScreen(
     characters: List<CharacterData>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    refreshKey: Int = 0
 ) {
     val context = LocalContext.current.applicationContext
     val repository = remember(context) { PracticeLogRepository(context) }
@@ -82,7 +83,7 @@ fun PracticeHistoryScreen(
         }
     }
 
-    LaunchedEffect(repository, charactersById) {
+    LaunchedEffect(repository, charactersById, refreshKey) {
         loadHistory()
     }
 
