@@ -11,6 +11,10 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.draw.clipToBounds
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -151,6 +155,8 @@ class MainActivity : ComponentActivity() {
                     var selectedIndex by remember { mutableIntStateOf(0) }
                     var loadError by remember { mutableStateOf<String?>(null) }
                     var selectedScreen by remember { mutableStateOf(MainScreen.HOME) }
+                    var visitedScreens by remember { mutableStateOf(setOf(MainScreen.HOME)) }
+                    var libraryResetKey by remember { mutableIntStateOf(0) }
                     var showActiveReviewSession by remember { mutableStateOf(false) }
                     var isLibraryDetail by remember { mutableStateOf(false) }
                     var navigationHistory by remember { mutableStateOf(listOf<MainScreen>()) }
@@ -158,7 +164,9 @@ class MainActivity : ComponentActivity() {
                     fun navigateTo(screen: MainScreen) {
                         if (screen != selectedScreen) {
                             navigationHistory = navigationHistory + selectedScreen
+                            if (selectedScreen == MainScreen.LIBRARY) libraryResetKey++
                             selectedScreen = screen
+                            visitedScreens = visitedScreens + screen
                             showActiveReviewSession = false
                             isLibraryDetail = false
                         }
@@ -453,9 +461,14 @@ class MainActivity : ComponentActivity() {
                                 }
 
                                 // Nội dung từng màn hình giữ nguyên các ViewModel/repository hiện có.
-                                when (selectedScreen) {
+                                RetainedScreenHost(
+                                    selectedScreen = selectedScreen,
+                                    visitedScreens = visitedScreens,
+                                    modifier = Modifier.weight(1f)
+                                ) { screen ->
+                                    when (screen) {
                                     MainScreen.GUIDE -> LearningGuideScreen(
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.HOME -> {
@@ -469,7 +482,7 @@ class MainActivity : ComponentActivity() {
                                                     selectedIndex = selectedCharacters.indexOfFirst { it.id == characterId }.coerceAtLeast(0)
                                                     navigateTo(MainScreen.FREE)
                                                 },
-                                                modifier = Modifier.weight(1f)
+                                                modifier = Modifier.fillMaxSize()
                                             )
                                     }
 
@@ -481,7 +494,7 @@ class MainActivity : ComponentActivity() {
                                                 showGrid = showGrid,
                                                 showHints = showHints,
                                                 deckType = selectedDeckType,
-                                                modifier = Modifier.weight(1f)
+                                                modifier = Modifier.fillMaxSize()
                                             )
                                         } else {
                                             ReviewOverviewScreen(
@@ -489,7 +502,7 @@ class MainActivity : ComponentActivity() {
                                                 deckType = selectedDeckType,
                                                 newCardsPerDay = selectedNewCardsPerDay,
                                                 onStartReview = { showActiveReviewSession = true },
-                                                modifier = Modifier.weight(1f)
+                                                modifier = Modifier.fillMaxSize()
                                             )
                                         }
                                     }
@@ -498,7 +511,8 @@ class MainActivity : ComponentActivity() {
                                         KanjiLibraryScreen(
                                             records = kanjiMetadata,
                                             writingCharacters = kanjiCharacters,
-                                            modifier = Modifier.weight(1f),
+                                            resetKey = libraryResetKey,
+                                            modifier = Modifier.fillMaxSize(),
                                             onDetailStateChanged = { isLibraryDetail = it },
                                             onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
                                                 practiceLogScope.launch {
@@ -516,6 +530,7 @@ class MainActivity : ComponentActivity() {
                                         )
                                     } else CharacterLibraryScreen(
                                         characters = selectedCharacters,
+                                        resetKey = libraryResetKey,
                                         deckName = characterTypeLabel(selectedDeckType),
                                         showGrid = showGrid,
                                         showHints = showHints,
@@ -533,21 +548,21 @@ class MainActivity : ComponentActivity() {
                                                 )
                                             }
                                         },
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.VOCABULARY -> VocabularyLibraryScreen(
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.HISTORY -> PracticeHistoryScreen(
                                         characters = selectedCharacters,
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.STATISTICS -> StatisticsScreen(
                                         characters = selectedCharacters,
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.SETTINGS -> SettingsScreen(
@@ -640,13 +655,13 @@ class MainActivity : ComponentActivity() {
                                             }
                                         },
                                         onCancelRestore = { pendingRestoreJson = null },
-                                        modifier = Modifier.weight(1f)
+                                        modifier = Modifier.fillMaxSize()
                                     )
 
                                     MainScreen.FREE -> {
                                     val selectedCharacter = selectedCharacters.getOrNull(selectedIndex)
                                     Column(
-                                        modifier = Modifier.weight(1f),
+                                        modifier = Modifier.fillMaxSize(),
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Row(
@@ -715,6 +730,7 @@ class MainActivity : ComponentActivity() {
                                     }
                                     }
                                 }
+                                }
 
                                 if (!isLibraryDetail && selectedScreen in setOf(MainScreen.HOME, MainScreen.LEARNING, MainScreen.LIBRARY, MainScreen.VOCABULARY, MainScreen.STATISTICS, MainScreen.HISTORY)) {
                                     Surface(color = MaterialTheme.colorScheme.surfaceContainer) {
@@ -739,6 +755,30 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+private fun RetainedScreenHost(
+    selectedScreen: MainScreen,
+    visitedScreens: Set<MainScreen>,
+    modifier: Modifier = Modifier,
+    content: @Composable (MainScreen) -> Unit
+) {
+    Box(modifier.clipToBounds()) {
+        visitedScreens.forEach { screen ->
+            val isSelected = screen == selectedScreen
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .zIndex(if (isSelected) 1f else 0f)
+                    .graphicsLayer {
+                        alpha = if (isSelected) 1f else 0f
+                        translationX = if (isSelected) 0f else size.width * 2f
+                    }
+            ) {
+                content(screen)
+            }
+        }
+    }
+}
 @Composable
 private fun BottomNavIcon(icon: ImageVector, label: String, selected: Boolean, onClick: () -> Unit) {
     Column(
