@@ -1,7 +1,10 @@
 package com.example.japanesewritingtrainer
 
 import android.content.Context
+import android.util.JsonReader
 import org.json.JSONObject
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
 
 /**
  * Joins workbook-generated Kanji metadata with the independent KanjiVG geometry asset.
@@ -13,6 +16,165 @@ data class KanjiDataset(
 )
 
 object KanjiStrokeRepository {
+
+
+    private const val CACHE_CAPACITY = 64
+    private val characterCache = object : LinkedHashMap<String, CharacterData>(CACHE_CAPACITY, 0.75f, true) {
+        override fun removeEldestEntry(eldest: MutableMap.MutableEntry<String, CharacterData>?): Boolean =
+            size > CACHE_CAPACITY
+    }
+
+    /** Loads only the lightweight metadata used by the Kanji library. */
+    fun loadMetadata(
+        context: Context,
+        metadataAssetPath: String = "characters/kanji.json"
+    ): List<KanjiData> = KanjiRepository.load(context, metadataAssetPath)
+
+    /** Loads writing geometry only when a learning session actually needs it. */
+    fun loadWritingCharacters(
+        context: Context,
+        metadata: List<KanjiData>,
+        strokesAssetPath: String = "characters/kanji_strokes.json"
+    ): List<CharacterData> {
+        val strokesText = context.assets.open(strokesAssetPath).bufferedReader().use { it.readText() }
+        return combine(metadata, strokesText)
+    }
+
+    /**
+     * Streams the stroke asset and materializes only the requested Kanji.
+     * Other records are skipped without creating StrokeData objects.
+     */
+    fun loadCharacter(
+        context: Context,
+        id: String,
+        metadata: KanjiData,
+        strokesAssetPath: String = "characters/kanji_strokes.json"
+    ): CharacterData {
+        synchronized(characterCache) {
+            characterCache[id]?.let { return it }
+        }
+
+        val result = context.assets.open(strokesAssetPath).use { input ->
+            JsonReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { reader ->
+                var schemaVersion: Int? = null
+                var found: CharacterData? = null
+                reader.beginObject()
+                while (reader.hasNext()) {
+                    when (reader.nextName()) {
+                        "schemaVersion" -> schemaVersion = reader.nextInt()
+                        "characters" -> {
+                            reader.beginArray()
+                            while (reader.hasNext() && found == null) {
+                                val candidate = readCharacterRecord(reader, id, metadata)
+                                if (candidate != null) found = candidate
+                            }
+                            while (reader.hasNext()) {
+                                reader.skipValue()
+                            }
+                            reader.endArray()
+                        }
+                        else -> reader.skipValue()
+                    }
+                }
+                reader.endObject()
+                require(schemaVersion == 1) { "Unsupported Kanji stroke dataset schema" }
+                found ?: error("Kanji stroke geometry not found for $id")
+            }
+        }
+
+        synchronized(characterCache) {
+            characterCache[id] = result
+        }
+        return result
+    }
+
+    private fun readCharacterRecord(
+        reader: JsonReader,
+        requestedId: String,
+        metadata: KanjiData
+    ): CharacterData? {
+        reader.beginObject()
+        require(reader.hasNext() && reader.nextName() == "id") {
+            "Kanji stroke records must start with an ID"
+        }
+        val recordId = reader.nextString()
+        if (recordId != requestedId) {
+            while (reader.hasNext()) {
+                reader.nextName()
+                reader.skipValue()
+            }
+            reader.endObject()
+            return null
+        }
+
+        var glyph: String? = null
+        var viewBoxSize: Float? = null
+        var strokeCount: Int? = null
+        var strokes: List<StrokeData>? = null
+        while (reader.hasNext()) {
+            when (reader.nextName()) {
+                "character" -> glyph = reader.nextString()
+                "viewBoxSize" -> viewBoxSize = reader.nextDouble().toFloat()
+                "strokeCount" -> strokeCount = reader.nextInt()
+                "strokes" -> {
+                    val parsed = mutableListOf<StrokeData>()
+                    reader.beginArray()
+                    while (reader.hasNext()) {
+                        var order: Int? = null
+                        var path: String? = null
+                        reader.beginObject()
+                        while (reader.hasNext()) {
+                            when (reader.nextName()) {
+                                "order" -> order = reader.nextInt()
+                                "svgPath" -> path = reader.nextString()
+                                else -> reader.skipValue()
+                            }
+                        }
+                        reader.endObject()
+                        parsed += StrokeData(
+                            order = requireNotNull(order) { "Missing stroke order for $requestedId" },
+                            svgPath = requireNotNull(path) { "Missing SVG path for $requestedId" }
+                        )
+                    }
+                    reader.endArray()
+                    strokes = parsed
+                }
+                else -> reader.skipValue()
+            }
+        }
+        reader.endObject()
+
+        val resolvedGlyph = requireNotNull(glyph) { "Missing Kanji glyph for $requestedId" }
+        val resolvedViewBox = requireNotNull(viewBoxSize) { "Missing viewBoxSize for $requestedId" }
+        val resolvedCount = requireNotNull(strokeCount) { "Missing stroke count for $requestedId" }
+        val resolvedStrokes = requireNotNull(strokes) { "Missing strokes for $requestedId" }
+        require(resolvedGlyph == metadata.character) { "Kanji glyph mismatch for $requestedId" }
+        require(resolvedCount == metadata.strokeCount && resolvedCount == resolvedStrokes.size) {
+            "Stroke count mismatch for ${metadata.character}"
+        }
+        require(resolvedStrokes.map { it.order } == (1..resolvedCount).toList()) {
+            "Stroke order must be continuous for ${metadata.character}"
+        }
+        require(resolvedStrokes.all { it.svgPath.isNotBlank() }) {
+            "Empty SVG path for ${metadata.character}"
+        }
+        require(resolvedViewBox.isFinite() && resolvedViewBox > 0f) {
+            "Invalid viewBoxSize for ${metadata.character}"
+        }
+        val reading = listOfNotNull(metadata.onyomi, metadata.kunyomi)
+            .joinToString(" · ")
+            .ifBlank { "Chưa có âm đọc" }
+        return CharacterData(
+            id = metadata.id,
+            character = metadata.character,
+            type = "kanji",
+            group = metadata.jlpt ?: "unclassified",
+            reading = reading,
+            strokeCount = resolvedCount,
+            viewBoxSize = resolvedViewBox,
+            strokes = resolvedStrokes
+        )
+    }
 
     /**
      * Reads and validates both Kanji assets once, returning metadata and writing geometry
