@@ -131,9 +131,9 @@ class MainActivity : ComponentActivity() {
                     var selectedDeckType by remember {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
-                    val selectedCharacters = remember(characters, kanjiCharacters, kanjiMetadata, selectedDeckType) {
+                    val selectedCharacters = remember(characters, kanjiMetadata, selectedDeckType) {
                         if (selectedDeckType == "kanji") {
-                            if (kanjiLoaded) kanjiCharacters else kanjiMetadata.map { item ->
+                            kanjiMetadata.map { item ->
                                 CharacterData(
                                     id = item.id,
                                     character = item.character,
@@ -147,6 +147,9 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                         } else characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                    }
+                    val selectedWritingCharacters = remember(characters, kanjiCharacters, selectedDeckType, selectedCharacters) {
+                        if (selectedDeckType == "kanji") kanjiCharacters else selectedCharacters
                     }
                     val selectedNewCardsPerDay = when (selectedDeckType) {
                         "katakana" -> katakanaNewCardsPerDay
@@ -475,7 +478,7 @@ class MainActivity : ComponentActivity() {
                                     MainScreen.LEARNING -> {
                                         if (showActiveReviewSession) {
                                             LearningSessionScreen(
-                                                characters = selectedCharacters,
+                                                characters = selectedWritingCharacters,
                                                 newCardsPerDay = selectedNewCardsPerDay,
                                                 showGrid = showGrid,
                                                 showHints = showHints,
@@ -645,7 +648,7 @@ class MainActivity : ComponentActivity() {
                                     )
 
                                     MainScreen.FREE -> {
-                                    val selectedCharacter = selectedCharacters.getOrNull(selectedIndex)
+                                    val selectedCharacter = selectedWritingCharacters.getOrNull(selectedIndex)
                                     Column(
                                         modifier = Modifier.fillMaxSize(),
                                         horizontalAlignment = Alignment.CenterHorizontally
@@ -672,15 +675,15 @@ class MainActivity : ComponentActivity() {
                                                     text = selectedCharacter?.character.orEmpty(),
                                                     style = MaterialTheme.typography.titleLarge
                                                 )
-                                                Text("${selectedIndex + 1} / ${selectedCharacters.size}")
+                                                Text("${selectedIndex + 1} / ${selectedWritingCharacters.size}")
                                             }
 
                                             Button(
                                                 onClick = {
                                                     selectedIndex = (selectedIndex + 1)
-                                                        .coerceAtMost(selectedCharacters.lastIndex)
+                                                        .coerceAtMost(selectedWritingCharacters.lastIndex)
                                                 },
-                                                enabled = selectedIndex < selectedCharacters.lastIndex
+                                                enabled = selectedIndex < selectedWritingCharacters.lastIndex
                                             ) {
                                                 Text("Tiếp")
                                             }
