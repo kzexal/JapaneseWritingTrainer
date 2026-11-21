@@ -115,16 +115,33 @@ class MainActivity : ComponentActivity() {
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiMetadata by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
+                    var kanjiMetadataLoaded by remember { mutableStateOf(false) }
                     var kanjiLoaded by remember { mutableStateOf(false) }
                     var kanjiLoading by remember { mutableStateOf(false) }
                     var kanjiLoadError by remember { mutableStateOf<String?>(null) }
                     var kanjiLoadAttempt by remember { mutableIntStateOf(0) }
+                    var kanjiWritingLoading by remember { mutableStateOf(false) }
+                    var kanjiWritingError by remember { mutableStateOf<String?>(null) }
+                    var kanjiWritingAttempt by remember { mutableIntStateOf(0) }
                     var selectedDeckType by remember {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
-                    val selectedCharacters = remember(characters, kanjiCharacters, selectedDeckType) {
-                        if (selectedDeckType == "kanji") kanjiCharacters else
-                            characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                    val selectedCharacters = remember(characters, kanjiCharacters, kanjiMetadata, selectedDeckType) {
+                        if (selectedDeckType == "kanji") {
+                            if (kanjiLoaded) kanjiCharacters else kanjiMetadata.map { item ->
+                                CharacterData(
+                                    id = item.id,
+                                    character = item.character,
+                                    type = "kanji",
+                                    group = item.jlpt ?: "unclassified",
+                                    reading = listOfNotNull(item.onyomi, item.kunyomi)
+                                        .joinToString(" · ").ifBlank { "Chưa có âm đọc" },
+                                    strokeCount = item.strokeCount,
+                                    viewBoxSize = 109f,
+                                    strokes = emptyList()
+                                )
+                            }
+                        } else characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
                     }
                     val selectedNewCardsPerDay = when (selectedDeckType) {
                         "katakana" -> katakanaNewCardsPerDay
@@ -236,26 +253,42 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
+                    // The library needs metadata only; do not parse the large stroke asset here.
                     LaunchedEffect(context, selectedDeckType, kanjiLoadAttempt) {
-                        if (selectedDeckType != "kanji" || kanjiLoaded) return@LaunchedEffect
+                        if (selectedDeckType != "kanji" || kanjiMetadataLoaded) return@LaunchedEffect
                         kanjiLoading = true
                         kanjiLoadError = null
                         try {
-                            val dataset = withContext(Dispatchers.IO) {
-                                KanjiStrokeRepository.loadDataset(context)
+                            kanjiMetadata = withContext(Dispatchers.IO) {
+                                KanjiStrokeRepository.loadMetadata(context)
                             }
-                            val allIds = characters.map { it.id } + dataset.writingCharacters.map { it.id }
-                            require(allIds.distinct().size == allIds.size) {
-                                "Character IDs must be unique across datasets."
-                            }
-                            kanjiCharacters = dataset.writingCharacters
-                            kanjiMetadata = dataset.metadata
-                            kanjiLoaded = true
+                            kanjiMetadataLoaded = true
                         } catch (exception: Exception) {
                             kanjiLoadError = exception.localizedMessage
                                 ?: "Không thể tải dữ liệu Kanji."
                         } finally {
                             kanjiLoading = false
+                        }
+                    }
+
+                    // Full geometry is needed for a learning session, not for browsing the library.
+                    LaunchedEffect(context, selectedDeckType, selectedScreen, kanjiWritingAttempt) {
+                        if (selectedDeckType != "kanji" ||
+                            selectedScreen !in setOf(MainScreen.LEARNING, MainScreen.FREE) ||
+                            kanjiLoaded
+                        ) return@LaunchedEffect
+                        kanjiWritingLoading = true
+                        kanjiWritingError = null
+                        try {
+                            kanjiCharacters = withContext(Dispatchers.IO) {
+                                KanjiStrokeRepository.loadWritingCharacters(context, kanjiMetadata)
+                            }
+                            kanjiLoaded = true
+                        } catch (exception: Exception) {
+                            kanjiWritingError = exception.localizedMessage
+                                ?: "Không thể tải dữ liệu nét viết Kanji."
+                        } finally {
+                            kanjiWritingLoading = false
                         }
                     }
 
@@ -282,7 +315,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        selectedDeckType == "kanji" && !kanjiLoaded -> {
+                        selectedDeckType == "kanji" && !kanjiMetadataLoaded -> {
                             Column(
                                 modifier = Modifier.fillMaxSize().padding(innerPadding),
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -291,7 +324,7 @@ class MainActivity : ComponentActivity() {
                                 if (kanjiLoading) {
                                     CircularProgressIndicator()
                                     Text(
-                                        "Đang tải dữ liệu Kanji...",
+                                        "Đang tải danh sách Kanji...",
                                         modifier = Modifier.padding(top = 12.dp)
                                     )
                                 } else {
@@ -300,6 +333,29 @@ class MainActivity : ComponentActivity() {
                                         color = MaterialTheme.colorScheme.error
                                     )
                                     OutlinedButton(onClick = { kanjiLoadAttempt++ }) {
+                                        Text("Thử tải lại")
+                                    }
+                                }
+                            }
+                        }
+
+                        selectedDeckType == "kanji" &&
+                            selectedScreen in setOf(MainScreen.LEARNING, MainScreen.FREE) &&
+                            !kanjiLoaded -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                if (kanjiWritingLoading) {
+                                    CircularProgressIndicator()
+                                    Text("Đang tải dữ liệu luyện viết Kanji...", modifier = Modifier.padding(top = 12.dp))
+                                } else {
+                                    Text(
+                                        kanjiWritingError ?: "Chưa thể tải dữ liệu nét viết Kanji.",
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                    OutlinedButton(onClick = { kanjiWritingAttempt++ }) {
                                         Text("Thử tải lại")
                                     }
                                 }
@@ -441,7 +497,7 @@ class MainActivity : ComponentActivity() {
                                     MainScreen.LIBRARY -> if (selectedDeckType == "kanji") {
                                         KanjiLibraryScreen(
                                             records = kanjiMetadata,
-                                            writingCharacters = selectedCharacters,
+                                            writingCharacters = kanjiCharacters,
                                             modifier = Modifier.weight(1f),
                                             onDetailStateChanged = { isLibraryDetail = it },
                                             onPracticeFinished = { characterId, mode, durationMs, finishedAt ->
