@@ -281,10 +281,11 @@ class MainActivity : ComponentActivity() {
                     }
 
                     // Full geometry is needed for a learning session, not for browsing the library.
-                    LaunchedEffect(context, selectedDeckType, selectedScreen, kanjiWritingAttempt, kanjiMetadataLoaded) {
+                    LaunchedEffect(context, selectedDeckType, selectedScreen, showActiveReviewSession, kanjiWritingAttempt, kanjiMetadataLoaded) {
+                        val needsWritingGeometry = selectedScreen == MainScreen.FREE ||
+                            (selectedScreen == MainScreen.LEARNING && showActiveReviewSession)
                         if (selectedDeckType != "kanji" || !kanjiMetadataLoaded ||
-                            selectedScreen !in setOf(MainScreen.LEARNING, MainScreen.FREE) ||
-                            kanjiLoaded
+                            !needsWritingGeometry || kanjiLoaded
                         ) return@LaunchedEffect
                         kanjiWritingLoading = true
                         kanjiWritingError = null
@@ -321,53 +322,6 @@ class MainActivity : ComponentActivity() {
                                     "Đang tải dữ liệu Hiragana và Katakana...",
                                     modifier = Modifier.padding(top = 12.dp)
                                 )
-                            }
-                        }
-
-                        selectedDeckType == "kanji" && !kanjiMetadataLoaded -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                if (kanjiLoading) {
-                                    CircularProgressIndicator()
-                                    Text(
-                                        "Đang tải danh sách Kanji...",
-                                        modifier = Modifier.padding(top = 12.dp)
-                                    )
-                                } else {
-                                    Text(
-                                        kanjiLoadError ?: "Chưa thể tải dữ liệu Kanji.",
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                    OutlinedButton(onClick = { kanjiLoadAttempt++ }) {
-                                        Text("Thử tải lại")
-                                    }
-                                }
-                            }
-                        }
-
-                        selectedDeckType == "kanji" &&
-                            selectedScreen in setOf(MainScreen.LEARNING, MainScreen.FREE) &&
-                            !kanjiLoaded -> {
-                            Column(
-                                modifier = Modifier.fillMaxSize().padding(innerPadding),
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                verticalArrangement = Arrangement.Center
-                            ) {
-                                if (kanjiWritingLoading) {
-                                    CircularProgressIndicator()
-                                    Text("Đang tải dữ liệu luyện viết Kanji...", modifier = Modifier.padding(top = 12.dp))
-                                } else {
-                                    Text(
-                                        kanjiWritingError ?: "Chưa thể tải dữ liệu nét viết Kanji.",
-                                        color = MaterialTheme.colorScheme.error
-                                    )
-                                    OutlinedButton(onClick = { kanjiWritingAttempt++ }) {
-                                        Text("Thử tải lại")
-                                    }
-                                }
                             }
                         }
 
@@ -467,7 +421,38 @@ class MainActivity : ComponentActivity() {
                                     visitedScreens = visitedScreens,
                                     modifier = Modifier.weight(1f)
                                 ) { screen ->
-                                    when (screen) {
+                                    val activeKanjiGeometryRequired = selectedDeckType == "kanji" &&
+                                        (selectedScreen == MainScreen.FREE ||
+                                            (selectedScreen == MainScreen.LEARNING && showActiveReviewSession))
+                                    if (screen == selectedScreen && selectedDeckType == "kanji" && !kanjiMetadataLoaded) {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            if (kanjiLoading) {
+                                                CircularProgressIndicator()
+                                                Text("Đang tải danh sách Kanji...", modifier = Modifier.padding(top = 12.dp))
+                                            } else {
+                                                Text(kanjiLoadError ?: "Chưa thể tải dữ liệu Kanji.", color = MaterialTheme.colorScheme.error)
+                                                OutlinedButton(onClick = { kanjiLoadAttempt++ }) { Text("Thử tải lại") }
+                                            }
+                                        }
+                                    } else if (screen == selectedScreen && activeKanjiGeometryRequired && !kanjiLoaded) {
+                                        Column(
+                                            modifier = Modifier.fillMaxSize(),
+                                            horizontalAlignment = Alignment.CenterHorizontally,
+                                            verticalArrangement = Arrangement.Center
+                                        ) {
+                                            if (kanjiWritingLoading) {
+                                                CircularProgressIndicator()
+                                                Text("Đang tải dữ liệu luyện viết Kanji...", modifier = Modifier.padding(top = 12.dp))
+                                            } else {
+                                                Text(kanjiWritingError ?: "Chưa thể tải dữ liệu nét viết Kanji.", color = MaterialTheme.colorScheme.error)
+                                                OutlinedButton(onClick = { kanjiWritingAttempt++ }) { Text("Thử tải lại") }
+                                            }
+                                        }
+                                    } else when (screen) {
                                     MainScreen.GUIDE -> LearningGuideScreen(
                                         modifier = Modifier.fillMaxSize()
                                     )
