@@ -284,6 +284,16 @@ class KanjiRepositoryTest {
     }
 
     @Test
+    fun librarySearchSupportsRomajiForReadingsAndExampleWords() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+
+        assertTrue(KanjiLibrary.filter(data, query = "kou").any { it.character == "校" })
+        assertTrue(KanjiLibrary.filter(data, query = "gakkou").any { it.character == "校" })
+        assertTrue(KanjiLibrary.filter(data, query = "nihon").any { it.character == "日" })
+        assertTrue(KanjiLibrary.filter(data, query = "shougakkou").any { it.character == "校" })
+    }
+
+    @Test
     fun indexedLibrarySearchAndFiltersMatchSourceBasedQueries() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
         val index = KanjiLibrary.createIndex(data)
