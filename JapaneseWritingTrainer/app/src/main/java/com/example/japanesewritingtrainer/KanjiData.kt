@@ -101,17 +101,39 @@ data class KanjiRadicalGroup(
 /** Search/filter operations for the Kanji Library UI. */
 object KanjiLibrary {
 
+    data class Index internal constructor(
+        val records: List<KanjiData>,
+        internal val searchableTextById: Map<String, String>,
+        internal val radicalNumberById: Map<String, Int?>
+    )
+
+    /** Precompute normalized search text and radical IDs once when the deck is loaded. */
+    fun createIndex(source: List<KanjiData>): Index = Index(
+        records = source,
+        searchableTextById = source.associate { it.id to searchableText(it) },
+        radicalNumberById = source.associate { it.id to radicalNumber(it.radical) }
+    )
+
     fun filter(
         source: List<KanjiData>,
         query: String = "",
         jlpt: String? = null,
         radical: String? = null
+    ): List<KanjiData> = filter(createIndex(source), query, jlpt, radical)
+
+    fun filter(
+        index: Index,
+        query: String = "",
+        jlpt: String? = null,
+        radical: String? = null
     ): List<KanjiData> {
         val normalizedQuery = query.trim().lowercase()
-        return source.filter { item ->
+        val radicalNumber = radical?.let(::radicalNumber)
+        return index.records.filter { item ->
             (jlpt == null || item.jlpt.equals(jlpt, ignoreCase = true)) &&
-                (radical == null || radicalNumber(item.radical) == radicalNumber(radical)) &&
-                (normalizedQuery.isEmpty() || searchableText(item).contains(normalizedQuery))
+                (radicalNumber == null || index.radicalNumberById[item.id] == radicalNumber) &&
+                (normalizedQuery.isEmpty() ||
+                    index.searchableTextById[item.id].orEmpty().contains(normalizedQuery))
         }
     }
 
@@ -121,8 +143,11 @@ object KanjiLibrary {
             .sorted()
 
     fun availableRadicalGroups(source: List<KanjiData>): List<KanjiRadicalGroup> =
-        source.mapNotNull { item ->
-            val number = radicalNumber(item.radical) ?: return@mapNotNull null
+        availableRadicalGroups(createIndex(source))
+
+    fun availableRadicalGroups(index: Index): List<KanjiRadicalGroup> =
+        index.records.mapNotNull { item ->
+            val number = index.radicalNumberById[item.id] ?: return@mapNotNull null
             val glyph = item.radical?.substringBeforeLast("(")?.trim()
                 ?.takeIf(String::isNotEmpty) ?: return@mapNotNull null
             number to glyph
