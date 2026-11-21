@@ -125,7 +125,7 @@ object KanjiLibrary {
         availableRadicalGroups(source).map { it.label }
 
     private fun radicalNumber(value: String?): Int? =
-        Regex("""\\((\\d+)\\)\\s*$""").find(value.orEmpty())
+        Regex("""\((\d+)\)\s*$""").find(value.orEmpty())
             ?.groupValues?.getOrNull(1)?.toIntOrNull()
 
     private fun searchableText(item: KanjiData): String =
