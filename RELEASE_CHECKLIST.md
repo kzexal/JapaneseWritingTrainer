@@ -1,6 +1,6 @@
 # Release readiness checklist
 
-Cập nhật: 20/11/2026  
+Cập nhật: 21/11/2026  
 Baseline: `main`
 
 Tài liệu này ghi nhận các bước cần hoàn tất trước khi phát hành. Không xem build Debug thành công là bằng chứng Release APK đã được ký và kiểm tra.
@@ -12,13 +12,13 @@ Tài liệu này ghi nhận các bước cần hoàn tất trước khi phát h�
 | Chức năng học cốt lõi | PASS theo xác nhận kiểm thử gần nhất | Hiragana, Katakana, Kanji, Vocabulary library, Session/FSRS, History, Statistics |
 | Backup/restore JSON | PASS theo xác nhận kiểm thử gần nhất | Validate dữ liệu và restore bằng Room transaction |
 | Daily streak và widget | Đã triển khai; cần kiểm tra lại trong Release | Chỉ hỗ trợ layout 2×1, hiển thị streak và số thẻ đến hạn |
-| Debug build và tests | PASS theo xác nhận người dùng ở lần kiểm tra trước | Cần chạy lại sau đợt cleanup cuối |
+| Debug build và tests | PASS theo xác nhận người dùng gần nhất | Bao gồm regression tests Kanji metadata/stroke geometry; vẫn cần chạy lại sau các thay đổi cuối cùng |
 | Application ID | Đã cố định | `com.example.japanesewritingtrainer` |
 | Version | Chưa chốt phát hành | Hiện `versionCode = 2`, `versionName = 1.1`; chỉ tăng khi tạo bản phát hành đầu tiên |
 | Launcher icon | Đã tích hợp | Cần xác minh hiển thị thực tế trên thiết bị |
 | Release signing | Chưa hoàn tất | Gradle đã hỗ trợ bốn biến môi trường; keystore chưa được tạo |
 | Release build | Chưa xác minh | Chưa có APK Release được ký |
-| Third-party attribution | Đã có notice trong repo và màn Nguồn dữ liệu | Cần rà soát nghĩa vụ license/ShareAlike trước khi phân phối |
+| Third-party attribution | Có notice trong repo và các bản notice/licence tham chiếu trong APK assets | Cần xác nhận provenance/version của workbook và hoàn tất rà soát ShareAlike trước khi phân phối |
 | Android Auto Backup | Chưa chốt chính sách | Manifest hiện bật backup cho database và SharedPreferences |
 
 ## 1. Kiểm tra ứng dụng trước phát hành
@@ -65,7 +65,9 @@ Mất keystore có thể khiến không thể phát hành bản cập nhật tư
 - [ ] Xác nhận phạm vi dữ liệu được sao lưu và khôi phục.
 - [ ] Rà soát merged manifest; chỉ giữ quyền cần thiết cho tính năng hiện tại.
 - [x] Ghi nhận nguồn dữ liệu và license trong `THIRD_PARTY_NOTICES.md` và màn Nguồn dữ liệu trong Cài đặt.
-- [ ] Rà soát nghĩa vụ license/ShareAlike đối với dữ liệu phái sinh trước khi phân phối công khai.
+- [x] Đóng gói notice OpenJLPT, bản sao statement EDRDG và notice KanjiVG trong app assets để tham chiếu offline.
+- [ ] Xác nhận nguồn và phiên bản chính xác của workbook Kanji metadata; thiết lập quy trình rà soát/cập nhật dữ liệu định kỳ theo điều khoản EDRDG.
+- [ ] Rà soát nghĩa vụ license/ShareAlike đối với dữ liệu phái sinh trước khi phân phối công khai; checklist này không thay thế tư vấn pháp lý.
 - [ ] Chuẩn bị ghi chú phát hành và hướng dẫn người dùng backup trước khi cập nhật.
 
 ## Quy tắc bảo vệ dữ liệu
