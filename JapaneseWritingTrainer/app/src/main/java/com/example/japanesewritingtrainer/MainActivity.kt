@@ -113,12 +113,18 @@ class MainActivity : ComponentActivity() {
                     val practiceLogRepository = remember(context) { PracticeLogRepository(context) }
                     val practiceLogScope = rememberCoroutineScope()
                     var characters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
+                    var kanjiCharacters by remember { mutableStateOf<List<CharacterData>>(emptyList()) }
                     var kanjiMetadata by remember { mutableStateOf<List<KanjiData>>(emptyList()) }
+                    var kanjiLoaded by remember { mutableStateOf(false) }
+                    var kanjiLoading by remember { mutableStateOf(false) }
+                    var kanjiLoadError by remember { mutableStateOf<String?>(null) }
+                    var kanjiLoadAttempt by remember { mutableIntStateOf(0) }
                     var selectedDeckType by remember {
                         mutableStateOf(appSettings.getSelectedCharacterType())
                     }
-                    val selectedCharacters = remember(characters, selectedDeckType) {
-                        characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
+                    val selectedCharacters = remember(characters, kanjiCharacters, selectedDeckType) {
+                        if (selectedDeckType == "kanji") kanjiCharacters else
+                            characters.filter { it.type.equals(selectedDeckType, ignoreCase = true) }
                     }
                     val selectedNewCardsPerDay = when (selectedDeckType) {
                         "katakana" -> katakanaNewCardsPerDay
@@ -203,10 +209,12 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    // Đọc JSON trên background thread để tránh chặn giao diện lúc khởi động.
+                    // Kana datasets are small and are loaded first. Kanji is loaded only
+                    // when the user selects that deck, so its large SVG dataset does not
+                    // delay the initial screen or the Kana decks.
                     LaunchedEffect(context) {
                         try {
-                            val loadedData = withContext(Dispatchers.IO) {
+                            characters = withContext(Dispatchers.IO) {
                                 val hiragana = CharacterRepository.load(
                                     context,
                                     "characters/hiragana.json"
@@ -215,19 +223,39 @@ class MainActivity : ComponentActivity() {
                                     context,
                                     "characters/katakana.json"
                                 )
-                                val kanji = KanjiStrokeRepository.loadDataset(context)
-                                val allCharacters = hiragana + katakana + kanji.writingCharacters
-                                require(allCharacters.map { it.id }.distinct().size == allCharacters.size) {
-                                    "Character IDs must be unique across datasets."
+                                val allKana = hiragana + katakana
+                                require(allKana.map { it.id }.distinct().size == allKana.size) {
+                                    "Character IDs must be unique across Kana datasets."
                                 }
-                                allCharacters to kanji.metadata
+                                allKana
                             }
-                            characters = loadedData.first
-                            kanjiMetadata = loadedData.second
                             loadError = null
                         } catch (exception: Exception) {
                             loadError = exception.localizedMessage
-                                ?: "Không thể tải dữ liệu Hiragana, Katakana và Kanji."
+                                ?: "Không thể tải dữ liệu Hiragana và Katakana."
+                        }
+                    }
+
+                    LaunchedEffect(context, selectedDeckType, kanjiLoadAttempt) {
+                        if (selectedDeckType != "kanji" || kanjiLoaded) return@LaunchedEffect
+                        kanjiLoading = true
+                        kanjiLoadError = null
+                        try {
+                            val dataset = withContext(Dispatchers.IO) {
+                                KanjiStrokeRepository.loadDataset(context)
+                            }
+                            val allIds = characters.map { it.id } + dataset.writingCharacters.map { it.id }
+                            require(allIds.distinct().size == allIds.size) {
+                                "Character IDs must be unique across datasets."
+                            }
+                            kanjiCharacters = dataset.writingCharacters
+                            kanjiMetadata = dataset.metadata
+                            kanjiLoaded = true
+                        } catch (exception: Exception) {
+                            kanjiLoadError = exception.localizedMessage
+                                ?: "Không thể tải dữ liệu Kanji."
+                        } finally {
+                            kanjiLoading = false
                         }
                     }
 
@@ -248,9 +276,33 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 CircularProgressIndicator()
                                 Text(
-                                    "Đang tải dữ liệu Hiragana, Katakana và Kanji...",
+                                    "Đang tải dữ liệu Hiragana và Katakana...",
                                     modifier = Modifier.padding(top = 12.dp)
                                 )
+                            }
+                        }
+
+                        selectedDeckType == "kanji" && !kanjiLoaded -> {
+                            Column(
+                                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                verticalArrangement = Arrangement.Center
+                            ) {
+                                if (kanjiLoading) {
+                                    CircularProgressIndicator()
+                                    Text(
+                                        "Đang tải dữ liệu Kanji...",
+                                        modifier = Modifier.padding(top = 12.dp)
+                                    )
+                                } else {
+                                    Text(
+                                        kanjiLoadError ?: "Chưa thể tải dữ liệu Kanji.",
+                                        color = MaterialTheme.colorScheme.error
+                                    )
+                                    OutlinedButton(onClick = { kanjiLoadAttempt++ }) {
+                                        Text("Thử tải lại")
+                                    }
+                                }
                             }
                         }
 
