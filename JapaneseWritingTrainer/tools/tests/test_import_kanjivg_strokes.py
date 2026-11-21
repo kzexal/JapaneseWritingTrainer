@@ -64,7 +64,7 @@ class ImportKanjiVGStrokesTests(unittest.TestCase):
             [stroke["order"] for stroke in dataset["characters"][0]["strokes"]],
         )
 
-    def test_splits_geometry_into_unicode_prefix_shards(self):
+    def test_splits_geometry_into_codepoint_shards(self):
         dataset = {
             "schemaVersion": 1,
             "source": {"name": "KanjiVG"},
