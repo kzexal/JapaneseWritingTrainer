@@ -48,7 +48,7 @@ fun KanjiLibraryScreen(
     var isLoading by remember { mutableStateOf(true) }
     var loadError by remember { mutableStateOf<String?>(null) }
     var query by remember { mutableStateOf("") }
-    var selectedRadical by remember { mutableStateOf<String?>(null) }
+    var selectedRadicalNumber by remember { mutableStateOf<Int?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(context) {
@@ -99,9 +99,17 @@ fun KanjiLibraryScreen(
         )
 
         else -> {
-            val radicals = remember(records) { KanjiLibrary.availableRadicals(records) }
-            val filtered = remember(records, query, selectedRadical) {
-                KanjiLibrary.filter(records, query, null, selectedRadical)
+            val radicals = remember(records) { KanjiLibrary.availableRadicalGroups(records) }
+            val filtered = remember(records, query, selectedRadicalNumber) {
+                if (selectedRadicalNumber == null) {
+                    KanjiLibrary.filter(records, query)
+                } else {
+                    records.filter { kanji ->
+                        kanji.radical?.substringAfterLast("(")?.removeSuffix(")")
+                            ?.trim()?.toIntOrNull() == selectedRadicalNumber &&
+                            KanjiLibrary.filter(listOf(kanji), query).isNotEmpty()
+                    }
+                }
             }
 
             LazyVerticalGrid(
@@ -124,19 +132,22 @@ fun KanjiLibraryScreen(
                         LazyRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                             item {
                                 FilterChip(
-                                    selected = selectedRadical == null,
-                                    onClick = { selectedRadical = null },
+                                    selected = selectedRadicalNumber == null,
+                                    onClick = { selectedRadicalNumber = null },
                                     label = { Text("Tất cả") }
                                 )
                             }
                             items(radicals.size) { index ->
                                 val radical = radicals[index]
                                 FilterChip(
-                                    selected = selectedRadical == radical,
+                                    selected = selectedRadicalNumber == radical.number,
                                     onClick = {
-                                        selectedRadical = if (selectedRadical == radical) null else radical
+                                        selectedRadicalNumber =
+                                            if (selectedRadicalNumber == radical.number) null else radical.number
                                     },
-                                    label = { Text(radical) }
+                                    label = {
+                                        Text("${radical.label} · ${radical.count}")
+                                    }
                                 )
                             }
                         }
