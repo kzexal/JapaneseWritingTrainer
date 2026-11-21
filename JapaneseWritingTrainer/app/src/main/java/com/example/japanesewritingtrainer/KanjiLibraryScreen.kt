@@ -14,21 +14,27 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /** Kanji browser backed by workbook metadata and validated KanjiVG stroke geometry. */
 @Composable
@@ -42,11 +48,41 @@ fun KanjiLibraryScreen(
     var query by remember { mutableStateOf("") }
     var selectedRadicalNumber by remember { mutableStateOf<Int?>(null) }
     var selectedKanjiId by remember { mutableStateOf<String?>(null) }
+    var selectedWritingCharacter by remember { mutableStateOf<CharacterData?>(null) }
+    var geometryLoading by remember { mutableStateOf(false) }
+    var geometryError by remember { mutableStateOf<String?>(null) }
+    var geometryRetry by remember { mutableStateOf(0) }
+    val context = LocalContext.current.applicationContext
     val recordsById = remember(records) { records.associateBy { it.id } }
     val writingCharactersById = remember(writingCharacters) {
         writingCharacters.associateBy { it.id }
     }
     val selectedKanji = recordsById[selectedKanjiId]
+    val selectedWritingCharacter = selectedKanji?.let {
+        writingCharactersById[it.id] ?: selectedWritingCharacter?.takeIf { loaded -> loaded.id == it.id }
+    }
+
+    LaunchedEffect(selectedKanjiId, writingCharacters, geometryRetry) {
+        val kanjiId = selectedKanjiId ?: return@LaunchedEffect
+        if (writingCharactersById.containsKey(kanjiId)) {
+            selectedWritingCharacter = null
+            geometryError = null
+            return@LaunchedEffect
+        }
+        val record = recordsById[kanjiId] ?: return@LaunchedEffect
+        selectedWritingCharacter = null
+        geometryLoading = true
+        geometryError = null
+        try {
+            selectedWritingCharacter = withContext(Dispatchers.IO) {
+                KanjiStrokeRepository.loadCharacter(context, kanjiId, record)
+            }
+        } catch (exception: Exception) {
+            geometryError = exception.localizedMessage ?: "Không thể tải dữ liệu nét viết."
+        } finally {
+            geometryLoading = false
+        }
+    }
     BackHandler(enabled = selectedKanji != null) {
         selectedKanjiId = null
         onDetailStateChanged(false)
@@ -54,12 +90,20 @@ fun KanjiLibraryScreen(
     when {
         selectedKanji != null -> KanjiDetail(
             kanji = selectedKanji,
-            character = writingCharactersById[selectedKanji.id],
+            character = selectedWritingCharacter,
+            isLoading = geometryLoading,
+            loadError = geometryError,
+            onRetry = { geometryRetry++ },
             onPracticeFinished = onPracticeFinished,
             onBack = {
                 selectedKanjiId = null
+                selectedWritingCharacter = null
+                geometryError = null
                 onDetailStateChanged(false)
             },
+            isLoading = geometryLoading,
+            loadError = geometryError,
+            onRetry = { geometryRetry++ },
             modifier = modifier
         )
 
@@ -138,6 +182,8 @@ fun KanjiLibraryScreen(
                                 .fillMaxWidth()
                                 .clickable {
                                     selectedKanjiId = kanji.id
+                                    selectedWritingCharacter = writingCharactersById[kanji.id]
+                                    geometryError = null
                                     onDetailStateChanged(true)
                                 }
                         ) {
@@ -173,6 +219,9 @@ private fun KanjiDetail(
     character: CharacterData?,
     onPracticeFinished: ((String, PracticeMode, Long, Long) -> Unit)?,
     onBack: () -> Unit,
+    isLoading: Boolean,
+    loadError: String?,
+    onRetry: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -198,8 +247,24 @@ private fun KanjiDetail(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
-        if (character == null) {
-            Text("Không có dữ liệu nét viết cho Kanji này.", color = MaterialTheme.colorScheme.error)
+        if (character == null && isLoading) {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                CircularProgressIndicator()
+                Text("Đang tải dữ liệu nét viết...")
+            }
+        } else if (character == null) {
+            Column(
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(loadError ?: "Không có dữ liệu nét viết cho Kanji này.", color = MaterialTheme.colorScheme.error)
+                TextButton(onClick = onRetry) { Text("Thử tải lại") }
+            }
         } else {
             WritingCanvas(
                 modifier = Modifier.weight(1f).fillMaxWidth(),
