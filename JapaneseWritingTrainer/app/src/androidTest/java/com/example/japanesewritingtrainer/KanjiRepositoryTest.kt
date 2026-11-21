@@ -11,11 +11,16 @@ import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class KanjiRepositoryTest {
+    private companion object {
+        const val EXPECTED_KANJI_COUNT = 1031
+        const val EXPECTED_N5_KANJI_COUNT = 86
+    }
+
     @Test
     fun generatedAssetContainsUniqueValidKanjiMetadata() {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val kanji = KanjiRepository.load(context)
-        assertEquals(86, kanji.size)
+        assertEquals(EXPECTED_KANJI_COUNT, kanji.size)
         assertEquals(kanji.size, kanji.map { it.id }.distinct().size)
         assertEquals(kanji.size, kanji.map { it.character }.distinct().size)
         assertTrue(kanji.all { it.id.startsWith("kanji_") })
@@ -48,7 +53,7 @@ class KanjiRepositoryTest {
         val context = ApplicationProvider.getApplicationContext<Context>()
         val metadata = KanjiRepository.load(context)
         val characters = KanjiStrokeRepository.load(context)
-        assertEquals(86, characters.size)
+        assertEquals(EXPECTED_KANJI_COUNT, characters.size)
         assertEquals(metadata.map { it.id }.toSet(), characters.map { it.id }.toSet())
         assertTrue(characters.all { it.type == "kanji" })
         assertTrue(characters.all { it.strokeCount == it.strokes.size })
@@ -65,8 +70,8 @@ class KanjiRepositoryTest {
         val cards = catalog.cardsForDeck(deck.id)
 
         assertEquals("japanese_kanji", deck.id)
-        assertEquals(86, deck.cardCount)
-        assertEquals(86, cards.size)
+        assertEquals(EXPECTED_KANJI_COUNT, deck.cardCount)
+        assertEquals(EXPECTED_KANJI_COUNT, cards.size)
         assertTrue(cards.all { it.id.startsWith("kanji_") && it.deckId == deck.id })
 
         val plan = LearningSessionPlanner.plan(
@@ -77,7 +82,7 @@ class KanjiRepositoryTest {
             newCardLimit = 10
         )
         assertEquals(10, plan.newCards.size)
-        assertEquals(76, plan.remainingNewCount)
+        assertEquals(EXPECTED_KANJI_COUNT - 10, plan.remainingNewCount)
         assertTrue(plan.newCards.all { it.kind == SessionCardKind.NEW })
     }
 
@@ -104,7 +109,7 @@ class KanjiRepositoryTest {
     @Test
     fun libraryFiltersByJlptAndRadical() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
-        assertEquals(86, KanjiLibrary.filter(data, jlpt = "N5").size)
+        assertEquals(EXPECTED_N5_KANJI_COUNT, KanjiLibrary.filter(data, jlpt = "N5").size)
         assertTrue(KanjiLibrary.filter(data, radical = "一 (1)").any { it.character == "一" })
         assertTrue(KanjiLibrary.availableJlptLevels(data).contains("N5"))
         assertTrue(KanjiLibrary.availableRadicals(data).isNotEmpty())
