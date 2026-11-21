@@ -7,20 +7,36 @@ import org.json.JSONObject
  * Joins workbook-generated Kanji metadata with the independent KanjiVG geometry asset.
  * This is static content only; it never reads or writes learner progress.
  */
+data class KanjiDataset(
+    val metadata: List<KanjiData>,
+    val writingCharacters: List<CharacterData>
+)
+
 object KanjiStrokeRepository {
+
+    /**
+     * Reads and validates both Kanji assets once, returning metadata and writing geometry
+     * from the same parsed dataset. Call from a background dispatcher.
+     */
+    fun loadDataset(
+        context: Context,
+        metadataAssetPath: String = "characters/kanji.json",
+        strokesAssetPath: String = "characters/kanji_strokes.json"
+    ): KanjiDataset {
+        val metadataText = context.assets.open(metadataAssetPath).bufferedReader().use { it.readText() }
+        val strokesText = context.assets.open(strokesAssetPath).bufferedReader().use { it.readText() }
+        val metadata = KanjiRepository.parseDataset(metadataText)
+        return KanjiDataset(
+            metadata = metadata,
+            writingCharacters = combine(metadata, strokesText)
+        )
+    }
 
     fun load(
         context: Context,
         metadataAssetPath: String = "characters/kanji.json",
         strokesAssetPath: String = "characters/kanji_strokes.json"
-    ): List<CharacterData> {
-        val metadataText = context.assets.open(metadataAssetPath).bufferedReader().use { it.readText() }
-        val strokesText = context.assets.open(strokesAssetPath).bufferedReader().use { it.readText() }
-        return combine(
-            KanjiRepository.parseDataset(metadataText),
-            strokesText
-        )
-    }
+    ): List<CharacterData> = loadDataset(context, metadataAssetPath, strokesAssetPath).writingCharacters
 
     internal fun combine(metadata: List<KanjiData>, strokesText: String): List<CharacterData> {
         val root = JSONObject(strokesText)
