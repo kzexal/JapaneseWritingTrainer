@@ -284,6 +284,21 @@ class KanjiRepositoryTest {
     }
 
     @Test
+    fun indexedLibrarySearchAndFiltersMatchSourceBasedQueries() {
+        val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
+        val index = KanjiLibrary.createIndex(data)
+
+        assertEquals(
+            KanjiLibrary.filter(data, query = "one", radical = "一 (1)").map { it.id },
+            KanjiLibrary.filter(index, query = "one", radical = "一 (1)").map { it.id }
+        )
+        assertEquals(
+            KanjiLibrary.availableRadicalGroups(data),
+            KanjiLibrary.availableRadicalGroups(index)
+        )
+    }
+
+    @Test
     fun libraryFiltersByJlptAndRadical() {
         val data = KanjiRepository.load(ApplicationProvider.getApplicationContext())
         assertEquals(EXPECTED_N5_KANJI_COUNT, KanjiLibrary.filter(data, jlpt = "N5").size)
