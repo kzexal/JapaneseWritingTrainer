@@ -41,8 +41,8 @@ object KanjiStrokeRepository {
     }
 
     /**
-     * Streams the stroke asset and materializes only the requested Kanji.
-     * Other records are skipped without creating StrokeData objects.
+     * Reads only the small Unicode-codepoint shard and materializes the requested Kanji.
+     * Other records in that shard are skipped without creating StrokeData objects.
      */
     fun loadCharacter(
         context: Context,
