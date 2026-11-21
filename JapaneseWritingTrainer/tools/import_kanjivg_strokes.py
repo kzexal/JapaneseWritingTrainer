@@ -21,6 +21,7 @@ from typing import Any
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SOURCE_DIR = PROJECT_ROOT / "tools/vendor/kanjivg/kanji"
 DEFAULT_OUTPUT = PROJECT_ROOT / "app/src/main/assets/characters/kanji_strokes.json"
+DEFAULT_SHARDS_DIR = PROJECT_ROOT / "app/src/main/assets/characters/kanji_strokes_shards"
 SCHEMA_VERSION = 1
 KANJIVG_ATTRIBUTION = (
     "Stroke geometry derived from KanjiVG, copyright Ulrich Apel and "
@@ -143,6 +144,28 @@ def build_stroke_dataset(
     }
 
 
+def build_stroke_shards(dataset: dict[str, Any]) -> dict[str, dict[str, Any]]:
+    """Split geometry into 16 balanced shards using the Unicode code point."""
+    shards: dict[str, list[dict[str, Any]]] = {}
+    for record in dataset["characters"]:
+        identifier = record["id"]
+        if not identifier.startswith("kanji_"):
+            raise ValueError(f"Unexpected Kanji ID: {identifier!r}")
+        suffix = identifier.removeprefix("kanji_")
+        if not re.fullmatch(r"[0-9a-f]{4,6}", suffix):
+            raise ValueError(f"Unexpected Kanji ID: {identifier!r}")
+        shard_key = format(int(suffix, 16) & 0xF, "x")
+        shards.setdefault(shard_key, []).append(record)
+
+    return {
+        key: {
+            "schemaVersion": dataset["schemaVersion"],
+            "source": dataset["source"],
+            "characters": records,
+        }
+        for key, records in sorted(shards.items())
+    }
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -157,6 +180,12 @@ def main() -> None:
         default=DEFAULT_OUTPUT,
         help="Output JSON path (default: app/src/main/assets/characters/kanji_strokes.json)",
     )
+    parser.add_argument(
+        "--shards-dir",
+        type=Path,
+        default=DEFAULT_SHARDS_DIR,
+        help="Directory for the 16 per-codepoint stroke shards",
+    )
     args = parser.parse_args()
 
     # Import lazily so the pure SVG parser can be unit-tested without loading
@@ -170,6 +199,14 @@ def main() -> None:
         json.dumps(dataset, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",
     )
+    shards = build_stroke_shards(dataset)
+    args.shards_dir.mkdir(parents=True, exist_ok=True)
+    for shard_key, shard in shards.items():
+        shard_path = args.shards_dir / f"{shard_key}.json"
+        shard_path.write_text(
+            json.dumps(shard, ensure_ascii=False, separators=(",", ":")) + "\n",
+            encoding="utf-8",
+        )
     print(f"Validated and generated: {args.output}")
     print(f"Kanji with stroke geometry: {len(dataset['characters'])}")
     print(f"Source: KanjiVG ({KANJIVG_LICENSE})")

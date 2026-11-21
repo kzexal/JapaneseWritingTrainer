@@ -10,6 +10,7 @@ assert SPEC.loader is not None
 SPEC.loader.exec_module(kanjivg_importer)
 
 build_stroke_dataset = kanjivg_importer.build_stroke_dataset
+build_stroke_shards = kanjivg_importer.build_stroke_shards
 parse_svg_strokes = kanjivg_importer.parse_svg_strokes
 source_filename = kanjivg_importer.source_filename
 
@@ -62,6 +63,34 @@ class ImportKanjiVGStrokesTests(unittest.TestCase):
             [1, 2],
             [stroke["order"] for stroke in dataset["characters"][0]["strokes"]],
         )
+
+    def test_splits_geometry_into_unicode_prefix_shards(self):
+        dataset = {
+            "schemaVersion": 1,
+            "source": {"name": "KanjiVG"},
+            "characters": [
+                {"id": "kanji_4e00", "character": "一"},
+                {"id": "kanji_4e8c", "character": "二"},
+                {"id": "kanji_6d77", "character": "海"},
+            ],
+        }
+
+        shards = build_stroke_shards(dataset)
+
+        self.assertEqual({"0", "c", "7"}, set(shards))
+        self.assertEqual("一", shards["0"]["characters"][0]["character"])
+        self.assertEqual("二", shards["c"]["characters"][0]["character"])
+        self.assertEqual("海", shards["7"]["characters"][0]["character"])
+        self.assertEqual(dataset["source"], shards["0"]["source"])
+
+    def test_rejects_invalid_id_when_building_shards(self):
+        dataset = {
+            "schemaVersion": 1,
+            "source": {},
+            "characters": [{"id": "not-kanji", "character": "一"}],
+        }
+        with self.assertRaisesRegex(ValueError, "Unexpected Kanji ID"):
+            build_stroke_shards(dataset)
 
     def test_rejects_stroke_count_mismatch_instead_of_importing_bad_geometry(self):
         with tempfile.TemporaryDirectory() as directory:

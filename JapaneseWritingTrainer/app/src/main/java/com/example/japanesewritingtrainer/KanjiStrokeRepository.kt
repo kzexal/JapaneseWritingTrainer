@@ -48,13 +48,17 @@ object KanjiStrokeRepository {
         context: Context,
         id: String,
         metadata: KanjiData,
-        strokesAssetPath: String = "characters/kanji_strokes.json"
+        shardsAssetDirectory: String = "characters/kanji_strokes_shards"
     ): CharacterData {
         synchronized(characterCache) {
             characterCache[id]?.let { return it }
         }
 
-        val result = context.assets.open(strokesAssetPath).use { input ->
+        val suffix = id.removePrefix("kanji_")
+        require(suffix.matches(Regex("[0-9a-f]{4,6}"))) { "Invalid Kanji ID: $id" }
+        val shardKey = (suffix.toLong(16) and 0xF).toString(16)
+        val shardPath = "$shardsAssetDirectory/$shardKey.json"
+        val result = context.assets.open(shardPath).use { input ->
             JsonReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { reader ->
                 findCharacter(reader, id, metadata)
                     ?: error("Kanji stroke geometry not found for $id")
