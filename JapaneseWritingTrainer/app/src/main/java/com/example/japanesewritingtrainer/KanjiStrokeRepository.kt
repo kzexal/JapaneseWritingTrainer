@@ -56,29 +56,8 @@ object KanjiStrokeRepository {
 
         val result = context.assets.open(strokesAssetPath).use { input ->
             JsonReader(InputStreamReader(input, StandardCharsets.UTF_8)).use { reader ->
-                var schemaVersion: Int? = null
-                var found: CharacterData? = null
-                reader.beginObject()
-                while (reader.hasNext()) {
-                    when (reader.nextName()) {
-                        "schemaVersion" -> schemaVersion = reader.nextInt()
-                        "characters" -> {
-                            reader.beginArray()
-                            while (reader.hasNext() && found == null) {
-                                val candidate = readCharacterRecord(reader, id, metadata)
-                                if (candidate != null) found = candidate
-                            }
-                            while (reader.hasNext()) {
-                                reader.skipValue()
-                            }
-                            reader.endArray()
-                        }
-                        else -> reader.skipValue()
-                    }
-                }
-                reader.endObject()
-                require(schemaVersion == 1) { "Unsupported Kanji stroke dataset schema" }
-                found ?: error("Kanji stroke geometry not found for $id")
+                findCharacter(reader, id, metadata)
+                    ?: error("Kanji stroke geometry not found for $id")
             }
         }
 
@@ -86,6 +65,33 @@ object KanjiStrokeRepository {
             characterCache[id] = result
         }
         return result
+    }
+
+    private fun findCharacter(
+        reader: JsonReader,
+        requestedId: String,
+        metadata: KanjiData
+    ): CharacterData? {
+        var schemaVersion: Int? = null
+        reader.beginObject()
+        while (reader.hasNext()) {
+            when (reader.nextName()) {
+                "schemaVersion" -> schemaVersion = reader.nextInt()
+                "characters" -> {
+                    require(schemaVersion == 1) { "Unsupported Kanji stroke dataset schema" }
+                    reader.beginArray()
+                    while (reader.hasNext()) {
+                        val candidate = readCharacterRecord(reader, requestedId, metadata)
+                        if (candidate != null) return candidate
+                    }
+                    reader.endArray()
+                }
+                else -> reader.skipValue()
+            }
+        }
+        reader.endObject()
+        require(schemaVersion == 1) { "Unsupported Kanji stroke dataset schema" }
+        return null
     }
 
     private fun readCharacterRecord(
