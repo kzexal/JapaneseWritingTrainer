@@ -1,7 +1,7 @@
 # Japanese Writing Trainer — Project Guide
 
 > **Tài liệu chuẩn duy nhất cho yêu cầu sản phẩm, quyết định kỹ thuật, trạng thái triển khai và kế hoạch phát hành.**
-> Baseline: `main` · Cập nhật: 21/11/2026 · Application ID: `com.example.japanesewritingtrainer`
+> Baseline: `main` · Cập nhật: 26/11/2026 · Application ID: `com.example.japanesewritingtrainer`
 
 ## 1. Mục tiêu và phạm vi
 
@@ -9,7 +9,9 @@ Japanese Writing Trainer là ứng dụng Android offline-first để luyện vi
 
 **Phạm vi hiện tại:** Hiragana, Katakana và Kanji; Trace, Guided Writing, Recall Writing, Free Practice; SRS dùng FSRS-rs; lịch sử, thống kê, streak, widget, cài đặt và JSON backup/restore.
 
-**Ưu tiên ngay lúc này:** hoàn tất cleanup repository, kiểm tra và phát hành thử bản hiện tại. Chỉ chuyển sang công việc Vocabulary sau khi người dùng xác nhận bản Release thử đã cài đặt và vận hành ổn. Không mở rộng Vocabulary/Excel pipeline trong giai đoạn Release thử.
+**Trạng thái hiện tại:** Release thử `1.1` (versionCode `2`) đã được ký, xác minh chữ ký, cài đặt và mở ứng dụng thành công trên thiết bị thử sau khi giới hạn phạm vi R8 optimization vào mã ứng dụng. Người dùng đã xác nhận chốt giai đoạn Release thử. Đây chưa phải phát hành công khai.
+
+**Ưu tiên tiếp theo:** khảo sát và thiết kế khả năng nhập bốn bộ Anki hiện có (Japanese Grammar, Japanese Kanji, Japanese Vocabulary, English Vocabulary), bao gồm nội dung, tiến độ FSRS và lịch sử ôn tập. Giai đoạn hiện tại chỉ là audit dữ liệu và thiết kế; chưa triển khai importer, chưa thay đổi Room schema và chưa nhập dữ liệu vào ứng dụng.
 
 ## 2. Nền tảng và kiến trúc
 
@@ -45,7 +47,8 @@ Không thay FSRS bằng SM-2. Không để UI/Room phụ thuộc kiểu dữ li�
 | Kanji | 1.031 ký tự thuộc danh sách học N5–N2; deck độc lập |
 | JLPT | N5–N2 là phân loại tham khảo từ cộng đồng, không phải danh sách Kanji chính thức |
 | Kanji library | Tìm theo Kanji, âm đọc, Romaji, nghĩa; lọc theo bộ thủ |
-| Vocabulary | Có workbook và các artifact hiện hữu trong repo. Không tiếp tục triển khai hoặc chỉnh pipeline trong giai đoạn Release thử |
+| Vocabulary | Có workbook Excel và bộ Anki Japanese Vocabulary; cần xác định nguồn nội dung chuẩn và quy tắc hợp nhất trước khi nhập |
+| Anki import | Đang ở giai đoạn khảo sát bốn APKG; chưa có importer hoặc hợp đồng dữ liệu được chốt |
 
 Quy tắc định danh:
 - ID card ổn định, không phụ thuộc thứ tự dòng Excel hoặc vị trí trong danh sách.
@@ -87,7 +90,8 @@ Các kiểm tra scheduler/Room và khôi phục phiên đã được người d�
 - Thống kê tiến độ theo deck; streak là thống kê toàn ứng dụng dựa trên PracticeLog.
 - Widget Android 2×1 chỉ đọc dữ liệu, hiển thị streak và số thẻ đến hạn; không tự sửa tiến độ.
 - JSON backup/restore gồm CardProgress và PracticeLog; validate trước khi restore và thay thế trong một Room transaction. Restore là replace, không phải merge.
-- Không thêm đăng nhập, cloud sync, Firebase, analytics hoặc đồng bộ Anki.
+- Không thêm đăng nhập, cloud sync, Firebase hoặc analytics.
+- Không xây dựng Anki live sync. Việc nhập một lần dữ liệu từ APKG (nội dung, tiến độ và lịch sử) là luồng migration riêng, không phải đồng bộ hai chiều.
 
 ### 3.5 Giao diện và trải nghiệm
 
@@ -148,7 +152,112 @@ cd ../..
 
 Instrumentation tests cần emulator/thiết bị kết nối. Không chạy lại các test không liên quan nếu không có thay đổi mã nguồn ảnh hưởng.
 
-## 7. Release thử — điều kiện trước khi chuyển sang Vocabulary
+## 7. Release thử — đã hoàn tất
+
+### 7.1 Kết quả đã xác nhận
+
+- Application ID: `com.example.japanesewritingtrainer`.
+- Gradle version: versionCode `2`, versionName `1.1`; không tự ý bump.
+- Release APK và AAB đã build thành công trên máy người dùng.
+- APK Release đã được xác minh bằng `apksigner`: chữ ký v2 hợp lệ, RSA 2048; SHA-256 certificate khớp fingerprint của keystore đã tạo.
+- APK Release đã cài đặt và mở ứng dụng thành công sau khi sửa R8 package scope.
+- R8 optimization chỉ áp dụng cho `com.example.japanesewritingtrainer.**`; giữ `android.r8.gradual.support=true`.
+- Người dùng đã xác nhận chốt giai đoạn Release thử.
+- Đây là bản Release thử trên thiết bị, không phải tuyên bố phát hành công khai hoặc phát hành Play Store.
+
+### 7.2 Signing và bảo mật
+
+- Keystore release được lưu ngoài repository; không commit keystore, mật khẩu hoặc thông tin bí mật.
+- Không yêu cầu người dùng gửi mật khẩu/secret vào chat hoặc GitHub.
+- Giữ bản sao lưu keystore ở các vị trí an toàn độc lập.
+- Không thay signing identity hoặc tạo keystore mới cho bản cập nhật tương thích nếu chưa có kế hoạch migration rõ ràng.
+
+### 7.3 Release regression
+
+Khi có thay đổi ảnh hưởng đến build, signing, R8, Room, scheduler hoặc luồng học, người dùng chạy các kiểm tra local phù hợp. Không tuyên bố build/test PASS nếu chưa quan sát kết quả từ người dùng hoặc môi trường chạy thực tế.
+
+## 8. Khảo sát và thiết kế nhập dữ liệu Anki
+
+### 8.1 Mục tiêu và phạm vi
+
+Mục tiêu là nhập dữ liệu từ bốn bộ APKG hiện có sang JapaneseWritingTrainer, ưu tiên giữ nội dung, trạng thái học, FSRS memory state, due scheduling và lịch sử ôn tập. Đây là migration một chiều từ bản export Anki; không phải Anki sync, không yêu cầu tài khoản hoặc cloud.
+
+Bốn nguồn cần khảo sát:
+
+1. Japanese Grammar
+2. Japanese Kanji
+3. Japanese Vocabulary
+4. English Vocabulary
+
+Mỗi loại nội dung có schema riêng. Không ép Grammar, Kanji, Japanese Vocabulary và English Vocabulary vào một Note model chung; chúng có thể dùng chung card identity/progress abstraction và FSRS scheduler ở tầng domain nếu mapping được xác minh.
+
+### 8.2 Snapshot APKG đã phân tích sơ bộ
+
+Báo cáo được tạo ngày 25/11/2026 từ bốn file APKG, đều sử dụng `collection.anki21b` và Collection schema version 18:
+
+| Bộ Anki | Notes | Cards | New | Review | Revlog |
+|---|---:|---:|---:|---:|---:|
+| Japanese Grammar | 49 | 49 | 0 | 49 | 592 |
+| Japanese Kanji | 1.031 | 1.031 | 939 | 92 | 788 |
+| Japanese Vocabulary | 198 | 198 | 83 | 115 | 2.350 |
+| English Vocabulary | 200 | 200 | 69 | 131 | 1.930 |
+| **Tổng** | **1.478** | **1.478** | **1.091** | **387** | **5.660** |
+
+Trong 5.660 review log, các rating tổng hợp được báo cáo là Again 2.231, Hard 484, Good 1.480 và Easy 1.465.
+
+Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`, `decay`, `lrt`. Đây là bằng chứng APKG có dữ liệu memory state cần bảo toàn và khảo sát tiếp; chưa được coi là xác nhận tương thích trực tiếp với FSRS-rs 6.6.2.
+
+**Giới hạn của báo cáo hiện tại:** script audit ban đầu đọc các trường `col.models` và `col.decks` theo cấu trúc cũ, trong khi APKG này có các bảng riêng `notetypes`, `fields`, `templates`, `decks`, `deck_config` và `config`. Vì vậy các kết quả `Decks: 0`, `Note Types: 0` và cấu hình rỗng là lỗi của cách đọc báo cáo, không phải kết luận APKG không có deck/Note Type/configuration. Thống kê media cũng chưa được xác minh đầy đủ. Không dùng các trường đó làm căn cứ thiết kế cho đến khi audit schema được sửa.
+
+### 8.3 Những điều phải xác minh trước khi viết importer
+
+- Đọc schema thực tế của `decks`, `notetypes`, `fields`, `templates`, `config`, `deck_config` và các liên kết của chúng.
+- Lấy chính xác thứ tự field, Note Type, card template, deck/subdeck, tags, media references và nội dung note; xác minh cách xử lý HTML, audio và hình ảnh.
+- Xác định chính xác ý nghĩa, đơn vị và thời điểm của các trường card scheduling: `type`, `queue`, `due`, `ivl`, `reps`, `lapses`, `left`, `odue`, `odid`, `factor`, `mod` và `data`.
+- Xác minh cấu trúc FSRS trong `cards.data`, phiên bản/thuật toán, desired retention và tham số liên quan. Không suy luận ý nghĩa trường chưa được xác nhận và không tự tính lại memory state trong bước import.
+- Xác minh ý nghĩa `revlog.ease`, `revlog.type`, `ivl`, `lastIvl`, timestamp và đơn vị thời gian; giữ thứ tự lịch sử và liên kết đúng Card.
+- Kiểm tra các trạng thái suspended/buried, learning/relearning và filtered/deck override nếu có; snapshot sơ bộ hiện chỉ báo cáo New và Review ở queue hiện tại.
+- Xác minh media thực tế trong từng APKG. Không kết luận không có media từ báo cáo sơ bộ.
+- Đối chiếu Japanese Kanji APKG với 1.031 Kanji hiện có trong ứng dụng để map vào card identity hiện hữu, tránh tạo duplicate.
+- Đối chiếu Japanese Vocabulary APKG với workbook Excel hiện có; xác định nguồn nội dung chuẩn và quy tắc xử lý duplicate/conflict trước khi hợp nhất.
+- Kiểm tra sự khác biệt giữa Anki FSRS và FSRS-rs 6.6.2 trước khi quyết định có thể khôi phục memory state trực tiếp hay phải dùng phương án tương thích được kiểm chứng.
+
+### 8.4 Nguyên tắc thiết kế migration
+
+1. APKG gốc là nguồn chỉ đọc; không chỉnh sửa collection gốc.
+2. Mỗi nguồn và mỗi Note/Card cần identity mapping ổn định, có namespace nguồn. Không dùng vị trí dòng Excel hoặc thứ tự trong danh sách làm ID.
+3. Lưu external Anki IDs/GUID làm provenance; không mặc định Anki ID có thể thay thế app primary key.
+4. Import phải idempotent: chạy lại cùng nguồn không tạo duplicate hoặc ghi đè tiến độ mới hơn một cách âm thầm.
+5. Nội dung từng loại deck có schema riêng; scheduler/progress dùng abstraction chung chỉ khi mapping không làm mất thông tin.
+6. Giữ raw FSRS memory state và raw review history khi có thể; mọi chuyển đổi đơn vị/thời gian phải có test và đối chiếu.
+7. Không biến lịch sử Anki thành các lần review mới trong scheduler; lịch sử import phải được phân biệt với review phát sinh trong ứng dụng.
+8. Tạo dry-run report trước khi ghi database: số note/card sẽ thêm, map, bỏ qua, xung đột, thiếu media và trạng thái không thể chuyển.
+9. Thực hiện import trong transaction hoặc theo batch có checkpoint/rollback được thiết kế rõ ràng; backup dữ liệu app trước khi import.
+10. Không xóa hoặc reset CardProgress/PracticeLog hiện có. Bổ sung Room migration rõ ràng nếu cần; tuyệt đối không dùng destructive migration.
+11. Sau import phải đối chiếu counts, card identity, due state, FSRS fields và số lượng review history; cung cấp báo cáo kết quả cho người dùng.
+
+### 8.5 Các giai đoạn thực hiện
+
+- **A — Schema audit:** sửa script phân tích để đọc schema Anki v18 và xác minh nội dung, deck, Note Type, media, scheduler config.
+- **B — Mapping specification:** lập bảng ánh xạ riêng cho bốn deck, card identity và progress/history.
+- **C — Compatibility validation:** kiểm chứng FSRS state, timestamp, due semantics và khả năng map với Room/FSRS-rs hiện tại.
+- **D — Dry run:** tạo báo cáo import không ghi dữ liệu, xử lý duplicate và xung đột.
+- **E — Implementation:** chỉ bắt đầu sau khi người dùng duyệt mapping/spec; có migration, backup, rollback và idempotency.
+- **F — Local validation:** người dùng chạy tests và thử import trên bản backup/test dataset trước khi dùng dữ liệu học chính.
+
+Hiện tại mới có snapshot audit sơ bộ; chưa hoàn tất A, chưa chốt mapping, chưa triển khai importer và chưa nhập bất kỳ dữ liệu Anki nào vào ứng dụng.
+
+## 9. Backlog sau giai đoạn audit
+
+1. Hoàn tất schema audit và mapping specification cho cả bốn bộ Anki.
+2. Chốt chính sách hợp nhất Japanese Kanji APKG với Kanji library hiện có và Japanese Vocabulary APKG với workbook Excel.
+3. Chỉ triển khai importer sau khi người dùng duyệt thiết kế migration.
+4. Kiểm tra clean install trên thiết bị phụ/emulator; không xóa dữ liệu học duy nhất.
+5. Rà soát attribution/provenance và ShareAlike trước phân phối công khai.
+6. Quyết định chính sách Android Auto Backup so với JSON backup thủ công.
+7. Các tính năng ngoài phạm vi như yōon writing units, nhận dạng ML/CNN, cloud sync/login chỉ xem xét khi có yêu cầu riêng.
+
+## 10. Tài liệu còn được giữ
 
 ### 7.1 Trạng thái
 
