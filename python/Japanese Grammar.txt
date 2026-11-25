@@ -1,0 +1,251 @@
+#separator:tab
+#html:true
+#guid column:1
+#notetype column:2
+#deck column:3
+#tags column:13
+Q8>lew86lu	Japanese Grammar Model	Japanese Grammar	は (wa)	Topic marker (am, is, are)	Noun + は	わたしは学生です。	I am a student.	N5	"Pronounced &#x27;wa&#x27; but written as &#x27;ha&#x27;."	"わたし [ ... ] 学生(がくせい)です。
+(I am a student.)"	"**は (wa)**
+*Ý nghĩa/Cách dùng:* Topic marker (am, is, are)
+*Ngữ pháp:* Noun + は
+*Lưu ý:* Pronounced &#x27;wa&#x27; but written as &#x27;ha&#x27;."	basic particle
+kLwJ,i.Ite	Japanese Grammar Model	Japanese Grammar	です (desu)	To be (polite)	Noun/Adjective + です	これは本です。	This is a book.	N5	Used at the end of a sentence to show politeness.	"これは本(ほん) [ ... ] 。
+(This is a book.)"	"**です (desu)**
+*Ý nghĩa/Cách dùng:* To be (polite)
+*Ngữ pháp:* Noun/Adjective + です
+*Lưu ý:* Used at the end of a sentence to show politeness."	copula polite
+J:y^7bvEh}	Japanese Grammar Model	Japanese Grammar	か (ka)	Question particle	Sentence + か	お元気ですか。	Are you well? / How are you?	N5	Acts like a question mark at the end of a sentence.	"お元気(げんき)です [ ... ] 。
+(Are you well? / How are you?)"	"**か (ka)**
+*Ý nghĩa/Cách dùng:* Question particle
+*Ngữ pháp:* Sentence + か
+*Lưu ý:* Acts like a question mark at the end of a sentence."	particle question
+O;1>{A@th	Japanese Grammar Model	Japanese Grammar	も (mo)	Also, too	Noun + も	わたしも行きます。	I will also go.	N5	Replaces は, が, or を.	"わたし [ ... ] 行き(いき)ます。
+(I will also go.)"	"**も (mo)**
+*Ý nghĩa/Cách dùng:* Also, too
+*Ngữ pháp:* Noun + も
+*Lưu ý:* Replaces は, が, or を."	inclusion particle
+NfjPNMnt44	Japanese Grammar Model	Japanese Grammar	を (o)	Direct object marker	Noun + を + Verb	りんごを食べます。	I eat an apple.	N5	"Pronounced &#x27;o&#x27; but written as &#x27;wo&#x27;."	"りんご [ ... ] 食べ(たべ)ます。
+(I eat an apple.)"	"**を (o)**
+*Ý nghĩa/Cách dùng:* Direct object marker
+*Ngữ pháp:* Noun + を + Verb
+*Lưu ý:* Pronounced &#x27;o&#x27; but written as &#x27;wo&#x27;."	object particle
+PrJs:X!.tI	Japanese Grammar Model	Japanese Grammar	に (ni)	Time or destination marker	Time/Place + に	日本に行きます。	I will go to Japan.	N5	Used for specific time or direction of action.	"日本(にっぽん) [ ... ] 行き(いき)ます。
+(I will go to Japan.)"	"**に (ni)**
+*Ý nghĩa/Cách dùng:* Time or destination marker
+*Ngữ pháp:* Time/Place + に
+*Lưu ý:* Used for specific time or direction of action."	destination particle time
+Nm|;FGW*8y	Japanese Grammar Model	Japanese Grammar	で (de)	Location of action, by means of	Place/Means + で	バスで学校に行きます。	I go to school by bus.	N5	Indicates where an action happens or the tool used.	"バス [ ... ] 学校(がっこう)に行き(いき)ます。
+(I go to school by bus.)"	"**で (de)**
+*Ý nghĩa/Cách dùng:* Location of action, by means of
+*Ngữ pháp:* Place/Means + で
+*Lưu ý:* Indicates where an action happens or the tool used."	location particle tool
+m;%>VtIdCv	Japanese Grammar Model	Japanese Grammar	ません (masen)	Polite negative form	Verb (masu stem) + ません	肉を食べません。	I do not eat meat.	N5	Negative form of verbs ending in ~ます.	"肉(にく)を食べ(たべ) [ ... ] 。
+(I do not eat meat.)"	"**ません (masen)**
+*Ý nghĩa/Cách dùng:* Polite negative form
+*Ngữ pháp:* Verb (masu stem) + ません
+*Lưu ý:* Negative form of verbs ending in ~ます."	negative verb
+ICB:llYj.m	Japanese Grammar Model	Japanese Grammar	ましょう (mashou)	"Let&#x27;s ~"	Verb (masu stem) + ましょう	一緒に行きましょう。	"Let&#x27;s go together."	N5	Used to suggest or invite someone to do something.	"一緒に(いっしょに)行き(いき) [ ... ] 。
+(Let&#x27;s go together.)"	"**ましょう (mashou)**
+*Ý nghĩa/Cách dùng:* Let&#x27;s ~
+*Ngữ pháp:* Verb (masu stem) + ましょう
+*Lưu ý:* Used to suggest or invite someone to do something."	suggestion verb
+l>zhCSdiX;	Japanese Grammar Model	Japanese Grammar	たい (tai)	Want to do ~	Verb (masu stem) + たいです	水を飲みたいです。	I want to drink water.	N5	"Expresses speaker&#x27;s desire to do an action."	"水(みず)を飲み(のみ) [ ... ] です。
+(I want to drink water.)"	"**たい (tai)**
+*Ý nghĩa/Cách dùng:* Want to do ~
+*Ngữ pháp:* Verb (masu stem) + たいです
+*Lưu ý:* Expresses speaker&#x27;s desire to do an action."	desire verb
+Mh;fPa|J5d	Japanese Grammar Model	Japanese Grammar	てください (te kudasai)	Please do ~	Verb (te-form) + ください	ちょっと待ってください。	Please wait a moment.	N5	Used to make a polite request.	"ちょっと待っ(まっ) [ ... ] 。
+(Please wait a moment.)"	"**てください (te kudasai)**
+*Ý nghĩa/Cách dùng:* Please do ~
+*Ngữ pháp:* Verb (te-form) + ください
+*Lưu ý:* Used to make a polite request."	request verb
+eXGsl@/9mo	Japanese Grammar Model	Japanese Grammar	ている (te iru)	Currently doing ~, is/are ~ing	Verb (te-form) + います	今、日本語を勉強しています。	I am studying Japanese now.	N5	Expresses an ongoing action or a state.	"今(いま)、日本語(にほんご)を勉強(べんきょう)しています。
+(I am studying Japanese now.)"	"**ている (te iru)**
+*Ý nghĩa/Cách dùng:* Currently doing ~, is/are ~ing
+*Ngữ pháp:* Verb (te-form) + います
+*Lưu ý:* Expresses an ongoing action or a state."	continuous verb
+VGyka;SuT	Japanese Grammar Model	Japanese Grammar	ないでください (naide kudasai)	Please do not do ~	Verb (nai-form) + ないでください	ここにゴミを捨てないでください。	Please do not throw garbage here.	N5	Negative request.	"ここにゴミを捨て(すて) [ ... ] 。
+(Please do not throw garbage here.)"	"**ないでください (naide kudasai)**
+*Ý nghĩa/Cách dùng:* Please do not do ~
+*Ngữ pháp:* Verb (nai-form) + ないでください
+*Lưu ý:* Negative request."	negative request verb
+k6a`G2vz^;	Japanese Grammar Model	Japanese Grammar	のが好きです (no ga suki desu)	Like doing ~	Verb (dictionary form) + のが好きです	映画を見るのが好きです。	I like watching movies.	N5	Turns a verb phrase into a noun phrase to express preference.	"映画(えいが)を見る(みる) [ ... ] 。
+(I like watching movies.)"	"**のが好きです (no ga suki desu)**
+*Ý nghĩa/Cách dùng:* Like doing ~
+*Ngữ pháp:* Verb (dictionary form) + のが好きです
+*Lưu ý:* Turns a verb phrase into a noun phrase to express preference."	nominalizer preference verb
+v8Aq9CAJt*	Japanese Grammar Model	Japanese Grammar	があります (ga arimasu)	There is, to have (inanimate)	Noun (inanimate) + があります	部屋にテレビがあります。	There is a TV in the room.	N5	Used for things that do not move on their own.	"部屋(へや)にテレビ [ ... ] 。
+(There is a TV in the room.)"	"**があります (ga arimasu)**
+*Ý nghĩa/Cách dùng:* There is, to have (inanimate)
+*Ngữ pháp:* Noun (inanimate) + があります
+*Lưu ý:* Used for things that do not move on their own."	existence inanimate
+GjblWvOuWR	Japanese Grammar Model	Japanese Grammar	がいます (ga imasu)	There is, to have (animate)	Noun (animate) + がいます	庭に犬がいます。	There is a dog in the garden.	N5	Used for living, moving things like people and animals.	"庭(にわ)に犬(いぬ) [ ... ] 。
+(There is a dog in the garden.)"	"**がいます (ga imasu)**
+*Ý nghĩa/Cách dùng:* There is, to have (animate)
+*Ngữ pháp:* Noun (animate) + がいます
+*Lưu ý:* Used for living, moving things like people and animals."	animate existence
+K6aY@EYU<P	Japanese Grammar Model	Japanese Grammar	ませんか (masen ka)	"Won&#x27;t you ~? / Would you like to ~?"	Verb (masu stem) + ませんか	一緒にお茶を飲みませんか。	Would you like to drink tea together?	N5	Used to politely invite someone.	"一緒に(いっしょに)お茶(ちゃ)を飲み(のみ) [ ... ] 。
+(Would you like to drink tea together?)"	"**ませんか (masen ka)**
+*Ý nghĩa/Cách dùng:* Won&#x27;t you ~? / Would you like to ~?
+*Ngữ pháp:* Verb (masu stem) + ませんか
+*Lưu ý:* Used to politely invite someone."	invitation verb
+"JF9S~W,Z9#"	Japanese Grammar Model	Japanese Grammar	から (kara)	Because ~	Reason + から, Result	忙しいから、行きません。	"Because I am busy, I won&#x27;t go."	N5	Expresses a reason or cause.	"忙しい(いそがしい) [ ... ] 、行き(いき)ません。
+(Because I am busy, I won&#x27;t go.)"	"**から (kara)**
+*Ý nghĩa/Cách dùng:* Because ~
+*Ngữ pháp:* Reason + から, Result
+*Lưu ý:* Expresses a reason or cause."	conjunction reason
+"zHc7eR%&-#"	Japanese Grammar Model	Japanese Grammar	けれども / が (keredomo / ga)	But, however	Sentence 1 + が/けれども, Sentence 2	高いですが、買いたいです。	It is expensive, but I want to buy it.	N5	Connects two contrasting ideas.	"高い(たかい)ですが、買い(かい)たいです。
+(It is expensive, but I want to buy it.)"	"**けれども / が (keredomo / ga)**
+*Ý nghĩa/Cách dùng:* But, however
+*Ngữ pháp:* Sentence 1 + が/けれども, Sentence 2
+*Lưu ý:* Connects two contrasting ideas."	conjunction contrast
+hE)Lfp)7Q9	Japanese Grammar Model	Japanese Grammar	より (yori)	More than ~	Noun 1 は Noun 2 + より + Adjective	車は自転車より速いです。	Cars are faster than bicycles.	N5	Used for comparison.	"車(くるま)は自転車(じてんしゃ) [ ... ] 速い(はやい)です。
+(Cars are faster than bicycles.)"	"**より (yori)**
+*Ý nghĩa/Cách dùng:* More than ~
+*Ngữ pháp:* Noun 1 は Noun 2 + より + Adjective
+*Lưu ý:* Used for comparison."	comparison particle
+vHV<@d7CzC	Japanese Grammar Model	Japanese Grammar	つもりです (tsumori desu)	Plan to ~ / Intend to ~	Verb (dictionary/nai form) + つもりです	明日、映画を見るつもりです。	I plan to watch a movie tomorrow.	N5	Expresses a strong intention or plan.	"明日(あした)、映画(えいが)を見る(みる) [ ... ] 。
+(I plan to watch a movie tomorrow.)"	"**つもりです (tsumori desu)**
+*Ý nghĩa/Cách dùng:* Plan to ~ / Intend to ~
+*Ngữ pháp:* Verb (dictionary/nai form) + つもりです
+*Lưu ý:* Expresses a strong intention or plan."	intention verb
+E;JF(P!Jtl	Japanese Grammar Model	Japanese Grammar	たり～たりする (tari~tari suru)	Do things like A and B	Verb 1 (ta-form) + り、Verb 2 (ta-form) + りします	週末は本を読んだり、映画を見たりします。	On weekends, I do things like reading books and watching movies.	N5	Lists representative actions.	"週末(しゅうまつ)は本(ほん)を読んだ(よんだ)り、映画(えいが)を見た(みた)りします。
+(On weekends, I do things like reading books and watching movies.)"	"**たり～たりする (tari~tari suru)**
+*Ý nghĩa/Cách dùng:* Do things like A and B
+*Ngữ pháp:* Verb 1 (ta-form) + り、Verb 2 (ta-form) + りします
+*Lưu ý:* Lists representative actions."	listing verb
+fl9Y6z.VB+	Japanese Grammar Model	Japanese Grammar	なる (naru)	To become	Noun/Na-adj + になる / I-adj + くなる	春になりました。	It has become spring.	N5	Expresses a change in state.	"春(はる)になりました。
+(It has become spring.)"	"**なる (naru)**
+*Ý nghĩa/Cách dùng:* To become
+*Ngữ pháp:* Noun/Na-adj + になる / I-adj + くなる
+*Lưu ý:* Expresses a change in state."	change verb
+EuV9|W)XH(	Japanese Grammar Model	Japanese Grammar	く/にする (ku/ni suru)	To make something ~	Noun/Na-adj + にする / I-adj + くする	部屋をきれいにします。	I will make the room clean.	N5	Expresses causing a change in state.	"部屋(へや)をきれいにします。
+(I will make the room clean.)"	"**く/にする (ku/ni suru)**
+*Ý nghĩa/Cách dùng:* To make something ~
+*Ngữ pháp:* Noun/Na-adj + にする / I-adj + くする
+*Lưu ý:* Expresses causing a change in state."	change verb
+crKC*ILS[m	Japanese Grammar Model	Japanese Grammar	てから (te kara)	After doing ~	Verb (te-form) + から	手を洗ってから、ご飯を食べます。	After washing my hands, I will eat.	N5	Indicates the sequence of two actions.	"手(て)を洗っ(あらっ) [ ... ] 、ご飯(めし)を食べ(たべ)ます。
+(After washing my hands, I will eat.)"	"**てから (te kara)**
+*Ý nghĩa/Cách dùng:* After doing ~
+*Ngữ pháp:* Verb (te-form) + から
+*Lưu ý:* Indicates the sequence of two actions."	sequence verb
+m%AQ8i)0[U	Japanese Grammar Model	Japanese Grammar	たことがある (ta koto ga aru)	Have done ~ before	Verb (ta-form) + ことがある	日本に行ったことがあります。	I have been to Japan before.	N5	Expresses past experience.	"日本(にっぽん)に行った(いった)ことがあります。
+(I have been to Japan before.)"	"**たことがある (ta koto ga aru)**
+*Ý nghĩa/Cách dùng:* Have done ~ before
+*Ngữ pháp:* Verb (ta-form) + ことがある
+*Lưu ý:* Expresses past experience."	experience verb
+m1_q,?/x?K	Japanese Grammar Model	Japanese Grammar	や (ya)	And (incomplete list)	Noun 1 + や + Noun 2	机の上に本やペンがあります。	There are books and pens (among other things) on the desk.	N5	Lists two or more items as examples.	"机(つくえ)の上に(うえに)本(ほん) [ ... ] ペンがあります。
+(There are books and pens (among other things) on the desk.)"	"**や (ya)**
+*Ý nghĩa/Cách dùng:* And (incomplete list)
+*Ngữ pháp:* Noun 1 + や + Noun 2
+*Lưu ý:* Lists two or more items as examples."	listing particle
+iys=t`g$OR	Japanese Grammar Model	Japanese Grammar	など (nado)	Etc. / And so on	Noun + や + Noun + など	りんごやみかんなどを買いました。	I bought apples, tangerines, etc.	N5	Often used together with や.	"りんごやみかん [ ... ] を買い(かい)ました。
+(I bought apples, tangerines, etc.)"	"**など (nado)**
+*Ý nghĩa/Cách dùng:* Etc. / And so on
+*Ngữ pháp:* Noun + や + Noun + など
+*Lưu ý:* Often used together with や."	listing particle
+x8HF435dk<	Japanese Grammar Model	Japanese Grammar	前に (mae ni)	Before ~	Verb (dict form)/Noun+の + 前に	寝る前に、本を読みます。	Before going to bed, I read a book.	N5	Indicates an action happening before another.	"寝る(ねる) [ ... ] 、本(ほん)を読み(よみ)ます。
+(Before going to bed, I read a book.)"	"**前に (mae ni)**
+*Ý nghĩa/Cách dùng:* Before ~
+*Ngữ pháp:* Verb (dict form)/Noun+の + 前に
+*Lưu ý:* Indicates an action happening before another."	conjunction time
+wZhjw;wK,R	Japanese Grammar Model	Japanese Grammar	後で (ato de)	After ~	Verb (ta-form)/Noun+の + 後で	授業の後で、テニスをします。	After class, I will play tennis.	N5	Indicates an action happening after another.	"授業(じゅぎょう)の [ ... ] 、テニスをします。
+(After class, I will play tennis.)"	"**後で (ato de)**
+*Ý nghĩa/Cách dùng:* After ~
+*Ngữ pháp:* Verb (ta-form)/Noun+の + 後で
+*Lưu ý:* Indicates an action happening after another."	conjunction time
+QdTf?[>.@q	Japanese Grammar Model	Japanese Grammar	AよりBのほうが (A yori B no hou ga)	B is more ~ than A	AよりBのほうが + Adjective	中国より日本のほうが小さいです。	Japan is smaller than China.	N5	Used to compare two things.	"中国(ちゅうごく)より日本(にっぽん)のほうが小さい(ちーさい)です。
+(Japan is smaller than China.)"	"**AよりBのほうが (A yori B no hou ga)**
+*Ý nghĩa/Cách dùng:* B is more ~ than A
+*Ngữ pháp:* AよりBのほうが + Adjective
+*Lưu ý:* Used to compare two things."	comparison grammar
+"v#mx<O,,w5"	Japanese Grammar Model	Japanese Grammar	どちら (dochira)	Which one (between two)	AとBとどちらが + Adj + ですか	肉と魚とどちらが好きですか。	Which do you like better, meat or fish?	N5	Used when asking to choose between two options.	"肉(にく)と魚(さかな)と [ ... ] が好き(すき)ですか。
+(Which do you like better, meat or fish?)"	"**どちら (dochira)**
+*Ý nghĩa/Cách dùng:* Which one (between two)
+*Ngữ pháp:* AとBとどちらが + Adj + ですか
+*Lưu ý:* Used when asking to choose between two options."	comparison grammar question
+z%Tmz&+V@N	Japanese Grammar Model	Japanese Grammar	一番 (ichiban)	The most / Number one	Category + で/の中で + Noun + が一番 + Adj	果物の中でりんごが一番好きです。	Among fruits, I like apples the most.	N5	Used to indicate the highest degree in a group.	"果物(くだもの)の中(なか)でりんごが [ ... ] 好き(すき)です。
+(Among fruits, I like apples the most.)"	"**一番 (ichiban)**
+*Ý nghĩa/Cách dùng:* The most / Number one
+*Ngữ pháp:* Category + で/の中で + Noun + が一番 + Adj
+*Lưu ý:* Used to indicate the highest degree in a group."	comparison grammar superlative
+"G3-eo}Q#%B"	Japanese Grammar Model	Japanese Grammar	あげる (ageru)	To give (to someone else)	Giver は Receiver に + Noun をあげる	私は友達にプレゼントをあげました。	I gave a present to my friend.	N5	Cannot be used when someone gives something to the speaker.	"私(わたし)は友達(ともだち)にプレゼントをあげました。
+(I gave a present to my friend.)"	"**あげる (ageru)**
+*Ý nghĩa/Cách dùng:* To give (to someone else)
+*Ngữ pháp:* Giver は Receiver に + Noun をあげる
+*Lưu ý:* Cannot be used when someone gives something to the speaker."	giving verb
+i(Icn/6Xzk	Japanese Grammar Model	Japanese Grammar	もらう (morau)	To receive (from someone)	Receiver は Giver に/から + Noun をもらう	私は山田さんに本をもらいました。	I received a book from Mr. Yamada.	N5	"Focuses on the receiver&#x27;s perspective."	"私(わたし)は山田(やまだ)さんに本(ほん)をもらいました。
+(I received a book from Mr. Yamada.)"	"**もらう (morau)**
+*Ý nghĩa/Cách dùng:* To receive (from someone)
+*Ngữ pháp:* Receiver は Giver に/から + Noun をもらう
+*Lưu ý:* Focuses on the receiver&#x27;s perspective."	receiving verb
+bHh/5R2_]@	Japanese Grammar Model	Japanese Grammar	くれる (kureru)	To give (to me/my family)	Giver は Me/Family に + Noun をくれる	母は私に時計をくれました。	My mother gave me a watch.	N5	Used when the speaker or someone close receives something.	"母(はは)は私(わたし)に時計(とけい)をくれました。
+(My mother gave me a watch.)"	"**くれる (kureru)**
+*Ý nghĩa/Cách dùng:* To give (to me/my family)
+*Ngữ pháp:* Giver は Me/Family に + Noun をくれる
+*Lưu ý:* Used when the speaker or someone close receives something."	giving verb
+Csbi)tyw$A	Japanese Grammar Model	Japanese Grammar	がほしい (ga hoshii)	Want (something)	Noun + がほしいです	新しい車がほしいです。	I want a new car.	N5	Expresses desire for an object (not an action).	"新しい(あたらしい)車(くるま) [ ... ] です。
+(I want a new car.)"	"**がほしい (ga hoshii)**
+*Ý nghĩa/Cách dùng:* Want (something)
+*Ngữ pháp:* Noun + がほしいです
+*Lưu ý:* Expresses desire for an object (not an action)."	adjective desire
+F5-/SHki_u	Japanese Grammar Model	Japanese Grammar	てもいいです (te mo ii desu)	May do ~ / Allowed to do ~	Verb (te-form) + もいいです	写真を撮ってもいいです。	You may take pictures.	N5	Expresses permission.	"写真(しゃしん)を撮っ(とっ) [ ... ] 。
+(You may take pictures.)"	"**てもいいです (te mo ii desu)**
+*Ý nghĩa/Cách dùng:* May do ~ / Allowed to do ~
+*Ngữ pháp:* Verb (te-form) + もいいです
+*Lưu ý:* Expresses permission."	permission verb
+oN)W6e_?T<	Japanese Grammar Model	Japanese Grammar	てはいけません (te wa ikemasen)	Must not do ~	Verb (te-form) + はいけません	ここでタバコを吸ってはいけません。	You must not smoke here.	N5	Expresses strong prohibition.	"ここでタバコを吸っ(すっ) [ ... ] 。
+(You must not smoke here.)"	"**てはいけません (te wa ikemasen)**
+*Ý nghĩa/Cách dùng:* Must not do ~
+*Ngữ pháp:* Verb (te-form) + はいけません
+*Lưu ý:* Expresses strong prohibition."	prohibition verb
+Qp^[_heabC	Japanese Grammar Model	Japanese Grammar	に行く/来る/帰る (ni iku/kuru/kaeru)	Go/Come/Return to do ~	Verb (masu stem) / Noun + に + 行く/来る/帰る	デパートへ買い物に行きます。	I will go to the department store to shop.	N5	Indicates purpose of movement.	"デパートへ買い物(かいもの)に行き(いき)ます。
+(I will go to the department store to shop.)"	"**に行く/来る/帰る (ni iku/kuru/kaeru)**
+*Ý nghĩa/Cách dùng:* Go/Come/Return to do ~
+*Ngữ pháp:* Verb (masu stem) / Noun + に + 行く/来る/帰る
+*Lưu ý:* Indicates purpose of movement."	purpose verb
+qTd0LOt>@b	Japanese Grammar Model	Japanese Grammar	ましょうか (mashou ka)	Shall we ~? / Let me ~	Verb (masu stem) + ましょうか	窓を閉めましょうか。	Shall I close the window?	N5	Used to offer help or suggest an action together.	"窓(まど)を閉め(しめ) [ ... ] 。
+(Shall I close the window?)"	"**ましょうか (mashou ka)**
+*Ý nghĩa/Cách dùng:* Shall we ~? / Let me ~
+*Ngữ pháp:* Verb (masu stem) + ましょうか
+*Lưu ý:* Used to offer help or suggest an action together."	offer suggestion verb
+Q~=;o`0Guy	Japanese Grammar Model	Japanese Grammar	もう (mou)	Already / Anymore	もう + Verb (past tense)	もう昼ご飯を食べました。	I already ate lunch.	N5	Indicates an action has been completed.	"[ ... ] 昼(ひる)ご飯(めし)を食べ(たべ)ました。
+(I already ate lunch.)"	"**もう (mou)**
+*Ý nghĩa/Cách dùng:* Already / Anymore
+*Ngữ pháp:* もう + Verb (past tense)
+*Lưu ý:* Indicates an action has been completed."	adverb time
+gRf=r$$f2@	Japanese Grammar Model	Japanese Grammar	まだ (mada)	Not yet / Still	まだ + Verb (negative / te-imasu)	まだ食べていません。	"I haven&#x27;t eaten yet."	N5	"Indicates an action hasn&#x27;t happened or is continuing."	"[ ... ] 食べて(たべて)いません。
+(I haven&#x27;t eaten yet.)"	"**まだ (mada)**
+*Ý nghĩa/Cách dùng:* Not yet / Still
+*Ngữ pháp:* まだ + Verb (negative / te-imasu)
+*Lưu ý:* Indicates an action hasn&#x27;t happened or is continuing."	adverb time
+eDlYGOg-4T	Japanese Grammar Model	Japanese Grammar	だけ (dake)	Only / Just	Noun / Verb + だけ	休みは日曜日だけです。	My only day off is Sunday.	N5	Expresses a limit.	"休み(やすみ)は日曜日(にちようび) [ ... ] です。
+(My only day off is Sunday.)"	"**だけ (dake)**
+*Ý nghĩa/Cách dùng:* Only / Just
+*Ngữ pháp:* Noun / Verb + だけ
+*Lưu ý:* Expresses a limit."	limitation particle
+uL~?IO,.h2	Japanese Grammar Model	Japanese Grammar	しか～ない (shika~nai)	Only / Nothing but	Noun + しか + Negative Verb	千円しかありません。	I have nothing but 1,000 yen (only 1,000 yen).	N5	Implies the amount is not enough or less than expected.	"千円(せんえん)しかありません。
+(I have nothing but 1,000 yen (only 1,000 yen).)"	"**しか～ない (shika~nai)**
+*Ý nghĩa/Cách dùng:* Only / Nothing but
+*Ngữ pháp:* Noun + しか + Negative Verb
+*Lưu ý:* Implies the amount is not enough or less than expected."	limitation particle
+kP_i^7X4m!	Japanese Grammar Model	Japanese Grammar	と (to)	And (complete list) / With	Noun 1 + と + Noun 2 / Person + と	パンと卵を買いました。	I bought bread and eggs.	N5	Lists all items or indicates doing something with someone.	"パン [ ... ] 卵(たまご)を買い(かい)ました。
+(I bought bread and eggs.)"	"**と (to)**
+*Ý nghĩa/Cách dùng:* And (complete list) / With
+*Ngữ pháp:* Noun 1 + と + Noun 2 / Person + と
+*Lưu ý:* Lists all items or indicates doing something with someone."	accompaniment listing particle
+}[GLnlR||	Japanese Grammar Model	Japanese Grammar	か (ka) (between nouns)	Or	Noun 1 + か + Noun 2	コーヒーか紅茶を飲みます。	I will drink coffee or black tea.	N5	Used to present choices.	"コーヒー [ ... ] 紅茶(こうちゃ)を飲み(のみ)ます。
+(I will drink coffee or black tea.)"	"**か (ka) (between nouns)**
+*Ý nghĩa/Cách dùng:* Or
+*Ngữ pháp:* Noun 1 + か + Noun 2
+*Lưu ý:* Used to present choices."	choice particle
+hw~me(?F0I	Japanese Grammar Model	Japanese Grammar	だれか / なにか / どこか (dareka/nanika/dokoka)	Someone / Something / Somewhere	Question word + か	なにか食べたいです。	I want to eat something.	N5	Acts as an indefinite pronoun.	"なにか食べた(たべた)いです。
+(I want to eat something.)"	"**だれか / なにか / どこか (dareka/nanika/dokoka)**
+*Ý nghĩa/Cách dùng:* Someone / Something / Somewhere
+*Ngữ pháp:* Question word + か
+*Lưu ý:* Acts as an indefinite pronoun."	indefinite pronoun
+NgPJ61v5f	Japanese Grammar Model	Japanese Grammar	だれも / なにも (daremo/nanimo)	No one / Nothing / Nowhere	Question word + も + Negative Verb	誰も来ませんでした。	No one came.	N5	Total negation.	"誰も(だれも)来ま(きま)せんでした。
+(No one came.)"	"**だれも / なにも (daremo/nanimo)**
+*Ý nghĩa/Cách dùng:* No one / Nothing / Nowhere
+*Ngữ pháp:* Question word + も + Negative Verb
+*Lưu ý:* Total negation."	negative pronoun
