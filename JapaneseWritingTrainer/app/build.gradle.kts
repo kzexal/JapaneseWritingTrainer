@@ -59,10 +59,11 @@ android {
             if (hasCompleteReleaseSigning) {
                 signingConfig = signingConfigs.getByName("release")
             }
-            // Diagnostic release build: disable R8 to verify whether it causes
-            // the startup IllegalAccessError in AndroidX Startup.
+            // Incremental R8 rollout: optimize app code while leaving AndroidX
+            // and Kotlin runtime libraries untouched during startup-crash isolation.
             optimization {
-                enable = false
+                enable = true
+                packageScope = setOf("com.example.japanesewritingtrainer.**")
             }
         }
     }
