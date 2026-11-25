@@ -263,6 +263,17 @@ Anki Desktop tiếp tục là nơi người dùng chỉnh sửa Note và tạo a
 4. Chọn APKG trong JapaneseWritingTrainer; ứng dụng phân tích và hiển thị dry-run trước khi ghi dữ liệu.
 5. Xác nhận import; nội dung/media được cập nhật theo mapping, còn tiến độ học phát sinh trong app được bảo toàn.
 
+**Mapping audio đã xác nhận từ Note Type hiện tại**
+
+| Deck | Note Type | Field audio | Hiện trạng |
+|---|---|---|---|
+| Japanese Grammar | Japanese Grammar Model | Không có | Không cấp audio theo chủ đích |
+| Japanese Kanji | Japanese Kanji Model | `Audio` | 1.031 references / 1.031 assets |
+| Japanese Vocabulary | Japanese Vocabulary Model++ | `Audio`, `ExampleAudio` | `Audio`: 198 references; `ExampleAudio`: hiện chưa có reference |
+| English Vocabulary | English Vocabulary Model | `audio` | 200 references / 200 assets |
+
+Tên field phải được giữ nguyên theo đúng Note Type (kể cả chữ hoa/thường). Khi người dùng tạo audio cho câu ví dụ trong tương lai, importer cần nhận diện `ExampleAudio` như một field riêng, không gộp với audio của từ. Báo cáo media hiện tại xác nhận 1.429 audio assets/references và không có reference thiếu, lỗi giải nén, mismatch size hoặc SHA-1.
+
 **Quy tắc identity và merge**
 - Identity Note nguồn: namespace deck/source + Anki Note GUID. Lưu Anki Note ID và Card ID như provenance/diagnostic, không dùng numeric ID làm identity duy nhất.
 - Card identity trong app phải ổn định theo source namespace + Note GUID + template ordinal/card role; xác minh mapping với Note Type thực tế trước implementation.
