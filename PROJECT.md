@@ -87,7 +87,6 @@ Các kiểm tra scheduler/Room và khôi phục phiên đã được người d�
 - Widget Android 2×1 chỉ đọc dữ liệu, hiển thị streak và số thẻ đến hạn; không tự sửa tiến độ.
 - JSON backup/restore gồm CardProgress và PracticeLog; validate trước khi restore và thay thế trong một Room transaction. Restore là replace, không phải merge.
 - Không thêm đăng nhập, cloud sync, Firebase hoặc analytics.
-- Không xây dựng Anki live sync. Việc nhập một lần dữ liệu từ APKG (nội dung, tiến độ và lịch sử) là luồng migration riêng, không phải đồng bộ hai chiều.
 
 ### 3.5 Giao diện và trải nghiệm
 
