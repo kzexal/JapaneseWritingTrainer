@@ -1,0 +1,4894 @@
+{
+  "generated_at_utc": "2026-11-25T18:08:57.118880+00:00",
+  "reports": [
+    {
+      "file": "Japanese Grammar.apkg",
+      "file_size_bytes": 91133,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "schema_version": 18,
+        "schema_modified_epoch_ms": 1795627556898,
+        "created_utc": "2026-10-19T21:00:00+00:00",
+        "modified_utc": "2026-11-25T17:25:56.925000+00:00",
+        "version": 18
+      },
+      "totals": {
+        "notes": 49,
+        "cards": 49,
+        "review_history": 592,
+        "decks": 2,
+        "note_types": 1
+      },
+      "deck_source": "normalized",
+      "decks": [
+        {
+          "id": "1",
+          "name": "Default",
+          "raw_name_separator": "none",
+          "cards": 0,
+          "common_blob": {
+            "bytes": 4,
+            "sha256": "8fe546efcd4214f28b1f61e7af7c4556c71fb30268334100adffe877796bf150",
+            "hex_prefix": "08011001",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 4,
+            "sha256": "59948439065f29619ef41280cbb932be52c56d99c5966b65e0111239f098bbef",
+            "hex_prefix": "0a020801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        },
+        {
+          "id": "1792667917885",
+          "name": "Japanese Grammar",
+          "raw_name_separator": "none",
+          "cards": 49,
+          "common_blob": {
+            "bytes": 12,
+            "sha256": "db812d55556fbff261a985c7d5d096a8b4aea0b67afa66994e2ad7eac73bf90a",
+            "hex_prefix": "080110011824280438a58d02",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 6,
+            "sha256": "2e9dc0ce7737ac548221fc038a661655b4ccb911bfa8627142f5da150c113b4a",
+            "hex_prefix": "0a0408013802",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "deck_configs": [
+        {
+          "id": "1",
+          "name": "Default",
+          "mtime_secs_utc": "2026-11-25T15:44:12+00:00",
+          "config_blob": {
+            "bytes": 217,
+            "sha256": "e86fb06ab95d640fb9234a95629e295c8179acdef7426ac53b37f954ccb13071",
+            "hex_prefix": "0a080000803f00002041120400002041221c0000803f0000",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "note_type_source": "normalized",
+      "note_types": [
+        {
+          "id": "1792666374225",
+          "name": "Japanese Grammar Model",
+          "note_count": 49,
+          "mtime_secs_utc": "2026-10-22T11:43:48+00:00",
+          "fields": [
+            {
+              "ordinal": 0,
+              "name": "Grammar",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "64030f859dfa6bde1b6073b19f1879b60adf434e0bafaa062d8e27dd620f2d22",
+                "hex_prefix": "1a05417269616c201448f0a1a7c1f99db99643",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 1,
+              "name": "Meaning",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "2753854dd8e924cd9f44da8c1091d8c758cc91c7505191b7d2f2561348404a94",
+                "hex_prefix": "1a05417269616c201448d393ddff95e3f7b4b301",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 2,
+              "name": "Structure",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "057f9174080b5de33b7915339ef59d5954ac6161889fe7bc650c8dea2591beed",
+                "hex_prefix": "1a05417269616c201448b196bdc3f1c5e7e435",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 3,
+              "name": "Example",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "e95a5eb2a6a2626006e02ce8198168d5bed6162a680ce255952c8f6d7cfd2fe9",
+                "hex_prefix": "1a05417269616c201448c8929de4d286e3e5d801",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 4,
+              "name": "ExampleMeaning",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "f3ae6d59489f4f6ff426668faf8021a2c20b32310d48239243bad0913f6715c8",
+                "hex_prefix": "1a05417269616c20144884a2edc1b4c68ef4cb01",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 5,
+              "name": "JLPT",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "d6fa831835b099f55fcbefb974b9148d135b9db43594ab5c146441d8d55b6ed0",
+                "hex_prefix": "1a05417269616c201448c4e9befad0c2da9304",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 6,
+              "name": "Notes",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "7ad169dc81e9a3499d923b59f6df3bf6344f18b796f13ed2dc071f910cf0071d",
+                "hex_prefix": "1a05417269616c20144897b9d5aacfc4968929",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 7,
+              "name": "Front",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "4dd9f12ecd6d194a0e24569460f7d45dbc54128bcb72a1c111721f94c0142d1d",
+                "hex_prefix": "1a05417269616c201448fda2bfeed0b6acdecf01",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 8,
+              "name": "Back",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "83a078855d44c4c9e4be8ad37f4e41272b892d077da14c0cf5f8f01a12a1d963",
+                "hex_prefix": "1a05417269616c201448f2c5b8a4ed92e797e701",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "templates": [
+            {
+              "ordinal": 0,
+              "name": "Card 1",
+              "config_blob": {
+                "bytes": 46,
+                "sha256": "4dcc9a9c7c9d3df905c6c17760773d9b4a2dc7b5ae19a7d5fcaa0aa710235e6a",
+                "hex_prefix": "0a097b7b46726f6e747d7d12167b7b46726f6e747d7d3c64",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "config_blob": {
+            "bytes": 160,
+            "sha256": "922684fa8af8197296be3d95b345c82497b746dcb78cebec49615c1bf3f74bf9",
+            "hex_prefix": "1a94012e63617264207b0a20202020666f6e742d66616d69",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "cards": {
+        "total": 49,
+        "by_type": {
+          "Review": 49
+        },
+        "by_queue": {
+          "Review": 49
+        },
+        "by_deck": {
+          "Japanese Grammar": {
+            "Review": 49
+          }
+        },
+        "by_note_type": {
+          "Japanese Grammar Model": 49
+        },
+        "cards_with_possible_fsrs_state": 49,
+        "card_data_keys": {
+          "pos": 49,
+          "s": 49,
+          "d": 49,
+          "dr": 49,
+          "decay": 49,
+          "lrt": 49
+        },
+        "fsrs_state_samples": [
+          {
+            "card_id": 1792668076271,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 343,
+              "s": 58.9435,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793889874
+            }
+          },
+          {
+            "card_id": 1792668076384,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 344,
+              "s": 54.4415,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793777452
+            }
+          },
+          {
+            "card_id": 1792668076480,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 345,
+              "s": 55.5386,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794147468
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total": 592,
+        "ratings": {
+          "Easy": 196,
+          "Good": 194,
+          "Hard": 51,
+          "Again": 151
+        },
+        "types": {
+          "Learning": 164,
+          "Review": 308,
+          "Relearning": 120
+        },
+        "unique_cards_reviewed": 49,
+        "review_time_ms": {
+          "min": 1905,
+          "max": 60000,
+          "average": 14002.31
+        },
+        "first_review_utc": "2026-10-22T11:43:55.964000+00:00",
+        "last_review_utc": "2026-11-25T15:38:12.083000+00:00"
+      },
+      "collection_config": {
+        "source": "normalized config key/value",
+        "entries": [
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": [
+              1
+            ]
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1200
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": -420
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": -1,
+            "mtime_secs_utc": "2026-11-25T17:25:56+00:00",
+            "value": 1795627556900
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 2
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": "noteFld"
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          }
+        ],
+        "legacy_col_conf_keys": []
+      },
+      "media": {
+        "archive_media": {
+          "manifest_status": "parse error: UnicodeDecodeError",
+          "manifest_entries": 0,
+          "total_bytes": 0,
+          "by_extension": {},
+          "audio_files": 0,
+          "image_files": 0,
+          "unmapped_archive_entries_sample": []
+        },
+        "audio_references": {
+          "unique_files_referenced": 0,
+          "total_references": 0,
+          "files": [],
+          "missing_or_unmapped_files": []
+        },
+        "image_references": {
+          "unique_files_referenced": 0,
+          "total_references": 0,
+          "files": [],
+          "missing_or_unmapped_files": []
+        },
+        "reference_counts_by_field": {}
+      },
+      "database_tables": {
+        "cards": [
+          "id",
+          "nid",
+          "did",
+          "ord",
+          "mod",
+          "usn",
+          "type",
+          "queue",
+          "due",
+          "ivl",
+          "factor",
+          "reps",
+          "lapses",
+          "left",
+          "odue",
+          "odid",
+          "flags",
+          "data"
+        ],
+        "col": [
+          "id",
+          "crt",
+          "mod",
+          "scm",
+          "ver",
+          "dty",
+          "usn",
+          "ls",
+          "conf",
+          "models",
+          "decks",
+          "dconf",
+          "tags"
+        ],
+        "config": [
+          "KEY",
+          "usn",
+          "mtime_secs",
+          "val"
+        ],
+        "deck_config": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "decks": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "common",
+          "kind"
+        ],
+        "fields": [
+          "ntid",
+          "ord",
+          "name",
+          "config"
+        ],
+        "graves": [
+          "oid",
+          "type",
+          "usn"
+        ],
+        "notes": [
+          "id",
+          "guid",
+          "mid",
+          "mod",
+          "usn",
+          "tags",
+          "flds",
+          "sfld",
+          "csum",
+          "flags",
+          "data"
+        ],
+        "notetypes": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "revlog": [
+          "id",
+          "cid",
+          "usn",
+          "ease",
+          "ivl",
+          "lastIvl",
+          "factor",
+          "time",
+          "type"
+        ],
+        "sqlite_stat1": [
+          "tbl",
+          "idx",
+          "stat"
+        ],
+        "sqlite_stat4": [
+          "tbl",
+          "idx",
+          "neq",
+          "nlt",
+          "ndlt",
+          "sample"
+        ],
+        "tags": [
+          "tag",
+          "usn",
+          "collapsed",
+          "config"
+        ],
+        "templates": [
+          "ntid",
+          "ord",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ]
+      }
+    },
+    {
+      "file": "Japanese Kanji.apkg",
+      "file_size_bytes": 9669952,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "schema_version": 18,
+        "schema_modified_epoch_ms": 1795627562955,
+        "created_utc": "2026-10-19T21:00:00+00:00",
+        "modified_utc": "2026-11-25T17:26:02.980000+00:00",
+        "version": 18
+      },
+      "totals": {
+        "notes": 1031,
+        "cards": 1031,
+        "review_history": 788,
+        "decks": 2,
+        "note_types": 1
+      },
+      "deck_source": "normalized",
+      "decks": [
+        {
+          "id": "1",
+          "name": "Default",
+          "raw_name_separator": "none",
+          "cards": 0,
+          "common_blob": {
+            "bytes": 4,
+            "sha256": "8fe546efcd4214f28b1f61e7af7c4556c71fb30268334100adffe877796bf150",
+            "hex_prefix": "08011001",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 4,
+            "sha256": "59948439065f29619ef41280cbb932be52c56d99c5966b65e0111239f098bbef",
+            "hex_prefix": "0a020801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        },
+        {
+          "id": "1792666377527",
+          "name": "Japanese Kanji",
+          "raw_name_separator": "none",
+          "cards": 1031,
+          "common_blob": {
+            "bytes": 14,
+            "sha256": "d703b044776cc0d79c5f14e4d14cbfdb117668a1c7d2307c533c4069781fe9d1",
+            "hex_prefix": "080110011824200128063899f004",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 6,
+            "sha256": "e7549a3de088ff1a46076351baabf34551b5c33e93a29b7dda3d42b502ccfce9",
+            "hex_prefix": "0a0408013801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "deck_configs": [
+        {
+          "id": "1",
+          "name": "Default",
+          "mtime_secs_utc": "2026-11-25T15:44:12+00:00",
+          "config_blob": {
+            "bytes": 217,
+            "sha256": "e86fb06ab95d640fb9234a95629e295c8179acdef7426ac53b37f954ccb13071",
+            "hex_prefix": "0a080000803f00002041120400002041221c0000803f0000",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "note_type_source": "normalized",
+      "note_types": [
+        {
+          "id": "1792666377650",
+          "name": "Japanese Kanji Model",
+          "note_count": 1031,
+          "mtime_secs_utc": "2026-11-20T14:20:25+00:00",
+          "fields": [
+            {
+              "ordinal": 0,
+              "name": "Kanji",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "0a0f36953ead8981904e43f411c9973dd38773d01586766761f15b7f5c6788f8",
+                "hex_prefix": "1a05417269616c2014489ab09ef0d6bdf58422",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 1,
+              "name": "Onyomi",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "f4577c9a41f1f9ee47627398f931d6053ede8d41f867c9389a486c6bf0348a39",
+                "hex_prefix": "1a05417269616c201448f2c4c6adf8b2a2c58d01",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 2,
+              "name": "Kunyomi",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "0ddcbecd9b928d71186ed56280e21cb4de72385dcbc86ae0ace48289ad6716af",
+                "hex_prefix": "1a05417269616c201448c99ec8eb89efae96a501",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 3,
+              "name": "Meaning",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "8f98c33af09339560771e50199d1063e47fec20cf8eccb9eb24e232c451610ca",
+                "hex_prefix": "1a05417269616c201448f9f2fddcfca7bbcc13",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 4,
+              "name": "Radical",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "78faf3745b49b58de98041e85b8d491adcf57e29bc755319c6d0d2cbc345aad6",
+                "hex_prefix": "1a05417269616c2014489aea8bee86a6cfd614",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 5,
+              "name": "StrokeCount",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "cd7ec7ef40aa7a2d0758829584b3bfd1ee52692876c3c88b801a28a6f3bc429f",
+                "hex_prefix": "1a05417269616c201448a8b1efefd6e5d3bba401",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 6,
+              "name": "ExampleWords",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "7022522ba49c852e5a6361af4f9403282a26bd3c89ebb37e38dfebfc8a2075f7",
+                "hex_prefix": "1a05417269616c201448deaed680d4f7b3faa001",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 7,
+              "name": "Notes",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "dd2c6d505e5c80f3f62103facc7a5bae5d2cfb2e8d99b1e56284f3ef02045540",
+                "hex_prefix": "1a05417269616c201448f1ee8dfcf3abda8a40",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 8,
+              "name": "JLPT",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "7506acc8fbd53b6acbf86de36f19c61c14f6e52a93960544cf05ef486b92462c",
+                "hex_prefix": "1a05417269616c201448ffcee796cee3abdd64",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 9,
+              "name": "Audio",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "5e6c539050f61f549e50c39b615140b31ca316148852e125df729c85200e8307",
+                "hex_prefix": "1a05417269616c201448e2cfc4cc88f5d6dab301",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "templates": [
+            {
+              "ordinal": 0,
+              "name": "Card 1",
+              "config_blob": {
+                "bytes": 178,
+                "sha256": "de8f023d0280821e817c296b1c8f1a9efe33c4967015907e2623095a18dbb4a0",
+                "hex_prefix": "0a1f3c64697620636c6173733d226a70223e7b7b4b616e6a",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "config_blob": {
+            "bytes": 160,
+            "sha256": "667c9735ed8a07f8b04e18a5065a22fac731e361cd6e37f5a1f78f0d41758579",
+            "hex_prefix": "1a94012e63617264207b0a20202020666f6e742d66616d69",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "cards": {
+        "total": 1031,
+        "by_type": {
+          "Review": 92,
+          "New": 939
+        },
+        "by_queue": {
+          "Review": 92,
+          "New": 939
+        },
+        "by_deck": {
+          "Japanese Kanji": {
+            "Review": 92,
+            "New": 939
+          }
+        },
+        "by_note_type": {
+          "Japanese Kanji Model": 1031
+        },
+        "cards_with_possible_fsrs_state": 92,
+        "card_data_keys": {
+          "pos": 92,
+          "s": 92,
+          "d": 92,
+          "dr": 92,
+          "decay": 92,
+          "lrt": 92
+        },
+        "fsrs_state_samples": [
+          {
+            "card_id": 1792666377840,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 257,
+              "s": 121.9035,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795184385
+            }
+          },
+          {
+            "card_id": 1792666377905,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 258,
+              "s": 49.5432,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793719253
+            }
+          },
+          {
+            "card_id": 1792666377971,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 259,
+              "s": 54.4415,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793777009
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total": 788,
+        "ratings": {
+          "Again": 188,
+          "Easy": 343,
+          "Hard": 45,
+          "Good": 212
+        },
+        "types": {
+          "Learning": 251,
+          "Review": 412,
+          "Relearning": 125
+        },
+        "unique_cards_reviewed": 92,
+        "review_time_ms": {
+          "min": 1457,
+          "max": 60000,
+          "average": 8084.2
+        },
+        "first_review_utc": "2026-10-22T10:58:10.173000+00:00",
+        "last_review_utc": "2026-11-25T15:39:35.454000+00:00"
+      },
+      "collection_config": {
+        "source": "normalized config key/value",
+        "entries": [
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": [
+              1
+            ]
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1200
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": -420
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": -1,
+            "mtime_secs_utc": "2026-11-25T17:26:02+00:00",
+            "value": 1795627562957
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 2
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": "noteFld"
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          }
+        ],
+        "legacy_col_conf_keys": []
+      },
+      "media": {
+        "archive_media": {
+          "manifest_status": "parse error: UnicodeDecodeError",
+          "manifest_entries": 0,
+          "total_bytes": 0,
+          "by_extension": {},
+          "audio_files": 0,
+          "image_files": 0,
+          "unmapped_archive_entries_sample": [
+            {
+              "archive_key": "0",
+              "bytes": 7624
+            },
+            {
+              "archive_key": "1",
+              "bytes": 10649
+            },
+            {
+              "archive_key": "2",
+              "bytes": 9673
+            },
+            {
+              "archive_key": "3",
+              "bytes": 9461
+            },
+            {
+              "archive_key": "4",
+              "bytes": 8473
+            },
+            {
+              "archive_key": "5",
+              "bytes": 8545
+            },
+            {
+              "archive_key": "6",
+              "bytes": 9881
+            },
+            {
+              "archive_key": "7",
+              "bytes": 10132
+            },
+            {
+              "archive_key": "8",
+              "bytes": 9192
+            },
+            {
+              "archive_key": "9",
+              "bytes": 7107
+            },
+            {
+              "archive_key": "10",
+              "bytes": 6549
+            },
+            {
+              "archive_key": "11",
+              "bytes": 9163
+            },
+            {
+              "archive_key": "12",
+              "bytes": 12693
+            },
+            {
+              "archive_key": "13",
+              "bytes": 9163
+            },
+            {
+              "archive_key": "14",
+              "bytes": 8466
+            },
+            {
+              "archive_key": "15",
+              "bytes": 11248
+            },
+            {
+              "archive_key": "16",
+              "bytes": 9192
+            },
+            {
+              "archive_key": "17",
+              "bytes": 9560
+            },
+            {
+              "archive_key": "18",
+              "bytes": 9304
+            },
+            {
+              "archive_key": "19",
+              "bytes": 10018
+            }
+          ]
+        },
+        "audio_references": {
+          "unique_files_referenced": 1031,
+          "total_references": 1031,
+          "files": [
+            {
+              "filename": "sapi5com-ccc03a7e-a688ba8f-fc529ed1-24f0fe89-6be7a29f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9236a8c5-7e19b979-aa32d0a3-f3ce8285-e221ecc8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-cf897b80-5f698b19-b9a63a4d-2fbfa734-a0750942.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7c9cfd47-00527dc6-efe4aa0f-8f457456-9219cbe8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-df7eb5ff-03d17a13-11a75a1d-f91ff234-4abfcc06.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-811aaecd-1fd9f090-24c05bac-d64e2f9f-08cba8ef.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bfd0960b-1255ffab-2ac95e3b-87889ae7-f3040f2d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bc2d4d65-2feb6d7e-7ab15542-e05388eb-7c06df07.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0777b399-f1e3dbf3-49c8bb78-e77625e1-7925aebc.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-8ecc2d5c-977f7a19-b96162b8-7e221b1e-5fdd9040.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-36f822d3-bf824d6c-eab486e9-9895d689-1811b492.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-cd9d4062-13f078d3-829dc816-9335ebca-d808f6f5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0d5e62c4-48e2edd1-273dccc5-c5ec51dd-22da8339.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-fe8c8ec9-c08203d2-676dd014-852db946-9f6b38a4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-1e7fa104-2e359790-663c4fb3-3691b749-48255101.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-166a1285-714d5e95-6ec57ccd-09cc0250-964337ad.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dfe12ef7-d0d6c773-c91a1638-4a19993f-946feaeb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a59a3df9-87470dca-6d6dc1c3-ce1fc349-97af8cd8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9f9a0d12-f4b69dda-1a7b47d1-484265c3-ed8c1a83.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0c794d0f-d5073b8d-5232867d-25a55b2e-91ca6ac4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-36176348-62544017-ee1a0fa5-198c1e7d-930104af.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-884dd90d-cab37c34-69f32e86-fa9d3bec-859111d2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9829c9b1-eb6aa7f5-a4c6b8f5-2c3bfb9b-37baff91.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7fdb9a65-9d13370f-38250e6c-c3315bb5-b346bce8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ba4bbba7-13868664-21cd06e6-0eddfac2-43dbcf6e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-8d190b3a-a8b217f3-70892fa3-3cca0cf7-5bab988c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-aee88d77-d19dfa42-7d8ee1a5-d7f07c6c-77ce8ec4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-10dc6124-8cd72d23-95a3572a-b6185aa6-73ff810e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-b9f4bcf9-177dbad8-a4441dab-acb9ebe9-50997999.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4f000301-84ae0a3e-c1b8e6df-49a5ad87-e745f4d3.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-39e66691-6db22be0-f1684c44-c48b3840-87c8779c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-25695cf1-88543572-be5b7380-f63c39e8-682f5e91.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dd93c210-d6f64af7-7971e0a7-e00a0cf5-49a63309.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-aee23987-8485d004-fdf735cd-ecf26373-8fa6da08.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-59119171-9995a2c7-933f7aff-6d86142d-cf1771bd.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-be64b00d-5984a8ff-2a9d07cb-c09f20f5-96516c36.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-aac4859f-400f971f-ff4ddcd5-6875f3d0-757e4cfb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4d2b4a6d-5b9468ca-853fc315-e6884aae-a7c6fb54.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-121c9d79-4a148510-a3fa477b-5b0a499c-0a667b62.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ba278c21-4f933662-c7090d5b-92d030df-05c61fac.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-be80f6ad-e7181c17-01605462-4b3f8adb-c9683b91.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9e9b5888-3ca4960e-b819d674-44cc0f48-e7ac6cb7.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-5f7d4367-6a5ee625-fb5bdfc4-358a9463-66c0cf61.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dc46b769-718837eb-013a6e9d-2340b2ec-a3cc86f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-df222fbe-fcd248b7-721af041-13659ed9-71f7f12b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-897673a9-aae8716d-76b9c15d-f4c3eceb-459ca4ae.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-2e67551d-1b4a26ac-058015f8-888c7a9b-feac327e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e9563895-00d17f57-5c60eba8-232bf184-a1bb6864.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-461274c4-45eb3597-7538870b-c4b1463a-a238e2c9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-234f683e-eae27db9-4aa05591-e88c1ab3-03ea70ee.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-26e3f03d-a6e329cb-3506cf4b-7b1f964f-6d9a2895.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3ae2e26b-a78a336f-142038ff-7885d79f-99b047e0.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7bdf5691-c1afd557-bd1cb37d-ebcfe063-6a829813.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4ae4edee-a7afa1f4-5847b1be-828e1bcd-b657bd66.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a69e132c-49376abd-90976e6d-c80f56a6-21d98eb2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7479ad93-c6528381-a24fe49e-2992c152-10898a6b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-075e52f9-44bc9c87-42a4516f-e7465e8c-1b7cbfc1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e63a50db-7f5d5e0c-60467ad0-ddd53ae7-d1ae02b4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-063cfff2-eef6fc72-c4d1c8e5-10fc4fac-432762b5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-b63a6bb8-508c0e34-70d5d09d-69bba61d-faf4f7d1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-413f39ed-cb1154cd-994ecd9d-ea4773cf-4a4d874b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bb5701bd-5619ed95-d545d098-9541aeb4-d1034eb4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ed82829d-5acbd3f0-a0a59069-edaf9227-4221501e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-8c3ff974-17d4c94f-65c8cb7d-9e0a5018-b6176bc8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-5604f4a8-620b2ef9-8689c553-5fab7118-dba5decc.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-69012fd7-c7ddd167-cab9cf21-5f0e9c12-84f95ac5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-07181e68-e1b0219b-97fd1623-b8e11c03-9f31fa0a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7abe96b4-16c4a2a6-54b7ce8f-72b12be6-a553da31.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e9cc7cac-d71e961b-fc121240-af09eca6-488db071.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-87e9653c-4b3d5e90-a94081e0-08983c42-bfffe3b7.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a501c435-4a87877b-0cb8199b-e1efbe26-8050af35.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-50bb93b9-589488e6-97237f14-6ffaef56-2130ccc4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-6cb22461-18085d1c-995d15cb-e8af137d-5f28e172.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-c9b5b259-10a011e3-13d8bc19-99220e7e-44d433cb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ff0b17ae-4eb261eb-a065aa0d-b5aec825-aa79c4ec.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-1ce83151-8d50d2ac-e7855a82-e5635d9e-7b0f19d9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-6f4ae487-f9ed6fec-cba53808-e1431e27-47916c8a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0f6479af-f2fbfb32-0c92530b-ad5f26a0-9df54ad5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-59eda05d-03e7354d-fb1d371b-6dc77990-d40b226d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e92a6652-355a6831-d3ccc7ce-47205847-1b49b8fe.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-450c67f6-98f959e9-95e436c8-a3d6ba72-acc6be8e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dc577cb0-f181f35c-c01b695c-d80acbed-d2f6cf42.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-95997a1f-5eec869e-c2193712-8c64e702-335f9f54.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d8c59714-c4e991cb-5f237814-b1777d83-190ad4a5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dc3fdc90-a14fe01f-c7739f93-ae67e90a-c2cf4028.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-de837b1f-e2744078-73da1e12-f2bef57b-cc5e405e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-197f93ad-eaabf9c7-baf9bd35-5cc828b8-7f60701c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-09da5479-80c47c24-bfeee237-34ba1a66-832387e6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ae28468b-68481e09-ea394eec-2c51cec1-643d496f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3f844f96-4cab59fb-701b59a2-67120df0-8bdf27dc.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d853fffa-20ef055b-a5257eb2-d97e10d6-d17bd15f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-29d357b1-97beac97-9110c589-186efce6-5e4a91ae.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-73b70507-cb3609a8-60d51e5d-6e485169-9cf6ca24.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4dfc497f-91c7d140-c47b8a9a-e7943c6d-852d9f37.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bd623a9e-550865d4-59f11a5c-b7c3a0b9-ee285d60.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-2667c4ce-8c505497-3ce6a504-f7323ff1-e26eeff1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-37b2acec-58a72643-64cae8d0-9afdb683-4736a35c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a0f40cc7-6e18fea6-4eb52539-0785384d-33a2a63e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-c0643a67-019aef1e-48c047b6-d322c231-110d9648.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-b7adc72c-b7f0ce33-3ec9b3bc-e5912d79-2939727d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            }
+          ],
+          "missing_or_unmapped_files": [
+            "sapi5com-ccc03a7e-a688ba8f-fc529ed1-24f0fe89-6be7a29f.mp3",
+            "sapi5com-9236a8c5-7e19b979-aa32d0a3-f3ce8285-e221ecc8.mp3",
+            "sapi5com-cf897b80-5f698b19-b9a63a4d-2fbfa734-a0750942.mp3",
+            "sapi5com-7c9cfd47-00527dc6-efe4aa0f-8f457456-9219cbe8.mp3",
+            "sapi5com-df7eb5ff-03d17a13-11a75a1d-f91ff234-4abfcc06.mp3",
+            "sapi5com-811aaecd-1fd9f090-24c05bac-d64e2f9f-08cba8ef.mp3",
+            "sapi5com-bfd0960b-1255ffab-2ac95e3b-87889ae7-f3040f2d.mp3",
+            "sapi5com-bc2d4d65-2feb6d7e-7ab15542-e05388eb-7c06df07.mp3",
+            "sapi5com-0777b399-f1e3dbf3-49c8bb78-e77625e1-7925aebc.mp3",
+            "sapi5com-8ecc2d5c-977f7a19-b96162b8-7e221b1e-5fdd9040.mp3",
+            "sapi5com-36f822d3-bf824d6c-eab486e9-9895d689-1811b492.mp3",
+            "sapi5com-cd9d4062-13f078d3-829dc816-9335ebca-d808f6f5.mp3",
+            "sapi5com-0d5e62c4-48e2edd1-273dccc5-c5ec51dd-22da8339.mp3",
+            "sapi5com-fe8c8ec9-c08203d2-676dd014-852db946-9f6b38a4.mp3",
+            "sapi5com-1e7fa104-2e359790-663c4fb3-3691b749-48255101.mp3",
+            "sapi5com-166a1285-714d5e95-6ec57ccd-09cc0250-964337ad.mp3",
+            "sapi5com-dfe12ef7-d0d6c773-c91a1638-4a19993f-946feaeb.mp3",
+            "sapi5com-a59a3df9-87470dca-6d6dc1c3-ce1fc349-97af8cd8.mp3",
+            "sapi5com-9f9a0d12-f4b69dda-1a7b47d1-484265c3-ed8c1a83.mp3",
+            "sapi5com-0c794d0f-d5073b8d-5232867d-25a55b2e-91ca6ac4.mp3",
+            "sapi5com-36176348-62544017-ee1a0fa5-198c1e7d-930104af.mp3",
+            "sapi5com-884dd90d-cab37c34-69f32e86-fa9d3bec-859111d2.mp3",
+            "sapi5com-9829c9b1-eb6aa7f5-a4c6b8f5-2c3bfb9b-37baff91.mp3",
+            "sapi5com-7fdb9a65-9d13370f-38250e6c-c3315bb5-b346bce8.mp3",
+            "sapi5com-ba4bbba7-13868664-21cd06e6-0eddfac2-43dbcf6e.mp3",
+            "sapi5com-8d190b3a-a8b217f3-70892fa3-3cca0cf7-5bab988c.mp3",
+            "sapi5com-aee88d77-d19dfa42-7d8ee1a5-d7f07c6c-77ce8ec4.mp3",
+            "sapi5com-10dc6124-8cd72d23-95a3572a-b6185aa6-73ff810e.mp3",
+            "sapi5com-b9f4bcf9-177dbad8-a4441dab-acb9ebe9-50997999.mp3",
+            "sapi5com-4f000301-84ae0a3e-c1b8e6df-49a5ad87-e745f4d3.mp3",
+            "sapi5com-39e66691-6db22be0-f1684c44-c48b3840-87c8779c.mp3",
+            "sapi5com-25695cf1-88543572-be5b7380-f63c39e8-682f5e91.mp3",
+            "sapi5com-dd93c210-d6f64af7-7971e0a7-e00a0cf5-49a63309.mp3",
+            "sapi5com-aee23987-8485d004-fdf735cd-ecf26373-8fa6da08.mp3",
+            "sapi5com-59119171-9995a2c7-933f7aff-6d86142d-cf1771bd.mp3",
+            "sapi5com-be64b00d-5984a8ff-2a9d07cb-c09f20f5-96516c36.mp3",
+            "sapi5com-aac4859f-400f971f-ff4ddcd5-6875f3d0-757e4cfb.mp3",
+            "sapi5com-4d2b4a6d-5b9468ca-853fc315-e6884aae-a7c6fb54.mp3",
+            "sapi5com-121c9d79-4a148510-a3fa477b-5b0a499c-0a667b62.mp3",
+            "sapi5com-ba278c21-4f933662-c7090d5b-92d030df-05c61fac.mp3",
+            "sapi5com-be80f6ad-e7181c17-01605462-4b3f8adb-c9683b91.mp3",
+            "sapi5com-9e9b5888-3ca4960e-b819d674-44cc0f48-e7ac6cb7.mp3",
+            "sapi5com-5f7d4367-6a5ee625-fb5bdfc4-358a9463-66c0cf61.mp3",
+            "sapi5com-dc46b769-718837eb-013a6e9d-2340b2ec-a3cc86f6.mp3",
+            "sapi5com-df222fbe-fcd248b7-721af041-13659ed9-71f7f12b.mp3",
+            "sapi5com-897673a9-aae8716d-76b9c15d-f4c3eceb-459ca4ae.mp3",
+            "sapi5com-2e67551d-1b4a26ac-058015f8-888c7a9b-feac327e.mp3",
+            "sapi5com-e9563895-00d17f57-5c60eba8-232bf184-a1bb6864.mp3",
+            "sapi5com-461274c4-45eb3597-7538870b-c4b1463a-a238e2c9.mp3",
+            "sapi5com-234f683e-eae27db9-4aa05591-e88c1ab3-03ea70ee.mp3",
+            "sapi5com-26e3f03d-a6e329cb-3506cf4b-7b1f964f-6d9a2895.mp3",
+            "sapi5com-3ae2e26b-a78a336f-142038ff-7885d79f-99b047e0.mp3",
+            "sapi5com-7bdf5691-c1afd557-bd1cb37d-ebcfe063-6a829813.mp3",
+            "sapi5com-4ae4edee-a7afa1f4-5847b1be-828e1bcd-b657bd66.mp3",
+            "sapi5com-a69e132c-49376abd-90976e6d-c80f56a6-21d98eb2.mp3",
+            "sapi5com-7479ad93-c6528381-a24fe49e-2992c152-10898a6b.mp3",
+            "sapi5com-075e52f9-44bc9c87-42a4516f-e7465e8c-1b7cbfc1.mp3",
+            "sapi5com-e63a50db-7f5d5e0c-60467ad0-ddd53ae7-d1ae02b4.mp3",
+            "sapi5com-063cfff2-eef6fc72-c4d1c8e5-10fc4fac-432762b5.mp3",
+            "sapi5com-b63a6bb8-508c0e34-70d5d09d-69bba61d-faf4f7d1.mp3",
+            "sapi5com-413f39ed-cb1154cd-994ecd9d-ea4773cf-4a4d874b.mp3",
+            "sapi5com-bb5701bd-5619ed95-d545d098-9541aeb4-d1034eb4.mp3",
+            "sapi5com-ed82829d-5acbd3f0-a0a59069-edaf9227-4221501e.mp3",
+            "sapi5com-8c3ff974-17d4c94f-65c8cb7d-9e0a5018-b6176bc8.mp3",
+            "sapi5com-5604f4a8-620b2ef9-8689c553-5fab7118-dba5decc.mp3",
+            "sapi5com-69012fd7-c7ddd167-cab9cf21-5f0e9c12-84f95ac5.mp3",
+            "sapi5com-07181e68-e1b0219b-97fd1623-b8e11c03-9f31fa0a.mp3",
+            "sapi5com-7abe96b4-16c4a2a6-54b7ce8f-72b12be6-a553da31.mp3",
+            "sapi5com-e9cc7cac-d71e961b-fc121240-af09eca6-488db071.mp3",
+            "sapi5com-87e9653c-4b3d5e90-a94081e0-08983c42-bfffe3b7.mp3",
+            "sapi5com-a501c435-4a87877b-0cb8199b-e1efbe26-8050af35.mp3",
+            "sapi5com-50bb93b9-589488e6-97237f14-6ffaef56-2130ccc4.mp3",
+            "sapi5com-6cb22461-18085d1c-995d15cb-e8af137d-5f28e172.mp3",
+            "sapi5com-c9b5b259-10a011e3-13d8bc19-99220e7e-44d433cb.mp3",
+            "sapi5com-ff0b17ae-4eb261eb-a065aa0d-b5aec825-aa79c4ec.mp3",
+            "sapi5com-1ce83151-8d50d2ac-e7855a82-e5635d9e-7b0f19d9.mp3",
+            "sapi5com-6f4ae487-f9ed6fec-cba53808-e1431e27-47916c8a.mp3",
+            "sapi5com-0f6479af-f2fbfb32-0c92530b-ad5f26a0-9df54ad5.mp3",
+            "sapi5com-59eda05d-03e7354d-fb1d371b-6dc77990-d40b226d.mp3",
+            "sapi5com-e92a6652-355a6831-d3ccc7ce-47205847-1b49b8fe.mp3",
+            "sapi5com-450c67f6-98f959e9-95e436c8-a3d6ba72-acc6be8e.mp3",
+            "sapi5com-dc577cb0-f181f35c-c01b695c-d80acbed-d2f6cf42.mp3",
+            "sapi5com-95997a1f-5eec869e-c2193712-8c64e702-335f9f54.mp3",
+            "sapi5com-d8c59714-c4e991cb-5f237814-b1777d83-190ad4a5.mp3",
+            "sapi5com-dc3fdc90-a14fe01f-c7739f93-ae67e90a-c2cf4028.mp3",
+            "sapi5com-de837b1f-e2744078-73da1e12-f2bef57b-cc5e405e.mp3",
+            "sapi5com-197f93ad-eaabf9c7-baf9bd35-5cc828b8-7f60701c.mp3",
+            "sapi5com-09da5479-80c47c24-bfeee237-34ba1a66-832387e6.mp3",
+            "sapi5com-ae28468b-68481e09-ea394eec-2c51cec1-643d496f.mp3",
+            "sapi5com-3f844f96-4cab59fb-701b59a2-67120df0-8bdf27dc.mp3",
+            "sapi5com-d853fffa-20ef055b-a5257eb2-d97e10d6-d17bd15f.mp3",
+            "sapi5com-29d357b1-97beac97-9110c589-186efce6-5e4a91ae.mp3",
+            "sapi5com-73b70507-cb3609a8-60d51e5d-6e485169-9cf6ca24.mp3",
+            "sapi5com-4dfc497f-91c7d140-c47b8a9a-e7943c6d-852d9f37.mp3",
+            "sapi5com-bd623a9e-550865d4-59f11a5c-b7c3a0b9-ee285d60.mp3",
+            "sapi5com-2667c4ce-8c505497-3ce6a504-f7323ff1-e26eeff1.mp3",
+            "sapi5com-37b2acec-58a72643-64cae8d0-9afdb683-4736a35c.mp3",
+            "sapi5com-a0f40cc7-6e18fea6-4eb52539-0785384d-33a2a63e.mp3",
+            "sapi5com-c0643a67-019aef1e-48c047b6-d322c231-110d9648.mp3",
+            "sapi5com-b7adc72c-b7f0ce33-3ec9b3bc-e5912d79-2939727d.mp3"
+          ]
+        },
+        "image_references": {
+          "unique_files_referenced": 0,
+          "total_references": 0,
+          "files": [],
+          "missing_or_unmapped_files": []
+        },
+        "reference_counts_by_field": {
+          "Audio": {
+            "audio": 1031
+          }
+        }
+      },
+      "database_tables": {
+        "cards": [
+          "id",
+          "nid",
+          "did",
+          "ord",
+          "mod",
+          "usn",
+          "type",
+          "queue",
+          "due",
+          "ivl",
+          "factor",
+          "reps",
+          "lapses",
+          "left",
+          "odue",
+          "odid",
+          "flags",
+          "data"
+        ],
+        "col": [
+          "id",
+          "crt",
+          "mod",
+          "scm",
+          "ver",
+          "dty",
+          "usn",
+          "ls",
+          "conf",
+          "models",
+          "decks",
+          "dconf",
+          "tags"
+        ],
+        "config": [
+          "KEY",
+          "usn",
+          "mtime_secs",
+          "val"
+        ],
+        "deck_config": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "decks": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "common",
+          "kind"
+        ],
+        "fields": [
+          "ntid",
+          "ord",
+          "name",
+          "config"
+        ],
+        "graves": [
+          "oid",
+          "type",
+          "usn"
+        ],
+        "notes": [
+          "id",
+          "guid",
+          "mid",
+          "mod",
+          "usn",
+          "tags",
+          "flds",
+          "sfld",
+          "csum",
+          "flags",
+          "data"
+        ],
+        "notetypes": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "revlog": [
+          "id",
+          "cid",
+          "usn",
+          "ease",
+          "ivl",
+          "lastIvl",
+          "factor",
+          "time",
+          "type"
+        ],
+        "sqlite_stat1": [
+          "tbl",
+          "idx",
+          "stat"
+        ],
+        "sqlite_stat4": [
+          "tbl",
+          "idx",
+          "neq",
+          "nlt",
+          "ndlt",
+          "sample"
+        ],
+        "tags": [
+          "tag",
+          "usn",
+          "collapsed",
+          "config"
+        ],
+        "templates": [
+          "ntid",
+          "ord",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ]
+      }
+    },
+    {
+      "file": "Japanese Vocabulary.apkg",
+      "file_size_bytes": 2418656,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "schema_version": 18,
+        "schema_modified_epoch_ms": 1795627259743,
+        "created_utc": "2026-10-19T21:00:00+00:00",
+        "modified_utc": "2026-11-25T17:20:59.791000+00:00",
+        "version": 18
+      },
+      "totals": {
+        "notes": 198,
+        "cards": 198,
+        "review_history": 2350,
+        "decks": 2,
+        "note_types": 1
+      },
+      "deck_source": "normalized",
+      "decks": [
+        {
+          "id": "1",
+          "name": "Default",
+          "raw_name_separator": "none",
+          "cards": 0,
+          "common_blob": {
+            "bytes": 4,
+            "sha256": "8fe546efcd4214f28b1f61e7af7c4556c71fb30268334100adffe877796bf150",
+            "hex_prefix": "08011001",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 4,
+            "sha256": "59948439065f29619ef41280cbb932be52c56d99c5966b65e0111239f098bbef",
+            "hex_prefix": "0a020801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        },
+        {
+          "id": "1792647885294",
+          "name": "Japanese Vocabulary",
+          "raw_name_separator": "none",
+          "cards": 198,
+          "common_blob": {
+            "bytes": 10,
+            "sha256": "8115848a0825cda4f6c418661f6f1ae00a2e723b3b188676487bdf986ea05d96",
+            "hex_prefix": "18242002281638f7e212",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 8,
+            "sha256": "b2129db95dca337a80a66fca04e8f23368182b49cd53c520c075ec680272fc91",
+            "hex_prefix": "0a06080110073802",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "deck_configs": [
+        {
+          "id": "1",
+          "name": "Default",
+          "mtime_secs_utc": "2026-11-25T15:44:12+00:00",
+          "config_blob": {
+            "bytes": 217,
+            "sha256": "e86fb06ab95d640fb9234a95629e295c8179acdef7426ac53b37f954ccb13071",
+            "hex_prefix": "0a080000803f00002041120400002041221c0000803f0000",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "note_type_source": "normalized",
+      "note_types": [
+        {
+          "id": "1792647885287",
+          "name": "Japanese Vocabulary Model++",
+          "note_count": 198,
+          "mtime_secs_utc": "2026-10-22T05:50:59+00:00",
+          "fields": [
+            {
+              "ordinal": 0,
+              "name": "Japanese",
+              "config_blob": {
+                "bytes": 25,
+                "sha256": "e8f017812d3d8a30010f5de55dcec7ee1ec1e748f92822e9bfda4e842437568a",
+                "hex_prefix": "1a065461686f6d612014fa0f0c7b226d65646961223a5b5d",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 1,
+              "name": "Reading",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 2,
+              "name": "Vietnamese",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 3,
+              "name": "Example",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 4,
+              "name": "ExampleMeaning",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 5,
+              "name": "Notes",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 6,
+              "name": "Radicals",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 7,
+              "name": "Mnemonics",
+              "config_blob": {
+                "bytes": 34,
+                "sha256": "df95c0d15ac0a12f250588996ea3a40e36c33972022459eef48e18293e742e5b",
+                "hex_prefix": "1a0f4c696265726174696f6e2053616e732014fa0f0c7b22",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 8,
+              "name": "Audio",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "5e17f1e8cbfee42d4714c1e5d0dab22c2b17f8989af1dcb8610c9afb7eec620f",
+                "hex_prefix": "1a05417269616c201448e0e5cc93aeccfa93d001",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 9,
+              "name": "ExampleAudio",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "96c3d5e3c5da54606befe745d3b52040d066d7d0e83fb5ae0afb8ebda4eeb5b2",
+                "hex_prefix": "1a05417269616c201448dcd798f4fcccfbcca201",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "templates": [
+            {
+              "ordinal": 0,
+              "name": "Japanese to Vietnamese",
+              "config_blob": {
+                "bytes": 1140,
+                "sha256": "b9ff61cf644c2d97ba08648058ed2c8ffc1cbfd3c42481cb776c959ab49eb702",
+                "hex_prefix": "0a233c64697620636c6173733d226a70223e7b7b4a617061",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "config_blob": {
+            "bytes": 1696,
+            "sha256": "3d0f655b9309c40cd64a560d7718c805aebfe7385268497ae67fedb1f93d942b",
+            "hex_prefix": "1aad0b0a2020202020202020202020202e63617264207b0a",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "cards": {
+        "total": 198,
+        "by_type": {
+          "Review": 115,
+          "New": 83
+        },
+        "by_queue": {
+          "Review": 115,
+          "New": 83
+        },
+        "by_deck": {
+          "Japanese Vocabulary": {
+            "Review": 115,
+            "New": 83
+          }
+        },
+        "by_note_type": {
+          "Japanese Vocabulary Model++": 198
+        },
+        "cards_with_possible_fsrs_state": 115,
+        "card_data_keys": {
+          "pos": 115,
+          "s": 115,
+          "d": 115,
+          "dr": 115,
+          "decay": 115,
+          "lrt": 115
+        },
+        "fsrs_state_samples": [
+          {
+            "card_id": 1792647728465,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 58.9435,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793892171
+            }
+          },
+          {
+            "card_id": 1792647728467,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 9.5307,
+              "d": 9.809,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794927829
+            }
+          },
+          {
+            "card_id": 1792647728469,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 51.0586,
+              "d": 6.058,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795277327
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total": 2350,
+        "ratings": {
+          "Easy": 474,
+          "Good": 558,
+          "Hard": 254,
+          "Again": 1064
+        },
+        "types": {
+          "Learning": 590,
+          "Review": 816,
+          "Relearning": 944
+        },
+        "unique_cards_reviewed": 115,
+        "review_time_ms": {
+          "min": 1323,
+          "max": 60000,
+          "average": 11601.09
+        },
+        "first_review_utc": "2026-10-22T05:56:45.729000+00:00",
+        "last_review_utc": "2026-11-25T15:55:15.630000+00:00"
+      },
+      "collection_config": {
+        "source": "normalized config key/value",
+        "entries": [
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": [
+              1
+            ]
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1200
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": -420
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": -1,
+            "mtime_secs_utc": "2026-11-25T17:20:59+00:00",
+            "value": 1795627259750
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 2
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": "noteFld"
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          }
+        ],
+        "legacy_col_conf_keys": []
+      },
+      "media": {
+        "archive_media": {
+          "manifest_status": "parse error: UnicodeDecodeError",
+          "manifest_entries": 0,
+          "total_bytes": 0,
+          "by_extension": {},
+          "audio_files": 0,
+          "image_files": 0,
+          "unmapped_archive_entries_sample": [
+            {
+              "archive_key": "0",
+              "bytes": 10781
+            },
+            {
+              "archive_key": "1",
+              "bytes": 10280
+            },
+            {
+              "archive_key": "2",
+              "bytes": 13571
+            },
+            {
+              "archive_key": "3",
+              "bytes": 11269
+            },
+            {
+              "archive_key": "4",
+              "bytes": 10239
+            },
+            {
+              "archive_key": "5",
+              "bytes": 12091
+            },
+            {
+              "archive_key": "6",
+              "bytes": 10904
+            },
+            {
+              "archive_key": "7",
+              "bytes": 13999
+            },
+            {
+              "archive_key": "8",
+              "bytes": 10712
+            },
+            {
+              "archive_key": "9",
+              "bytes": 12661
+            },
+            {
+              "archive_key": "10",
+              "bytes": 8880
+            },
+            {
+              "archive_key": "11",
+              "bytes": 10622
+            },
+            {
+              "archive_key": "12",
+              "bytes": 10865
+            },
+            {
+              "archive_key": "13",
+              "bytes": 13358
+            },
+            {
+              "archive_key": "14",
+              "bytes": 8836
+            },
+            {
+              "archive_key": "15",
+              "bytes": 8686
+            },
+            {
+              "archive_key": "16",
+              "bytes": 10518
+            },
+            {
+              "archive_key": "17",
+              "bytes": 10879
+            },
+            {
+              "archive_key": "18",
+              "bytes": 13271
+            },
+            {
+              "archive_key": "19",
+              "bytes": 13592
+            }
+          ]
+        },
+        "audio_references": {
+          "unique_files_referenced": 198,
+          "total_references": 198,
+          "files": [
+            {
+              "filename": "sapi5js-34e80d47-d6a7d174-9338e03f-23b6ae76-ed54197c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e5795491-eded7161-b56675ec-01cb9264-f5e7d711.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-adaa958f-df017dbe-0f6aadb6-8bc0dee5-5f4d2ddd.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-ff99687f-26ff06c8-829c0967-1883b1f2-ec2f2ab4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-add25c51-c62c6070-d9d56d34-48507175-79ae481f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-b445bb8f-30c674ef-33a2eadf-01fcf32a-1621d5ce.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-18599a02-d29a28d4-54b0353c-9f3a2961-f7ac8edc.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-fd986c7d-2195afa0-ac21e7cc-204c4231-29c68554.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-c0787465-28c57799-374ae1c2-7150fef4-62516175.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-de4baa1a-c22440a0-ba860c95-9682c047-ea6e3c1c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-bdd9e265-a979c362-86665ce6-95bbcabb-93d04231.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-3748635d-c901bef4-a2b93317-f69c2d61-d74f0809.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-4756e3d3-d9bba9ab-b036fbce-7ab4b2f3-adf8826e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-a1cf3ef1-b6c8e8b8-76fdeae1-cb709767-a8c3bad2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-70c9e4f9-bac98d2e-b512c79a-0b81e962-b4938729.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-cd28a96c-0e1099bf-ea4e3b84-72427ae4-33db7d41.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-cdba479b-c188d32a-d05f9d05-a2bb898a-718967ce.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-fad9eabc-1d8e2137-6a4f51dc-cddf9724-87196c7e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-3d138388-ef34c112-57eb06dd-8b37857b-7a043f85.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-06f6a270-607a41be-94bdc0bc-ef52fef3-7094536b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-5aae9f9f-ed76ed54-ebe74e54-540587d8-d6efb3c1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-632fcdad-329c5e7e-249fb210-c5132dc4-cafb5f7c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-00edf197-1bdd64d3-51edff12-df8a58e0-f3ea65de.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e3c68dc9-adcd2738-ec70b7bd-d1d326d5-2136e29e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-5f12a8c1-fcc776f9-d97fe8d0-d43b1a54-a45cd356.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-550ebd71-ffd08740-a6d9b952-af79f2d4-db96597a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-075cac8a-7cd12709-95e99f86-e58fb39d-08780cc8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-77bcfdfa-5e6a8b40-cb3b4616-7e45d450-ed443b77.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-16f8e33c-43237f20-35b8b0f9-da31591e-424affc4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-bea8a4a8-bedb84dc-94db91c5-446137d8-27e01cec.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-b8e2cbf1-86113eb2-8c4f0818-a8b6a04d-d332e9d8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-fa2d2b83-963f1bf0-03c64360-50e0e698-30d108d6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-c2dcebf7-302791f5-b0487264-b9381ef9-52ef399f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-d18984e4-1efac2db-44abf420-ad6e71e4-4d843e35.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-ca82ccd1-40cc340e-d404ef56-73d47539-4c2ace7f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-a453b102-b56d5037-3672c919-df32d3de-f6b0a6f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-01cfccd9-c51a5553-bbe68622-b4f10a29-269d4015.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-9891771a-1cfcf548-59d6ef03-a448b615-dcfb7846.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-5aa26057-f552cf98-1a9482cf-7e88bce6-a7c37ded.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-326bc909-8f2012a3-3c06da42-6b294f6d-66632f61.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-c65b9fcc-582f2476-5a447a86-676020be-5f8b82eb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-007bf692-51cd786e-77eb505c-1c76bf76-93dec641.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e3f74005-af636b3f-7ead5634-8009352d-5f716219.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-4ed4be75-5fcbd198-56251f70-f41a8f26-dc96ddec.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-1ca457bc-fffb7a77-f6c78bd3-66b54f23-4a1168ad.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e1e3830b-487198a1-db4d3794-b5bb23c6-dfdda130.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-d05ea829-eb37cc68-3700bfad-ad62aa37-4923ccfa.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-9c36ca9e-48842ff2-4f349876-49d7ad47-877b7343.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-d1573bb5-4f7914e7-312a2ae1-8b58ad3c-56911f16.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-b1c36258-c1dc8385-52c2a521-12f86a93-1f91e7be.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-78463335-5a105e41-3e206e07-fae1d536-d9f4117d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-9668dc05-bf05e4a4-29dc6d6e-a1cbc7f3-6c260d03.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e7c2bb74-a4ed59af-229c0569-6176c14a-91309f7f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-2cbacd1b-9eed66bf-e14e0632-5555cfd5-20e553d4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-8a20c97c-3bf0ddc9-7597e1d8-ca925183-635f336d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-13db48f0-df72d382-86865a57-3ea9dec3-76de0a63.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-27999570-99732118-34682971-db18dbc2-26443288.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-d9ab9a02-a369e074-41ec534f-846a6532-81ef9286.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-c8d85093-3aca34cb-7f26ccc5-bcfd0941-36c5f37b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-a2075187-ed70be2e-b0fff511-08e18986-9e463161.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-70265e48-4a23b38e-ea8ac71f-a18e966a-b1831577.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-f71d23be-e9762596-6b9687b9-328bd5c7-f5ef002e.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-6c24e71a-9c2585c9-dab4492a-953e2512-8dc534a9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-31664f6d-adad929c-bd5202ce-e8606bb0-d79cff7a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-65c209c4-0b38f067-3782ea80-9c351974-49918713.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-01e9d54d-d870a141-045afe4e-d4994421-62ec09e6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-2f2fe7c7-ec1aa1c7-d02f4173-8729f69f-90fb54ed.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-65654d4f-5dde1c0d-b994c6a9-01bdd506-f4f12c09.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-0860a834-036a87bb-5a276f3d-9816d5d4-49132279.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-2d0870b9-97aa2384-51d07890-3d95d0f4-0f3163d8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-36d4ab61-392a9ea1-5dd984e0-fffdea87-7bce9cb9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-dcc8fafc-e7aa3996-74ec146d-01e8ebd5-9e2c4e85.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-af3a9f71-ab091a99-6558db4f-61add303-70e06464.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-e338b67c-fa42f516-1df4de1c-7da13b76-4b9381b2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-369637a7-3f85201a-2b1d6aef-5a53d400-f68409f9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-1192988c-b450de2d-76f0f9dc-1c5a92f5-36d4bbf6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-cd595b03-db7e9a2f-c1700c1e-b5d6b1c2-06bd0fe8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-be38157f-a56ae9af-8e235801-c95b5228-af4a610b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-343eaed5-5a57ebc7-9631d6aa-b412fbbf-1636a9f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-08ec69dd-ae7556db-4b907942-cc4e6c5f-f4f62ab3.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-cf80992f-88daea9d-8e1eb809-88c55077-fb92c539.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-f24b0dd4-228dd7e9-76c9c775-1a987aa2-8500b7f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-4fb07a60-4ad135be-b711bd8f-eb39c092-737e3a9a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-27e386c7-2e5b8b39-629daaf0-b6005506-920637ed.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-cee90269-5b3e1ce9-474adccb-a9953821-7d68a368.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-db2e139c-735496aa-ee186033-9b174a9f-f1964f01.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-7f39575d-bd9d9864-bee04b71-f2c056be-42e605d1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-61f7487c-dad54918-9542eb91-a3a1e3b2-13741442.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-0450c17e-6926afca-d355d487-a4b0e9fc-739298ee.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-56ff4983-0cdad5d0-ca6ad311-50bb537d-4839b3d4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-b2c50e1f-aab60a95-2392d00d-50890565-6cd9e0bf.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-4bdcfa40-3c5deeb0-3bf3897e-c647bb3c-014611fb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-a6fb098d-4d975859-f830b5cd-5ca13813-225210d5.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-598dab7d-3ee15c26-8add7a8f-7fefb402-0947b481.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-f04bb1a8-aa503ba5-de7761a0-364ed821-4c82f29d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-afb9e048-f0ba0016-b5999489-65f886ea-d775bb8b.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-b6666d9a-e7744e7d-09ce1af7-d9cc0442-97a29a55.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-dae8db18-c843083f-98278cf1-74c60dc9-5f8a91c7.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-62c4b1e2-dd444bdb-b9285274-0cdd6b8e-d65708b7.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5js-63a8a597-030c4e17-a66b7c29-713804c8-5a1199d4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            }
+          ],
+          "missing_or_unmapped_files": [
+            "sapi5js-34e80d47-d6a7d174-9338e03f-23b6ae76-ed54197c.mp3",
+            "sapi5js-e5795491-eded7161-b56675ec-01cb9264-f5e7d711.mp3",
+            "sapi5js-adaa958f-df017dbe-0f6aadb6-8bc0dee5-5f4d2ddd.mp3",
+            "sapi5js-ff99687f-26ff06c8-829c0967-1883b1f2-ec2f2ab4.mp3",
+            "sapi5js-add25c51-c62c6070-d9d56d34-48507175-79ae481f.mp3",
+            "sapi5js-b445bb8f-30c674ef-33a2eadf-01fcf32a-1621d5ce.mp3",
+            "sapi5js-18599a02-d29a28d4-54b0353c-9f3a2961-f7ac8edc.mp3",
+            "sapi5js-fd986c7d-2195afa0-ac21e7cc-204c4231-29c68554.mp3",
+            "sapi5js-c0787465-28c57799-374ae1c2-7150fef4-62516175.mp3",
+            "sapi5js-de4baa1a-c22440a0-ba860c95-9682c047-ea6e3c1c.mp3",
+            "sapi5js-bdd9e265-a979c362-86665ce6-95bbcabb-93d04231.mp3",
+            "sapi5js-3748635d-c901bef4-a2b93317-f69c2d61-d74f0809.mp3",
+            "sapi5js-4756e3d3-d9bba9ab-b036fbce-7ab4b2f3-adf8826e.mp3",
+            "sapi5js-a1cf3ef1-b6c8e8b8-76fdeae1-cb709767-a8c3bad2.mp3",
+            "sapi5js-70c9e4f9-bac98d2e-b512c79a-0b81e962-b4938729.mp3",
+            "sapi5js-cd28a96c-0e1099bf-ea4e3b84-72427ae4-33db7d41.mp3",
+            "sapi5js-cdba479b-c188d32a-d05f9d05-a2bb898a-718967ce.mp3",
+            "sapi5js-fad9eabc-1d8e2137-6a4f51dc-cddf9724-87196c7e.mp3",
+            "sapi5js-3d138388-ef34c112-57eb06dd-8b37857b-7a043f85.mp3",
+            "sapi5js-06f6a270-607a41be-94bdc0bc-ef52fef3-7094536b.mp3",
+            "sapi5js-5aae9f9f-ed76ed54-ebe74e54-540587d8-d6efb3c1.mp3",
+            "sapi5js-632fcdad-329c5e7e-249fb210-c5132dc4-cafb5f7c.mp3",
+            "sapi5js-00edf197-1bdd64d3-51edff12-df8a58e0-f3ea65de.mp3",
+            "sapi5js-e3c68dc9-adcd2738-ec70b7bd-d1d326d5-2136e29e.mp3",
+            "sapi5js-5f12a8c1-fcc776f9-d97fe8d0-d43b1a54-a45cd356.mp3",
+            "sapi5js-550ebd71-ffd08740-a6d9b952-af79f2d4-db96597a.mp3",
+            "sapi5js-075cac8a-7cd12709-95e99f86-e58fb39d-08780cc8.mp3",
+            "sapi5js-77bcfdfa-5e6a8b40-cb3b4616-7e45d450-ed443b77.mp3",
+            "sapi5js-16f8e33c-43237f20-35b8b0f9-da31591e-424affc4.mp3",
+            "sapi5js-bea8a4a8-bedb84dc-94db91c5-446137d8-27e01cec.mp3",
+            "sapi5js-b8e2cbf1-86113eb2-8c4f0818-a8b6a04d-d332e9d8.mp3",
+            "sapi5js-fa2d2b83-963f1bf0-03c64360-50e0e698-30d108d6.mp3",
+            "sapi5js-c2dcebf7-302791f5-b0487264-b9381ef9-52ef399f.mp3",
+            "sapi5js-d18984e4-1efac2db-44abf420-ad6e71e4-4d843e35.mp3",
+            "sapi5js-ca82ccd1-40cc340e-d404ef56-73d47539-4c2ace7f.mp3",
+            "sapi5js-a453b102-b56d5037-3672c919-df32d3de-f6b0a6f6.mp3",
+            "sapi5js-01cfccd9-c51a5553-bbe68622-b4f10a29-269d4015.mp3",
+            "sapi5js-9891771a-1cfcf548-59d6ef03-a448b615-dcfb7846.mp3",
+            "sapi5js-5aa26057-f552cf98-1a9482cf-7e88bce6-a7c37ded.mp3",
+            "sapi5js-326bc909-8f2012a3-3c06da42-6b294f6d-66632f61.mp3",
+            "sapi5js-c65b9fcc-582f2476-5a447a86-676020be-5f8b82eb.mp3",
+            "sapi5js-007bf692-51cd786e-77eb505c-1c76bf76-93dec641.mp3",
+            "sapi5js-e3f74005-af636b3f-7ead5634-8009352d-5f716219.mp3",
+            "sapi5js-4ed4be75-5fcbd198-56251f70-f41a8f26-dc96ddec.mp3",
+            "sapi5js-1ca457bc-fffb7a77-f6c78bd3-66b54f23-4a1168ad.mp3",
+            "sapi5js-e1e3830b-487198a1-db4d3794-b5bb23c6-dfdda130.mp3",
+            "sapi5js-d05ea829-eb37cc68-3700bfad-ad62aa37-4923ccfa.mp3",
+            "sapi5js-9c36ca9e-48842ff2-4f349876-49d7ad47-877b7343.mp3",
+            "sapi5js-d1573bb5-4f7914e7-312a2ae1-8b58ad3c-56911f16.mp3",
+            "sapi5js-b1c36258-c1dc8385-52c2a521-12f86a93-1f91e7be.mp3",
+            "sapi5js-78463335-5a105e41-3e206e07-fae1d536-d9f4117d.mp3",
+            "sapi5js-9668dc05-bf05e4a4-29dc6d6e-a1cbc7f3-6c260d03.mp3",
+            "sapi5js-e7c2bb74-a4ed59af-229c0569-6176c14a-91309f7f.mp3",
+            "sapi5js-2cbacd1b-9eed66bf-e14e0632-5555cfd5-20e553d4.mp3",
+            "sapi5js-8a20c97c-3bf0ddc9-7597e1d8-ca925183-635f336d.mp3",
+            "sapi5js-13db48f0-df72d382-86865a57-3ea9dec3-76de0a63.mp3",
+            "sapi5js-27999570-99732118-34682971-db18dbc2-26443288.mp3",
+            "sapi5js-d9ab9a02-a369e074-41ec534f-846a6532-81ef9286.mp3",
+            "sapi5js-c8d85093-3aca34cb-7f26ccc5-bcfd0941-36c5f37b.mp3",
+            "sapi5js-a2075187-ed70be2e-b0fff511-08e18986-9e463161.mp3",
+            "sapi5js-70265e48-4a23b38e-ea8ac71f-a18e966a-b1831577.mp3",
+            "sapi5js-f71d23be-e9762596-6b9687b9-328bd5c7-f5ef002e.mp3",
+            "sapi5js-6c24e71a-9c2585c9-dab4492a-953e2512-8dc534a9.mp3",
+            "sapi5js-31664f6d-adad929c-bd5202ce-e8606bb0-d79cff7a.mp3",
+            "sapi5js-65c209c4-0b38f067-3782ea80-9c351974-49918713.mp3",
+            "sapi5js-01e9d54d-d870a141-045afe4e-d4994421-62ec09e6.mp3",
+            "sapi5js-2f2fe7c7-ec1aa1c7-d02f4173-8729f69f-90fb54ed.mp3",
+            "sapi5js-65654d4f-5dde1c0d-b994c6a9-01bdd506-f4f12c09.mp3",
+            "sapi5js-0860a834-036a87bb-5a276f3d-9816d5d4-49132279.mp3",
+            "sapi5js-2d0870b9-97aa2384-51d07890-3d95d0f4-0f3163d8.mp3",
+            "sapi5js-36d4ab61-392a9ea1-5dd984e0-fffdea87-7bce9cb9.mp3",
+            "sapi5js-dcc8fafc-e7aa3996-74ec146d-01e8ebd5-9e2c4e85.mp3",
+            "sapi5js-af3a9f71-ab091a99-6558db4f-61add303-70e06464.mp3",
+            "sapi5js-e338b67c-fa42f516-1df4de1c-7da13b76-4b9381b2.mp3",
+            "sapi5js-369637a7-3f85201a-2b1d6aef-5a53d400-f68409f9.mp3",
+            "sapi5js-1192988c-b450de2d-76f0f9dc-1c5a92f5-36d4bbf6.mp3",
+            "sapi5js-cd595b03-db7e9a2f-c1700c1e-b5d6b1c2-06bd0fe8.mp3",
+            "sapi5js-be38157f-a56ae9af-8e235801-c95b5228-af4a610b.mp3",
+            "sapi5js-343eaed5-5a57ebc7-9631d6aa-b412fbbf-1636a9f6.mp3",
+            "sapi5js-08ec69dd-ae7556db-4b907942-cc4e6c5f-f4f62ab3.mp3",
+            "sapi5js-cf80992f-88daea9d-8e1eb809-88c55077-fb92c539.mp3",
+            "sapi5js-f24b0dd4-228dd7e9-76c9c775-1a987aa2-8500b7f6.mp3",
+            "sapi5js-4fb07a60-4ad135be-b711bd8f-eb39c092-737e3a9a.mp3",
+            "sapi5js-27e386c7-2e5b8b39-629daaf0-b6005506-920637ed.mp3",
+            "sapi5js-cee90269-5b3e1ce9-474adccb-a9953821-7d68a368.mp3",
+            "sapi5js-db2e139c-735496aa-ee186033-9b174a9f-f1964f01.mp3",
+            "sapi5js-7f39575d-bd9d9864-bee04b71-f2c056be-42e605d1.mp3",
+            "sapi5js-61f7487c-dad54918-9542eb91-a3a1e3b2-13741442.mp3",
+            "sapi5js-0450c17e-6926afca-d355d487-a4b0e9fc-739298ee.mp3",
+            "sapi5js-56ff4983-0cdad5d0-ca6ad311-50bb537d-4839b3d4.mp3",
+            "sapi5js-b2c50e1f-aab60a95-2392d00d-50890565-6cd9e0bf.mp3",
+            "sapi5js-4bdcfa40-3c5deeb0-3bf3897e-c647bb3c-014611fb.mp3",
+            "sapi5js-a6fb098d-4d975859-f830b5cd-5ca13813-225210d5.mp3",
+            "sapi5js-598dab7d-3ee15c26-8add7a8f-7fefb402-0947b481.mp3",
+            "sapi5js-f04bb1a8-aa503ba5-de7761a0-364ed821-4c82f29d.mp3",
+            "sapi5js-afb9e048-f0ba0016-b5999489-65f886ea-d775bb8b.mp3",
+            "sapi5js-b6666d9a-e7744e7d-09ce1af7-d9cc0442-97a29a55.mp3",
+            "sapi5js-dae8db18-c843083f-98278cf1-74c60dc9-5f8a91c7.mp3",
+            "sapi5js-62c4b1e2-dd444bdb-b9285274-0cdd6b8e-d65708b7.mp3",
+            "sapi5js-63a8a597-030c4e17-a66b7c29-713804c8-5a1199d4.mp3"
+          ]
+        },
+        "image_references": {
+          "unique_files_referenced": 0,
+          "total_references": 0,
+          "files": [],
+          "missing_or_unmapped_files": []
+        },
+        "reference_counts_by_field": {
+          "Audio": {
+            "audio": 198
+          }
+        }
+      },
+      "database_tables": {
+        "cards": [
+          "id",
+          "nid",
+          "did",
+          "ord",
+          "mod",
+          "usn",
+          "type",
+          "queue",
+          "due",
+          "ivl",
+          "factor",
+          "reps",
+          "lapses",
+          "left",
+          "odue",
+          "odid",
+          "flags",
+          "data"
+        ],
+        "col": [
+          "id",
+          "crt",
+          "mod",
+          "scm",
+          "ver",
+          "dty",
+          "usn",
+          "ls",
+          "conf",
+          "models",
+          "decks",
+          "dconf",
+          "tags"
+        ],
+        "config": [
+          "KEY",
+          "usn",
+          "mtime_secs",
+          "val"
+        ],
+        "deck_config": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "decks": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "common",
+          "kind"
+        ],
+        "fields": [
+          "ntid",
+          "ord",
+          "name",
+          "config"
+        ],
+        "graves": [
+          "oid",
+          "type",
+          "usn"
+        ],
+        "notes": [
+          "id",
+          "guid",
+          "mid",
+          "mod",
+          "usn",
+          "tags",
+          "flds",
+          "sfld",
+          "csum",
+          "flags",
+          "data"
+        ],
+        "notetypes": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "revlog": [
+          "id",
+          "cid",
+          "usn",
+          "ease",
+          "ivl",
+          "lastIvl",
+          "factor",
+          "time",
+          "type"
+        ],
+        "sqlite_stat1": [
+          "tbl",
+          "idx",
+          "stat"
+        ],
+        "sqlite_stat4": [
+          "tbl",
+          "idx",
+          "neq",
+          "nlt",
+          "ndlt",
+          "sample"
+        ],
+        "tags": [
+          "tag",
+          "usn",
+          "collapsed",
+          "config"
+        ],
+        "templates": [
+          "ntid",
+          "ord",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ]
+      }
+    },
+    {
+      "file": "English Vocabulary.apkg",
+      "file_size_bytes": 3014607,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "schema_version": 18,
+        "schema_modified_epoch_ms": 1795627546437,
+        "created_utc": "2026-10-19T21:00:00+00:00",
+        "modified_utc": "2026-11-25T17:25:46.694000+00:00",
+        "version": 18
+      },
+      "totals": {
+        "notes": 200,
+        "cards": 200,
+        "review_history": 1930,
+        "decks": 2,
+        "note_types": 1
+      },
+      "deck_source": "normalized",
+      "decks": [
+        {
+          "id": "1",
+          "name": "Default",
+          "raw_name_separator": "none",
+          "cards": 0,
+          "common_blob": {
+            "bytes": 4,
+            "sha256": "8fe546efcd4214f28b1f61e7af7c4556c71fb30268334100adffe877796bf150",
+            "hex_prefix": "08011001",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 4,
+            "sha256": "59948439065f29619ef41280cbb932be52c56d99c5966b65e0111239f098bbef",
+            "hex_prefix": "0a020801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        },
+        {
+          "id": "1793026159084",
+          "name": "English Vocabulary",
+          "raw_name_separator": "none",
+          "cards": 200,
+          "common_blob": {
+            "bytes": 14,
+            "sha256": "ee532e422f3b774d21e1e3bd21bb87b65fefc72e0583e7222d814b33d6db44f1",
+            "hex_prefix": "080110011824200128203895f70d",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          },
+          "kind_blob": {
+            "bytes": 4,
+            "sha256": "59948439065f29619ef41280cbb932be52c56d99c5966b65e0111239f098bbef",
+            "hex_prefix": "0a020801",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "deck_configs": [
+        {
+          "id": "1",
+          "name": "Default",
+          "mtime_secs_utc": "2026-11-25T15:44:12+00:00",
+          "config_blob": {
+            "bytes": 217,
+            "sha256": "e86fb06ab95d640fb9234a95629e295c8179acdef7426ac53b37f954ccb13071",
+            "hex_prefix": "0a080000803f00002041120400002041221c0000803f0000",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "note_type_source": "normalized",
+      "note_types": [
+        {
+          "id": "1793026159208",
+          "name": "English Vocabulary Model",
+          "note_count": 200,
+          "mtime_secs_utc": "2026-10-26T14:50:57+00:00",
+          "fields": [
+            {
+              "ordinal": 0,
+              "name": "Word",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "deb60cac74c0b43219b5e8f47684f6f4518559cc2264b99d07778c9f13f8f382",
+                "hex_prefix": "1a05417269616c201448d48396bae6e1ebe201",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 1,
+              "name": "IPA",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "734c7ab1f4379fe708d1de93b61d803fe7b1b456a986bfda801171d21fe9169f",
+                "hex_prefix": "1a05417269616c201448fbd5b484ffeae8e45a",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 2,
+              "name": "Vietnamese",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "b79adfcf30be61efed41b500c189ded4ee00c412d987bc99750e06bc18011ae3",
+                "hex_prefix": "1a05417269616c201448aed197f7f4ebc3e3b701",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 3,
+              "name": "PartOfSpeech",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "8978aba6b7641b1e60b530a77f59413876bac46613c383e97df4f63dc2673a6f",
+                "hex_prefix": "1a05417269616c201448a4c1c3e3fdd6d0960c",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 4,
+              "name": "Example",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "5b50535add750f16e5587218d32e9dba14920104fd48c7a7b4b4a64eadca6f7a",
+                "hex_prefix": "1a05417269616c201448af87abb4a199c3dffc01",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 5,
+              "name": "ExampleMeaning",
+              "config_blob": {
+                "bytes": 19,
+                "sha256": "16d506498589a71e5e9ae66e38d424a8186a5a49a341d22f5b782d488d7a9bfb",
+                "hex_prefix": "1a05417269616c201448abbfd2c9bdf9d6fa6c",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            },
+            {
+              "ordinal": 6,
+              "name": "audio",
+              "config_blob": {
+                "bytes": 20,
+                "sha256": "9998309d4bf61c319e3e2ea2a7ec75adc734d279811dd8cce5999b193a86699e",
+                "hex_prefix": "1a05417269616c201448fbfa9b8df382c9dac401",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "templates": [
+            {
+              "ordinal": 0,
+              "name": "Card 1",
+              "config_blob": {
+                "bytes": 144,
+                "sha256": "95db88c55080783286c0596b40c18fe2bd07de8932b4627e9fe73ef40890e0b7",
+                "hex_prefix": "0a157b7b576f72647d7d3c62723e7b7b617564696f7d7d12",
+                "encoding": "opaque protobuf/blob; not decoded by this script"
+              }
+            }
+          ],
+          "config_blob": {
+            "bytes": 161,
+            "sha256": "3b104f6a2618adf6504cc2961d376fa1586d1721e87459e0ee10a876ecb3559f",
+            "hex_prefix": "1a94012e63617264207b0a20202020666f6e742d66616d69",
+            "encoding": "opaque protobuf/blob; not decoded by this script"
+          }
+        }
+      ],
+      "cards": {
+        "total": 200,
+        "by_type": {
+          "Review": 131,
+          "New": 69
+        },
+        "by_queue": {
+          "Review": 131,
+          "New": 69
+        },
+        "by_deck": {
+          "English Vocabulary": {
+            "Review": 131,
+            "New": 69
+          }
+        },
+        "by_note_type": {
+          "English Vocabulary Model": 200
+        },
+        "cards_with_possible_fsrs_state": 131,
+        "card_data_keys": {
+          "pos": 131,
+          "s": 131,
+          "d": 131,
+          "dr": 131,
+          "decay": 131,
+          "lrt": 131
+        },
+        "fsrs_state_samples": [
+          {
+            "card_id": 1793026159400,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 392,
+              "s": 72.5769,
+              "d": 4.819,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795529744
+            }
+          },
+          {
+            "card_id": 1793026159462,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 393,
+              "s": 58.1587,
+              "d": 4.862,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795185525
+            }
+          },
+          {
+            "card_id": 1793026159525,
+            "keys": [
+              "d",
+              "decay",
+              "dr",
+              "lrt",
+              "pos",
+              "s"
+            ],
+            "values": {
+              "pos": 394,
+              "s": 47.0007,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793719958
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total": 1930,
+        "ratings": {
+          "Again": 828,
+          "Easy": 452,
+          "Good": 516,
+          "Hard": 134
+        },
+        "types": {
+          "Learning": 600,
+          "Review": 725,
+          "Relearning": 605
+        },
+        "unique_cards_reviewed": 131,
+        "review_time_ms": {
+          "min": 1131,
+          "max": 60000,
+          "average": 6309.18
+        },
+        "first_review_utc": "2026-10-26T14:53:40.300000+00:00",
+        "last_review_utc": "2026-11-25T15:56:36.859000+00:00"
+      },
+      "collection_config": {
+        "source": "normalized config key/value",
+        "entries": [
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": [
+              1
+            ]
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1200
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": -420
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": -1,
+            "mtime_secs_utc": "2026-11-25T17:25:46+00:00",
+            "value": 1795627546664
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 1
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": true
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 2
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": false
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": "noteFld"
+          },
+          {
+            "key": null,
+            "usn": 0,
+            "mtime_secs_utc": "1970-01-01T00:00:00+00:00",
+            "value": 0
+          }
+        ],
+        "legacy_col_conf_keys": []
+      },
+      "media": {
+        "archive_media": {
+          "manifest_status": "parse error: UnicodeDecodeError",
+          "manifest_entries": 0,
+          "total_bytes": 0,
+          "by_extension": {},
+          "audio_files": 0,
+          "image_files": 0,
+          "unmapped_archive_entries_sample": [
+            {
+              "archive_key": "0",
+              "bytes": 13350
+            },
+            {
+              "archive_key": "1",
+              "bytes": 15797
+            },
+            {
+              "archive_key": "2",
+              "bytes": 16689
+            },
+            {
+              "archive_key": "3",
+              "bytes": 15093
+            },
+            {
+              "archive_key": "4",
+              "bytes": 13145
+            },
+            {
+              "archive_key": "5",
+              "bytes": 13073
+            },
+            {
+              "archive_key": "6",
+              "bytes": 13983
+            },
+            {
+              "archive_key": "7",
+              "bytes": 15489
+            },
+            {
+              "archive_key": "8",
+              "bytes": 10812
+            },
+            {
+              "archive_key": "9",
+              "bytes": 13181
+            },
+            {
+              "archive_key": "10",
+              "bytes": 15759
+            },
+            {
+              "archive_key": "11",
+              "bytes": 14326
+            },
+            {
+              "archive_key": "12",
+              "bytes": 12475
+            },
+            {
+              "archive_key": "13",
+              "bytes": 15138
+            },
+            {
+              "archive_key": "14",
+              "bytes": 13053
+            },
+            {
+              "archive_key": "15",
+              "bytes": 13602
+            },
+            {
+              "archive_key": "16",
+              "bytes": 17079
+            },
+            {
+              "archive_key": "17",
+              "bytes": 14386
+            },
+            {
+              "archive_key": "18",
+              "bytes": 13220
+            },
+            {
+              "archive_key": "19",
+              "bytes": 13887
+            }
+          ]
+        },
+        "audio_references": {
+          "unique_files_referenced": 200,
+          "total_references": 200,
+          "files": [
+            {
+              "filename": "sapi5com-63baed47-85d0f943-07c79020-394999ca-c6e33fb1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-57c635b1-a68253b7-47e687cd-96988380-12807a21.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-6e517cf4-b9d378ef-d05c449e-fffca44a-bf2c2127.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-b34e689d-87592546-fbe0d2e1-5a0eab32-69024f53.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-38172e48-9dd524f9-02874c44-d860e290-0b5c5c25.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9b7e1090-6a3c1175-728b8f2d-3c171382-73a5e048.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-b28cd563-e7c4b645-bb151d18-4559b805-6bedb631.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-54b4a042-a24e308a-b20dbd4b-40afbd07-4ba454b6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0f471510-7faf2862-3f902f75-c5b53b19-7f0eb0fe.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-12a412e0-327dd5ec-63acb641-292a6ff7-f46fba18.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a4564f20-9816e21f-966f4659-b4a3dc00-4bf48b81.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3c8e5a32-12af2587-5d576bbf-d3ba0a69-7a075337.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-47118387-d9c0e6b9-c2d01b80-9c12b550-05e22947.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3ca87006-9e1b2a3a-868a5f00-a0b522bc-3719083f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-fb02b30a-f2676965-6aa9620b-620a5411-cbfe548a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-06b65f37-0e22c0f5-2e1d4e6c-aa099db4-5d8eff1f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-1575736f-d2244867-68094573-588a4929-2fef6f50.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-161bcc2c-aa067a9d-8ed242db-677abe55-75b1c1f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-cbcc08a8-2783b0c4-b386220c-50b08bff-f526b624.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-fb19ce55-ac3890f9-74423bc0-a1ae7039-4a612253.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f0ac8041-62b37634-63babdef-3a9d3951-34507138.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d62c584e-267e709f-5fb8563b-e406ac46-f9c0f509.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-324b697f-1327ec32-7c32d3ad-bb555778-f5e76eea.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-730e0da0-8f9ce387-daa881d7-138e2404-eaa49099.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7388d12b-17a70ab3-b1ca4756-2afff929-b301ea6f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-006b44ad-617e4b8f-7fa797ee-c0c0f77d-1003a095.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-43f27e08-6ebd7342-95b91c76-ee7733e8-ef25e461.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-dd1ccb1f-9b9982dd-1bee739a-5070735a-4ebddd0c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d8960484-ed7add47-411dcb82-5cc2aad1-24566dcc.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-a8ab893b-ad6e6149-bac3186b-e2eba33e-fc89db1a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-550c2f13-d6ee830c-aa52ea6a-4ff501b2-c6e0df31.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-6000f4d8-21fa127b-335590ae-15f48d4b-07734fea.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4cb28def-9a6bd6d8-1b9f1d77-b768c1af-5bec55c3.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-19a71279-4a4d08a7-8b296467-f0abde28-9d210995.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-0b5fa1ea-55e99be2-875e82a9-734343c4-565307e9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9f44ca60-96b075a0-315622ca-6181d61b-ec300fee.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3cb2f10a-c9d07fe5-eda4331f-42bfc6e9-1033d357.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-30cfcae9-a06e0ba0-bd4f72a2-e1e194e2-19c4e30a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-c8494e9b-725cccc5-3de53caa-4278b40a-09ca5a15.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-41856eba-0ba868c5-112b13e6-3f5ce18d-511774e2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ed9579cf-7b0d1650-8eeb1fb1-41c280cc-fdfb88c8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e0508dcc-a3c713b5-f42401ce-6795562c-8b9e0d68.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-46f1aa2b-7125b16e-47bf98fd-dc7c25e7-4515c053.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-767d595a-543c4e58-c23c3af7-9be758c0-0552675c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-1a6b5113-3cd6625f-ad06aec1-fb56b3c3-5c7245f2.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-4ee23709-b784f31c-219a4ad3-562deb2b-f74d5a74.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-369e8ce2-ec654c30-48b2457b-59bc33c8-c3bb287f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f0ffbf4d-1f46880b-d3ae4d9e-cfab6512-3659f503.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9e2ca75b-2bef7da6-8bb08b2f-535fb44a-ef9aed2c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-482443da-e8673eb7-d3505d79-33de5e9b-0546605f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e74b8b37-15e273ed-488e01c9-4e8e498c-8b72d2ab.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-048e97a8-ce8acfd6-584d5991-b2c72e09-059c9890.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3846667d-f829a116-0672d0f1-d1241997-e28f6474.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-55fa7d95-b89bdfeb-1152a2c1-c394ab7f-34ea2c9a.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-880fea5c-2f7177b3-0ef16c70-67fe6eb0-26975b05.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9fd02b72-29741348-e2ff535a-f18341d9-76342cc3.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-7c1871d6-88fa2eee-784ecfaa-58bf8b58-7f1d9be4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-44957e21-17f12274-d45afdaa-d6f2d955-aca65da1.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-32c62f50-f8d579b3-1036ad68-20109713-f97b6b18.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9fb108fd-e022bf5a-da8046d9-4689bf1a-39ebb035.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d0d8f21c-cb31d9d8-ad4b7736-0b7136fb-f2a947f6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-93ddffec-586e1cc6-f63292d8-a6cd13ea-7e349c15.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f08d6e30-2d96124b-ffb4ef68-facb612f-82a5a681.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-11a9aaee-907bcfda-97026f43-520d6261-f349454f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-252cbe16-53940d53-9d6d900d-9d864916-b8e1dd11.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d87e61ae-a8753893-3067fcca-7313e11d-c8baadc6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-741ee3b5-0bc98299-0cbe84ef-4632382b-649eefb0.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-6c1d2415-ed7fdc09-bab47355-64fece8e-9da3a385.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-170f1e74-b9a5d3f5-5e6ccc35-c0c18007-182b79b6.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-c4347da6-92639e9b-895264ff-4aa7e5f5-5f013095.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-fcf2beb2-8ca52f15-8ca24c30-0e64d6cc-5cfd53b9.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-40d30274-e59b96d8-f63b2217-3a1ff261-6fb9fb56.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-63b44299-63df3f63-aa3a0c27-3b68a231-5015e92f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ca45a813-3a727919-280e6060-b949a982-9dcf2fc8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-65041f26-3440e73b-27eef6ca-8f4c80d1-84f32fd8.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-db4d7cfc-1b10ffdd-c8493e89-18e17c45-a1a38842.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-760eba75-d3713360-9b200d82-2a916fd6-c966b57f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-44302419-ab01bf92-2678fb87-e49bbf80-de8b7974.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bac8d81f-8469040e-eb332670-d2f32e66-039fd369.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ca0ea8e2-3e5121b1-9f64b289-710a3704-ba3e95d4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-54f60085-8ee1ab47-5c5aa589-65694419-be0c5e19.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-ef24baf8-e06d78c8-c66e7ce2-1d78bc18-5a04ccfb.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d4e95aaa-c6b5ef90-7c9127e9-16b94e45-d4aae67c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-3906b214-b10b3078-1d1e3911-a6efe58d-6db04065.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-838c5224-95c0213b-ffd4821e-dc4a6636-75e4468c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-76f158be-0cdf714e-04280810-678f077c-dbc996f0.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f1a1cde0-88e3d2db-0b769ccd-14dc0659-9185b706.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-e188c1dd-93cb37df-cabf4f06-42b0c64f-80627100.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-94769776-bb64eb02-98d80cf8-a940ca25-675357cf.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f13a3ea8-cf8361a1-4ec2827e-f885b9df-15205e16.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-5d8bffa3-89372e7b-e7dc45fd-79101e2d-757bc841.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-d2df8060-4d4a876d-1d10489b-3366a1dc-4ed2d72d.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-424db484-17e47515-b024b7bc-1311b927-62968e07.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-c8c19e37-f9309ed3-34cd379d-f0ba3b0a-ab07c9fa.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-bcfe4ba3-883cc197-94a6a3ec-ea65bd76-76766749.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-41068d17-3b99c1a1-6be9a928-aec7fc3b-2ad605be.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-f3a82cb5-4a93691b-cdbf57b8-8ad60316-cd9f81c4.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-62127c9c-58527d55-2e26691f-97a7aa23-6130c26f.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-53db99ca-6540cdf1-9a63c1f6-43369dec-b88378de.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            },
+            {
+              "filename": "sapi5com-9c5951a2-0a644ce0-b9c65361-b329f1d2-c0e83e3c.mp3",
+              "references": 1,
+              "present_in_manifest": false,
+              "present_in_archive": false,
+              "bytes": null
+            }
+          ],
+          "missing_or_unmapped_files": [
+            "sapi5com-63baed47-85d0f943-07c79020-394999ca-c6e33fb1.mp3",
+            "sapi5com-57c635b1-a68253b7-47e687cd-96988380-12807a21.mp3",
+            "sapi5com-6e517cf4-b9d378ef-d05c449e-fffca44a-bf2c2127.mp3",
+            "sapi5com-b34e689d-87592546-fbe0d2e1-5a0eab32-69024f53.mp3",
+            "sapi5com-38172e48-9dd524f9-02874c44-d860e290-0b5c5c25.mp3",
+            "sapi5com-9b7e1090-6a3c1175-728b8f2d-3c171382-73a5e048.mp3",
+            "sapi5com-b28cd563-e7c4b645-bb151d18-4559b805-6bedb631.mp3",
+            "sapi5com-54b4a042-a24e308a-b20dbd4b-40afbd07-4ba454b6.mp3",
+            "sapi5com-0f471510-7faf2862-3f902f75-c5b53b19-7f0eb0fe.mp3",
+            "sapi5com-12a412e0-327dd5ec-63acb641-292a6ff7-f46fba18.mp3",
+            "sapi5com-a4564f20-9816e21f-966f4659-b4a3dc00-4bf48b81.mp3",
+            "sapi5com-3c8e5a32-12af2587-5d576bbf-d3ba0a69-7a075337.mp3",
+            "sapi5com-47118387-d9c0e6b9-c2d01b80-9c12b550-05e22947.mp3",
+            "sapi5com-3ca87006-9e1b2a3a-868a5f00-a0b522bc-3719083f.mp3",
+            "sapi5com-fb02b30a-f2676965-6aa9620b-620a5411-cbfe548a.mp3",
+            "sapi5com-06b65f37-0e22c0f5-2e1d4e6c-aa099db4-5d8eff1f.mp3",
+            "sapi5com-1575736f-d2244867-68094573-588a4929-2fef6f50.mp3",
+            "sapi5com-161bcc2c-aa067a9d-8ed242db-677abe55-75b1c1f6.mp3",
+            "sapi5com-cbcc08a8-2783b0c4-b386220c-50b08bff-f526b624.mp3",
+            "sapi5com-fb19ce55-ac3890f9-74423bc0-a1ae7039-4a612253.mp3",
+            "sapi5com-f0ac8041-62b37634-63babdef-3a9d3951-34507138.mp3",
+            "sapi5com-d62c584e-267e709f-5fb8563b-e406ac46-f9c0f509.mp3",
+            "sapi5com-324b697f-1327ec32-7c32d3ad-bb555778-f5e76eea.mp3",
+            "sapi5com-730e0da0-8f9ce387-daa881d7-138e2404-eaa49099.mp3",
+            "sapi5com-7388d12b-17a70ab3-b1ca4756-2afff929-b301ea6f.mp3",
+            "sapi5com-006b44ad-617e4b8f-7fa797ee-c0c0f77d-1003a095.mp3",
+            "sapi5com-43f27e08-6ebd7342-95b91c76-ee7733e8-ef25e461.mp3",
+            "sapi5com-dd1ccb1f-9b9982dd-1bee739a-5070735a-4ebddd0c.mp3",
+            "sapi5com-d8960484-ed7add47-411dcb82-5cc2aad1-24566dcc.mp3",
+            "sapi5com-a8ab893b-ad6e6149-bac3186b-e2eba33e-fc89db1a.mp3",
+            "sapi5com-550c2f13-d6ee830c-aa52ea6a-4ff501b2-c6e0df31.mp3",
+            "sapi5com-6000f4d8-21fa127b-335590ae-15f48d4b-07734fea.mp3",
+            "sapi5com-4cb28def-9a6bd6d8-1b9f1d77-b768c1af-5bec55c3.mp3",
+            "sapi5com-19a71279-4a4d08a7-8b296467-f0abde28-9d210995.mp3",
+            "sapi5com-0b5fa1ea-55e99be2-875e82a9-734343c4-565307e9.mp3",
+            "sapi5com-9f44ca60-96b075a0-315622ca-6181d61b-ec300fee.mp3",
+            "sapi5com-3cb2f10a-c9d07fe5-eda4331f-42bfc6e9-1033d357.mp3",
+            "sapi5com-30cfcae9-a06e0ba0-bd4f72a2-e1e194e2-19c4e30a.mp3",
+            "sapi5com-c8494e9b-725cccc5-3de53caa-4278b40a-09ca5a15.mp3",
+            "sapi5com-41856eba-0ba868c5-112b13e6-3f5ce18d-511774e2.mp3",
+            "sapi5com-ed9579cf-7b0d1650-8eeb1fb1-41c280cc-fdfb88c8.mp3",
+            "sapi5com-e0508dcc-a3c713b5-f42401ce-6795562c-8b9e0d68.mp3",
+            "sapi5com-46f1aa2b-7125b16e-47bf98fd-dc7c25e7-4515c053.mp3",
+            "sapi5com-767d595a-543c4e58-c23c3af7-9be758c0-0552675c.mp3",
+            "sapi5com-1a6b5113-3cd6625f-ad06aec1-fb56b3c3-5c7245f2.mp3",
+            "sapi5com-4ee23709-b784f31c-219a4ad3-562deb2b-f74d5a74.mp3",
+            "sapi5com-369e8ce2-ec654c30-48b2457b-59bc33c8-c3bb287f.mp3",
+            "sapi5com-f0ffbf4d-1f46880b-d3ae4d9e-cfab6512-3659f503.mp3",
+            "sapi5com-9e2ca75b-2bef7da6-8bb08b2f-535fb44a-ef9aed2c.mp3",
+            "sapi5com-482443da-e8673eb7-d3505d79-33de5e9b-0546605f.mp3",
+            "sapi5com-e74b8b37-15e273ed-488e01c9-4e8e498c-8b72d2ab.mp3",
+            "sapi5com-048e97a8-ce8acfd6-584d5991-b2c72e09-059c9890.mp3",
+            "sapi5com-3846667d-f829a116-0672d0f1-d1241997-e28f6474.mp3",
+            "sapi5com-55fa7d95-b89bdfeb-1152a2c1-c394ab7f-34ea2c9a.mp3",
+            "sapi5com-880fea5c-2f7177b3-0ef16c70-67fe6eb0-26975b05.mp3",
+            "sapi5com-9fd02b72-29741348-e2ff535a-f18341d9-76342cc3.mp3",
+            "sapi5com-7c1871d6-88fa2eee-784ecfaa-58bf8b58-7f1d9be4.mp3",
+            "sapi5com-44957e21-17f12274-d45afdaa-d6f2d955-aca65da1.mp3",
+            "sapi5com-32c62f50-f8d579b3-1036ad68-20109713-f97b6b18.mp3",
+            "sapi5com-9fb108fd-e022bf5a-da8046d9-4689bf1a-39ebb035.mp3",
+            "sapi5com-d0d8f21c-cb31d9d8-ad4b7736-0b7136fb-f2a947f6.mp3",
+            "sapi5com-93ddffec-586e1cc6-f63292d8-a6cd13ea-7e349c15.mp3",
+            "sapi5com-f08d6e30-2d96124b-ffb4ef68-facb612f-82a5a681.mp3",
+            "sapi5com-11a9aaee-907bcfda-97026f43-520d6261-f349454f.mp3",
+            "sapi5com-252cbe16-53940d53-9d6d900d-9d864916-b8e1dd11.mp3",
+            "sapi5com-d87e61ae-a8753893-3067fcca-7313e11d-c8baadc6.mp3",
+            "sapi5com-741ee3b5-0bc98299-0cbe84ef-4632382b-649eefb0.mp3",
+            "sapi5com-6c1d2415-ed7fdc09-bab47355-64fece8e-9da3a385.mp3",
+            "sapi5com-170f1e74-b9a5d3f5-5e6ccc35-c0c18007-182b79b6.mp3",
+            "sapi5com-c4347da6-92639e9b-895264ff-4aa7e5f5-5f013095.mp3",
+            "sapi5com-fcf2beb2-8ca52f15-8ca24c30-0e64d6cc-5cfd53b9.mp3",
+            "sapi5com-40d30274-e59b96d8-f63b2217-3a1ff261-6fb9fb56.mp3",
+            "sapi5com-63b44299-63df3f63-aa3a0c27-3b68a231-5015e92f.mp3",
+            "sapi5com-ca45a813-3a727919-280e6060-b949a982-9dcf2fc8.mp3",
+            "sapi5com-65041f26-3440e73b-27eef6ca-8f4c80d1-84f32fd8.mp3",
+            "sapi5com-db4d7cfc-1b10ffdd-c8493e89-18e17c45-a1a38842.mp3",
+            "sapi5com-760eba75-d3713360-9b200d82-2a916fd6-c966b57f.mp3",
+            "sapi5com-44302419-ab01bf92-2678fb87-e49bbf80-de8b7974.mp3",
+            "sapi5com-bac8d81f-8469040e-eb332670-d2f32e66-039fd369.mp3",
+            "sapi5com-ca0ea8e2-3e5121b1-9f64b289-710a3704-ba3e95d4.mp3",
+            "sapi5com-54f60085-8ee1ab47-5c5aa589-65694419-be0c5e19.mp3",
+            "sapi5com-ef24baf8-e06d78c8-c66e7ce2-1d78bc18-5a04ccfb.mp3",
+            "sapi5com-d4e95aaa-c6b5ef90-7c9127e9-16b94e45-d4aae67c.mp3",
+            "sapi5com-3906b214-b10b3078-1d1e3911-a6efe58d-6db04065.mp3",
+            "sapi5com-838c5224-95c0213b-ffd4821e-dc4a6636-75e4468c.mp3",
+            "sapi5com-76f158be-0cdf714e-04280810-678f077c-dbc996f0.mp3",
+            "sapi5com-f1a1cde0-88e3d2db-0b769ccd-14dc0659-9185b706.mp3",
+            "sapi5com-e188c1dd-93cb37df-cabf4f06-42b0c64f-80627100.mp3",
+            "sapi5com-94769776-bb64eb02-98d80cf8-a940ca25-675357cf.mp3",
+            "sapi5com-f13a3ea8-cf8361a1-4ec2827e-f885b9df-15205e16.mp3",
+            "sapi5com-5d8bffa3-89372e7b-e7dc45fd-79101e2d-757bc841.mp3",
+            "sapi5com-d2df8060-4d4a876d-1d10489b-3366a1dc-4ed2d72d.mp3",
+            "sapi5com-424db484-17e47515-b024b7bc-1311b927-62968e07.mp3",
+            "sapi5com-c8c19e37-f9309ed3-34cd379d-f0ba3b0a-ab07c9fa.mp3",
+            "sapi5com-bcfe4ba3-883cc197-94a6a3ec-ea65bd76-76766749.mp3",
+            "sapi5com-41068d17-3b99c1a1-6be9a928-aec7fc3b-2ad605be.mp3",
+            "sapi5com-f3a82cb5-4a93691b-cdbf57b8-8ad60316-cd9f81c4.mp3",
+            "sapi5com-62127c9c-58527d55-2e26691f-97a7aa23-6130c26f.mp3",
+            "sapi5com-53db99ca-6540cdf1-9a63c1f6-43369dec-b88378de.mp3",
+            "sapi5com-9c5951a2-0a644ce0-b9c65361-b329f1d2-c0e83e3c.mp3"
+          ]
+        },
+        "image_references": {
+          "unique_files_referenced": 0,
+          "total_references": 0,
+          "files": [],
+          "missing_or_unmapped_files": []
+        },
+        "reference_counts_by_field": {
+          "audio": {
+            "audio": 200
+          }
+        }
+      },
+      "database_tables": {
+        "cards": [
+          "id",
+          "nid",
+          "did",
+          "ord",
+          "mod",
+          "usn",
+          "type",
+          "queue",
+          "due",
+          "ivl",
+          "factor",
+          "reps",
+          "lapses",
+          "left",
+          "odue",
+          "odid",
+          "flags",
+          "data"
+        ],
+        "col": [
+          "id",
+          "crt",
+          "mod",
+          "scm",
+          "ver",
+          "dty",
+          "usn",
+          "ls",
+          "conf",
+          "models",
+          "decks",
+          "dconf",
+          "tags"
+        ],
+        "config": [
+          "KEY",
+          "usn",
+          "mtime_secs",
+          "val"
+        ],
+        "deck_config": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "decks": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "common",
+          "kind"
+        ],
+        "fields": [
+          "ntid",
+          "ord",
+          "name",
+          "config"
+        ],
+        "graves": [
+          "oid",
+          "type",
+          "usn"
+        ],
+        "notes": [
+          "id",
+          "guid",
+          "mid",
+          "mod",
+          "usn",
+          "tags",
+          "flds",
+          "sfld",
+          "csum",
+          "flags",
+          "data"
+        ],
+        "notetypes": [
+          "id",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ],
+        "revlog": [
+          "id",
+          "cid",
+          "usn",
+          "ease",
+          "ivl",
+          "lastIvl",
+          "factor",
+          "time",
+          "type"
+        ],
+        "sqlite_stat1": [
+          "tbl",
+          "idx",
+          "stat"
+        ],
+        "sqlite_stat4": [
+          "tbl",
+          "idx",
+          "neq",
+          "nlt",
+          "ndlt",
+          "sample"
+        ],
+        "tags": [
+          "tag",
+          "usn",
+          "collapsed",
+          "config"
+        ],
+        "templates": [
+          "ntid",
+          "ord",
+          "name",
+          "mtime_secs",
+          "usn",
+          "config"
+        ]
+      }
+    }
+  ],
+  "errors": [],
+  "notes": [
+    "Anki schema v18 normalized tables are inspected when present.",
+    "Opaque protobuf config blobs are fingerprinted, not decoded.",
+    "Note contents are not exported; only media references are counted.",
+    "Original APKG files are never modified."
+  ]
+}

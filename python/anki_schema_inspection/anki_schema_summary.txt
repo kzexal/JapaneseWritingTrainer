@@ -1,0 +1,349 @@
+ANKI SCHEMA + MEDIA INSPECTION
+========================================================================
+Read-only inspection. APKG files are not modified.
+Note field contents are not exported; only field names and media references are counted.
+
+========================================================================
+Japanese Grammar.apkg
+------------------------------------------------------------------------
+Collection schema version: 18
+Notes: 49
+Cards: 49
+Decks: 2 (normalized)
+Note Types: 1 (normalized)
+Review history: 592
+
+DECKS
+  Default — 0 cards (id=1)
+  Japanese Grammar — 49 cards (id=1792667917885)
+
+NOTE TYPES / FIELDS
+  Japanese Grammar Model — 49 notes
+    0: Grammar
+    1: Meaning
+    2: Structure
+    3: Example
+    4: ExampleMeaning
+    5: JLPT
+    6: Notes
+    7: Front
+    8: Back
+    Template 0: Card 1
+
+CARD QUEUES
+  Review: 49
+
+REVIEW RATINGS
+  Easy: 196
+  Good: 194
+  Hard: 51
+  Again: 151
+
+POSSIBLE FSRS STATE
+  Cards with possible FSRS state: 49
+  Card data keys: {'pos': 49, 's': 49, 'd': 49, 'dr': 49, 'decay': 49, 'lrt': 49}
+  Note: field meanings/compatibility are not inferred by this script.
+
+DECK CONFIGURATION
+  Deck config presets: 1
+  Default (id=1): protobuf bytes=217
+  Protobuf blobs are fingerprinted but not decoded; FSRS parameters need a compatible Anki protobuf schema.
+
+MEDIA / AUDIO
+  Manifest status: parse error: UnicodeDecodeError
+  Manifest files: 0
+  Audio assets: 0
+  Image assets: 0
+  Audio files referenced by notes: 0
+  Total audio references: 0
+  Missing/unmapped audio: 0
+  Image files referenced by notes: 0
+  Media references by field: {}
+
+DATABASE TABLES
+  cards: id, nid, did, ord, mod, usn, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, flags, data
+  col: id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags
+  config: KEY, usn, mtime_secs, val
+  deck_config: id, name, mtime_secs, usn, config
+  decks: id, name, mtime_secs, usn, common, kind
+  fields: ntid, ord, name, config
+  graves: oid, type, usn
+  notes: id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data
+  notetypes: id, name, mtime_secs, usn, config
+  revlog: id, cid, usn, ease, ivl, lastIvl, factor, time, type
+  sqlite_stat1: tbl, idx, stat
+  sqlite_stat4: tbl, idx, neq, nlt, ndlt, sample
+  tags: tag, usn, collapsed, config
+  templates: ntid, ord, name, mtime_secs, usn, config
+
+========================================================================
+Japanese Kanji.apkg
+------------------------------------------------------------------------
+Collection schema version: 18
+Notes: 1031
+Cards: 1031
+Decks: 2 (normalized)
+Note Types: 1 (normalized)
+Review history: 788
+
+DECKS
+  Default — 0 cards (id=1)
+  Japanese Kanji — 1031 cards (id=1792666377527)
+
+NOTE TYPES / FIELDS
+  Japanese Kanji Model — 1031 notes
+    0: Kanji
+    1: Onyomi
+    2: Kunyomi
+    3: Meaning
+    4: Radical
+    5: StrokeCount
+    6: ExampleWords
+    7: Notes
+    8: JLPT
+    9: Audio
+    Template 0: Card 1
+
+CARD QUEUES
+  Review: 92
+  New: 939
+
+REVIEW RATINGS
+  Again: 188
+  Easy: 343
+  Hard: 45
+  Good: 212
+
+POSSIBLE FSRS STATE
+  Cards with possible FSRS state: 92
+  Card data keys: {'pos': 92, 's': 92, 'd': 92, 'dr': 92, 'decay': 92, 'lrt': 92}
+  Note: field meanings/compatibility are not inferred by this script.
+
+DECK CONFIGURATION
+  Deck config presets: 1
+  Default (id=1): protobuf bytes=217
+  Protobuf blobs are fingerprinted but not decoded; FSRS parameters need a compatible Anki protobuf schema.
+
+MEDIA / AUDIO
+  Manifest status: parse error: UnicodeDecodeError
+  Manifest files: 0
+  Audio assets: 0
+  Image assets: 0
+  Audio files referenced by notes: 1031
+  Total audio references: 1031
+  Missing/unmapped audio: 100
+    sapi5com-ccc03a7e-a688ba8f-fc529ed1-24f0fe89-6be7a29f.mp3 — refs=1, present=False
+    sapi5com-9236a8c5-7e19b979-aa32d0a3-f3ce8285-e221ecc8.mp3 — refs=1, present=False
+    sapi5com-cf897b80-5f698b19-b9a63a4d-2fbfa734-a0750942.mp3 — refs=1, present=False
+    sapi5com-7c9cfd47-00527dc6-efe4aa0f-8f457456-9219cbe8.mp3 — refs=1, present=False
+    sapi5com-df7eb5ff-03d17a13-11a75a1d-f91ff234-4abfcc06.mp3 — refs=1, present=False
+    sapi5com-811aaecd-1fd9f090-24c05bac-d64e2f9f-08cba8ef.mp3 — refs=1, present=False
+    sapi5com-bfd0960b-1255ffab-2ac95e3b-87889ae7-f3040f2d.mp3 — refs=1, present=False
+    sapi5com-bc2d4d65-2feb6d7e-7ab15542-e05388eb-7c06df07.mp3 — refs=1, present=False
+    sapi5com-0777b399-f1e3dbf3-49c8bb78-e77625e1-7925aebc.mp3 — refs=1, present=False
+    sapi5com-8ecc2d5c-977f7a19-b96162b8-7e221b1e-5fdd9040.mp3 — refs=1, present=False
+    sapi5com-36f822d3-bf824d6c-eab486e9-9895d689-1811b492.mp3 — refs=1, present=False
+    sapi5com-cd9d4062-13f078d3-829dc816-9335ebca-d808f6f5.mp3 — refs=1, present=False
+    sapi5com-0d5e62c4-48e2edd1-273dccc5-c5ec51dd-22da8339.mp3 — refs=1, present=False
+    sapi5com-fe8c8ec9-c08203d2-676dd014-852db946-9f6b38a4.mp3 — refs=1, present=False
+    sapi5com-1e7fa104-2e359790-663c4fb3-3691b749-48255101.mp3 — refs=1, present=False
+  Image files referenced by notes: 0
+  Media references by field: {'Audio': {'audio': 1031}}
+
+DATABASE TABLES
+  cards: id, nid, did, ord, mod, usn, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, flags, data
+  col: id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags
+  config: KEY, usn, mtime_secs, val
+  deck_config: id, name, mtime_secs, usn, config
+  decks: id, name, mtime_secs, usn, common, kind
+  fields: ntid, ord, name, config
+  graves: oid, type, usn
+  notes: id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data
+  notetypes: id, name, mtime_secs, usn, config
+  revlog: id, cid, usn, ease, ivl, lastIvl, factor, time, type
+  sqlite_stat1: tbl, idx, stat
+  sqlite_stat4: tbl, idx, neq, nlt, ndlt, sample
+  tags: tag, usn, collapsed, config
+  templates: ntid, ord, name, mtime_secs, usn, config
+
+========================================================================
+Japanese Vocabulary.apkg
+------------------------------------------------------------------------
+Collection schema version: 18
+Notes: 198
+Cards: 198
+Decks: 2 (normalized)
+Note Types: 1 (normalized)
+Review history: 2350
+
+DECKS
+  Default — 0 cards (id=1)
+  Japanese Vocabulary — 198 cards (id=1792647885294)
+
+NOTE TYPES / FIELDS
+  Japanese Vocabulary Model++ — 198 notes
+    0: Japanese
+    1: Reading
+    2: Vietnamese
+    3: Example
+    4: ExampleMeaning
+    5: Notes
+    6: Radicals
+    7: Mnemonics
+    8: Audio
+    9: ExampleAudio
+    Template 0: Japanese to Vietnamese
+
+CARD QUEUES
+  Review: 115
+  New: 83
+
+REVIEW RATINGS
+  Easy: 474
+  Good: 558
+  Hard: 254
+  Again: 1064
+
+POSSIBLE FSRS STATE
+  Cards with possible FSRS state: 115
+  Card data keys: {'pos': 115, 's': 115, 'd': 115, 'dr': 115, 'decay': 115, 'lrt': 115}
+  Note: field meanings/compatibility are not inferred by this script.
+
+DECK CONFIGURATION
+  Deck config presets: 1
+  Default (id=1): protobuf bytes=217
+  Protobuf blobs are fingerprinted but not decoded; FSRS parameters need a compatible Anki protobuf schema.
+
+MEDIA / AUDIO
+  Manifest status: parse error: UnicodeDecodeError
+  Manifest files: 0
+  Audio assets: 0
+  Image assets: 0
+  Audio files referenced by notes: 198
+  Total audio references: 198
+  Missing/unmapped audio: 100
+    sapi5js-34e80d47-d6a7d174-9338e03f-23b6ae76-ed54197c.mp3 — refs=1, present=False
+    sapi5js-e5795491-eded7161-b56675ec-01cb9264-f5e7d711.mp3 — refs=1, present=False
+    sapi5js-adaa958f-df017dbe-0f6aadb6-8bc0dee5-5f4d2ddd.mp3 — refs=1, present=False
+    sapi5js-ff99687f-26ff06c8-829c0967-1883b1f2-ec2f2ab4.mp3 — refs=1, present=False
+    sapi5js-add25c51-c62c6070-d9d56d34-48507175-79ae481f.mp3 — refs=1, present=False
+    sapi5js-b445bb8f-30c674ef-33a2eadf-01fcf32a-1621d5ce.mp3 — refs=1, present=False
+    sapi5js-18599a02-d29a28d4-54b0353c-9f3a2961-f7ac8edc.mp3 — refs=1, present=False
+    sapi5js-fd986c7d-2195afa0-ac21e7cc-204c4231-29c68554.mp3 — refs=1, present=False
+    sapi5js-c0787465-28c57799-374ae1c2-7150fef4-62516175.mp3 — refs=1, present=False
+    sapi5js-de4baa1a-c22440a0-ba860c95-9682c047-ea6e3c1c.mp3 — refs=1, present=False
+    sapi5js-bdd9e265-a979c362-86665ce6-95bbcabb-93d04231.mp3 — refs=1, present=False
+    sapi5js-3748635d-c901bef4-a2b93317-f69c2d61-d74f0809.mp3 — refs=1, present=False
+    sapi5js-4756e3d3-d9bba9ab-b036fbce-7ab4b2f3-adf8826e.mp3 — refs=1, present=False
+    sapi5js-a1cf3ef1-b6c8e8b8-76fdeae1-cb709767-a8c3bad2.mp3 — refs=1, present=False
+    sapi5js-70c9e4f9-bac98d2e-b512c79a-0b81e962-b4938729.mp3 — refs=1, present=False
+  Image files referenced by notes: 0
+  Media references by field: {'Audio': {'audio': 198}}
+
+DATABASE TABLES
+  cards: id, nid, did, ord, mod, usn, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, flags, data
+  col: id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags
+  config: KEY, usn, mtime_secs, val
+  deck_config: id, name, mtime_secs, usn, config
+  decks: id, name, mtime_secs, usn, common, kind
+  fields: ntid, ord, name, config
+  graves: oid, type, usn
+  notes: id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data
+  notetypes: id, name, mtime_secs, usn, config
+  revlog: id, cid, usn, ease, ivl, lastIvl, factor, time, type
+  sqlite_stat1: tbl, idx, stat
+  sqlite_stat4: tbl, idx, neq, nlt, ndlt, sample
+  tags: tag, usn, collapsed, config
+  templates: ntid, ord, name, mtime_secs, usn, config
+
+========================================================================
+English Vocabulary.apkg
+------------------------------------------------------------------------
+Collection schema version: 18
+Notes: 200
+Cards: 200
+Decks: 2 (normalized)
+Note Types: 1 (normalized)
+Review history: 1930
+
+DECKS
+  Default — 0 cards (id=1)
+  English Vocabulary — 200 cards (id=1793026159084)
+
+NOTE TYPES / FIELDS
+  English Vocabulary Model — 200 notes
+    0: Word
+    1: IPA
+    2: Vietnamese
+    3: PartOfSpeech
+    4: Example
+    5: ExampleMeaning
+    6: audio
+    Template 0: Card 1
+
+CARD QUEUES
+  Review: 131
+  New: 69
+
+REVIEW RATINGS
+  Again: 828
+  Easy: 452
+  Good: 516
+  Hard: 134
+
+POSSIBLE FSRS STATE
+  Cards with possible FSRS state: 131
+  Card data keys: {'pos': 131, 's': 131, 'd': 131, 'dr': 131, 'decay': 131, 'lrt': 131}
+  Note: field meanings/compatibility are not inferred by this script.
+
+DECK CONFIGURATION
+  Deck config presets: 1
+  Default (id=1): protobuf bytes=217
+  Protobuf blobs are fingerprinted but not decoded; FSRS parameters need a compatible Anki protobuf schema.
+
+MEDIA / AUDIO
+  Manifest status: parse error: UnicodeDecodeError
+  Manifest files: 0
+  Audio assets: 0
+  Image assets: 0
+  Audio files referenced by notes: 200
+  Total audio references: 200
+  Missing/unmapped audio: 100
+    sapi5com-63baed47-85d0f943-07c79020-394999ca-c6e33fb1.mp3 — refs=1, present=False
+    sapi5com-57c635b1-a68253b7-47e687cd-96988380-12807a21.mp3 — refs=1, present=False
+    sapi5com-6e517cf4-b9d378ef-d05c449e-fffca44a-bf2c2127.mp3 — refs=1, present=False
+    sapi5com-b34e689d-87592546-fbe0d2e1-5a0eab32-69024f53.mp3 — refs=1, present=False
+    sapi5com-38172e48-9dd524f9-02874c44-d860e290-0b5c5c25.mp3 — refs=1, present=False
+    sapi5com-9b7e1090-6a3c1175-728b8f2d-3c171382-73a5e048.mp3 — refs=1, present=False
+    sapi5com-b28cd563-e7c4b645-bb151d18-4559b805-6bedb631.mp3 — refs=1, present=False
+    sapi5com-54b4a042-a24e308a-b20dbd4b-40afbd07-4ba454b6.mp3 — refs=1, present=False
+    sapi5com-0f471510-7faf2862-3f902f75-c5b53b19-7f0eb0fe.mp3 — refs=1, present=False
+    sapi5com-12a412e0-327dd5ec-63acb641-292a6ff7-f46fba18.mp3 — refs=1, present=False
+    sapi5com-a4564f20-9816e21f-966f4659-b4a3dc00-4bf48b81.mp3 — refs=1, present=False
+    sapi5com-3c8e5a32-12af2587-5d576bbf-d3ba0a69-7a075337.mp3 — refs=1, present=False
+    sapi5com-47118387-d9c0e6b9-c2d01b80-9c12b550-05e22947.mp3 — refs=1, present=False
+    sapi5com-3ca87006-9e1b2a3a-868a5f00-a0b522bc-3719083f.mp3 — refs=1, present=False
+    sapi5com-fb02b30a-f2676965-6aa9620b-620a5411-cbfe548a.mp3 — refs=1, present=False
+  Image files referenced by notes: 0
+  Media references by field: {'audio': {'audio': 200}}
+
+DATABASE TABLES
+  cards: id, nid, did, ord, mod, usn, type, queue, due, ivl, factor, reps, lapses, left, odue, odid, flags, data
+  col: id, crt, mod, scm, ver, dty, usn, ls, conf, models, decks, dconf, tags
+  config: KEY, usn, mtime_secs, val
+  deck_config: id, name, mtime_secs, usn, config
+  decks: id, name, mtime_secs, usn, common, kind
+  fields: ntid, ord, name, config
+  graves: oid, type, usn
+  notes: id, guid, mid, mod, usn, tags, flds, sfld, csum, flags, data
+  notetypes: id, name, mtime_secs, usn, config
+  revlog: id, cid, usn, ease, ivl, lastIvl, factor, time, type
+  sqlite_stat1: tbl, idx, stat
+  sqlite_stat4: tbl, idx, neq, nlt, ndlt, sample
+  tags: tag, usn, collapsed, config
+  templates: ntid, ord, name, mtime_secs, usn, config
+
+========================================================================
+ERRORS
+
+END OF REPORT
