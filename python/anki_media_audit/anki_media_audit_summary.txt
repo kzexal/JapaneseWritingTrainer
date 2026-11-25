@@ -1,0 +1,81 @@
+ANKI MEDIA / AUDIO AUDIT
+========================================================================
+Read-only. No APKG content is modified.
+
+========================================================================
+Japanese Grammar.apkg
+Format: modern protobuf + zstd
+Manifest: parsed
+Media files: 0
+Audio assets: 0
+Image assets: 0
+Decoded assets: 0
+Audio references: 0 across 0 files
+Audio refs missing from manifest: 0
+Audio assets not decoded: 0
+Size mismatches: 0
+SHA1 mismatches: 0
+Template formats inspected: True
+Template config parse errors: 0
+AwesomeTTS template tags: 0
+Audio references by field:
+
+========================================================================
+Japanese Kanji.apkg
+Format: modern protobuf + zstd
+Manifest: parsed
+Media files: 1031
+Audio assets: 1031
+Image assets: 0
+Decoded assets: 1031
+Audio references: 1031 across 1031 files
+Audio refs missing from manifest: 0
+Audio assets not decoded: 0
+Size mismatches: 0
+SHA1 mismatches: 0
+Template formats inspected: True
+Template config parse errors: 0
+AwesomeTTS template tags: 0
+Audio references by field:
+  Audio: 1031
+
+========================================================================
+Japanese Vocabulary.apkg
+Format: modern protobuf + zstd
+Manifest: parsed
+Media files: 198
+Audio assets: 198
+Image assets: 0
+Decoded assets: 198
+Audio references: 198 across 198 files
+Audio refs missing from manifest: 0
+Audio assets not decoded: 0
+Size mismatches: 0
+SHA1 mismatches: 0
+Template formats inspected: True
+Template config parse errors: 0
+AwesomeTTS template tags: 0
+Audio references by field:
+  Audio: 198
+
+========================================================================
+English Vocabulary.apkg
+Format: modern protobuf + zstd
+Manifest: parsed
+Media files: 200
+Audio assets: 200
+Image assets: 0
+Decoded assets: 200
+Audio references: 200 across 200 files
+Audio refs missing from manifest: 0
+Audio assets not decoded: 0
+Size mismatches: 0
+SHA1 mismatches: 0
+Template formats inspected: True
+Template config parse errors: 0
+AwesomeTTS template tags: 0
+Audio references by field:
+  audio: 200
+
+========================================================================
+ERRORS
