@@ -11,8 +11,6 @@ Japanese Writing Trainer là ứng dụng Android offline-first để luyện vi
 
 **Trạng thái hiện tại:** Release thử `1.1` (versionCode `2`) đã được ký, xác minh chữ ký, cài đặt và mở ứng dụng thành công trên thiết bị thử sau khi giới hạn phạm vi R8 optimization vào mã ứng dụng. Người dùng đã xác nhận chốt giai đoạn Release thử. Đây chưa phải phát hành công khai.
 
-**Ưu tiên tiếp theo:** khảo sát và thiết kế khả năng nhập bốn bộ Anki hiện có (Japanese Grammar, Japanese Kanji, Japanese Vocabulary, English Vocabulary), bao gồm nội dung, tiến độ FSRS và lịch sử ôn tập. Giai đoạn hiện tại chỉ là audit dữ liệu và thiết kế; chưa triển khai importer, chưa thay đổi Room schema và chưa nhập dữ liệu vào ứng dụng.
-
 ## 2. Nền tảng và kiến trúc
 
 | Hạng mục | Quyết định |
@@ -47,8 +45,6 @@ Không thay FSRS bằng SM-2. Không để UI/Room phụ thuộc kiểu dữ li�
 | Kanji | 1.031 ký tự thuộc danh sách học N5–N2; deck độc lập |
 | JLPT | N5–N2 là phân loại tham khảo từ cộng đồng, không phải danh sách Kanji chính thức |
 | Kanji library | Tìm theo Kanji, âm đọc, Romaji, nghĩa; lọc theo bộ thủ |
-| Vocabulary | Có workbook Excel và bộ Anki Japanese Vocabulary; cần xác định nguồn nội dung chuẩn và quy tắc hợp nhất trước khi nhập |
-| Anki import | Đang ở giai đoạn khảo sát bốn APKG; chưa có importer hoặc hợp đồng dữ liệu được chốt |
 
 Quy tắc định danh:
 - ID card ổn định, không phụ thuộc thứ tự dòng Excel hoặc vị trí trong danh sách.
@@ -176,142 +172,15 @@ Instrumentation tests cần emulator/thiết bị kết nối. Không chạy l�
 
 Khi có thay đổi ảnh hưởng đến build, signing, R8, Room, scheduler hoặc luồng học, người dùng chạy các kiểm tra local phù hợp. Không tuyên bố build/test PASS nếu chưa quan sát kết quả từ người dùng hoặc môi trường chạy thực tế.
 
-## 8. Khảo sát và thiết kế nhập dữ liệu Anki
+## 8. Backlog
 
-### 8.1 Mục tiêu và phạm vi
+1. Kiểm tra clean install trên thiết bị phụ/emulator; không xóa dữ liệu học duy nhất.
+2. Rà soát attribution/provenance và ShareAlike trước phân phối công khai.
+3. Quyết định chính sách Android Auto Backup so với JSON backup thủ công.
+4. Các tính năng ngoài phạm vi như yōon writing units, nhận dạng ML/CNN, cloud sync/login chỉ xem xét khi có yêu cầu riêng.
 
-Mục tiêu là nhập dữ liệu từ bốn bộ APKG hiện có sang JapaneseWritingTrainer, ưu tiên giữ nội dung, trạng thái học, FSRS memory state, due scheduling và lịch sử ôn tập. Đây là migration một chiều từ bản export Anki; không phải Anki sync, không yêu cầu tài khoản hoặc cloud.
-
-Bốn nguồn cần khảo sát:
-
-1. Japanese Grammar
-2. Japanese Kanji
-3. Japanese Vocabulary
-4. English Vocabulary
-
-Mỗi loại nội dung có schema riêng. Không ép Grammar, Kanji, Japanese Vocabulary và English Vocabulary vào một Note model chung; chúng có thể dùng chung card identity/progress abstraction và FSRS scheduler ở tầng domain nếu mapping được xác minh.
-
-### 8.2 Snapshot APKG đã phân tích sơ bộ
-
-Báo cáo được tạo ngày 25/11/2026 từ bốn file APKG, đều sử dụng `collection.anki21b` và Collection schema version 18:
-
-| Bộ Anki | Notes | Cards | New | Review | Revlog |
-|---|---:|---:|---:|---:|---:|
-| Japanese Grammar | 49 | 49 | 0 | 49 | 592 |
-| Japanese Kanji | 1.031 | 1.031 | 939 | 92 | 788 |
-| Japanese Vocabulary | 198 | 198 | 83 | 115 | 2.350 |
-| English Vocabulary | 200 | 200 | 69 | 131 | 1.930 |
-| **Tổng** | **1.478** | **1.478** | **1.091** | **387** | **5.660** |
-
-Trong 5.660 review log, các rating tổng hợp được báo cáo là Again 2.231, Hard 484, Good 1.480 và Easy 1.465.
-
-Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`, `decay`, `lrt`. Đây là bằng chứng APKG có dữ liệu memory state cần bảo toàn và khảo sát tiếp; chưa được coi là xác nhận tương thích trực tiếp với FSRS-rs 6.6.2.
-
-**Giới hạn của báo cáo hiện tại:** script audit ban đầu đọc các trường `col.models` và `col.decks` theo cấu trúc cũ, trong khi APKG này có các bảng riêng `notetypes`, `fields`, `templates`, `decks`, `deck_config` và `config`. Vì vậy các kết quả `Decks: 0`, `Note Types: 0` và cấu hình rỗng là lỗi của cách đọc báo cáo, không phải kết luận APKG không có deck/Note Type/configuration. Thống kê media cũng chưa được xác minh đầy đủ. Không dùng các trường đó làm căn cứ thiết kế cho đến khi audit schema được sửa.
-
-### 8.3 Những điều phải xác minh trước khi viết importer
-
-- Đọc schema thực tế của `decks`, `notetypes`, `fields`, `templates`, `config`, `deck_config` và các liên kết của chúng.
-- Lấy chính xác thứ tự field, Note Type, card template, deck/subdeck, tags, media references và nội dung note; xác minh cách xử lý HTML, audio và hình ảnh.
-- Xác định chính xác ý nghĩa, đơn vị và thời điểm của các trường card scheduling: `type`, `queue`, `due`, `ivl`, `reps`, `lapses`, `left`, `odue`, `odid`, `factor`, `mod` và `data`.
-- Xác minh cấu trúc FSRS trong `cards.data`, phiên bản/thuật toán, desired retention và tham số liên quan. Không suy luận ý nghĩa trường chưa được xác nhận và không tự tính lại memory state trong bước import.
-- Xác minh ý nghĩa `revlog.ease`, `revlog.type`, `ivl`, `lastIvl`, timestamp và đơn vị thời gian; giữ thứ tự lịch sử và liên kết đúng Card.
-- Kiểm tra các trạng thái suspended/buried, learning/relearning và filtered/deck override nếu có; snapshot sơ bộ hiện chỉ báo cáo New và Review ở queue hiện tại.
-- Xác minh media thực tế trong từng APKG: đọc ZIP media manifest, đối chiếu tên file trong note fields (ví dụ `[sound:filename.mp3]`) với archive entries, thống kê audio/image theo định dạng và phát hiện tham chiếu thiếu. Không kết luận không có media chỉ từ báo cáo sơ bộ.
-- Với audio, xác định audio gắn với field nào (từ, cách đọc, ví dụ hay câu), phân biệt audio của từ và audio của câu ví dụ; giữ nguyên mapping field → asset. Kiểm tra codec/định dạng và khả năng phát trên Android trước khi quyết định đóng gói hoặc chuyển đổi.
-- Audio gốc trong APKG là nguồn ưu tiên nếu có quyền sử dụng phù hợp. Ứng dụng có thể lưu audio trong app-private storage hoặc assets để phát offline; không cần Internet sau khi dữ liệu đã được import. Không nhúng toàn bộ media vào APK nếu làm tăng kích thước cài đặt không cần thiết.
-- Đối chiếu Japanese Kanji APKG với 1.031 Kanji hiện có trong ứng dụng để map vào card identity hiện hữu, tránh tạo duplicate.
-- Đối chiếu Japanese Vocabulary APKG với workbook Excel hiện có; xác định nguồn nội dung chuẩn và quy tắc xử lý duplicate/conflict trước khi hợp nhất.
-- Kiểm tra sự khác biệt giữa Anki FSRS và FSRS-rs 6.6.2 trước khi quyết định có thể khôi phục memory state trực tiếp hay phải dùng phương án tương thích được kiểm chứng.
-
-### 8.4 Nguyên tắc thiết kế migration
-
-1. APKG gốc là nguồn chỉ đọc; không chỉnh sửa collection gốc.
-2. Mỗi nguồn và mỗi Note/Card cần identity mapping ổn định, có namespace nguồn. Không dùng vị trí dòng Excel hoặc thứ tự trong danh sách làm ID.
-3. Lưu external Anki IDs/GUID làm provenance; không mặc định Anki ID có thể thay thế app primary key.
-4. Import phải idempotent: chạy lại cùng nguồn không tạo duplicate hoặc ghi đè tiến độ mới hơn một cách âm thầm.
-5. Nội dung từng loại deck có schema riêng; scheduler/progress dùng abstraction chung chỉ khi mapping không làm mất thông tin.
-6. Giữ raw FSRS memory state và raw review history khi có thể; mọi chuyển đổi đơn vị/thời gian phải có test và đối chiếu.
-7. Giữ nguyên audio/image assets được note tham chiếu; import media phải có manifest, mapping ổn định, kiểm tra file thiếu/trùng và xác minh phát offline. Không tự thay audio gốc bằng TTS.
-8. Hỗ trợ cập nhật APKG nhiều lần: Note mới được thêm; audio mới của Note cũ được bổ sung/cập nhật theo field mapping; không tạo card trùng và không ghi đè FSRS state, due date hoặc review history đã phát sinh trong ứng dụng. Mỗi lần cập nhật phải có dry-run và báo cáo thay đổi.
-9. TTS chỉ là phương án bổ trợ cho nội dung không có audio phù hợp; không thay audio AwesomeTTS đã lưu. Không tạo TTS hàng loạt tự động khi import.
-9. Không biến lịch sử Anki thành các lần review mới trong scheduler; lịch sử import phải được phân biệt với review phát sinh trong ứng dụng.
-10. Tạo dry-run report trước khi ghi database: số note/card sẽ thêm, map, bỏ qua, xung đột, thiếu media và trạng thái không thể chuyển.
-11. Thực hiện import trong transaction hoặc theo batch có checkpoint/rollback được thiết kế rõ ràng; backup dữ liệu app trước khi import.
-12. Không xóa hoặc reset CardProgress/PracticeLog hiện có. Bổ sung Room migration rõ ràng nếu cần; tuyệt đối không dùng destructive migration.
-13. Sau import phải đối chiếu counts, card identity, due state, FSRS fields, số lượng review history và khả năng phát media; cung cấp báo cáo kết quả cho người dùng.
-
-### 8.5 Các giai đoạn thực hiện
-
-- **A — Schema audit:** sửa script phân tích để đọc schema Anki v18 và xác minh nội dung, deck, Note Type, media, scheduler config.
-- **B — Mapping specification:** lập bảng ánh xạ riêng cho bốn deck, card identity và progress/history.
-- **C — Compatibility validation:** kiểm chứng FSRS state, timestamp, due semantics và khả năng map với Room/FSRS-rs hiện tại.
-- **D — Dry run:** tạo báo cáo import không ghi dữ liệu, xử lý duplicate và xung đột.
-- **E — Implementation:** chỉ bắt đầu sau khi người dùng duyệt mapping/spec; có migration, backup, rollback và idempotency.
-- **F — Local validation:** người dùng chạy tests và thử import trên bản backup/test dataset trước khi dùng dữ liệu học chính.
-
-Hiện tại schema/media audit đã đọc được bốn APKG và media manifest. Mapping nội dung, GUID, field-level media, FSRS compatibility và dry-run vẫn cần hoàn tất; chưa triển khai importer và chưa nhập dữ liệu Anki vào ứng dụng.
-
-### 8.6 Cập nhật APKG và bổ sung audio sau lần import đầu
-
-Anki Desktop tiếp tục là nơi người dùng chỉnh sửa Note và tạo audio bằng AwesomeTTS. JapaneseWritingTrainer nhận các bản APKG được xuất lại; không cần kết nối trực tiếp AnkiWeb, không cần API AwesomeTTS và không cần mạng khi phát audio đã import.
-
-**Quy trình người dùng dự kiến**
-1. Thêm Note/từ mới hoặc chỉnh sửa Note trong Anki.
-2. Dùng AwesomeTTS tạo audio cho field mong muốn (ví dụ Audio, audio, ExampleAudio).
-3. Export từng deck thành `.apkg`, bật Include Media. Có thể bật Include Scheduling Information khi muốn APKG mang theo snapshot scheduling; ứng dụng vẫn không dùng snapshot này để ghi đè tiến độ đã phát sinh sau lần import đầu.
-4. Chọn APKG trong JapaneseWritingTrainer; ứng dụng phân tích và hiển thị dry-run trước khi ghi dữ liệu.
-5. Xác nhận import; nội dung/media được cập nhật theo mapping, còn tiến độ học phát sinh trong app được bảo toàn.
-
-**Mapping audio đã xác nhận từ Note Type hiện tại**
-
-| Deck | Note Type | Field audio | Hiện trạng |
-|---|---|---|---|
-| Japanese Grammar | Japanese Grammar Model | Không có | Không cấp audio theo chủ đích |
-| Japanese Kanji | Japanese Kanji Model | `Audio` | 1.031 references / 1.031 assets |
-| Japanese Vocabulary | Japanese Vocabulary Model++ | `Audio`, `ExampleAudio` | `Audio`: 198 references; `ExampleAudio`: hiện chưa có reference |
-| English Vocabulary | English Vocabulary Model | `audio` | 200 references / 200 assets |
-
-Tên field phải được giữ nguyên theo đúng Note Type (kể cả chữ hoa/thường). Khi người dùng tạo audio cho câu ví dụ trong tương lai, importer cần nhận diện `ExampleAudio` như một field riêng, không gộp với audio của từ. Báo cáo media hiện tại xác nhận 1.429 audio assets/references và không có reference thiếu, lỗi giải nén, mismatch size hoặc SHA-1.
-
-**Quy tắc identity và merge**
-- Identity Note nguồn: namespace deck/source + Anki Note GUID. Lưu Anki Note ID và Card ID như provenance/diagnostic, không dùng numeric ID làm identity duy nhất.
-- Card identity trong app phải ổn định theo source namespace + Note GUID + template ordinal/card role; xác minh mapping với Note Type thực tế trước implementation.
-- Note GUID đã biết: cập nhật nội dung/audio theo chính sách field-level; không tạo Note/Card trùng.
-- Note GUID mới: tạo Note/Card mới với trạng thái New, sau dry-run và theo mapping deck đã duyệt.
-- Note không còn xuất hiện trong APKG mới: không tự xóa Note/Card/progress trong app.
-- Khi refresh Note đã import, không ghi đè app FSRS state, due timestamp hoặc PracticeLog bằng snapshot Anki mới. Review history Anki ban đầu được lưu như imported history riêng; review mới trong app tiếp tục là PracticeLog.
-- Nếu field nội dung thay đổi ở cả Anki và app, báo conflict trong dry-run; không âm thầm chọn một phía. Chính sách dự kiến: Anki là nguồn nội dung chuẩn, app là nguồn tiến độ sau lần import đầu, nhưng người dùng phải duyệt conflict.
-
-**Quản lý media**
-- Audio mapping lưu theo source namespace + Note GUID + field name + media filename; không suy luận chỉ từ thứ tự field hoặc thứ tự file trong ZIP.
-- Giải nén numeric media entries theo manifest Protobuf/Zstandard của APKG; xác minh kích thước/hash trước khi đưa vào kho media.
-- Lưu file audio trong app-private storage (không nhúng toàn bộ audio vào APK); phát offline. Metadata trong Room giữ relative path, MIME/extension nếu xác định được, size, SHA-256 và các Note-field references.
-- Dùng content hash để tránh lưu trùng cùng asset; không ghi đè file đang được tham chiếu nếu nội dung khác hash.
-- Khi media filename được thay thế hoặc Note trỏ sang file khác, cập nhật mapping sau khi file mới đã được xác minh. Chỉ dọn asset không còn tham chiếu trong bước garbage-collection riêng.
-- Ưu tiên giữ định dạng gốc; chỉ chuyển mã nếu codec không phát được trên Android và phải giữ bản gốc/ghi nhận chuyển đổi. Chốt thư viện phát sau khi kiểm tra decoder Android.
-- UI audio dùng chung cho các deck: phát audio gắn với nội dung hiện tại; phân biệt audio từ vựng và audio ví dụ khi cả hai tồn tại.
-- Japanese Grammar hiện không có audio theo chủ đích; không coi đây là lỗi thiếu media và không tạo audio khi import. Android TTS có thể là lựa chọn bổ sung riêng, không thuộc migration audio gốc.
-
-**Dry-run và an toàn**
-- Báo cáo số Note mới/đã biết, field nội dung thay đổi, audio mới/thay thế, asset trùng hash, media thiếu/không hỗ trợ và conflict.
-- Nếu APKG chỉ thêm audio cho Note cũ, chỉ cập nhật media và field reference; không đổi số card, FSRS state, due date hoặc lịch sử app.
-- Backup app trước khi apply; transaction/checkpoint, rollback và idempotency. Lặp lại cùng APKG không tạo thay đổi thừa.
-- APKG gốc là read-only; không sửa trực tiếp collection/media trong profile Anki.
-
-## 9. Backlog sau giai đoạn audit
-
-1. Hoàn tất schema audit và mapping specification cho cả bốn bộ Anki.
-2. Chốt chính sách hợp nhất Japanese Kanji APKG với Kanji library hiện có và Japanese Vocabulary APKG với workbook Excel.
-3. Chỉ triển khai importer sau khi người dùng duyệt thiết kế migration.
-4. Kiểm tra clean install trên thiết bị phụ/emulator; không xóa dữ liệu học duy nhất.
-5. Rà soát attribution/provenance và ShareAlike trước phân phối công khai.
-6. Quyết định chính sách Android Auto Backup so với JSON backup thủ công.
-7. Các tính năng ngoài phạm vi như yōon writing units, nhận dạng ML/CNN, cloud sync/login chỉ xem xét khi có yêu cầu riêng.
-
-## 10. Tài liệu còn được giữ
+## 9. Tài liệu còn được giữ
 
 - `README.md`: trang giới thiệu và hướng dẫn mở/build ngắn gọn, trỏ về tài liệu này.
 - `JapaneseWritingTrainer/THIRD_PARTY_NOTICES.md`: thông báo ghi công và điều khoản dữ liệu/native dependencies bắt buộc giữ khi phân phối.
-- `vocabulary.xlsx` và các artifact Anki: nguồn dữ liệu cần đối chiếu trong giai đoạn audit; không tự ý chỉnh sửa nguồn gốc.
 - Các source code, tests, assets, generator và native libraries cần thiết cho ứng dụng.
