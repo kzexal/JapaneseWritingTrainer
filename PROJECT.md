@@ -233,7 +233,8 @@ Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`,
 5. Nội dung từng loại deck có schema riêng; scheduler/progress dùng abstraction chung chỉ khi mapping không làm mất thông tin.
 6. Giữ raw FSRS memory state và raw review history khi có thể; mọi chuyển đổi đơn vị/thời gian phải có test và đối chiếu.
 7. Giữ nguyên audio/image assets được note tham chiếu; import media phải có manifest, mapping ổn định, kiểm tra file thiếu/trùng và xác minh phát offline. Không tự thay audio gốc bằng TTS.
-8. TTS chỉ là phương án bổ trợ cho nội dung không có audio phù hợp; cần thiết kế riêng về engine, ngôn ngữ/voice, chất lượng phát âm và cache. Không tạo TTS hàng loạt trong giai đoạn migration ban đầu.
+8. Hỗ trợ cập nhật APKG nhiều lần: Note mới được thêm; audio mới của Note cũ được bổ sung/cập nhật theo field mapping; không tạo card trùng và không ghi đè FSRS state, due date hoặc review history đã phát sinh trong ứng dụng. Mỗi lần cập nhật phải có dry-run và báo cáo thay đổi.
+9. TTS chỉ là phương án bổ trợ cho nội dung không có audio phù hợp; không thay audio AwesomeTTS đã lưu. Không tạo TTS hàng loạt tự động khi import.
 9. Không biến lịch sử Anki thành các lần review mới trong scheduler; lịch sử import phải được phân biệt với review phát sinh trong ứng dụng.
 10. Tạo dry-run report trước khi ghi database: số note/card sẽ thêm, map, bỏ qua, xung đột, thiếu media và trạng thái không thể chuyển.
 11. Thực hiện import trong transaction hoặc theo batch có checkpoint/rollback được thiết kế rõ ràng; backup dữ liệu app trước khi import.
@@ -249,7 +250,43 @@ Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`,
 - **E — Implementation:** chỉ bắt đầu sau khi người dùng duyệt mapping/spec; có migration, backup, rollback và idempotency.
 - **F — Local validation:** người dùng chạy tests và thử import trên bản backup/test dataset trước khi dùng dữ liệu học chính.
 
-Hiện tại mới có snapshot audit sơ bộ; chưa hoàn tất A, chưa chốt mapping, chưa triển khai importer và chưa nhập bất kỳ dữ liệu Anki nào vào ứng dụng.
+Hiện tại schema/media audit đã đọc được bốn APKG và media manifest. Mapping nội dung, GUID, field-level media, FSRS compatibility và dry-run vẫn cần hoàn tất; chưa triển khai importer và chưa nhập dữ liệu Anki vào ứng dụng.
+
+### 8.6 Cập nhật APKG và bổ sung audio sau lần import đầu
+
+Anki Desktop tiếp tục là nơi người dùng chỉnh sửa Note và tạo audio bằng AwesomeTTS. JapaneseWritingTrainer nhận các bản APKG được xuất lại; không cần kết nối trực tiếp AnkiWeb, không cần API AwesomeTTS và không cần mạng khi phát audio đã import.
+
+**Quy trình người dùng dự kiến**
+1. Thêm Note/từ mới hoặc chỉnh sửa Note trong Anki.
+2. Dùng AwesomeTTS tạo audio cho field mong muốn (ví dụ Audio, audio, ExampleAudio).
+3. Export từng deck thành `.apkg`, bật Include Media. Có thể bật Include Scheduling Information khi muốn APKG mang theo snapshot scheduling; ứng dụng vẫn không dùng snapshot này để ghi đè tiến độ đã phát sinh sau lần import đầu.
+4. Chọn APKG trong JapaneseWritingTrainer; ứng dụng phân tích và hiển thị dry-run trước khi ghi dữ liệu.
+5. Xác nhận import; nội dung/media được cập nhật theo mapping, còn tiến độ học phát sinh trong app được bảo toàn.
+
+**Quy tắc identity và merge**
+- Identity Note nguồn: namespace deck/source + Anki Note GUID. Lưu Anki Note ID và Card ID như provenance/diagnostic, không dùng numeric ID làm identity duy nhất.
+- Card identity trong app phải ổn định theo source namespace + Note GUID + template ordinal/card role; xác minh mapping với Note Type thực tế trước implementation.
+- Note GUID đã biết: cập nhật nội dung/audio theo chính sách field-level; không tạo Note/Card trùng.
+- Note GUID mới: tạo Note/Card mới với trạng thái New, sau dry-run và theo mapping deck đã duyệt.
+- Note không còn xuất hiện trong APKG mới: không tự xóa Note/Card/progress trong app.
+- Khi refresh Note đã import, không ghi đè app FSRS state, due timestamp hoặc PracticeLog bằng snapshot Anki mới. Review history Anki ban đầu được lưu như imported history riêng; review mới trong app tiếp tục là PracticeLog.
+- Nếu field nội dung thay đổi ở cả Anki và app, báo conflict trong dry-run; không âm thầm chọn một phía. Chính sách dự kiến: Anki là nguồn nội dung chuẩn, app là nguồn tiến độ sau lần import đầu, nhưng người dùng phải duyệt conflict.
+
+**Quản lý media**
+- Audio mapping lưu theo source namespace + Note GUID + field name + media filename; không suy luận chỉ từ thứ tự field hoặc thứ tự file trong ZIP.
+- Giải nén numeric media entries theo manifest Protobuf/Zstandard của APKG; xác minh kích thước/hash trước khi đưa vào kho media.
+- Lưu file audio trong app-private storage (không nhúng toàn bộ audio vào APK); phát offline. Metadata trong Room giữ relative path, MIME/extension nếu xác định được, size, SHA-256 và các Note-field references.
+- Dùng content hash để tránh lưu trùng cùng asset; không ghi đè file đang được tham chiếu nếu nội dung khác hash.
+- Khi media filename được thay thế hoặc Note trỏ sang file khác, cập nhật mapping sau khi file mới đã được xác minh. Chỉ dọn asset không còn tham chiếu trong bước garbage-collection riêng.
+- Ưu tiên giữ định dạng gốc; chỉ chuyển mã nếu codec không phát được trên Android và phải giữ bản gốc/ghi nhận chuyển đổi. Chốt thư viện phát sau khi kiểm tra decoder Android.
+- UI audio dùng chung cho các deck: phát audio gắn với nội dung hiện tại; phân biệt audio từ vựng và audio ví dụ khi cả hai tồn tại.
+- Japanese Grammar hiện không có audio theo chủ đích; không coi đây là lỗi thiếu media và không tạo audio khi import. Android TTS có thể là lựa chọn bổ sung riêng, không thuộc migration audio gốc.
+
+**Dry-run và an toàn**
+- Báo cáo số Note mới/đã biết, field nội dung thay đổi, audio mới/thay thế, asset trùng hash, media thiếu/không hỗ trợ và conflict.
+- Nếu APKG chỉ thêm audio cho Note cũ, chỉ cập nhật media và field reference; không đổi số card, FSRS state, due date hoặc lịch sử app.
+- Backup app trước khi apply; transaction/checkpoint, rollback và idempotency. Lặp lại cùng APKG không tạo thay đổi thừa.
+- APKG gốc là read-only; không sửa trực tiếp collection/media trong profile Anki.
 
 ## 9. Backlog sau giai đoạn audit
 
