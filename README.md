@@ -27,10 +27,10 @@ Instrumentation tests cần emulator hoặc thiết bị Android đang kết n�
 
 ## Tài liệu dự án
 
-**[PROJECT.md](PROJECT.md)** là tài liệu chuẩn duy nhất cho yêu cầu sản phẩm, kiến trúc, quyết định UI, trạng thái triển khai, quy tắc phát triển và checklist Release thử.
+**[PROJECT.md](PROJECT.md)** là tài liệu chuẩn duy nhất cho yêu cầu sản phẩm, kiến trúc, quyết định UI, trạng thái triển khai, quy tắc phát triển, Release và kế hoạch migration dữ liệu Anki.
 
 Ghi công và giấy phép dữ liệu: [THIRD_PARTY_NOTICES.md](JapaneseWritingTrainer/THIRD_PARTY_NOTICES.md).
 
 ## Phát hành
 
-Release APK cần được ký bằng keystore riêng lưu ngoài repository. Không commit keystore hoặc mật khẩu. Chưa chuyển sang phát triển Vocabulary cho đến khi người dùng xác nhận Release thử đạt các điều kiện trong `PROJECT.md`.
+Release thử `1.1` (versionCode `2`) đã được ký, cài đặt và mở thành công trên thiết bị thử; chưa phải phát hành công khai. Giai đoạn tiếp theo là audit và thiết kế migration từ bốn bộ Anki theo `PROJECT.md`. Không commit keystore hoặc mật khẩu.
