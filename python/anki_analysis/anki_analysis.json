@@ -1,0 +1,1197 @@
+{
+  "generated_at_utc": "2026-11-25T17:51:36.832440+00:00",
+  "reports": [
+    {
+      "file": "Japanese Grammar.apkg",
+      "file_size_bytes": 91133,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "creation_time_utc": "2026-10-19T21:00:00+00:00",
+        "last_modified_utc": null,
+        "schema_version": 1795627556898,
+        "collection_version": 18
+      },
+      "totals": {
+        "notes": 49,
+        "cards": 49,
+        "review_history": 592,
+        "decks": 0,
+        "note_types": 0,
+        "media_files": 0
+      },
+      "decks": [],
+      "note_types": [],
+      "cards": {
+        "total_cards": 49,
+        "by_type": {
+          "Review": 49
+        },
+        "by_queue": {
+          "Review": 49
+        },
+        "by_deck": {
+          "Unknown deck (1792667917885)": {
+            "cards": 49,
+            "types": {
+              "Review": 49
+            },
+            "queues": {
+              "Review": 49
+            },
+            "unique_notes": 49
+          }
+        },
+        "interval_days": {
+          "min": 2,
+          "max": 88,
+          "average": 25.82
+        },
+        "repetitions": {
+          "min": 3,
+          "max": 28,
+          "average": 12.08
+        },
+        "lapses": {
+          "min": 0,
+          "max": 6,
+          "average": 1.96
+        },
+        "cards_with_possible_memory_state": 49,
+        "card_data_keys": {
+          "pos": 49,
+          "s": 49,
+          "d": 49,
+          "dr": 49,
+          "decay": 49,
+          "lrt": 49
+        },
+        "memory_state_samples": [
+          {
+            "card_id": 1792668076271,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 343,
+              "s": 58.9435,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793889874
+            }
+          },
+          {
+            "card_id": 1792668076384,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 344,
+              "s": 54.4415,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793777452
+            }
+          },
+          {
+            "card_id": 1792668076480,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 345,
+              "s": 55.5386,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794147468
+            }
+          },
+          {
+            "card_id": 1792668076584,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 346,
+              "s": 63.5569,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794064466
+            }
+          },
+          {
+            "card_id": 1792668076664,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 347,
+              "s": 55.3244,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794064545
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total_reviews": 592,
+        "ratings": {
+          "Easy": 196,
+          "Good": 194,
+          "Hard": 51,
+          "Again": 151
+        },
+        "review_types": {
+          "Learning": 164,
+          "Review": 308,
+          "Relearning": 120
+        },
+        "unique_cards_reviewed": 49,
+        "review_time_ms": {
+          "min": 1905,
+          "max": 60000,
+          "average": 14002.31
+        },
+        "first_review_utc": "2026-10-22T11:43:55.964000+00:00",
+        "last_review_utc": "2026-11-25T15:38:12.083000+00:00"
+      },
+      "scheduling_config": {
+        "collection_config": {},
+        "deck_options": {},
+        "deck_specific_config": {}
+      },
+      "tags": {
+        "basic": 1,
+        "particle": 13,
+        "copula": 1,
+        "polite": 1,
+        "question": 2,
+        "inclusion": 1,
+        "object": 1,
+        "destination": 1,
+        "time": 5,
+        "location": 1,
+        "tool": 1,
+        "negative": 3,
+        "verb": 21,
+        "suggestion": 2,
+        "desire": 2,
+        "request": 2,
+        "continuous": 1,
+        "nominalizer": 1,
+        "preference": 1,
+        "existence": 2,
+        "inanimate": 1,
+        "animate": 1,
+        "invitation": 1,
+        "conjunction": 4,
+        "reason": 1,
+        "contrast": 1,
+        "comparison": 4,
+        "intention": 1,
+        "listing": 4,
+        "change": 2,
+        "sequence": 1,
+        "experience": 1,
+        "grammar": 3,
+        "superlative": 1,
+        "giving": 2,
+        "receiving": 1,
+        "adjective": 1,
+        "permission": 1,
+        "prohibition": 1,
+        "purpose": 1,
+        "offer": 1,
+        "adverb": 2,
+        "limitation": 2,
+        "accompaniment": 1,
+        "choice": 1,
+        "indefinite": 1,
+        "pronoun": 2
+      },
+      "media": {
+        "count": 0,
+        "filenames_sample": []
+      },
+      "database_tables": [
+        "cards",
+        "col",
+        "config",
+        "deck_config",
+        "decks",
+        "fields",
+        "graves",
+        "notes",
+        "notetypes",
+        "revlog",
+        "sqlite_stat1",
+        "sqlite_stat4",
+        "tags",
+        "templates"
+      ],
+      "database_columns": {
+        "col": [
+          "conf",
+          "crt",
+          "dconf",
+          "decks",
+          "dty",
+          "id",
+          "ls",
+          "mod",
+          "models",
+          "scm",
+          "tags",
+          "usn",
+          "ver"
+        ],
+        "notes": [
+          "csum",
+          "data",
+          "flags",
+          "flds",
+          "guid",
+          "id",
+          "mid",
+          "mod",
+          "sfld",
+          "tags",
+          "usn"
+        ],
+        "cards": [
+          "data",
+          "did",
+          "due",
+          "factor",
+          "flags",
+          "id",
+          "ivl",
+          "lapses",
+          "left",
+          "mod",
+          "nid",
+          "odid",
+          "odue",
+          "ord",
+          "queue",
+          "reps",
+          "type",
+          "usn"
+        ],
+        "revlog": [
+          "cid",
+          "ease",
+          "factor",
+          "id",
+          "ivl",
+          "lastIvl",
+          "time",
+          "type",
+          "usn"
+        ]
+      }
+    },
+    {
+      "file": "Japanese Kanji.apkg",
+      "file_size_bytes": 9669952,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "creation_time_utc": "2026-10-19T21:00:00+00:00",
+        "last_modified_utc": null,
+        "schema_version": 1795627562955,
+        "collection_version": 18
+      },
+      "totals": {
+        "notes": 1031,
+        "cards": 1031,
+        "review_history": 788,
+        "decks": 0,
+        "note_types": 0,
+        "media_files": 0
+      },
+      "decks": [],
+      "note_types": [],
+      "cards": {
+        "total_cards": 1031,
+        "by_type": {
+          "Review": 92,
+          "New": 939
+        },
+        "by_queue": {
+          "Review": 92,
+          "New": 939
+        },
+        "by_deck": {
+          "Unknown deck (1792666377527)": {
+            "cards": 1031,
+            "types": {
+              "Review": 92,
+              "New": 939
+            },
+            "queues": {
+              "Review": 92,
+              "New": 939
+            },
+            "unique_notes": 1031
+          }
+        },
+        "interval_days": {
+          "min": 0,
+          "max": 150,
+          "average": 2.87
+        },
+        "repetitions": {
+          "min": 0,
+          "max": 23,
+          "average": 0.76
+        },
+        "lapses": {
+          "min": 0,
+          "max": 6,
+          "average": 0.11
+        },
+        "cards_with_possible_memory_state": 92,
+        "card_data_keys": {
+          "pos": 92,
+          "s": 92,
+          "d": 92,
+          "dr": 92,
+          "decay": 92,
+          "lrt": 92
+        },
+        "memory_state_samples": [
+          {
+            "card_id": 1792666377840,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 257,
+              "s": 121.9035,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795184385
+            }
+          },
+          {
+            "card_id": 1792666377905,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 258,
+              "s": 49.5432,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793719253
+            }
+          },
+          {
+            "card_id": 1792666377971,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 259,
+              "s": 54.4415,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793777009
+            }
+          },
+          {
+            "card_id": 1792666378036,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 260,
+              "s": 63.5569,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794064686
+            }
+          },
+          {
+            "card_id": 1792666378123,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 261,
+              "s": 44.6277,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793776967
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total_reviews": 788,
+        "ratings": {
+          "Again": 188,
+          "Easy": 343,
+          "Hard": 45,
+          "Good": 212
+        },
+        "review_types": {
+          "Learning": 251,
+          "Review": 412,
+          "Relearning": 125
+        },
+        "unique_cards_reviewed": 92,
+        "review_time_ms": {
+          "min": 1457,
+          "max": 60000,
+          "average": 8084.2
+        },
+        "first_review_utc": "2026-10-22T10:58:10.173000+00:00",
+        "last_review_utc": "2026-11-25T15:39:35.454000+00:00"
+      },
+      "scheduling_config": {
+        "collection_config": {},
+        "deck_options": {},
+        "deck_specific_config": {}
+      },
+      "tags": {
+        "basic": 10,
+        "number": 13,
+        "currency": 2,
+        "shape": 1,
+        "nature": 10,
+        "time": 12,
+        "metal": 1,
+        "people": 9,
+        "direction": 13,
+        "object": 1,
+        "education": 3,
+        "life": 1,
+        "adjective": 9,
+        "size": 2,
+        "color": 2,
+        "verb": 15,
+        "concept": 2,
+        "transport": 1,
+        "energy": 1,
+        "place": 3,
+        "language": 1,
+        "quantity": 1,
+        "space": 1,
+        "frequency": 1,
+        "grade-2": 119,
+        "N4": 160,
+        "grade-3": 185,
+        "grade-1": 30,
+        "grade-4": 151,
+        "grade-6": 103,
+        "grade-5": 146,
+        "grade-8": 211,
+        "N3": 387,
+        "N2": 398
+      },
+      "media": {
+        "count": 0,
+        "filenames_sample": []
+      },
+      "database_tables": [
+        "cards",
+        "col",
+        "config",
+        "deck_config",
+        "decks",
+        "fields",
+        "graves",
+        "notes",
+        "notetypes",
+        "revlog",
+        "sqlite_stat1",
+        "sqlite_stat4",
+        "tags",
+        "templates"
+      ],
+      "database_columns": {
+        "col": [
+          "conf",
+          "crt",
+          "dconf",
+          "decks",
+          "dty",
+          "id",
+          "ls",
+          "mod",
+          "models",
+          "scm",
+          "tags",
+          "usn",
+          "ver"
+        ],
+        "notes": [
+          "csum",
+          "data",
+          "flags",
+          "flds",
+          "guid",
+          "id",
+          "mid",
+          "mod",
+          "sfld",
+          "tags",
+          "usn"
+        ],
+        "cards": [
+          "data",
+          "did",
+          "due",
+          "factor",
+          "flags",
+          "id",
+          "ivl",
+          "lapses",
+          "left",
+          "mod",
+          "nid",
+          "odid",
+          "odue",
+          "ord",
+          "queue",
+          "reps",
+          "type",
+          "usn"
+        ],
+        "revlog": [
+          "cid",
+          "ease",
+          "factor",
+          "id",
+          "ivl",
+          "lastIvl",
+          "time",
+          "type",
+          "usn"
+        ]
+      }
+    },
+    {
+      "file": "Japanese Vocabulary.apkg",
+      "file_size_bytes": 2418656,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "creation_time_utc": "2026-10-19T21:00:00+00:00",
+        "last_modified_utc": null,
+        "schema_version": 1795627259743,
+        "collection_version": 18
+      },
+      "totals": {
+        "notes": 198,
+        "cards": 198,
+        "review_history": 2350,
+        "decks": 0,
+        "note_types": 0,
+        "media_files": 0
+      },
+      "decks": [],
+      "note_types": [],
+      "cards": {
+        "total_cards": 198,
+        "by_type": {
+          "Review": 115,
+          "New": 83
+        },
+        "by_queue": {
+          "Review": 115,
+          "New": 83
+        },
+        "by_deck": {
+          "Unknown deck (1792647885294)": {
+            "cards": 198,
+            "types": {
+              "Review": 115,
+              "New": 83
+            },
+            "queues": {
+              "Review": 115,
+              "New": 83
+            },
+            "unique_notes": 198
+          }
+        },
+        "interval_days": {
+          "min": 0,
+          "max": 98,
+          "average": 9.93
+        },
+        "repetitions": {
+          "min": 0,
+          "max": 113,
+          "average": 11.7
+        },
+        "lapses": {
+          "min": 0,
+          "max": 14,
+          "average": 2.05
+        },
+        "cards_with_possible_memory_state": 115,
+        "card_data_keys": {
+          "pos": 115,
+          "s": 115,
+          "d": 115,
+          "dr": 115,
+          "decay": 115,
+          "lrt": 115
+        },
+        "memory_state_samples": [
+          {
+            "card_id": 1792647728465,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 58.9435,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793892171
+            }
+          },
+          {
+            "card_id": 1792647728467,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 9.5307,
+              "d": 9.809,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794927829
+            }
+          },
+          {
+            "card_id": 1792647728469,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 51.0586,
+              "d": 6.058,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795277327
+            }
+          },
+          {
+            "card_id": 1792647728471,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 54.789,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793892416
+            }
+          },
+          {
+            "card_id": 1792647728473,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 0,
+              "s": 50.2971,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793976774
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total_reviews": 2350,
+        "ratings": {
+          "Easy": 474,
+          "Good": 558,
+          "Hard": 254,
+          "Again": 1064
+        },
+        "review_types": {
+          "Learning": 590,
+          "Review": 816,
+          "Relearning": 944
+        },
+        "unique_cards_reviewed": 115,
+        "review_time_ms": {
+          "min": 1323,
+          "max": 60000,
+          "average": 11601.09
+        },
+        "first_review_utc": "2026-10-22T05:56:45.729000+00:00",
+        "last_review_utc": "2026-11-25T15:55:15.630000+00:00"
+      },
+      "scheduling_config": {
+        "collection_config": {},
+        "deck_options": {},
+        "deck_specific_config": {}
+      },
+      "tags": {
+        "leech": 18
+      },
+      "media": {
+        "count": 0,
+        "filenames_sample": []
+      },
+      "database_tables": [
+        "cards",
+        "col",
+        "config",
+        "deck_config",
+        "decks",
+        "fields",
+        "graves",
+        "notes",
+        "notetypes",
+        "revlog",
+        "sqlite_stat1",
+        "sqlite_stat4",
+        "tags",
+        "templates"
+      ],
+      "database_columns": {
+        "col": [
+          "conf",
+          "crt",
+          "dconf",
+          "decks",
+          "dty",
+          "id",
+          "ls",
+          "mod",
+          "models",
+          "scm",
+          "tags",
+          "usn",
+          "ver"
+        ],
+        "notes": [
+          "csum",
+          "data",
+          "flags",
+          "flds",
+          "guid",
+          "id",
+          "mid",
+          "mod",
+          "sfld",
+          "tags",
+          "usn"
+        ],
+        "cards": [
+          "data",
+          "did",
+          "due",
+          "factor",
+          "flags",
+          "id",
+          "ivl",
+          "lapses",
+          "left",
+          "mod",
+          "nid",
+          "odid",
+          "odue",
+          "ord",
+          "queue",
+          "reps",
+          "type",
+          "usn"
+        ],
+        "revlog": [
+          "cid",
+          "ease",
+          "factor",
+          "id",
+          "ivl",
+          "lastIvl",
+          "time",
+          "type",
+          "usn"
+        ]
+      }
+    },
+    {
+      "file": "English Vocabulary.apkg",
+      "file_size_bytes": 3014607,
+      "database_source": "collection.anki21b",
+      "collection": {
+        "creation_time_utc": "2026-10-19T21:00:00+00:00",
+        "last_modified_utc": null,
+        "schema_version": 1795627546437,
+        "collection_version": 18
+      },
+      "totals": {
+        "notes": 200,
+        "cards": 200,
+        "review_history": 1930,
+        "decks": 0,
+        "note_types": 0,
+        "media_files": 0
+      },
+      "decks": [],
+      "note_types": [],
+      "cards": {
+        "total_cards": 200,
+        "by_type": {
+          "Review": 131,
+          "New": 69
+        },
+        "by_queue": {
+          "Review": 131,
+          "New": 69
+        },
+        "by_deck": {
+          "Unknown deck (1793026159084)": {
+            "cards": 200,
+            "types": {
+              "Review": 131,
+              "New": 69
+            },
+            "queues": {
+              "Review": 131,
+              "New": 69
+            },
+            "unique_notes": 200
+          }
+        },
+        "interval_days": {
+          "min": 0,
+          "max": 99,
+          "average": 10.63
+        },
+        "repetitions": {
+          "min": 0,
+          "max": 55,
+          "average": 9.65
+        },
+        "lapses": {
+          "min": 0,
+          "max": 13,
+          "average": 1.52
+        },
+        "cards_with_possible_memory_state": 131,
+        "card_data_keys": {
+          "pos": 131,
+          "s": 131,
+          "d": 131,
+          "dr": 131,
+          "decay": 131,
+          "lrt": 131
+        },
+        "memory_state_samples": [
+          {
+            "card_id": 1793026159400,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 392,
+              "s": 72.5769,
+              "d": 4.819,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795529744
+            }
+          },
+          {
+            "card_id": 1793026159462,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 393,
+              "s": 58.1587,
+              "d": 4.862,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795185525
+            }
+          },
+          {
+            "card_id": 1793026159525,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 394,
+              "s": 47.0007,
+              "d": 1.0,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1793719958
+            }
+          },
+          {
+            "card_id": 1793026159586,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 395,
+              "s": 12.7965,
+              "d": 9.661,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1794929769
+            }
+          },
+          {
+            "card_id": 1793026159646,
+            "keys": [
+              "pos",
+              "s",
+              "d",
+              "dr",
+              "decay",
+              "lrt"
+            ],
+            "values": {
+              "pos": 396,
+              "s": 8.366,
+              "d": 9.796,
+              "dr": 0.9,
+              "decay": 0.154,
+              "lrt": 1795352608
+            }
+          }
+        ]
+      },
+      "review_history": {
+        "available": true,
+        "total_reviews": 1930,
+        "ratings": {
+          "Again": 828,
+          "Easy": 452,
+          "Good": 516,
+          "Hard": 134
+        },
+        "review_types": {
+          "Learning": 600,
+          "Review": 725,
+          "Relearning": 605
+        },
+        "unique_cards_reviewed": 131,
+        "review_time_ms": {
+          "min": 1131,
+          "max": 60000,
+          "average": 6309.18
+        },
+        "first_review_utc": "2026-10-26T14:53:40.300000+00:00",
+        "last_review_utc": "2026-11-25T15:56:36.859000+00:00"
+      },
+      "scheduling_config": {
+        "collection_config": {},
+        "deck_options": {},
+        "deck_specific_config": {}
+      },
+      "tags": {
+        "leech": 6
+      },
+      "media": {
+        "count": 0,
+        "filenames_sample": []
+      },
+      "database_tables": [
+        "cards",
+        "col",
+        "config",
+        "deck_config",
+        "decks",
+        "fields",
+        "graves",
+        "notes",
+        "notetypes",
+        "revlog",
+        "sqlite_stat1",
+        "sqlite_stat4",
+        "tags",
+        "templates"
+      ],
+      "database_columns": {
+        "col": [
+          "conf",
+          "crt",
+          "dconf",
+          "decks",
+          "dty",
+          "id",
+          "ls",
+          "mod",
+          "models",
+          "scm",
+          "tags",
+          "usn",
+          "ver"
+        ],
+        "notes": [
+          "csum",
+          "data",
+          "flags",
+          "flds",
+          "guid",
+          "id",
+          "mid",
+          "mod",
+          "sfld",
+          "tags",
+          "usn"
+        ],
+        "cards": [
+          "data",
+          "did",
+          "due",
+          "factor",
+          "flags",
+          "id",
+          "ivl",
+          "lapses",
+          "left",
+          "mod",
+          "nid",
+          "odid",
+          "odue",
+          "ord",
+          "queue",
+          "reps",
+          "type",
+          "usn"
+        ],
+        "revlog": [
+          "cid",
+          "ease",
+          "factor",
+          "id",
+          "ivl",
+          "lastIvl",
+          "time",
+          "type",
+          "usn"
+        ]
+      }
+    }
+  ],
+  "errors": []
+}

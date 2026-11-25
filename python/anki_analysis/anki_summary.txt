@@ -1,0 +1,165 @@
+ANKI COLLECTION ANALYSIS
+=================================================================
+This report contains aggregate data only.
+Original APKG files were not modified.
+
+=================================================================
+Japanese Grammar.apkg
+-----------------------------------------------------------------
+Notes:         49
+Cards:         49
+Review history:592
+Decks:         0
+Note Types:    0
+Media files:   0
+
+NOTE TYPES
+
+CARD TYPES
+  Review: 49
+
+CARD QUEUES
+  Review: 49
+
+REVIEW RATINGS
+  Easy: 196
+  Good: 194
+  Hard: 51
+  Again: 151
+  Unique cards reviewed: 49
+  First review: 2026-10-22T11:43:55.964000+00:00
+  Last review: 2026-11-25T15:38:12.083000+00:00
+
+POSSIBLE FSRS MEMORY DATA
+  Cards with possible memory state: 49
+  Card data keys: {'pos': 49, 's': 49, 'd': 49, 'dr': 49, 'decay': 49, 'lrt': 49}
+
+SCHEDULING CONFIGURATION
+{
+  "collection_config": {},
+  "deck_options": {},
+  "deck_specific_config": {}
+}
+
+=================================================================
+Japanese Kanji.apkg
+-----------------------------------------------------------------
+Notes:         1031
+Cards:         1031
+Review history:788
+Decks:         0
+Note Types:    0
+Media files:   0
+
+NOTE TYPES
+
+CARD TYPES
+  Review: 92
+  New: 939
+
+CARD QUEUES
+  Review: 92
+  New: 939
+
+REVIEW RATINGS
+  Again: 188
+  Easy: 343
+  Hard: 45
+  Good: 212
+  Unique cards reviewed: 92
+  First review: 2026-10-22T10:58:10.173000+00:00
+  Last review: 2026-11-25T15:39:35.454000+00:00
+
+POSSIBLE FSRS MEMORY DATA
+  Cards with possible memory state: 92
+  Card data keys: {'pos': 92, 's': 92, 'd': 92, 'dr': 92, 'decay': 92, 'lrt': 92}
+
+SCHEDULING CONFIGURATION
+{
+  "collection_config": {},
+  "deck_options": {},
+  "deck_specific_config": {}
+}
+
+=================================================================
+Japanese Vocabulary.apkg
+-----------------------------------------------------------------
+Notes:         198
+Cards:         198
+Review history:2350
+Decks:         0
+Note Types:    0
+Media files:   0
+
+NOTE TYPES
+
+CARD TYPES
+  Review: 115
+  New: 83
+
+CARD QUEUES
+  Review: 115
+  New: 83
+
+REVIEW RATINGS
+  Easy: 474
+  Good: 558
+  Hard: 254
+  Again: 1064
+  Unique cards reviewed: 115
+  First review: 2026-10-22T05:56:45.729000+00:00
+  Last review: 2026-11-25T15:55:15.630000+00:00
+
+POSSIBLE FSRS MEMORY DATA
+  Cards with possible memory state: 115
+  Card data keys: {'pos': 115, 's': 115, 'd': 115, 'dr': 115, 'decay': 115, 'lrt': 115}
+
+SCHEDULING CONFIGURATION
+{
+  "collection_config": {},
+  "deck_options": {},
+  "deck_specific_config": {}
+}
+
+=================================================================
+English Vocabulary.apkg
+-----------------------------------------------------------------
+Notes:         200
+Cards:         200
+Review history:1930
+Decks:         0
+Note Types:    0
+Media files:   0
+
+NOTE TYPES
+
+CARD TYPES
+  Review: 131
+  New: 69
+
+CARD QUEUES
+  Review: 131
+  New: 69
+
+REVIEW RATINGS
+  Again: 828
+  Easy: 452
+  Good: 516
+  Hard: 134
+  Unique cards reviewed: 131
+  First review: 2026-10-26T14:53:40.300000+00:00
+  Last review: 2026-11-25T15:56:36.859000+00:00
+
+POSSIBLE FSRS MEMORY DATA
+  Cards with possible memory state: 131
+  Card data keys: {'pos': 131, 's': 131, 'd': 131, 'dr': 131, 'decay': 131, 'lrt': 131}
+
+SCHEDULING CONFIGURATION
+{
+  "collection_config": {},
+  "deck_options": {},
+  "deck_specific_config": {}
+}
+
+=================================================================
+END OF REPORT
