@@ -217,7 +217,9 @@ Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`,
 - Xác minh cấu trúc FSRS trong `cards.data`, phiên bản/thuật toán, desired retention và tham số liên quan. Không suy luận ý nghĩa trường chưa được xác nhận và không tự tính lại memory state trong bước import.
 - Xác minh ý nghĩa `revlog.ease`, `revlog.type`, `ivl`, `lastIvl`, timestamp và đơn vị thời gian; giữ thứ tự lịch sử và liên kết đúng Card.
 - Kiểm tra các trạng thái suspended/buried, learning/relearning và filtered/deck override nếu có; snapshot sơ bộ hiện chỉ báo cáo New và Review ở queue hiện tại.
-- Xác minh media thực tế trong từng APKG. Không kết luận không có media từ báo cáo sơ bộ.
+- Xác minh media thực tế trong từng APKG: đọc ZIP media manifest, đối chiếu tên file trong note fields (ví dụ `[sound:filename.mp3]`) với archive entries, thống kê audio/image theo định dạng và phát hiện tham chiếu thiếu. Không kết luận không có media chỉ từ báo cáo sơ bộ.
+- Với audio, xác định audio gắn với field nào (từ, cách đọc, ví dụ hay câu), phân biệt audio của từ và audio của câu ví dụ; giữ nguyên mapping field → asset. Kiểm tra codec/định dạng và khả năng phát trên Android trước khi quyết định đóng gói hoặc chuyển đổi.
+- Audio gốc trong APKG là nguồn ưu tiên nếu có quyền sử dụng phù hợp. Ứng dụng có thể lưu audio trong app-private storage hoặc assets để phát offline; không cần Internet sau khi dữ liệu đã được import. Không nhúng toàn bộ media vào APK nếu làm tăng kích thước cài đặt không cần thiết.
 - Đối chiếu Japanese Kanji APKG với 1.031 Kanji hiện có trong ứng dụng để map vào card identity hiện hữu, tránh tạo duplicate.
 - Đối chiếu Japanese Vocabulary APKG với workbook Excel hiện có; xác định nguồn nội dung chuẩn và quy tắc xử lý duplicate/conflict trước khi hợp nhất.
 - Kiểm tra sự khác biệt giữa Anki FSRS và FSRS-rs 6.6.2 trước khi quyết định có thể khôi phục memory state trực tiếp hay phải dùng phương án tương thích được kiểm chứng.
@@ -230,11 +232,13 @@ Có 387 cards đã ôn có các khóa trong `cards.data`: `pos`, `s`, `d`, `dr`,
 4. Import phải idempotent: chạy lại cùng nguồn không tạo duplicate hoặc ghi đè tiến độ mới hơn một cách âm thầm.
 5. Nội dung từng loại deck có schema riêng; scheduler/progress dùng abstraction chung chỉ khi mapping không làm mất thông tin.
 6. Giữ raw FSRS memory state và raw review history khi có thể; mọi chuyển đổi đơn vị/thời gian phải có test và đối chiếu.
-7. Không biến lịch sử Anki thành các lần review mới trong scheduler; lịch sử import phải được phân biệt với review phát sinh trong ứng dụng.
-8. Tạo dry-run report trước khi ghi database: số note/card sẽ thêm, map, bỏ qua, xung đột, thiếu media và trạng thái không thể chuyển.
-9. Thực hiện import trong transaction hoặc theo batch có checkpoint/rollback được thiết kế rõ ràng; backup dữ liệu app trước khi import.
-10. Không xóa hoặc reset CardProgress/PracticeLog hiện có. Bổ sung Room migration rõ ràng nếu cần; tuyệt đối không dùng destructive migration.
-11. Sau import phải đối chiếu counts, card identity, due state, FSRS fields và số lượng review history; cung cấp báo cáo kết quả cho người dùng.
+7. Giữ nguyên audio/image assets được note tham chiếu; import media phải có manifest, mapping ổn định, kiểm tra file thiếu/trùng và xác minh phát offline. Không tự thay audio gốc bằng TTS.
+8. TTS chỉ là phương án bổ trợ cho nội dung không có audio phù hợp; cần thiết kế riêng về engine, ngôn ngữ/voice, chất lượng phát âm và cache. Không tạo TTS hàng loạt trong giai đoạn migration ban đầu.
+9. Không biến lịch sử Anki thành các lần review mới trong scheduler; lịch sử import phải được phân biệt với review phát sinh trong ứng dụng.
+10. Tạo dry-run report trước khi ghi database: số note/card sẽ thêm, map, bỏ qua, xung đột, thiếu media và trạng thái không thể chuyển.
+11. Thực hiện import trong transaction hoặc theo batch có checkpoint/rollback được thiết kế rõ ràng; backup dữ liệu app trước khi import.
+12. Không xóa hoặc reset CardProgress/PracticeLog hiện có. Bổ sung Room migration rõ ràng nếu cần; tuyệt đối không dùng destructive migration.
+13. Sau import phải đối chiếu counts, card identity, due state, FSRS fields, số lượng review history và khả năng phát media; cung cấp báo cáo kết quả cho người dùng.
 
 ### 8.5 Các giai đoạn thực hiện
 
